@@ -18,19 +18,22 @@
 package com.t8rin.imagetoolbox.core.ui.widget.dialogs
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import com.shifenmiao.base.ui.button.CancelButton
 import com.t8rin.imagetoolbox.core.resources.R
 import com.t8rin.imagetoolbox.core.settings.presentation.provider.LocalSettingsState
 import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedAlertDialog
 import com.t8rin.imagetoolbox.core.ui.widget.system.OneBoxDangerButton
-import com.t8rin.imagetoolbox.core.ui.widget.system.OnePrimaryButton
+import com.t8rin.imagetoolbox.core.resources.icons.line.LineExitToApp
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineSave
 
 @Composable
@@ -55,7 +58,7 @@ fun ExitWithoutSavingDialog(
             onDismissRequest = onDismiss,
             placeAboveAll = placeAboveAll,
             dismissButton = {
-                OnePrimaryButton(
+                CancelButton(
                     text = stringResource(R.string.stay),
                     onClick = onDismiss
                 )
@@ -63,6 +66,7 @@ fun ExitWithoutSavingDialog(
             confirmButton = {
                 OneBoxDangerButton(
                     text = stringResource(R.string.exit),
+                    leadingIcon = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineExitToApp,
                     onClick = {
                         onDismiss()
                         onExit()
@@ -72,8 +76,9 @@ fun ExitWithoutSavingDialog(
             title = { Text(text = title) },
             text = {
                 Text(
+                    modifier = Modifier.fillMaxWidth(),
                     text = text,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Start
                 )
             },
             icon = {

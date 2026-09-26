@@ -10,12 +10,12 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -28,18 +28,21 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.shifenmiao.theme.AppTheme
-import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedButton
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassCard
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassOutlinedTextField
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassTextFieldVisualPreset
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassStyle
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassSurface
+import com.t8rin.imagetoolbox.core.ui.widget.glass.glassDense
 import com.t8rin.imagetoolbox.core.ui.widget.glass.glassMedium
 
 @Immutable
@@ -324,6 +327,65 @@ fun OneBoxOutlinedTextField(
     )
 }
 
+/**
+ * 全应用统一的胶囊按钮 [OneBoxPillButton]。
+ *
+ * 对话框、底部面板里的「确认 / 取消 / 危险操作」都必须走这一份实现，
+ * 不要再各自拼 `Row + glass` 背景 —— 否则圆角、图标大小、间距会各写各的，
+ * 出现同一个 App 里两套按钮样式的割裂感。
+ *
+ * @param leadingIcon 可选前置图标（16dp 由调用方自行约束，见 [OneBoxButtonIcon]）
+ */
+@Composable
+fun OneBoxPillButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHighest,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+    textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+) {
+    val shape = OneBoxDesignSystem.pillShape
+    Row(
+        modifier = modifier
+            .alpha(if (enabled) 1f else 0.5f)
+            .clip(shape)
+            .clickable(enabled = enabled, onClick = onClick)
+            .glassDense(
+                color = containerColor,
+                shape = shape,
+            )
+            .padding(contentPadding),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        leadingIcon?.let {
+            it()
+            Spacer(modifier = Modifier.size(OneBoxDesignSystem.compactSpacing))
+        }
+        Text(
+            text = text,
+            style = textStyle.copy(color = contentColor),
+        )
+    }
+}
+
+/** 胶囊按钮里的标准图标尺寸，避免每个调用方各写一个 12/16/18.dp */
+@Composable
+fun OneBoxButtonIcon(
+    imageVector: ImageVector,
+    contentDescription: String? = null,
+) {
+    Icon(
+        modifier = Modifier.size(16.dp),
+        imageVector = imageVector,
+        contentDescription = contentDescription,
+    )
+}
+
 @Composable
 fun OnePrimaryButton(
     text: String,
@@ -332,30 +394,15 @@ fun OnePrimaryButton(
     enabled: Boolean = true,
     leadingIcon: ImageVector? = null,
 ) {
-    EnhancedButton(
+    OneBoxPillButton(
+        text = text,
         onClick = onClick,
-        modifier = modifier.widthIn(min = 96.dp),
+        modifier = modifier,
         enabled = enabled,
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        shape = OneBoxDesignSystem.listRowShape,
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-    ) {
-        if (leadingIcon != null) {
-            Icon(
-                imageVector = leadingIcon,
-                contentDescription = null,
-                modifier = Modifier.size(18.dp),
-            )
-            androidx.compose.foundation.layout.Spacer(
-                modifier = Modifier.size(OneBoxDesignSystem.compactSpacing)
-            )
-        }
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelLarge,
-        )
-    }
+        leadingIcon = leadingIcon?.let { { OneBoxButtonIcon(it) } },
+    )
 }
 
 @Composable
@@ -366,30 +413,13 @@ fun OneSecondaryButton(
     enabled: Boolean = true,
     leadingIcon: ImageVector? = null,
 ) {
-    EnhancedButton(
+    OneBoxPillButton(
+        text = text,
         onClick = onClick,
-        modifier = modifier.widthIn(min = 96.dp),
+        modifier = modifier,
         enabled = enabled,
-        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        shape = OneBoxDesignSystem.listRowShape,
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-    ) {
-        if (leadingIcon != null) {
-            Icon(
-                imageVector = leadingIcon,
-                contentDescription = null,
-                modifier = Modifier.size(18.dp),
-            )
-            androidx.compose.foundation.layout.Spacer(
-                modifier = Modifier.size(OneBoxDesignSystem.compactSpacing)
-            )
-        }
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelLarge,
-        )
-    }
+        leadingIcon = leadingIcon?.let { { OneBoxButtonIcon(it) } },
+    )
 }
 
 @Composable
@@ -400,30 +430,15 @@ fun OneBoxDangerButton(
     enabled: Boolean = true,
     leadingIcon: ImageVector? = null,
 ) {
-    EnhancedButton(
+    OneBoxPillButton(
+        text = text,
         onClick = onClick,
-        modifier = modifier.widthIn(min = 96.dp),
+        modifier = modifier,
         enabled = enabled,
         containerColor = MaterialTheme.colorScheme.errorContainer,
         contentColor = MaterialTheme.colorScheme.onErrorContainer,
-        shape = OneBoxDesignSystem.listRowShape,
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-    ) {
-        if (leadingIcon != null) {
-            Icon(
-                imageVector = leadingIcon,
-                contentDescription = null,
-                modifier = Modifier.size(18.dp),
-            )
-            androidx.compose.foundation.layout.Spacer(
-                modifier = Modifier.size(OneBoxDesignSystem.compactSpacing)
-            )
-        }
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelLarge,
-        )
-    }
+        leadingIcon = leadingIcon?.let { { OneBoxButtonIcon(it) } },
+    )
 }
 
 @Composable

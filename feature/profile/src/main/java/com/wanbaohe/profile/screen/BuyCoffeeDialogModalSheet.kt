@@ -12,7 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.shifenmiao.base.ui.button.SmallSecondaryButton
+import com.shifenmiao.base.ui.button.SecondarySmallButton
 import com.shifenmiao.base.utils.ActionUtils
 import com.shifenmiao.base.utils.StringUtils
 import com.shifenmiao.common.logic.AppComponent
@@ -61,7 +61,7 @@ fun BuyCoffeeDialogModalSheet(
                 navigationIcon = {
                 },
                 actions = {
-                    SmallSecondaryButton(
+                    SecondarySmallButton(
                         text = stringResource(id = R.string.free_coffee),
                         onClick = {
                             ActionUtils.showLogin(

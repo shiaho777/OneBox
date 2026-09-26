@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -139,11 +138,7 @@ fun ConfirmContentDialog(
         visible = showDialog.value,
         onDismissRequest = onDismissRequest,
         title = {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Text(text = title)
         },
         text = {
             content()
@@ -195,9 +190,7 @@ fun OptionConfirmDialog(
             Text(
                 modifier = Modifier
                     .fillMaxWidth(),
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                text = title
             )
         },
         text = {

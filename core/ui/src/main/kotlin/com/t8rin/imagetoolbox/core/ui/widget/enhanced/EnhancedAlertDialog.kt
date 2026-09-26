@@ -33,10 +33,12 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.LocalContentColor
@@ -351,35 +353,31 @@ private fun EnhancedAlertDialogContent(
         tonalElevation = if (useGlass) 0.dp else tonalElevation,
     ) {
         Column(modifier = Modifier.padding(DialogPadding)) {
-            icon?.let {
-                CompositionLocalProvider(LocalContentColor provides iconContentColor) {
-                    Box(
-                        Modifier
-                            .padding(IconPadding)
-                            .align(Alignment.CenterHorizontally)
-                    ) {
-                        icon()
-                    }
-                }
-            }
-            title?.let {
-                ProvideContentColorTextStyle(
-                    contentColor = titleContentColor,
-                    textStyle = MaterialTheme.typography.headlineSmall
+            if (icon != null || title != null) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(TitlePadding),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(IconTitleSpacing)
                 ) {
-                    Box(
-                        // Align the title to the center when an icon is present.
-                        Modifier
-                            .padding(TitlePadding)
-                            .align(
-                                if (icon == null) {
-                                    Alignment.Start
-                                } else {
-                                    Alignment.CenterHorizontally
-                                }
-                            )
-                    ) {
-                        title()
+                    if (icon != null) {
+                        CompositionLocalProvider(LocalContentColor provides iconContentColor) {
+                            // 与标题同一行时图标要收一号，否则比 titleMedium 的字高出太多
+                            Box(modifier = Modifier.size(DialogIconSize)) {
+                                icon()
+                            }
+                        }
+                    }
+                    if (title != null) {
+                        ProvideContentColorTextStyle(
+                            contentColor = titleContentColor,
+                            textStyle = MaterialTheme.typography.titleMedium
+                        ) {
+                            Box(modifier = Modifier.weight(weight = 1f, fill = false)) {
+                                title()
+                            }
+                        }
                     }
                 }
             }
@@ -433,6 +431,7 @@ private val ButtonsVerticalSpacing = 12.dp
 
 // Paddings for each of the dialog's parts.
 private val DialogPadding = PaddingValues(all = 24.dp)
-private val IconPadding = PaddingValues(bottom = 16.dp)
+private val DialogIconSize = 20.dp
+private val IconTitleSpacing = 12.dp
 private val TitlePadding = PaddingValues(bottom = 16.dp)
 private val TextPadding = PaddingValues(bottom = 24.dp)
