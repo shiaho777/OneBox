@@ -23,6 +23,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -32,6 +33,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -64,18 +66,16 @@ import com.t8rin.imagetoolbox.core.ui.widget.controls.selection.FontSelector
 import com.t8rin.imagetoolbox.core.ui.widget.controls.selection.ImageSelector
 import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedSliderItem
 import com.t8rin.imagetoolbox.core.ui.widget.enhanced.hapticsClickable
+import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassOutlinedTextField
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassStyle
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassSurface
-import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassTonalButton
 import com.t8rin.imagetoolbox.core.ui.widget.glass.glassBackground
 import com.t8rin.imagetoolbox.core.ui.widget.modifier.ShapeDefaults
-import com.t8rin.imagetoolbox.core.ui.widget.modifier.animateShape
+import com.t8rin.imagetoolbox.core.ui.widget.modifier.container
 import com.t8rin.imagetoolbox.core.ui.widget.other.BarcodeType
 import com.t8rin.imagetoolbox.core.ui.widget.other.BoxAnimatedVisibility
 import com.t8rin.imagetoolbox.core.ui.widget.other.InfoContainer
 import com.t8rin.imagetoolbox.core.ui.widget.other.LinkPreviewList
-import com.t8rin.imagetoolbox.core.ui.widget.system.OneBoxDesignSystem
-import com.t8rin.imagetoolbox.core.ui.widget.text.RoundedTextField
 import com.t8rin.imagetoolbox.feature.scan_qr_code.presentation.screenLogic.ScanQrCodeComponent
 import com.shifenmiao.theme.AppTheme
 import kotlin.math.roundToInt
@@ -120,109 +120,92 @@ internal fun ScanQrCodeControls(component: ScanQrCodeComponent) {
         )
     }
 
-    GlassSurface(
-        modifier = Modifier.fillMaxWidth(),
-        style = OneBoxDesignSystem.sectionGlassStyle,
-        shape = OneBoxDesignSystem.sectionCardShape,
-        borderWidth = 0.dp
-    ) {
-        Column {
-            RoundedTextField(
-                modifier = Modifier
-                    .padding(
-                        top = AppTheme.dimens.spaceSmall,
-                        start = AppTheme.dimens.spaceSmall,
-                        end = AppTheme.dimens.spaceSmall,
-                        bottom = if (noContent) AppTheme.dimens.spaceExtraSmall else AppTheme.dimens.spaceSmall
-                    ),
-                shape = animateShape(
-                    if (noContent) ShapeDefaults.smallTop else ShapeDefaults.small
-                ),
-                value = params.content.raw,
-                onValueChange = {
-                    component.updateParams(
-                        params.copy(
-                            content = params.content.copy(it)
-                        )
-                    )
-                },
-                maxSymbols = 2500,
-                singleLine = false,
-                supportingText = if (!noContent) {
-                    {
-                        AnimatedContent(
-                            targetState = params.content,
-                            contentKey = { it::class.simpleName },
-                            transitionSpec = { fadeIn() togetherWith fadeOut() }
-                        ) { content ->
-                            Text(
-                                text = stringResource(content.name),
-                                color = MaterialTheme.colorScheme.onMixedContainer,
-                                modifier = Modifier
-                                    .glassBackground(
-                                        style = GlassStyle.Thin,
-                                        color = MaterialTheme.colorScheme.mixedContainer,
-                                        shape = ShapeDefaults.small,
-                                        borderWidth = 0.dp,
-                                    )
-                                    .padding(horizontal = 5.dp, vertical = 1.dp)
-                            )
-                        }
-                    }
-                } else null,
-                label = {
-                    Text(stringResource(id = R.string.code_content))
-                },
-                keyboardOptions = KeyboardOptions()
+    GlassOutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        value = params.content.raw,
+        onValueChange = {
+            component.updateParams(
+                params.copy(
+                    content = params.content.copy(it.take(2500))
+                )
             )
-
-            var showEditField by rememberSaveable {
-                mutableStateOf(false)
-            }
-
-            GlassTonalButton(
-                onClick = { showEditField = true },
-                shape = if (noContent) ShapeDefaults.smallBottom else ShapeDefaults.small,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = AppTheme.dimens.spaceSmall,
-                        end = AppTheme.dimens.spaceSmall,
-                        bottom = AppTheme.dimens.spaceSmall
-                    ),
-                color = MaterialTheme.colorScheme.mixedContainer,
-                contentColor = MaterialTheme.colorScheme.onMixedContainer,
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Rounded.MiniEdit,
-                        contentDescription = null
-                    )
-                    Spacer(Modifier.width(AppTheme.dimens.spaceExtraSmall))
+        },
+        singleLine = false,
+        supportingText = if (!noContent) {
+            {
+                AnimatedContent(
+                    targetState = params.content,
+                    contentKey = { it::class.simpleName },
+                    transitionSpec = { fadeIn() togetherWith fadeOut() }
+                ) { content ->
                     Text(
-                        text = stringResource(
-                            if (params.content is QrType.Complex) R.string.edit_barcode else R.string.create_barcode
-                        )
+                        text = stringResource(content.name),
+                        color = MaterialTheme.colorScheme.onMixedContainer,
+                        modifier = Modifier
+                            .glassBackground(
+                                style = GlassStyle.Thin,
+                                color = MaterialTheme.colorScheme.mixedContainer,
+                                shape = ShapeDefaults.small,
+                                borderWidth = 0.dp,
+                            )
+                            .padding(horizontal = 5.dp, vertical = 1.dp)
                     )
                 }
             }
+        } else null,
+        label = {
+            Text(stringResource(id = R.string.code_content))
+        },
+        keyboardOptions = KeyboardOptions()
+    )
 
-            QrTypeEditSheet(
-                qrType = params.content.safeCast(),
-                onSave = { component.updateParams(params.copy(content = it)) },
-                onDismiss = { showEditField = false },
-                visible = showEditField
-            )
-        }
+    var showEditField by rememberSaveable {
+        mutableStateOf(false)
     }
-    Spacer(modifier = Modifier.height(AppTheme.dimens.spaceSmall))
+
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .container(
+                shape = ShapeDefaults.default,
+                resultPadding = 0.dp
+            )
+            .hapticsClickable(
+                onClick = { showEditField = true }
+            )
+            .padding(vertical = 16.dp)
+    ) {
+        Icon(
+            imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Rounded.MiniEdit,
+            contentDescription = null,
+            modifier = Modifier.size(20.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = stringResource(
+                if (params.content is QrType.Complex) R.string.edit_barcode else R.string.create_barcode
+            ),
+            style = MaterialTheme.typography.titleSmall
+        )
+    }
+
+    QrTypeEditSheet(
+        qrType = params.content.safeCast(),
+        onSave = { component.updateParams(params.copy(content = it)) },
+        onDismiss = { showEditField = false },
+        visible = showEditField
+    )
+
+    Spacer(modifier = Modifier.height(AppTheme.dimens.spaceNormal))
     InfoContainer(
         text = stringResource(R.string.scan_qr_code_to_replace_content),
-        modifier = Modifier.padding(AppTheme.dimens.spaceSmall)
+        modifier = Modifier.padding(8.dp)
     )
-    Spacer(modifier = Modifier.height(AppTheme.dimens.spaceSmall))
+    Spacer(modifier = Modifier.height(AppTheme.dimens.spaceNormal))
 
     AnimatedVisibility(visible = params.content.raw.isNotEmpty()) {
         Column {
@@ -245,7 +228,7 @@ internal fun ScanQrCodeControls(component: ScanQrCodeComponent) {
                     }
                 }
             )
-            Spacer(modifier = Modifier.height(AppTheme.dimens.spaceSmall))
+            Spacer(modifier = Modifier.height(AppTheme.dimens.spaceNormal))
             BoxAnimatedVisibility(
                 visible = !params.type.isSquare || params.type == BarcodeType.DATA_MATRIX,
                 modifier = Modifier.fillMaxWidth()
@@ -265,10 +248,10 @@ internal fun ScanQrCodeControls(component: ScanQrCodeComponent) {
                     internalStateTransformation = {
                         it.roundToTwoDigits()
                     },
-                    modifier = Modifier.padding(bottom = AppTheme.dimens.spaceSmall)
+                    modifier = Modifier.padding(bottom = AppTheme.dimens.spaceNormal)
                 )
             }
-            Spacer(modifier = Modifier.height(AppTheme.dimens.spaceSmall))
+            Spacer(modifier = Modifier.height(AppTheme.dimens.spaceNormal))
             QrParamsSelector(
                 isQrType = params.type == BarcodeType.QR_CODE,
                 value = params.qrParams,
@@ -331,19 +314,11 @@ internal fun ScanQrCodeControls(component: ScanQrCodeComponent) {
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(AppTheme.dimens.spaceSmall))
-            RoundedTextField(
+            Spacer(modifier = Modifier.height(AppTheme.dimens.spaceNormal))
+            GlassOutlinedTextField(
                 modifier = Modifier
-                    .padding(horizontal = AppTheme.dimens.spaceSmall)
-                    .glassBackground(
-                        style = OneBoxDesignSystem.rowGlassStyle,
-                        shape = animateShape(
-                            if (params.description.isNotEmpty()) ShapeDefaults.top
-                            else ShapeDefaults.default
-                        ),
-                        borderWidth = 0.dp
-                    )
-                    .padding(AppTheme.dimens.spaceSmall),
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
                 value = params.description,
                 onValueChange = {
                     component.updateParams(
@@ -357,7 +332,6 @@ internal fun ScanQrCodeControls(component: ScanQrCodeComponent) {
                     Text(stringResource(id = R.string.qr_description))
                 }
             )
-            Spacer(modifier = Modifier.height(AppTheme.dimens.spaceSmall))
             BoxAnimatedVisibility(
                 visible = params.description.isNotEmpty(),
                 modifier = Modifier.fillMaxWidth()
@@ -372,8 +346,8 @@ internal fun ScanQrCodeControls(component: ScanQrCodeComponent) {
                         )
                     },
                     containerColor = Color.Unspecified,
-                    shape = ShapeDefaults.bottom,
-                    modifier = Modifier.padding(bottom = AppTheme.dimens.spaceSmall)
+                    shape = ShapeDefaults.default,
+                    modifier = Modifier.padding(bottom = AppTheme.dimens.spaceNormal)
                 )
             }
             EnhancedSliderItem(
