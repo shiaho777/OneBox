@@ -20,7 +20,6 @@ package com.t8rin.imagetoolbox.feature.checksum_tools.presentation.components.pa
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -56,7 +55,6 @@ internal fun ColumnScope.CompareWithUriPage(
         } else {
             InfoContainer(
                 text = stringResource(R.string.pick_file_to_checksum),
-                modifier = Modifier.padding(8.dp),
             )
         }
     }

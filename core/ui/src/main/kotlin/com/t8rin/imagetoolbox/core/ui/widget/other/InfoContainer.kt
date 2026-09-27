@@ -52,8 +52,8 @@ fun InfoContainer(
     shape: Shape = OneBoxDesignSystem.compactBadgeShape,
     icon: ImageVector? = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineInfo,
     textAlign: TextAlign = TextAlign.Center,
-    contentPadding: PaddingValues = PaddingValues(OneBoxDesignSystem.compactSpacing),
-    lineHeight: TextUnit = 14.sp,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+    lineHeight: TextUnit = 18.sp,
 ) {
     GlassSurface(
         modifier = modifier,

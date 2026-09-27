@@ -18,7 +18,6 @@
 package com.t8rin.imagetoolbox.feature.checksum_tools.presentation.components.pages
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -53,7 +52,6 @@ internal fun CalculateFromUriPage(
         } else {
             InfoContainer(
                 text = stringResource(R.string.pick_file_to_checksum),
-                modifier = Modifier.padding(8.dp),
             )
         }
     }

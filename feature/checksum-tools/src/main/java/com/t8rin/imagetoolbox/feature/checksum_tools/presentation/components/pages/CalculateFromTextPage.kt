@@ -19,7 +19,6 @@ package com.t8rin.imagetoolbox.feature.checksum_tools.presentation.components.pa
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,7 +64,6 @@ internal fun ColumnScope.CalculateFromTextPage(
     AnimatedVisibility(page.checksum.isEmpty()) {
         InfoContainer(
             text = stringResource(R.string.enter_text_to_checksum),
-            modifier = Modifier.padding(8.dp),
         )
     }
 }

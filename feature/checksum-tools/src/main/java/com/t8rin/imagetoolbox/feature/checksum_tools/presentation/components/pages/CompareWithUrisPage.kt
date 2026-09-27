@@ -188,7 +188,6 @@ internal fun ColumnScope.CompareWithUrisPage(
         } else {
             InfoContainer(
                 text = stringResource(R.string.pick_files_to_checksum),
-                modifier = Modifier.padding(8.dp),
             )
         }
     }

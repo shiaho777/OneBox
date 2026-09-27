@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -53,7 +52,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.smarttoolfactory.extendedcolors.util.roundToTwoDigits
 import com.t8rin.imagetoolbox.core.domain.model.QrType
 import com.t8rin.imagetoolbox.core.domain.model.copy
@@ -205,11 +203,7 @@ internal fun ScanQrCodeControls(component: ScanQrCodeComponent) {
     Spacer(modifier = Modifier.height(AppTheme.dimens.spaceNormal))
     InfoContainer(
         text = stringResource(R.string.scan_qr_code_to_replace_content),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-        lineHeight = 18.sp
+        modifier = Modifier.fillMaxWidth()
     )
     Spacer(modifier = Modifier.height(AppTheme.dimens.spaceNormal))
 
