@@ -218,6 +218,17 @@ object GlassCustomSliderDefaults {
      */
     val TrackEdgeSpacing: Dp = 0.dp
 
+    /**
+     * 刻度点抽稀步长。
+     *
+     * 质量这类滑杆 `steps = 99`（0..100 的每一档都是一个刻度），99 个 1dp 的点
+     * 铺满整条轨道会连成一条虚线，把轨道纹理压过去。这里只画每隔
+     * [TickStride] 个的刻度（0 / 10 / … / 100 共 11 个点），保留刻度语义又不糊。
+     *
+     * 不影响轨道和滑块本身，也不影响不传 `steps` 的滑杆（它们本来就没有刻度）。
+     */
+    const val TickStride: Int = 10
+
     @Composable
     fun Thumb(
         interactionSource: MutableInteractionSource,
@@ -306,7 +317,9 @@ object GlassCustomSliderDefaults {
         ) { fractionToX ->
             val activeEdgeX = fractionToX(fraction)
 
-            sliderState.tickFractions.forEach { tickFraction ->
+            sliderState.tickFractions.forEachIndexed { index, tickFraction ->
+                // 抽稀：见 [GlassCustomSliderDefaults.TickStride]
+                if (index % TickStride != 0) return@forEachIndexed
                 val x = fractionToX(tickFraction)
                 val isActiveTick = if (isRtl) x >= activeEdgeX else x <= activeEdgeX
                 drawCircle(
@@ -360,7 +373,9 @@ object GlassCustomSliderDefaults {
             val activeMinX = minOf(activeStartX, activeEndX)
             val activeMaxX = maxOf(activeStartX, activeEndX)
 
-            rangeSliderState.tickFractions.forEach { tickFraction ->
+            rangeSliderState.tickFractions.forEachIndexed { index, tickFraction ->
+                // 抽稀：见 [GlassCustomSliderDefaults.TickStride]
+                if (index % TickStride != 0) return@forEachIndexed
                 val x = fractionToX(tickFraction)
                 val isActiveTick = x in activeMinX..activeMaxX
                 drawCircle(
