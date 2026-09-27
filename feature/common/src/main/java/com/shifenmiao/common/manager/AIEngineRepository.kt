@@ -85,9 +85,22 @@ class AIEngineRepository @Inject constructor(private val appDatabase: AppDatabas
         appDatabase.aiEngineDao().insertEngine(engine)
     }
 
+    /**
+     * 按 [AiEngine] 保存引擎。
+     *
+     * 默认落成"用户自有"(source=LOCAL, canEdit=true): 传进来的是普通 AiEngine 而不是
+     * [AiEngineEntity], 调用方意图基本都是"这是我的引擎"。以前这里吃 [AiEngineEntity.fromAiEngine]
+     * 的默认值(source=REMOTE, canEdit=false), 会把用户自建引擎写成非自有行 ——
+     * 那种行会被远程白名单过滤掉, 表现为"保存成功但列表里没有"。
+     */
     suspend fun saveEngine(engine: AiEngine) {
         val existing = getEngineByNameAndProtocol(engine.name, engine.requestProtocol.name)
-        val entity = AiEngineEntity.fromAiEngine(engine, existingEntity = existing)
+        val entity = AiEngineEntity.fromAiEngine(
+            engine = engine,
+            existingEntity = existing,
+            source = existing?.sourceType() ?: AiConfigSource.LOCAL,
+            canEdit = existing?.canEdit ?: true,
+        )
         appDatabase.aiEngineDao().insertEngine(entity)
     }
 

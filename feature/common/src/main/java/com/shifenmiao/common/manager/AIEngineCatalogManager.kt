@@ -11,6 +11,7 @@ import com.shifenmiao.model.remote.AiEngineConfig
 import com.shifenmiao.storage.RemoteConfigStorage
 import com.shifenmiao.storage.TokenStorage
 import com.t8rin.imagetoolbox.core.domain.coroutines.DispatchersHolder
+import com.t8rin.imagetoolbox.core.domain.remote.ErrorReporter
 import com.t8rin.logger.makeLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -29,6 +30,7 @@ class AIEngineCatalogManager @Inject constructor(
     private val aiEngineRepository: AIEngineRepository,
     private val aiEngineSyncManager: AIEngineSyncManager,
     private val aiEngineManager: AIEngineManager,
+    private val errorReporter: ErrorReporter,
     dispatchersHolder: DispatchersHolder,
 ) : DispatchersHolder by dispatchersHolder {
 
@@ -136,19 +138,90 @@ class AIEngineCatalogManager @Inject constructor(
         )
     }
 
+    /** 保存已有引擎的配置改动(详情页编辑, 可能改的是内置预置行) */
     fun saveEngineConfigOnly(engine: AiEngine, onComplete: (Boolean) -> Unit = {}) {
+        persistEngineConfig(engine = engine, isNewEngine = false) { result ->
+            onComplete(result is AddEngineResult.Success)
+        }
+    }
+
+    /**
+     * 新增一个用户自建引擎。
+     *
+     * 与 [saveEngineConfigOnly] 的差别是多了两道"别假装成功"的防线:
+     * 名称撞上已有引擎时拒绝而不是静默覆盖, 写入后回读确认真的落成了用户自有的行。
+     * 这两条对应的都是 #29 那一类"提示添加成功、列表里却没有"的假成功。
+     *
+     * 回调给的是具体结果而不是 Boolean, 这样 UI 能对"名称重复"给出可操作的提示,
+     * 而不是一句"请稍后重试"。
+     */
+    fun addLocalEngine(engine: AiEngine, onComplete: (AddEngineResult) -> Unit = {}) {
+        persistEngineConfig(engine = engine, isNewEngine = true, onComplete = onComplete)
+    }
+
+    private fun persistEngineConfig(
+        engine: AiEngine,
+        isNewEngine: Boolean,
+        onComplete: (AddEngineResult) -> Unit,
+    ) {
         managerScope.launch {
             try {
                 val existing = aiEngineRepository.getEngineByNameAndProtocol(
                     name = engine.name,
                     requestProtocol = engine.requestProtocol.name,
                 )
+
+                // 撞名保护: 新增时只要名称已被任何一行占用就拒绝 ——
+                // 无论那一行是内置预设还是用户之前建的另一条自定义引擎。
+                // 否则会走 update 分支: 用户既看不到新条目, 已有的引擎还会被悄悄改掉。
+                if (isNewEngine && existing != null) {
+                    makeLog {
+                        "AIEngineCatalogManager: Reject new engine '${engine.name}', " +
+                            "name already taken by source=${existing.source} canEdit=${existing.canEdit}"
+                    }
+                    reportEngineSaveFailure(
+                        engine = engine,
+                        reason = "name_collision",
+                        detail = "已存在同名引擎(source=${existing.source}, canEdit=${existing.canEdit})",
+                    )
+                    onComplete(AddEngineResult.NameTaken)
+                    return@launch
+                }
+
+                val isLocalOwnedEngine = existing?.isLocalOwned() ?: true
                 val entity = mergeConfigToEntity(engine = engine, existing = existing)
 
                 if (existing == null) {
                     aiEngineRepository.saveEngine(entity)
                 } else {
                     aiEngineRepository.updateEngine(entity)
+                }
+
+                // 回读断言: 写库成功 != 列表里能看到。新增入口必须落成"用户自有"的行,
+                // 否则宁可回滚报失败, 也不再让 UI 出现"提示成功、列表没变化"的假成功。
+                val persisted = aiEngineRepository.getEngineByNameAndProtocol(
+                    name = engine.name,
+                    requestProtocol = engine.requestProtocol.name,
+                )
+                if (persisted == null || (isNewEngine && !persisted.isLocalOwned())) {
+                    makeLog {
+                        "AIEngineCatalogManager: Engine '${engine.name}' not persisted as expected " +
+                            "(existing=${existing != null}, persisted=${persisted?.source}/${persisted?.canEdit})"
+                    }
+                    if (existing == null && persisted != null) {
+                        // 本次是新增: 回滚掉这条用户永远看不到的行, 不给库里留脏数据
+                        aiEngineRepository.deleteEngineByNameAndProtocol(
+                            name = persisted.name,
+                            requestProtocol = persisted.requestProtocol,
+                        )
+                    }
+                    reportEngineSaveFailure(
+                        engine = engine,
+                        reason = "not_visible_after_save",
+                        detail = "回读 source=${persisted?.source} canEdit=${persisted?.canEdit}",
+                    )
+                    onComplete(AddEngineResult.NotVisible)
+                    return@launch
                 }
 
                 // 同步更新模型配置（canUploadFile、canImage 等字段存储在模型表中）
@@ -159,8 +232,10 @@ class AIEngineCatalogManager @Inject constructor(
                         ?.takeIf { it.engineName.equals(engineName, ignoreCase = true) }
                         ?: aiEngineRepository.getModelByNameAndEngineName(model.name, engineName)
 
-                    if (existingModel?.isLocalOwned() == true) {
-                        val updatedLocalModelEntity = AiModelEntity.fromAiModel(
+                    if (isLocalOwnedEngine || existingModel?.isLocalOwned() == true) {
+                        // 用户自建引擎的模型也必须是"本地自有": 落成 REMOTE 会被远程引擎白名单
+                        // 连带过滤, 表现为引擎能选、模型选择器里却没有它。
+                        val localModelEntity = AiModelEntity.fromAiModel(
                             model = model.copy(
                                 engineName = engineName,
                                 canEdit = true,
@@ -168,14 +243,19 @@ class AIEngineCatalogManager @Inject constructor(
                             existingEntity = existingModel,
                             source = AiConfigSource.LOCAL,
                         ).copy(
-                            id = existingModel.id,
+                            id = existingModel?.id ?: 0,
                             engineName = engineName,
                             source = AiConfigSource.LOCAL.name,
                             canEdit = true,
-                            enabled = existingModel.enabled,
-                            sortOrder = existingModel.sortOrder,
+                            enabled = existingModel?.enabled ?: true,
+                            sortOrder = existingModel?.sortOrder
+                                ?: (aiEngineRepository.getMaxModelSortOrderForEngine(engineName) + 1),
                         )
-                        aiEngineRepository.updateModel(updatedLocalModelEntity)
+                        if (existingModel == null) {
+                            aiEngineRepository.saveModel(localModelEntity)
+                        } else {
+                            aiEngineRepository.updateModel(localModelEntity)
+                        }
                     } else {
                         val baseRemoteEntity = existingModel ?: AiModelEntity.fromAiModel(
                             model = model.copy(
@@ -205,11 +285,42 @@ class AIEngineCatalogManager @Inject constructor(
                     }
                 }
 
-                onComplete(true)
+                onComplete(AddEngineResult.Success)
             } catch (e: Exception) {
                 makeLog { "AIEngineCatalogManager: Save engine config failed: $e" }
-                onComplete(false)
+                reportEngineSaveFailure(
+                    engine = engine,
+                    reason = "exception",
+                    detail = e.message.orEmpty(),
+                    throwable = e,
+                )
+                onComplete(AddEngineResult.Failed)
             }
+        }
+    }
+
+    /**
+     * 保存失败上报后台。
+     *
+     * 这类"看起来成功、其实没生效"的问题以前只能靠用户发 issue 才知道(#29 就是),
+     * 上报后能直接从数据里看趋势, 而不是等下一个用户来踩。
+     */
+    private fun reportEngineSaveFailure(
+        engine: AiEngine,
+        reason: String,
+        detail: String,
+        throwable: Throwable? = null,
+    ) {
+        val extra = mapOf(
+            "reason" to reason,
+            "engine_name" to engine.name,
+            "protocol" to engine.requestProtocol.name,
+            "detail" to detail.take(128),
+        )
+        if (throwable != null) {
+            errorReporter.reportError(SOURCE, throwable, extra)
+        } else {
+            errorReporter.reportAnomaly(SOURCE, "自定义引擎保存未生效: $reason", extra)
         }
     }
 
@@ -441,6 +552,10 @@ class AIEngineCatalogManager @Inject constructor(
             source = existing?.source ?: AiConfigSource.LOCAL.name,
             canEdit = existing?.canEdit ?: true,
         )
+    }
+
+    private companion object {
+        const val SOURCE = "AIEngineCatalogManager.saveEngineConfigOnly"
     }
 }
 

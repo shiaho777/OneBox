@@ -1,6 +1,7 @@
 package com.wanbaohe.setting.ai.component
 
 import com.arkivanov.decompose.ComponentContext
+import com.shifenmiao.common.manager.AddEngineResult
 import com.shifenmiao.common.manager.AIEngineCatalogManager
 import com.shifenmiao.core.constants.UrlConstants
 import com.shifenmiao.model.ai.AiEngine
@@ -43,12 +44,13 @@ class AIAddEngineComponent @AssistedInject internal constructor(
         showValidationErrors = value
     }
 
-    fun save(onComplete: (Boolean) -> Unit) {
+    fun save(onComplete: (AddEngineResult) -> Unit) {
         val draft = _draft.value
         _isSaving.value = true
-        aiEngineCatalogManager.saveEngineConfigOnly(draft) { success ->
+        // 走新增入口: 撞名会被拒绝、写入后会回读校验, 不会再出现"提示成功但列表里没有"
+        aiEngineCatalogManager.addLocalEngine(draft) { result ->
             _isSaving.value = false
-            onComplete(success)
+            onComplete(result)
         }
     }
 

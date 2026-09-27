@@ -110,6 +110,8 @@
     <string name="ai_engine_refresh_failed">サービスカタログの同期に失敗しました: %1$s</string>
     <string name="ai_engine_add_success">%1$s を追加しました</string>
     <string name="ai_engine_add_failed">モデルサービスの追加に失敗しました。後でもう一度お試しください。</string>
+    <string name="ai_engine_name_conflict">そのサービスキーは既に使われています。別の名前を指定してください。</string>
+    <string name="ai_engine_model_name_hint">サービスが要求するモデル ID（例: gpt-4o-mini）。空欄のままにすると、後で詳細ページからモデルを追加できます。</string>
     <string name="ai_engine_edit_action">編集</string>
     <string name="ai_engine_delete_action">削除</string>
     <string name="ai_engine_local_badge">直接</string>

@@ -125,6 +125,8 @@
     <string name="ai_engine_refresh_failed">فشلت مزامنة كتالوج الخدمات: %1$s</string>
     <string name="ai_engine_add_success">تمت إضافة %1$s</string>
     <string name="ai_engine_add_failed">فشلت إضافة خدمة النموذج. يرجى المحاولة لاحقاً.</string>
+    <string name="ai_engine_name_conflict">مفتاح الخدمة هذا مستخدم بالفعل. الرجاء اختيار مفتاح آخر.</string>
+    <string name="ai_engine_model_name_hint">معرّف النموذج المطلوب من الخدمة (مثل gpt-4o-mini). اتركه فارغًا لإضافة النماذج لاحقًا من صفحة التفاصيل.</string>
     <string name="ai_engine_edit_action">تعديل</string>
     <string name="ai_engine_delete_action">حذف</string>
     <string name="ai_engine_local_badge">مباشر</string>

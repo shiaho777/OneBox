@@ -110,6 +110,8 @@
     <string name="ai_engine_refresh_failed">Hizmet kataloğu senkronize edilemedi: %1$s</string>
     <string name="ai_engine_add_success">%1$s eklendi</string>
     <string name="ai_engine_add_failed">Model hizmeti eklenemedi. Lütfen daha sonra tekrar deneyin.</string>
+    <string name="ai_engine_name_conflict">Bu servis anahtarı zaten kullanılıyor. Lütfen başkasını seçin.</string>
+    <string name="ai_engine_model_name_hint">Hizmetin istediği model kimliği (örn. gpt-4o-mini). Boş bırakırsanız modelleri sonra ayrıntı sayfasından ekleyebilirsiniz.</string>
     <string name="ai_engine_edit_action">Düzenle</string>
     <string name="ai_engine_delete_action">Sil</string>
     <string name="ai_engine_local_badge">Doğrudan</string>

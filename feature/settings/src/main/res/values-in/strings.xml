@@ -110,6 +110,8 @@
     <string name="ai_engine_refresh_failed">Gagal menyinkronkan katalog layanan: %1$s</string>
     <string name="ai_engine_add_success">Ditambahkan %1$s</string>
     <string name="ai_engine_add_failed">Gagal menambahkan layanan model. Silakan coba lagi nanti.</string>
+    <string name="ai_engine_name_conflict">Kunci layanan itu sudah dipakai. Pilih yang lain.</string>
+    <string name="ai_engine_model_name_hint">ID model yang diminta layanan (mis. gpt-4o-mini). Biarkan kosong untuk menambah model nanti di halaman detail.</string>
     <string name="ai_engine_edit_action">Edit</string>
     <string name="ai_engine_delete_action">Hapus</string>
     <string name="ai_engine_local_badge">Langsung</string>

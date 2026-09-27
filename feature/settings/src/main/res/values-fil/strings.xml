@@ -110,6 +110,8 @@
     <string name="ai_engine_refresh_failed">Failed to sync service catalog: %1$s</string>
     <string name="ai_engine_add_success">Added %1$s</string>
     <string name="ai_engine_add_failed">Failed to add the model service. Please try again later.</string>
+    <string name="ai_engine_name_conflict">Ginagamit na ang service key na iyan. Pumili ng iba.</string>
+    <string name="ai_engine_model_name_hint">Model ID na kailangan ng serbisyo (hal. gpt-4o-mini). Iwanang blangko para magdagdag ng modelo mamaya sa detail page.</string>
     <string name="ai_engine_edit_action">Edit</string>
     <string name="ai_engine_delete_action">Delete</string>
     <string name="ai_engine_local_badge">Direct</string>

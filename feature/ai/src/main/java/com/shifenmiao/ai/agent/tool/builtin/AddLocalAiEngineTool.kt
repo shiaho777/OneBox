@@ -6,6 +6,7 @@ import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.base.utils.LoginUtils
+import com.shifenmiao.common.manager.AddEngineResult
 import com.shifenmiao.common.manager.AIEngineCatalogManager
 import com.shifenmiao.model.ai.AiEngine
 import com.shifenmiao.model.ai.AiRequestProtocol
@@ -130,9 +131,10 @@ class AddLocalAiEngineTool @Inject constructor(
             )
 
             val success = suspendCancellableCoroutine<Boolean> { continuation ->
-                aiEngineCatalogManager.saveEngineConfigOnly(draft) { result ->
+                // Agent 建引擎也是"新增", 走同一条会拒绝撞名、并回读校验的入口
+                aiEngineCatalogManager.addLocalEngine(draft) { result ->
                     if (continuation.isActive) {
-                        continuation.resume(result) {}
+                        continuation.resume(result is AddEngineResult.Success) {}
                     }
                 }
             }

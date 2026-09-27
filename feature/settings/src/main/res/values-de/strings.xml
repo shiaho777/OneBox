@@ -110,6 +110,8 @@
     <string name="ai_engine_refresh_failed">Synchronisierung des Dienstkatalogs fehlgeschlagen: %1$s</string>
     <string name="ai_engine_add_success">%1$s hinzugefügt</string>
     <string name="ai_engine_add_failed">Hinzufügen des Modelldiensts fehlgeschlagen. Bitte später erneut versuchen.</string>
+    <string name="ai_engine_name_conflict">Dieser Dienstschlüssel ist bereits vergeben. Bitte wähle einen anderen.</string>
+    <string name="ai_engine_model_name_hint">Vom Dienst erwartete Modell-ID (z. B. gpt-4o-mini). Leer lassen, um Modelle später auf der Detailseite hinzuzufügen.</string>
     <string name="ai_engine_edit_action">Bearbeiten</string>
     <string name="ai_engine_delete_action">Löschen</string>
     <string name="ai_engine_local_badge">Direkt</string>

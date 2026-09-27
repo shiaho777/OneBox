@@ -110,6 +110,8 @@
     <string name="ai_engine_refresh_failed">Falha ao sincronizar o catálogo de serviços: %1$s</string>
     <string name="ai_engine_add_success">%1$s adicionado</string>
     <string name="ai_engine_add_failed">Falha ao adicionar o serviço de modelo. Tente novamente mais tarde.</string>
+    <string name="ai_engine_name_conflict">Essa chave de serviço já está em uso. Escolha outra.</string>
+    <string name="ai_engine_model_name_hint">ID do modelo exigido pelo serviço (ex.: gpt-4o-mini). Deixe em branco para adicionar modelos depois na página de detalhes.</string>
     <string name="ai_engine_edit_action">Editar</string>
     <string name="ai_engine_delete_action">Excluir</string>
     <string name="ai_engine_local_badge">Direto</string>

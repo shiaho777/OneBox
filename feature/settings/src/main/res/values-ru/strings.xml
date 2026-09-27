@@ -110,6 +110,8 @@
     <string name="ai_engine_refresh_failed">Не удалось синхронизировать каталог сервисов: %1$s</string>
     <string name="ai_engine_add_success">Добавлено: %1$s</string>
     <string name="ai_engine_add_failed">Не удалось добавить сервис моделей. Пожалуйста, попробуйте позже.</string>
+    <string name="ai_engine_name_conflict">Этот ключ сервиса уже занят. Выберите другой.</string>
+    <string name="ai_engine_model_name_hint">ID модели, которое требует сервис (например, gpt-4o-mini). Оставьте пустым, чтобы добавить модели позже на странице настроек.</string>
     <string name="ai_engine_edit_action">Изменить</string>
     <string name="ai_engine_delete_action">Удалить</string>
     <string name="ai_engine_local_badge">Прямое</string>

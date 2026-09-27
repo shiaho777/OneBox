@@ -120,6 +120,8 @@
     <string name="ai_engine_refresh_failed">同步服務目錄失敗：%1$s</string>
     <string name="ai_engine_add_success">已新增 %1$s</string>
     <string name="ai_engine_add_failed">新增模型服務失敗，請稍後重試。</string>
+    <string name="ai_engine_name_conflict">服務識別碼已被佔用，請換一個名稱。</string>
+    <string name="ai_engine_model_name_hint">填服務端要求的模型 ID（如 gpt-4o-mini）；留空可稍後在詳細頁從服務端取得並新增。</string>
     <string name="ai_engine_edit_action">編輯</string>
     <string name="ai_engine_delete_action">刪除</string>
     <string name="ai_engine_local_badge">直連</string>

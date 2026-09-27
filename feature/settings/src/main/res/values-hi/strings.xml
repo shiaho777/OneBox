@@ -110,6 +110,8 @@
     <string name="ai_engine_refresh_failed">सेवा सूची सिंक करने में विफल: %1$s</string>
     <string name="ai_engine_add_success">%1$s जोड़ा गया</string>
     <string name="ai_engine_add_failed">मॉडल सेवा जोड़ने में विफल। कृपया बाद में पुनः प्रयास करें।</string>
+    <string name="ai_engine_name_conflict">वह सेवा कुंजी पहले से ली गई है। कृपया दूसरी चुनें।</string>
+    <string name="ai_engine_model_name_hint">सेवा द्वारा अपेक्षित मॉडल ID (जैसे gpt-4o-mini)। बाद में विवरण पृष्ठ पर मॉडल जोड़ने के लिए खाली छोड़ें।</string>
     <string name="ai_engine_edit_action">संपादित करें</string>
     <string name="ai_engine_delete_action">हटाएं</string>
     <string name="ai_engine_local_badge">सीधा</string>

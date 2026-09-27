@@ -153,6 +153,8 @@
     <string name="ai_engine_refresh_failed">Failed to sync service catalog: %1$s</string>
     <string name="ai_engine_add_success">Added %1$s</string>
     <string name="ai_engine_add_failed">Failed to add the model service. Please try again later.</string>
+    <string name="ai_engine_name_conflict">That service key is already taken. Please choose another one.</string>
+    <string name="ai_engine_model_name_hint">Model ID required by the service (e.g. gpt-4o-mini). Leave blank to add models later on the detail page.</string>
     <string name="ai_engine_edit_action">Edit</string>
     <string name="ai_engine_delete_action">Delete</string>
     <string name="ai_engine_local_badge">Direct</string>

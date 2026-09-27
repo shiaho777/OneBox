@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.shifenmiao.base.ui.ClearTextFieldTrailingIcon
 import com.shifenmiao.base.ui.PasswordTextField
 import com.shifenmiao.base.utils.StringUtils
+import com.shifenmiao.common.manager.AddEngineResult
 import com.shifenmiao.common.ui.BaseScreen
 import com.shifenmiao.common.ui.BottomSaveCancelBar
 import com.shifenmiao.core.constants.UrlConstants
@@ -52,6 +53,19 @@ private fun deriveServiceKey(title: String): String {
         .replace(Regex("[^a-z0-9]+"), "-")
         .trim('-')
 }
+
+/**
+ * 自动派生用的服务标识。
+ *
+ * 中文标题压出来的 slug 常常短到没有区分度 —— "我的AI" 和 "阿里ai" 都会变成 `ai`,
+ * 两条自定义引擎撞同一个 key, 后加的那条要么被拒、要么(旧版本里)把前一条覆盖掉。
+ * 所以短于 [MIN_SERVICE_KEY_LENGTH] 的一律视为派生失败, 交给调用方用时间戳兜底。
+ */
+private fun deriveAutoServiceKey(title: String): String {
+    return deriveServiceKey(title).takeIf { it.length >= MIN_SERVICE_KEY_LENGTH }.orEmpty()
+}
+
+private const val MIN_SERVICE_KEY_LENGTH = 3
 
 // 各云端协议的默认 API 路径, 用于切换协议时识别"用户没改过的默认值"
 private val PROTOCOL_DEFAULT_PATHS = setOf("/v1/chat/completions", "/v1/responses", "/v1/messages")
@@ -134,7 +148,7 @@ fun AIAddEngineScreen(
                         component.updateDraft { engine ->
                             engine.copy(
                                 title = value,
-                                name = if (serviceKeyEdited) engine.name else deriveServiceKey(value),
+                                name = if (serviceKeyEdited) engine.name else deriveAutoServiceKey(value),
                             )
                         }
                     },
@@ -176,7 +190,7 @@ fun AIAddEngineScreen(
                                     onClear = {
                                         serviceKeyEdited = false
                                         component.updateDraft {
-                                            it.copy(name = deriveServiceKey(it.title))
+                                            it.copy(name = deriveAutoServiceKey(it.title))
                                         }
                                     },
                                 )
@@ -366,6 +380,25 @@ fun AIAddEngineScreen(
                         onClearValue = { component.updateDraft { it.copy(authorizationCode = "") } },
                         imeAction = ImeAction.Done,
                     )
+
+                    // 自定义服务的模型 ID 客户端猜不出来。填了这里, 新引擎加完就能直接发消息;
+                    // 留空则只能靠 AiProvider.Default 的兜底模型(名字和真实服务对不上)。
+                    if (!isJevProtocol && !isPikafishProtocol) {
+                        OneBoxOutlinedTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            value = draft.model.name,
+                            onValueChange = { value ->
+                                component.updateDraft { engine ->
+                                    engine.copy(model = engine.model.copy(name = value, title = value))
+                                }
+                            },
+                            label = { Text(stringResource(R.string.ai_engine_model_name)) },
+                            singleLine = true,
+                            supportingText = {
+                                Text(stringResource(R.string.ai_engine_model_name_hint))
+                            },
+                        )
+                    }
                 }
             }
 
@@ -391,24 +424,30 @@ fun AIAddEngineScreen(
                     }
                     return@BottomSaveCancelBar
                 }
-                // 服务标识留空时自动派生; 纯中文标题派生不出 slug, 退化为时间戳后缀兜底
+                // 服务标识留空时自动派生; 纯中文标题派生不出可用的 slug, 退化为时间戳后缀兜底
                 val resolvedName = draft.name.trim().ifBlank {
-                    deriveServiceKey(trimmedTitle).ifBlank {
+                    deriveAutoServiceKey(trimmedTitle).ifBlank {
                         "engine-${System.currentTimeMillis() % 1_000_000}"
                     }
                 }
                 if (resolvedName != draft.name) {
                     component.updateDraft { it.copy(name = resolvedName) }
                 }
-                component.save { success ->
+                component.save { result ->
                     coroutineScope.launch {
-                        if (success) {
-                            AppToastHost.showToast(
-                                getString(R.string.ai_engine_add_success, draft.title.ifBlank { draft.name })
+                        when (result) {
+                            AddEngineResult.Success -> {
+                                AppToastHost.showToast(
+                                    getString(R.string.ai_engine_add_success, draft.title.ifBlank { draft.name })
+                                )
+                                component.onGoBack()
+                            }
+                            // 名称重复是可以自己解决的, 别让用户对着"请稍后重试"反复重试
+                            AddEngineResult.NameTaken -> AppToastHost.showFailureToast(
+                                getString(R.string.ai_engine_name_conflict)
                             )
-                            component.onGoBack()
-                        } else {
-                            AppToastHost.showFailureToast(
+                            AddEngineResult.NotVisible,
+                            AddEngineResult.Failed -> AppToastHost.showFailureToast(
                                 getString(R.string.ai_engine_add_failed)
                             )
                         }
