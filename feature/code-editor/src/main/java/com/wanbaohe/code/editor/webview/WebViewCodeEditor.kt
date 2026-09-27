@@ -50,7 +50,7 @@ fun WebViewCodeEditor(
     initialValue: String = "",
     state: WebViewCodeEditorState = rememberWebViewCodeEditorState(),
     modifier: Modifier = Modifier,
-    placeholder: String = "在此输入代码…",
+    placeholder: String = "",
     language: String = "plaintext",
     readOnly: Boolean = false,
     storageKey: String = "default",

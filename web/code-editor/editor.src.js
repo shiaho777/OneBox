@@ -48,7 +48,7 @@ let editorView = null;
 let isReady = false;
 let pendingContent = null;
 let pendingLanguage = null;
-let currentPlaceholder = '在此输入代码…';
+let currentPlaceholder = '';
 let STORAGE_KEY = window.CODE_EDITOR_STORAGE_KEY || 'code_editor_draft_default';
 let autoSaveTimer = null;
 let isInitializing = true;
@@ -286,7 +286,7 @@ window.CodeEditorBridge = {
     },
 
     setPlaceholder(text) {
-        currentPlaceholder = text || '在此输入代码…';
+        currentPlaceholder = text || '';
         if (editorView) {
             try {
                 editorView.dispatch({
@@ -697,8 +697,9 @@ async function initEditor() {
                     ...historyKeymap,
                     indentWithTab
                 ]),
-                // 占位符
-                cmPlaceholder(currentPlaceholder),
+                // 占位符(必须挂在 placeholderCompartment 里,否则 setPlaceholder 的
+                // reconfigure 找不到已注册的 compartment,占位符永远无法被替换)
+                placeholderCompartment.of(cmPlaceholder(currentPlaceholder)),
                 // 动态重配置
                 languageCompartment.of(getLanguageExtension(initialLang)),
                 wordWrapCompartment.of(EditorView.lineWrapping),
