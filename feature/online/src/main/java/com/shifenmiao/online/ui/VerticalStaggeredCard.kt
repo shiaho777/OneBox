@@ -24,6 +24,7 @@ import com.shifenmiao.base.utils.StringUtils
 import com.shifenmiao.common.components.OperateBar
 import com.shifenmiao.common.handle.ItemScreenResolver
 import com.shifenmiao.core.R
+import com.shifenmiao.database.item.entity.Category
 import com.shifenmiao.database.item.entity.ItemWithCategoriesAndStats
 import com.shifenmiao.interfaces.singleton.AppContext
 import com.shifenmiao.model.ListItemType
@@ -367,8 +368,21 @@ fun VerticalStaggeredCard(
     )
 }
 
+/**
+ * chip 展示用的"主分类"。
+ *
+ * 关联查询(Room Junction)无 ORDER BY,直接 firstOrNull 会落到本地行 id 最小者;
+ * 而分类表按语种名各存一行(中英分属不同 id 区间),同一 item 切换语言后
+ * min(id) 指向不同逻辑分类,中英 chip 不一致。document_id 是各语种行共享的
+ * Strapi 稳定标识,按它排序(空值靠后、id 兜底)可保证跨语言选中同一逻辑分类。
+ */
+private fun primaryCategory(item: ItemWithCategoriesAndStats): Category? =
+    item.categories.minWithOrNull(
+        compareBy<Category>({ it.documentId == null }, { it.documentId ?: "" }, { it.id })
+    )
+
 private fun firstCategoryName(item: ItemWithCategoriesAndStats): String? =
-    item.categories.firstOrNull()?.name
+    primaryCategory(item)?.name
 
 private fun firstCategoryId(item: ItemWithCategoriesAndStats): Int? =
-    item.categories.firstOrNull()?.id
+    primaryCategory(item)?.id

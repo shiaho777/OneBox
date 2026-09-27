@@ -286,9 +286,19 @@ interface ItemEntityDao {
     @Query("SELECT * FROM category WHERE name = :name LIMIT 1")
     suspend fun getCategoryByName(name: String): Category?
 
+    @Query("SELECT * FROM category WHERE document_id = :documentId LIMIT 1")
+    suspend fun getCategoryByDocumentId(documentId: String): Category?
+
     @Transaction
     suspend fun upsertCategory(category: Category): Int {
-        val existing = getCategoryByName(category.name)
+        // 优先按 document_id(跨语种稳定标识)复用同一行,让不同语种名落到同一条记录,
+        // 切换语言后分类关联不会分裂成两套 id。但 category 表有 unique(name, source):
+        // 若命中行的名称与目标名不同、且目标名已被另一行占用(存量库已存在双语种行),
+        // 改回按名匹配,避免 UPDATE 撞唯一索引。
+        val byDocumentId = category.documentId?.takeIf { it.isNotBlank() }
+            ?.let { getCategoryByDocumentId(it) }
+            ?.takeIf { it.name == category.name || getCategoryByName(category.name) == null }
+        val existing = byDocumentId ?: getCategoryByName(category.name)
         return if (existing != null) {
             updateCategoryFromSync(
                 id = existing.id,
