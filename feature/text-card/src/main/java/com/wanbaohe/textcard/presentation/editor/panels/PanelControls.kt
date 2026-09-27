@@ -70,7 +70,6 @@ internal fun PanelSliderRow(
             onValueChange = onValueChange,
             valueRange = valueRange,
             // 滑杆不带背景容器,直接排布
-            drawContainer = false,
             enabled = enabled,
             modifier = Modifier.weight(1f)
         )

@@ -177,6 +177,15 @@ sealed class EnhancedFloatingActionButtonType(
         shape = { ShapeDefaults.default }
     )
 
+    /**
+     * 紧凑方钮：48×48 圆角方形，用于底部操作栏里成组出现的
+     * "icon + 背景容器" 按钮（选图 / 保存 / 分享 / 原图…）。
+     */
+    data object Compact : EnhancedFloatingActionButtonType(
+        size = 48.dp,
+        shape = { ShapeDefaults.small }
+    )
+
     data object SecondaryHorizontal : EnhancedFloatingActionButtonType(
         width = 42.dp,
         height = 56.dp,

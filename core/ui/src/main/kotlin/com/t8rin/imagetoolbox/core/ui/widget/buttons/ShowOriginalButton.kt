@@ -4,6 +4,9 @@
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,27 +25,27 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.t8rin.imagetoolbox.core.resources.R
+import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedIconButton
 import com.t8rin.imagetoolbox.core.ui.widget.enhanced.longPress
 import com.t8rin.imagetoolbox.core.ui.widget.modifier.ShapeDefaults
 import com.t8rin.imagetoolbox.core.ui.widget.modifier.shapeByInteraction
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineHistory
 
+/**
+ * "查看原图"按钮 —— 按住显示原图。
+ *
+ * 用 [EnhancedIconButton] 带容器色，而不是裸图标：底部操作栏左上的操作按钮
+ * 和右下角的 FAB 一样，都应该有自己的底色容器、成组出现。
+ */
 @Composable
 fun ShowOriginalButton(
     canShow: Boolean = true,
@@ -51,15 +54,17 @@ fun ShowOriginalButton(
     val haptics = LocalHapticFeedback.current
     val interactionSource = remember { MutableInteractionSource() }
 
-    val shape = shapeByInteraction(
-        shape = CircleShape,
+    EnhancedIconButton(
+        onClick = {},
+        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+        interactionSource = interactionSource,
+        shape = shapeByInteraction(
+            shape = ShapeDefaults.small,
+            pressedShape = ShapeDefaults.mini,
+            interactionSource = interactionSource
+        ),
         pressedShape = ShapeDefaults.mini,
-        interactionSource = interactionSource
-    )
-
-    Box(
         modifier = Modifier
-            .clip(shape)
             .indication(
                 interactionSource = interactionSource,
                 indication = LocalIndication.current
@@ -85,11 +90,7 @@ fun ShowOriginalButton(
     ) {
         Icon(
             imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineHistory,
-            contentDescription = stringResource(R.string.original),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(8.dp)
+            contentDescription = stringResource(R.string.original)
         )
     }
 }

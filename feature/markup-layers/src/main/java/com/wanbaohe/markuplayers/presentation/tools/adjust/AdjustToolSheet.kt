@@ -182,7 +182,6 @@ private fun AdjustSliderRow(
             },
             onValueChangeFinished = { dragging = false },
             valueRange = -100f..100f,
-            drawContainer = false,
             modifier = Modifier.weight(1f)
         )
         Text(

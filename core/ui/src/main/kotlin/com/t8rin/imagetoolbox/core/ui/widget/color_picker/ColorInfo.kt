@@ -24,18 +24,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ContentCopy
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -49,6 +46,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
@@ -57,6 +55,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.smarttoolfactory.colordetector.util.ColorUtil.colorToHex
 import com.smarttoolfactory.colordetector.util.ColorUtil.colorToHexAlpha
@@ -81,6 +80,7 @@ import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineTheme
 import com.t8rin.imagetoolbox.core.resources.icons.ContentCopy
+import com.t8rin.imagetoolbox.core.resources.icons.Delete
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineContentPaste
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineShuffle
 
@@ -96,6 +96,9 @@ fun ColorInfo(
     supportButtonIcon: ImageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineShuffle,
     modifier: Modifier = Modifier,
     infoContainerColor: Color = Color.Unspecified,
+    onRemove: (() -> Unit)? = null,
+    removeContentDescription: String? = null,
+    enabled: Boolean = true,
 ) {
     val context = LocalContext.current
     val colorPasteError = rememberSaveable { mutableStateOf<String?>(null) }
@@ -116,218 +119,216 @@ fun ColorInfo(
         colorPasteError.value = null
     }
 
+    // 一行里不再嵌套第二层卡片：色块 / 色值 / 图标按钮直接排在同一个玻璃容器内，
+    // 视觉层级只有「卡片 → 控件」两层，避免玻璃叠玻璃把色值和图标压糊。
+    var expanded by rememberSaveable { mutableStateOf(false) }
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .alpha(if (enabled) 1f else 0.5f),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Card(
+        Box(
             modifier = Modifier
-                .size(56.dp)
+                .size(48.dp)
                 .container(
                     shape = MaterialTheme.shapes.medium,
                     color = color,
                     resultPadding = 0.dp
                 )
+                .clip(MaterialTheme.shapes.medium)
                 .transparencyChecker()
                 .background(
                     color = color,
                     shape = MaterialTheme.shapes.medium
                 ),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            )
+            contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+            EnhancedIconButton(
+                onClick = onSupportButtonClick,
+                enabled = enabled
             ) {
-                EnhancedIconButton(
-                    onClick = onSupportButtonClick
-                ) {
-                    Icon(
-                        imageVector = supportButtonIcon,
-                        contentDescription = stringResource(R.string.edit),
-                        tint = animateColorAsState(
-                            color.inverse(
-                                fraction = { cond ->
-                                    if (cond) 0.8f
-                                    else 0.5f
-                                },
-                                darkMode = color.luminance() < 0.3f
-                            )
-                        ).value,
-                        modifier = Modifier
-                            .size(28.dp)
-                            .background(
-                                color = color.copy(alpha = 1f),
-                                shape = ShapeDefaults.mini
-                            )
-                            .padding(2.dp)
-                    )
-                }
+                Icon(
+                    imageVector = supportButtonIcon,
+                    contentDescription = stringResource(R.string.edit),
+                    tint = animateColorAsState(
+                        color.inverse(
+                            fraction = { cond ->
+                                if (cond) 0.8f
+                                else 0.5f
+                            },
+                            darkMode = color.luminance() < 0.3f
+                        )
+                    ).value,
+                    modifier = Modifier
+                        .size(26.dp)
+                        .background(
+                            color = color.copy(alpha = 1f),
+                            shape = ShapeDefaults.mini
+                        )
+                        .padding(2.dp)
+                )
             }
         }
 
-        Card(
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Box(
             modifier = Modifier
-                .height(60.dp)
-                .fillMaxWidth()
-                .padding(start = 16.dp)
+                .weight(1f)
+                .height(48.dp)
+                .clip(ShapeDefaults.pressed)
                 .container(
-                    shape = MaterialTheme.shapes.medium,
-                    color = infoContainerColor
-                ),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            )
+                    shape = ShapeDefaults.pressed,
+                    color = infoContainerColor,
+                    resultPadding = 0.dp
+                )
+                .hapticsClickable(enabled = enabled) {
+                    expanded = true
+                },
+            contentAlignment = Alignment.CenterStart
         ) {
-            AnimatedContent(
-                colorPasteError.value != null
-            ) { error ->
-                var expanded by remember { mutableStateOf(false) }
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(start = 8.dp)
-                        .padding(end = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (error) {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = colorPasteError.value ?: "",
-                            style = MaterialTheme.typography.labelMedium,
-                            textAlign = TextAlign.Center
-                        )
-                    } else {
-                        Row(modifier = Modifier.weight(1f)) {
-                            AutoSizeText(
-                                text = getFormattedColor(color),
-                                style = MaterialTheme.typography.titleMedium,
-                                maxLines = 1,
-                                modifier = Modifier
-                                    .clip(ShapeDefaults.pressed)
-                                    .hapticsClickable {
-                                        expanded = true
-                                    }
-                                    .padding(4.dp)
-                            )
-                        }
-                        Row(Modifier.width(80.dp)) {
-                            EnhancedIconButton(
-                                onClick = onCopyCustomColor
-                            ) {
-                                Icon(
-                                    imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Rounded.ContentCopy,
-                                    contentDescription = stringResource(R.string.copy)
-                                )
-                            }
-                            EnhancedIconButton(
-                                onClick = onPasteCustomColor
-                            ) {
-                                Icon(
-                                    imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineContentPaste,
-                                    contentDescription = stringResource(R.string.pastel)
-                                )
-                            }
-                        }
-                    }
-                }
-                var value by remember(expanded) { mutableStateOf(getFormattedColor(color)) }
-                EnhancedAlertDialog(
-                    visible = expanded,
-                    onDismissRequest = { expanded = false },
-                    icon = {
-                        val hexColorInt by remember(value) {
-                            derivedStateOf {
-                                if (hexWithAlphaRegex.matches(value)) {
-                                    HexUtil.hexToColor(value).toArgb()
-                                } else null
-                            }
-                        }
-                        AnimatedContent(hexColorInt) { colorFromHex ->
-                            if (colorFromHex != null) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(28.dp)
-                                        .container(
-                                            shape = CircleShape,
-                                            color = Color(colorFromHex),
-                                            resultPadding = 0.dp
-                                        )
-                                )
-                            } else {
-                                Icon(
-                                    imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineTheme,
-                                    contentDescription = null
-                                )
-                            }
-                        }
+            AutoSizeText(
+                text = colorPasteError.value ?: getFormattedColor(color),
+                style = MaterialTheme.typography.titleMedium,
+                color = if (colorPasteError.value != null) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    LocalContentColor.current.copy(alpha = 0.7f)
+                },
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
+        }
 
-                    },
-                    title = {
-                        Text(stringResource(R.string.color))
-                    },
-                    text = {
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            val style =
-                                MaterialTheme.typography.titleMedium.copy(textAlign = TextAlign.Center)
-                            OutlinedTextField(
-                                shape = ShapeDefaults.default,
-                                textStyle = style,
-                                maxLines = 1,
-                                value = value.removePrefix("#"),
-                                visualTransformation = HexVisualTransformation(true),
-                                onValueChange = {
-                                    val hex = it.replace("#", "")
+        Spacer(modifier = Modifier.width(4.dp))
 
-                                    if (hex.length <= 8) {
-                                        var validHex = true
-
-                                        for (index in hex.indices) {
-                                            validHex =
-                                                hexRegexSingleChar.matches(hex[index].toString())
-                                            if (!validHex) break
-                                        }
-
-                                        if (validHex) {
-                                            value = "#${hex.uppercase()}"
-                                        }
-                                    }
-                                },
-                                placeholder = {
-                                    Text(
-                                        text = "#AARRGGBB",
-                                        style = style,
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
-                                }
-                            )
-                        }
-                    },
-                    confirmButton = {
-                        EnhancedButton(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            onClick = {
-                                if (hexWithAlphaRegex.matches(value)) {
-                                    onColorChange(HexUtil.hexToColor(value))
-                                }
-                                expanded = false
-                            }
-                        ) {
-                            Text(stringResource(R.string.apply))
-                        }
-                    }
+        // 图标按钮固定同宽同高，行宽不够时也不会互相叠压
+        EnhancedIconButton(
+            onClick = onCopyCustomColor,
+            enabled = enabled
+        ) {
+            Icon(
+                imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Rounded.ContentCopy,
+                contentDescription = stringResource(R.string.copy)
+            )
+        }
+        EnhancedIconButton(
+            onClick = onPasteCustomColor,
+            enabled = enabled
+        ) {
+            Icon(
+                imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineContentPaste,
+                contentDescription = stringResource(R.string.pastel)
+            )
+        }
+        if (onRemove != null) {
+            EnhancedIconButton(
+                onClick = onRemove,
+                enabled = enabled,
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+                contentColor = MaterialTheme.colorScheme.onErrorContainer
+            ) {
+                Icon(
+                    imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.Delete,
+                    contentDescription = removeContentDescription
+                        ?: stringResource(R.string.delete)
                 )
             }
         }
     }
+
+    var value by remember(expanded, color) { mutableStateOf(getFormattedColor(color)) }
+    EnhancedAlertDialog(
+        visible = expanded,
+        onDismissRequest = { expanded = false },
+        icon = {
+            val hexColorInt by remember(value) {
+                derivedStateOf {
+                    if (hexWithAlphaRegex.matches(value)) {
+                        HexUtil.hexToColor(value).toArgb()
+                    } else null
+                }
+            }
+            AnimatedContent(hexColorInt) { colorFromHex ->
+                if (colorFromHex != null) {
+                    Box(
+                        modifier = Modifier
+                            .size(28.dp)
+                            .container(
+                                shape = CircleShape,
+                                color = Color(colorFromHex),
+                                resultPadding = 0.dp
+                            )
+                    )
+                } else {
+                    Icon(
+                        imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineTheme,
+                        contentDescription = null
+                    )
+                }
+            }
+
+        },
+        title = {
+            Text(stringResource(R.string.color))
+        },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                val style =
+                    MaterialTheme.typography.titleMedium.copy(textAlign = TextAlign.Center)
+                OutlinedTextField(
+                    shape = ShapeDefaults.default,
+                    textStyle = style,
+                    maxLines = 1,
+                    value = value.removePrefix("#"),
+                    visualTransformation = HexVisualTransformation(true),
+                    onValueChange = {
+                        val hex = it.replace("#", "")
+
+                        if (hex.length <= 8) {
+                            var validHex = true
+
+                            for (index in hex.indices) {
+                                validHex =
+                                    hexRegexSingleChar.matches(hex[index].toString())
+                                if (!validHex) break
+                            }
+
+                            if (validHex) {
+                                value = "#${hex.uppercase()}"
+                            }
+                        }
+                    },
+                    placeholder = {
+                        Text(
+                            text = "#AARRGGBB",
+                            style = style,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                )
+            }
+        },
+        confirmButton = {
+            EnhancedButton(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                onClick = {
+                    if (hexWithAlphaRegex.matches(value)) {
+                        onColorChange(HexUtil.hexToColor(value))
+                    }
+                    expanded = false
+                }
+            ) {
+                Text(stringResource(R.string.apply))
+            }
+        }
+    )
 }
 
 /** Receive the clipboard data. */

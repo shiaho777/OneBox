@@ -52,6 +52,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import com.t8rin.imagetoolbox.core.resources.Icons
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -62,6 +63,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -80,6 +82,7 @@ import com.t8rin.imagetoolbox.core.ui.widget.enhanced.enhancedVerticalScroll
 import com.t8rin.imagetoolbox.core.ui.widget.glass.glassBackground
 import com.t8rin.imagetoolbox.core.ui.widget.modifier.container
 import com.t8rin.imagetoolbox.core.ui.widget.modifier.drawHorizontalStroke
+import com.t8rin.imagetoolbox.core.ui.widget.system.OneBoxDesignSystem
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineSave
 
 @Composable
@@ -195,10 +198,21 @@ fun BottomButtonsBlock(
             }
         } else if (portrait) {
             BottomAppBar(
-                modifier = Modifier.drawHorizontalStroke(
-                    top = true,
-                    enabled = enableHorizontalStroke
-                ),
+                modifier = Modifier
+                    .drawHorizontalStroke(
+                        top = true,
+                        enabled = enableHorizontalStroke
+                    )
+                    // 顶部左右两角做成圆角，和项目里导航栏/底部操作栏
+                    // （OneBoxBottomActionBar）保持同一套形状语言。
+                    // 这里用 clip 而不是 shape 参数：当前 material3 版本的
+                    // BottomAppBar 没有 shape 入参。
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = OneBoxDesignSystem.largeRadius,
+                            topEnd = OneBoxDesignSystem.largeRadius,
+                        )
+                    ),
                 actions = actions,
                 floatingActionButton = {
                     Row {
@@ -224,16 +238,17 @@ fun BottomButtonsBlock(
                                     if (isPrimaryButtonVisible) tertiaryContainer
                                     else primaryContainer
                                 },
-                                type = if (isPrimaryButtonVisible) {
-                                    EnhancedFloatingActionButtonType.SecondaryHorizontal
-                                } else {
-                                    EnhancedFloatingActionButtonType.Primary
-                                },
+                                // 和主按钮（保存）用同一个尺寸/形状：
+                                // 两个按钮都是「icon + 背景容器」的组合，
+                                // 大小必须一致，不能一个是 42×56 圆角矩形、
+                                // 一个是 48×48 圆角方形。
+                                type = EnhancedFloatingActionButtonType.Compact,
                                 modifier = Modifier.padding(end = spacing)
                             ) {
                                 Icon(
                                     imageVector = secondaryButtonIcon,
-                                    contentDescription = null
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(FabIconPadding)
                                 )
                             }
                         }
@@ -245,6 +260,7 @@ fun BottomButtonsBlock(
                                 onClick = onPrimaryButtonClick.takeIf { isPrimaryButtonEnabled },
                                 onLongClick = onPrimaryButtonLongClick.takeIf { isPrimaryButtonEnabled },
                                 interactionSource = remember { MutableInteractionSource() }.takeIf { isPrimaryButtonEnabled },
+                                type = EnhancedFloatingActionButtonType.Compact,
                                 containerColor = takeColorFromScheme {
                                     if (isPrimaryButtonEnabled) primaryButtonContainerColor
                                     else surfaceContainerHighest
@@ -267,7 +283,8 @@ fun BottomButtonsBlock(
                                         }
                                         Icon(
                                             imageVector = icon,
-                                            contentDescription = null
+                                            contentDescription = null,
+                                            modifier = Modifier.padding(FabIconPadding)
                                         )
                                         if (text.isNotEmpty()) {
                                             Spacer(Modifier.width(16.dp))
@@ -344,6 +361,7 @@ fun BottomButtonsBlock(
                         onClick = onPrimaryButtonClick.takeIf { isPrimaryButtonEnabled },
                         onLongClick = onPrimaryButtonLongClick.takeIf { isPrimaryButtonEnabled },
                         interactionSource = remember { MutableInteractionSource() }.takeIf { isPrimaryButtonEnabled },
+                        type = EnhancedFloatingActionButtonType.Compact,
                         containerColor = takeColorFromScheme {
                             if (isPrimaryButtonEnabled) primaryButtonContainerColor
                             else surfaceContainerHighest
@@ -367,7 +385,8 @@ fun BottomButtonsBlock(
                                 }
                                 Icon(
                                     imageVector = icon,
-                                    contentDescription = null
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(FabIconPadding)
                                 )
                                 if (text.isNotEmpty()) {
                                     Spacer(Modifier.width(16.dp))
@@ -382,3 +401,9 @@ fun BottomButtonsBlock(
         }
     }
 }
+
+/**
+ * 底部操作栏按钮内的图标留白 —— 让 icon 和 48×48 的圆角底色容器之间
+ * 保持一圈呼吸空间，而不是图标顶到容器边缘。
+ */
+private val FabIconPadding = 4.dp

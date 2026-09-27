@@ -143,7 +143,6 @@ fun ExportSettingsSheet(
                     valueRange = 10f..100f,
                     enabled = settings.format.canChangeCompressionValue,
                     // 滑杆不带背景容器,直接排布
-                    drawContainer = false,
                     modifier = Modifier.fillMaxWidth()
                 )
 

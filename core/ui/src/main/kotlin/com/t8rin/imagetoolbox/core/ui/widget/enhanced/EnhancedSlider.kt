@@ -17,29 +17,27 @@
 
 package com.t8rin.imagetoolbox.core.ui.widget.enhanced
 
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.SliderColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.unit.dp
-import com.t8rin.imagetoolbox.core.ui.utils.animation.animateFloatingRangeAsState
-import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassStyle
-import com.t8rin.imagetoolbox.core.ui.widget.modifier.container
-import com.t8rin.imagetoolbox.core.ui.widget.sliders.custom_slider.CustomSliderColors
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassCustomRangeSlider
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassCustomSlider
-import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassCustomSliderDefaults
+import com.t8rin.imagetoolbox.core.ui.widget.sliders.custom_slider.CustomSliderColors
+import com.t8rin.imagetoolbox.core.ui.widget.sliders.custom_slider.CustomSliderDefaults
 
+/**
+ * 滑杆条目里用的滑杆。
+ *
+ * **它只是 [GlassCustomSlider] 的薄封装，不再自带任何视觉参数**
+ * （之前这里写死了 `trackHeight = 16.dp`、`GlassStyle.Thin`，还额外套了一层
+ * 胶囊容器，导致「水印透明度」这类滑杆和设置里「文字大小」那种裸
+ * [GlassCustomSlider] 长得不一样）。
+ *
+ * 现在两者是同一个组件、同一套默认值：细扁轨道 + 滑块在轨道内滑动。
+ * 想调整所有滑杆的外观，只改 [com.t8rin.imagetoolbox.core.ui.widget.glass.GlassCustomSliderDefaults]。
+ */
 @Composable
 fun EnhancedSlider(
     value: Float,
@@ -49,50 +47,26 @@ fun EnhancedSlider(
     valueRange: ClosedFloatingPointRange<Float>,
     steps: Int = 0,
     enabled: Boolean = true,
-    colors: SliderColors? = null,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    drawContainer: Boolean = true
+    sliderColors: SliderColors? = null,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
-    val realColors = colors?.toCustomSliderColors()
-        ?: defaultEnhancedSliderColors()
-    val trackHeight = if (drawContainer) 16.dp else 20.dp
-    val trackStyle = if (drawContainer) GlassStyle.Thin else GlassStyle.Regular
-    val activeTrackStyle = if (drawContainer) GlassStyle.Regular else GlassStyle.Medium
-    val thumbStyle = if (drawContainer) GlassStyle.Regular else GlassStyle.Medium
-    val glassBorderWidth = if (drawContainer) 0.dp else 0.5.dp
-
-    if (steps != 0) {
-        var compositions by remember {
-            mutableIntStateOf(0)
-        }
-        val haptics = LocalHapticFeedback.current
-        val updatedValue by rememberUpdatedState(newValue = value)
-
-        LaunchedEffect(updatedValue) {
-            if (compositions > 0) haptics.press()
-
-            compositions++
-        }
-    }
-
     GlassCustomSlider(
-        value = animateFloatAsState(value).value,
+        value = value,
         onValueChange = onValueChange,
-        modifier = modifier.enhancedSliderContainer(drawContainer = drawContainer),
+        modifier = modifier,
         enabled = enabled,
         valueRange = valueRange,
         steps = steps,
         onValueChangeFinished = onValueChangeFinished,
-        colors = realColors,
+        colors = sliderColors?.toCustomSliderColors() ?: CustomSliderDefaults.colors(),
         interactionSource = interactionSource,
-        trackStyle = trackStyle,
-        activeTrackStyle = activeTrackStyle,
-        thumbStyle = thumbStyle,
-        glassBorderWidth = glassBorderWidth,
-        trackHeight = trackHeight,
     )
 }
 
+/**
+ * [EnhancedRangeSlider] 同 [EnhancedSlider]：纯 [GlassCustomRangeSlider] 封装，
+ * 不覆盖任何视觉参数。
+ */
 @Composable
 fun EnhancedRangeSlider(
     value: ClosedFloatingPointRange<Float>,
@@ -102,73 +76,21 @@ fun EnhancedRangeSlider(
     valueRange: ClosedFloatingPointRange<Float>,
     steps: Int = 0,
     enabled: Boolean = true,
-    colors: SliderColors? = null,
+    sliderColors: SliderColors? = null,
+    @Suppress("UNUSED_PARAMETER")
     startInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    endInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    drawContainer: Boolean = true
+    @Suppress("UNUSED_PARAMETER")
+    endInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
-    val realColors = colors?.toCustomSliderColors()
-        ?: defaultEnhancedRangeSliderColors()
-    val trackHeight = if (drawContainer) 16.dp else 20.dp
-    val trackStyle = if (drawContainer) GlassStyle.Thin else GlassStyle.Regular
-    val activeTrackStyle = if (drawContainer) GlassStyle.Regular else GlassStyle.Medium
-    val thumbStyle = if (drawContainer) GlassStyle.Regular else GlassStyle.Medium
-    val glassBorderWidth = if (drawContainer) 0.dp else 0.5.dp
-
-    if (steps != 0) {
-        var compositions by remember {
-            mutableIntStateOf(0)
-        }
-        val haptics = LocalHapticFeedback.current
-        val updatedValue by rememberUpdatedState(newValue = value)
-
-        LaunchedEffect(updatedValue) {
-            if (compositions > 0) haptics.press()
-
-            compositions++
-        }
-    }
-
     GlassCustomRangeSlider(
-        value = animateFloatingRangeAsState(value).value,
+        value = value,
         onValueChange = onValueChange,
-        modifier = modifier.enhancedSliderContainer(drawContainer = drawContainer),
+        modifier = modifier,
         enabled = enabled,
         valueRange = valueRange,
-        onValueChangeFinished = onValueChangeFinished,
-        colors = realColors,
-        startInteractionSource = startInteractionSource,
-        endInteractionSource = endInteractionSource,
-        startThumb = {
-            GlassCustomSliderDefaults.Thumb(
-                interactionSource = startInteractionSource,
-                colors = realColors,
-                enabled = enabled,
-                style = thumbStyle,
-                glassBorderWidth = glassBorderWidth,
-            )
-        },
-        endThumb = {
-            GlassCustomSliderDefaults.Thumb(
-                interactionSource = endInteractionSource,
-                colors = realColors,
-                enabled = enabled,
-                style = thumbStyle,
-                glassBorderWidth = glassBorderWidth,
-            )
-        },
-        track = { rangeSliderState ->
-            GlassCustomSliderDefaults.Track(
-                rangeSliderState = rangeSliderState,
-                colors = realColors,
-                enabled = enabled,
-                trackStyle = trackStyle,
-                activeTrackStyle = activeTrackStyle,
-                glassBorderWidth = glassBorderWidth,
-                trackHeight = trackHeight,
-            )
-        },
         steps = steps,
+        onValueChangeFinished = onValueChangeFinished,
+        colors = sliderColors?.toCustomSliderColors() ?: CustomSliderDefaults.colors(),
     )
 }
 
@@ -183,45 +105,4 @@ private fun SliderColors.toCustomSliderColors(): CustomSliderColors = CustomSlid
     disabledActiveTickColor = disabledActiveTickColor,
     disabledInactiveTrackColor = disabledInactiveTrackColor,
     disabledInactiveTickColor = disabledInactiveTickColor,
-)
-
-private fun Modifier.enhancedSliderContainer(
-    drawContainer: Boolean,
-): Modifier = then(
-    if (drawContainer) {
-        Modifier
-            .container(
-                shape = CircleShape,
-                resultPadding = 0.dp,
-            )
-            .padding(horizontal = 8.dp, vertical = 2.dp)
-    } else Modifier
-)
-
-@Composable
-private fun defaultEnhancedSliderColors(): CustomSliderColors = CustomSliderColors(
-    thumbColor = androidx.compose.material3.MaterialTheme.colorScheme.onPrimaryContainer.copy(0.68f),
-    activeTrackColor = androidx.compose.material3.MaterialTheme.colorScheme.primaryContainer,
-    activeTickColor = androidx.compose.material3.MaterialTheme.colorScheme.inverseSurface,
-    inactiveTrackColor = androidx.compose.material3.SwitchDefaults.colors().disabledCheckedTrackColor,
-    inactiveTickColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
-    disabledThumbColor = androidx.compose.material3.SliderDefaults.colors().disabledThumbColor,
-    disabledActiveTrackColor = androidx.compose.material3.SliderDefaults.colors().disabledActiveTrackColor,
-    disabledActiveTickColor = androidx.compose.material3.SliderDefaults.colors().disabledActiveTickColor,
-    disabledInactiveTrackColor = androidx.compose.material3.SliderDefaults.colors().disabledInactiveTrackColor,
-    disabledInactiveTickColor = androidx.compose.material3.SliderDefaults.colors().disabledInactiveTickColor,
-)
-
-@Composable
-private fun defaultEnhancedRangeSliderColors(): CustomSliderColors = CustomSliderColors(
-    thumbColor = androidx.compose.material3.MaterialTheme.colorScheme.onPrimaryContainer,
-    activeTrackColor = androidx.compose.material3.MaterialTheme.colorScheme.primaryContainer,
-    activeTickColor = androidx.compose.material3.MaterialTheme.colorScheme.inverseSurface,
-    inactiveTrackColor = androidx.compose.material3.SwitchDefaults.colors().disabledCheckedTrackColor,
-    inactiveTickColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
-    disabledThumbColor = androidx.compose.material3.SliderDefaults.colors().disabledThumbColor,
-    disabledActiveTrackColor = androidx.compose.material3.SliderDefaults.colors().disabledActiveTrackColor,
-    disabledActiveTickColor = androidx.compose.material3.SliderDefaults.colors().disabledActiveTickColor,
-    disabledInactiveTrackColor = androidx.compose.material3.SliderDefaults.colors().disabledInactiveTrackColor,
-    disabledInactiveTickColor = androidx.compose.material3.SliderDefaults.colors().disabledInactiveTickColor,
 )

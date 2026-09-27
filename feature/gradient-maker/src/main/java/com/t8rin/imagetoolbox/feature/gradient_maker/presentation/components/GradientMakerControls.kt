@@ -46,6 +46,7 @@ import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedSliderItem
 import com.t8rin.imagetoolbox.core.ui.widget.image.ImageCounter
 import com.t8rin.imagetoolbox.core.ui.widget.modifier.flatGlassContainer
 import com.t8rin.imagetoolbox.core.ui.widget.sheets.PickImageFromUrisSheet
+import com.t8rin.imagetoolbox.core.ui.widget.system.OneBoxDesignSystem
 import com.t8rin.imagetoolbox.core.ui.widget.text.TitleItem
 import com.t8rin.imagetoolbox.feature.gradient_maker.presentation.components.model.canPickImage
 import com.t8rin.imagetoolbox.feature.gradient_maker.presentation.components.model.isMesh
@@ -60,6 +61,9 @@ internal fun GradientMakerControls(component: GradientMakerComponent) {
     var showPickImageFromUrisSheet by rememberSaveable { mutableStateOf(false) }
 
     val screenType = component.screenType
+
+    // 分组之间统一留出松间距：视觉上先分组、再分组内，避免每块背景都贴到一起
+    val groupSpacing = OneBoxDesignSystem.blockSpacing
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -88,7 +92,7 @@ internal fun GradientMakerControls(component: GradientMakerComponent) {
                 )
             }
         }
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(groupSpacing))
 
         if (screenType.isMesh()) {
             Column(
@@ -96,12 +100,12 @@ internal fun GradientMakerControls(component: GradientMakerComponent) {
                     resultPadding = 0.dp
                 )
             ) {
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(groupSpacing))
                 TitleItem(
                     text = stringResource(R.string.points_customization),
                     icon = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineBuild,
                     modifier = Modifier.padding(
-                        horizontal = 16.dp
+                        horizontal = OneBoxDesignSystem.cardPadding
                     )
                 )
                 MeshGradientEditor(
@@ -109,10 +113,10 @@ internal fun GradientMakerControls(component: GradientMakerComponent) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1f)
-                        .padding(16.dp)
+                        .padding(OneBoxDesignSystem.cardPadding)
                 )
             }
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(groupSpacing))
             EnhancedSliderItem(
                 value = component.meshGradientState.gridSize,
                 title = stringResource(R.string.grid_size),
@@ -130,7 +134,7 @@ internal fun GradientMakerControls(component: GradientMakerComponent) {
                     }
                 }
             )
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(OneBoxDesignSystem.compactSpacing))
             EnhancedSliderItem(
                 value = component.meshResolutionX,
                 title = stringResource(R.string.resolution),
@@ -153,28 +157,28 @@ internal fun GradientMakerControls(component: GradientMakerComponent) {
                     onRadialDimensionsChange = component::setRadialProperties
                 )
             }
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(groupSpacing))
             ColorStopSelection(
                 colorStops = component.colorStops,
                 onRemoveClick = component::removeColorStop,
                 onValueChange = component::updateColorStop,
                 onAddColorStop = component::addColorStop
             )
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(groupSpacing))
             TileModeSelector(
                 value = component.tileMode,
                 onValueChange = component::setTileMode
             )
         }
         if (screenType.canPickImage()) {
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(groupSpacing))
             SaveExifWidget(
                 checked = component.keepExif,
                 imageFormat = component.imageFormat,
                 onCheckedChange = component::toggleKeepExif
             )
         }
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(OneBoxDesignSystem.compactSpacing))
         ImageFormatSelector(
             value = component.imageFormat,
             forceEnabled = screenType != null && !screenType.canPickImage(),

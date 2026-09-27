@@ -213,7 +213,7 @@ fun LazyListScope.imageStickyHeader(
                                 controlsVisible = true
                                 onStateChange(imageState.copy(position = it.toInt()))
                             },
-                            colors = SliderDefaults.colors(
+                            sliderColors = SliderDefaults.colors(
                                 inactiveTrackColor = MaterialTheme.colorScheme.outlineVariant(
                                     onTopOf = MaterialTheme.colorScheme.tertiaryContainer
                                 ).copy(0.5f),

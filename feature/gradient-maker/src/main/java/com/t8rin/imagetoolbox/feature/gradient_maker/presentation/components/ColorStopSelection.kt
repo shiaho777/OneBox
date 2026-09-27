@@ -17,15 +17,12 @@
 
 package com.t8rin.imagetoolbox.feature.gradient_maker.presentation.components
 
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -37,17 +34,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.t8rin.imagetoolbox.core.resources.R
-import com.t8rin.imagetoolbox.core.resources.icons.Delete
 import com.t8rin.imagetoolbox.core.resources.icons.MiniEdit
 import com.t8rin.imagetoolbox.core.ui.theme.mixedContainer
 import com.t8rin.imagetoolbox.core.ui.widget.color_picker.ColorInfo
@@ -55,20 +49,15 @@ import com.t8rin.imagetoolbox.core.ui.widget.color_picker.ColorSelection
 import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedButton
 import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedModalBottomSheet
 import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedSlider
-import com.t8rin.imagetoolbox.core.ui.widget.enhanced.hapticsClickable
 import com.t8rin.imagetoolbox.core.ui.widget.modifier.ShapeDefaults
 import com.t8rin.imagetoolbox.core.ui.widget.modifier.flatGlassContainer
 import com.t8rin.imagetoolbox.core.ui.widget.other.ExpandableItem
-import com.t8rin.imagetoolbox.core.ui.widget.other.RevealDirection
-import com.t8rin.imagetoolbox.core.ui.widget.other.RevealValue
-import com.t8rin.imagetoolbox.core.ui.widget.other.SwipeToReveal
-import com.t8rin.imagetoolbox.core.ui.widget.other.rememberRevealState
 import com.t8rin.imagetoolbox.core.ui.widget.saver.ColorSaver
+import com.t8rin.imagetoolbox.core.ui.widget.system.OneBoxDesignSystem
 import com.t8rin.imagetoolbox.core.ui.widget.text.AutoSizeText
 import com.t8rin.imagetoolbox.core.ui.widget.text.TitleItem
 import com.t8rin.imagetoolbox.core.ui.widget.value.ValueDialog
 import com.t8rin.imagetoolbox.core.ui.widget.value.ValueText
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineTheme
 
@@ -92,8 +81,11 @@ fun ColorStopSelection(
         expandableContent = {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(8.dp)
+                verticalArrangement = Arrangement.spacedBy(OneBoxDesignSystem.compactSpacing),
+                modifier = Modifier.padding(
+                    horizontal = OneBoxDesignSystem.compactSpacing,
+                    vertical = OneBoxDesignSystem.microSpacing
+                )
             ) {
                 colorStops.forEachIndexed { index, (value, color) ->
                     ColorStopSelectionItem(
@@ -114,7 +106,8 @@ fun ColorStopSelection(
                         showColorPicker = true
                     },
                     modifier = Modifier.padding(
-                        horizontal = 16.dp
+                        top = OneBoxDesignSystem.microSpacing,
+                        bottom = OneBoxDesignSystem.microSpacing
                     )
                 ) {
                     Icon(
@@ -181,113 +174,63 @@ private fun ColorStopSelectionItem(
 ) {
     var showColorPicker by rememberSaveable { mutableStateOf(false) }
 
-    val scope = rememberCoroutineScope()
-    val state = rememberRevealState()
-    SwipeToReveal(
-        state = state,
-        enableSwipe = canDelete,
-        revealedContentEnd = {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .flatGlassContainer(
-                        color = MaterialTheme.colorScheme.errorContainer,
-                        shape = MaterialTheme.shapes.large,
-                        autoShadowElevation = 0.dp,
-                        resultPadding = 0.dp
-                    )
-                    .hapticsClickable {
-                        scope.launch {
-                            state.animateTo(RevealValue.Default)
-                        }
-                        onRemoveClick()
-                    }
-            ) {
-                Icon(
-                    imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.Delete,
-                    contentDescription = stringResource(R.string.delete),
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .padding(end = 8.dp)
-                        .align(Alignment.CenterEnd),
-                    tint = MaterialTheme.colorScheme.onErrorContainer
-                )
+    // 色标行 = 一层玻璃容器 + 控件层。
+    // 未选中时不给行内滑杆再套一层容器圆底，避免出现「玻璃里面还有玻璃」的双层底。
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .flatGlassContainer(
+                shape = MaterialTheme.shapes.large,
+                resultPadding = OneBoxDesignSystem.itemSpacing
+            ),
+        verticalArrangement = Arrangement.spacedBy(OneBoxDesignSystem.compactSpacing)
+    ) {
+        ColorInfo(
+            color = color,
+            onColorChange = {
+                onValueChange(value to it)
+            },
+            supportButtonIcon = com.t8rin.imagetoolbox.core.resources.Icons.Rounded.MiniEdit,
+            onSupportButtonClick = {
+                showColorPicker = true
+            },
+            onRemove = onRemoveClick.takeIf { canDelete },
+            removeContentDescription = stringResource(R.string.delete)
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            EnhancedSlider(
+                value = value,
+                onValueChange = { onValueChange(it to color) },
+                valueRange = 0f..1f,
+                modifier = Modifier.weight(1f)
+            )
+            var showValueDialog by rememberSaveable {
+                mutableStateOf(false)
             }
-        },
-        directions = setOf(RevealDirection.EndToStart),
-        swipeableContent = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .flatGlassContainer(
-                        shape = MaterialTheme.shapes.large,
-                        resultPadding = 8.dp
-                    )
-                    .then(
-                        if (canDelete) {
-                            Modifier.pointerInput(Unit) {
-                                detectTapGestures(
-                                    onPress = {
-                                        val time = System.currentTimeMillis()
-                                        awaitRelease()
-                                        if (System.currentTimeMillis() - time >= 200) {
-                                            scope.launch {
-                                                state.animateTo(RevealValue.FullyRevealedStart)
-                                            }
-                                        }
-                                    }
-                                )
-                            }
-                        } else Modifier
-                    )
-            ) {
-                ColorInfo(
-                    color = color,
-                    onColorChange = {
-                        onValueChange(value to it)
-                    },
-                    supportButtonIcon = com.t8rin.imagetoolbox.core.resources.Icons.Rounded.MiniEdit,
-                    onSupportButtonClick = {
-                        showColorPicker = true
-                    }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    EnhancedSlider(
-                        value = value,
-                        onValueChange = { onValueChange(it to color) },
-                        valueRange = 0f..1f,
-                        modifier = Modifier.weight(1f)
-                    )
-                    var showValueDialog by rememberSaveable {
-                        mutableStateOf(false)
-                    }
-                    ValueText(
-                        modifier = Modifier,
-                        value = (value * 100).toInt(),
-                        onClick = {
-                            showValueDialog = true
-                        }
-                    )
-                    ValueDialog(
-                        roundTo = 0,
-                        valueRange = 0f..100f,
-                        valueState = (value * 100).toInt().toString(),
-                        expanded = showValueDialog,
-                        onDismiss = {
-                            showValueDialog = false
-                        },
-                        onValueUpdate = {
-                            onValueChange(it.roundToInt() / 100f to color)
-                            showValueDialog = false
-                        }
-                    )
+            ValueText(
+                modifier = Modifier.padding(start = OneBoxDesignSystem.microSpacing),
+                value = (value * 100).toInt(),
+                onClick = {
+                    showValueDialog = true
                 }
-            }
+            )
+            ValueDialog(
+                roundTo = 0,
+                valueRange = 0f..100f,
+                valueState = (value * 100).toInt().toString(),
+                expanded = showValueDialog,
+                onDismiss = {
+                    showValueDialog = false
+                },
+                onValueUpdate = {
+                    onValueChange(it.roundToInt() / 100f to color)
+                    showValueDialog = false
+                }
+            )
         }
-    )
+    }
 
     EnhancedModalBottomSheet(
         sheetContent = {

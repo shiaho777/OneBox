@@ -649,7 +649,6 @@ private fun TextSliderRow(
             onValueChange = onValueChange,
             valueRange = valueRange,
             // 滑杆不带背景容器,直接排布
-            drawContainer = false,
             modifier = Modifier.weight(1f)
         )
         Text(

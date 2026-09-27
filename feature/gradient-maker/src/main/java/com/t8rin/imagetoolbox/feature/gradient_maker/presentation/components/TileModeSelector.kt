@@ -17,20 +17,22 @@
 
 package com.t8rin.imagetoolbox.feature.gradient_maker.presentation.components
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.t8rin.imagetoolbox.core.resources.R
-import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedButtonGroup
-import com.t8rin.imagetoolbox.core.ui.widget.modifier.ShapeDefaults
-import com.t8rin.imagetoolbox.core.ui.widget.modifier.animateContentSizeNoClip
-import com.t8rin.imagetoolbox.core.ui.widget.modifier.flatGlassContainer
+import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassSegmentedButtonRow
+import com.t8rin.imagetoolbox.core.ui.widget.system.OneBoxDesignSystem
 
 @Composable
 fun TileModeSelector(
@@ -46,23 +48,32 @@ fun TileModeSelector(
             TileMode.Decal
         )
     }
-    Box(
-        modifier = modifier
-            .flatGlassContainer(
-                shape = ShapeDefaults.extraLarge
-            )
-            .animateContentSizeNoClip(),
-        contentAlignment = Alignment.Center
+    // 分段行自带玻璃底，这里不再套第二层容器卡 —— 和「日夜间模式」的用法一致：
+    // 只有「标题 + 裸分段行」，父级不画背景。
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(OneBoxDesignSystem.compactSpacing)
     ) {
-        EnhancedButtonGroup(
-            modifier = Modifier.padding(8.dp),
-            enabled = true,
-            items = entries.map { it.translatedName },
-            selectedIndex = entries.indexOf(value),
-            title = stringResource(id = R.string.tile_mode),
-            onIndexChange = {
-                onValueChange(entries[it])
-            }
+        Text(
+            text = stringResource(id = R.string.tile_mode),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(horizontal = OneBoxDesignSystem.compactSpacing)
+        )
+        GlassSegmentedButtonRow(
+            options = entries,
+            selectedOption = value,
+            onOptionSelected = onValueChange,
+            label = { mode ->
+                Text(
+                    text = mode.translatedName,
+                    maxLines = 1,
+                    textAlign = TextAlign.Center
+                )
+            },
+            buttonHeight = 40.dp,
         )
     }
 }

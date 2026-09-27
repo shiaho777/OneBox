@@ -17,51 +17,50 @@
 
 package com.t8rin.imagetoolbox.core.ui.widget.enhanced
 
-import androidx.compose.animation.core.FiniteAnimationSpec
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
-import androidx.compose.material3.ToggleButtonDefaults
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.t8rin.imagetoolbox.core.settings.presentation.provider.LocalSettingsState
-import com.t8rin.imagetoolbox.core.ui.theme.outlineVariant
-import com.t8rin.imagetoolbox.core.ui.utils.helper.ProvidesValue
+import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassSegmentedButtonRow
 import com.t8rin.imagetoolbox.core.ui.widget.modifier.fadingEdges
 import com.t8rin.imagetoolbox.core.ui.widget.preferences.PreferenceItemDefaults
 import com.t8rin.imagetoolbox.core.ui.widget.text.AutoSizeText
 
+/**
+ * 分段选择按钮组。
+ *
+ * **视觉实现已统一到 [GlassSegmentedButtonRow]**（毛玻璃分段行）：
+ * 每个按钮独立圆角、滑块带玻璃描边，选中项有色调叠加。
+ * 这里保留原有 API（`items` / `selectedIndex` / `title` / 颜色参数），
+ * 因此全项目 20 余处调用点无需改动即可切到新的玻璃视觉。
+ *
+ * 多选重载（`values` / `selectedIndices`）在玻璃行上表示为多个「已选」滑块：
+ * 玻璃行本身只支持单选，多选时会把每个选中项都画成滑块。
+ */
 @Composable
 fun EnhancedButtonGroup(
     modifier: Modifier = defaultModifier,
@@ -261,11 +260,20 @@ fun EnhancedButtonGroup(
     isScrollable: Boolean = true,
     contentPadding: PaddingValues = DefaultContentPadding
 ) {
-    val settingsState = LocalSettingsState.current
-
     val disabledColor = MaterialTheme.colorScheme.onSurface
         .copy(alpha = 0.38f)
         .compositeOver(MaterialTheme.colorScheme.surface)
+
+    // 兼容层：视觉完全交给 GlassSegmentedButtonRow 的默认玻璃样式 ——
+    // 与「日夜间模式」用的是同一个组件、同一套默认值，不再另调底色/容器样式。
+    // 老调用方传的 surface / secondary 是当年的默认值，这里视为「没传」。
+    val selectedColor = activeButtonColor.takeIf {
+        it != MaterialTheme.colorScheme.secondary
+    }
+    val unselectedColor = inactiveButtonColor.takeIf {
+        it != MaterialTheme.colorScheme.surface
+    }
+    val isMultiSelect = selectedIndices.size > 1
 
     ProvideTextStyle(
         value = LocalTextStyle.current.copy(
@@ -274,7 +282,7 @@ fun EnhancedButtonGroup(
         )
     ) {
         Column(
-            modifier = modifier,
+            modifier = modifier.alpha(if (enabled) 1f else 0.55f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
@@ -282,82 +290,62 @@ fun EnhancedButtonGroup(
                 horizontalArrangement = Arrangement.Center,
                 content = title
             )
-            val scrollState = rememberScrollState()
-            val elevation by animateDpAsState(
-                if (settingsState.borderWidth > 0.dp || !enabled) 0.dp else 0.5.dp
-            )
 
-            LocalMinimumInteractiveComponentSize.ProvidesValue(Dp.Unspecified) {
-                MaterialTheme(
-                    motionScheme = object : MotionScheme by MotionScheme.expressive() {
-                        override fun <T> fastSpatialSpec(): FiniteAnimationSpec<T> = tween(400)
-                    }
-                ) {
+            val row: @Composable (Modifier) -> Unit = { rowModifier ->
+                val sharedLabel: @Composable (Int) -> Unit = { itemContent(it) }
+                val rowContentPadding =
+                    if (isScrollable) DefaultContentPadding else contentPadding
+                if (isMultiSelect) {
+                    GlassSegmentedButtonRow(
+                        options = (0 until itemCount).toList(),
+                        selectedOptions = selectedIndices,
+                        onOptionSelected = { index, _ -> onIndexChange(index) },
+                        modifier = rowModifier,
+                        label = sharedLabel,
+                        selectedColor = selectedColor
+                            ?: MaterialTheme.colorScheme.primaryContainer,
+                        unselectedColor = unselectedColor ?: Color.Transparent,
+                        contentPadding = rowContentPadding,
+                        hugContent = isScrollable,
+                    )
+                } else {
+                    GlassSegmentedButtonRow(
+                        options = (0 until itemCount).toList(),
+                        selectedOption = selectedIndices.firstOrNull() ?: 0,
+                        onOptionSelected = onIndexChange,
+                        modifier = rowModifier,
+                        label = sharedLabel,
+                        selectedColor = selectedColor
+                            ?: MaterialTheme.colorScheme.primaryContainer,
+                        unselectedColor = unselectedColor ?: Color.Transparent,
+                        contentPadding = rowContentPadding,
+                        hugContent = isScrollable,
+                    )
+                }
+            }
+
+            if (isScrollable) {
+                val scrollState = rememberScrollState()
+                BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+                    val rowWidth = maxWidth
                     Row(
                         modifier = Modifier
-                            .height(IntrinsicSize.Max)
-                            .then(
-                                if (isScrollable) {
-                                    Modifier
-                                        .fadingEdges(scrollState)
-                                        .horizontalScroll(scrollState)
-                                } else Modifier.fillMaxWidth()
-                            )
-                            .padding(contentPadding),
-                        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                            .fadingEdges(scrollState)
+                            .horizontalScroll(scrollState),
                     ) {
-                        repeat(itemCount) { index ->
-                            val activeContainerColor = if (enabled) {
-                                activeButtonColor
-                            } else {
-                                MaterialTheme.colorScheme.surfaceContainer
-                            }
-
-                            val selected = index in selectedIndices
-
-                            EnhancedToggleButton(
-                                enabled = enabled,
-                                onCheckedChange = {
-                                    onIndexChange(index)
-                                },
-                                border = BorderStroke(
-                                    width = settingsState.borderWidth,
-                                    color = MaterialTheme.colorScheme.outlineVariant(
-                                        onTopOf = if (selected) activeContainerColor
-                                        else inactiveButtonColor
-                                    )
-                                ),
-                                colors = ToggleButtonDefaults.toggleButtonColors(
-                                    containerColor = inactiveButtonColor,
-                                    contentColor = contentColorFor(inactiveButtonColor),
-                                    checkedContainerColor = activeContainerColor,
-                                    checkedContentColor = contentColorFor(activeContainerColor)
-                                ),
-                                checked = selected,
-                                shapes = when (index) {
-                                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes(
-                                        pressedShape = ButtonDefaults.pressedShape
-                                    )
-
-                                    itemCount - 1 -> ButtonGroupDefaults.connectedTrailingButtonShapes(
-                                        pressedShape = ButtonDefaults.pressedShape
-                                    )
-
-                                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes(
-                                        pressedShape = ButtonDefaults.pressedShape,
-                                    )
-                                },
-                                elevation = elevation,
-                                modifier = Modifier.then(
-                                    if (isScrollable) Modifier
-                                    else Modifier.weight(1f)
-                                )
-                            ) {
-                                itemContent(index)
-                            }
-                        }
+                        row(
+                            Modifier
+                                .widthIn(min = rowWidth)
+                                .padding(contentPadding)
+                        )
                     }
                 }
+            } else {
+                row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(contentPadding)
+                )
             }
         }
     }

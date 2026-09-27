@@ -19,20 +19,20 @@ package com.t8rin.imagetoolbox.feature.gradient_maker.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.t8rin.imagetoolbox.core.resources.R
-import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedButtonGroup
-import com.t8rin.imagetoolbox.core.ui.widget.modifier.ShapeDefaults
-import com.t8rin.imagetoolbox.core.ui.widget.modifier.animateContentSizeNoClip
-import com.t8rin.imagetoolbox.core.ui.widget.modifier.flatGlassContainer
+import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassSegmentedButtonRow
 import com.t8rin.imagetoolbox.core.ui.widget.other.ExpandableItem
+import com.t8rin.imagetoolbox.core.ui.widget.system.OneBoxDesignSystem
 import com.t8rin.imagetoolbox.core.ui.widget.text.TitleItem
 import com.t8rin.imagetoolbox.feature.gradient_maker.domain.GradientType
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineTune
@@ -44,24 +44,25 @@ fun GradientTypeSelector(
     modifier: Modifier = Modifier,
     propertiesContent: @Composable () -> Unit
 ) {
+    // 分段行自带玻璃底，父级不再套容器卡 —— 避免「卡片里面还有卡片」的多层背景。
     Column(
-        modifier = modifier
-            .flatGlassContainer(
-                shape = ShapeDefaults.extraLarge
-            )
-            .animateContentSizeNoClip(),
-        verticalArrangement = Arrangement.Center,
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(OneBoxDesignSystem.compactSpacing),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        EnhancedButtonGroup(
-            modifier = Modifier.padding(8.dp),
-            enabled = true,
-            items = GradientType.entries.map { it.translatedName },
-            selectedIndex = GradientType.entries.indexOf(value),
-            title = stringResource(id = R.string.gradient_type),
-            onIndexChange = {
-                onValueChange(GradientType.entries[it])
-            }
+        GlassSegmentedButtonRow(
+            options = GradientType.entries,
+            selectedOption = value,
+            onOptionSelected = onValueChange,
+            modifier = Modifier.fillMaxWidth(),
+            label = { type ->
+                Text(
+                    text = type.translatedName,
+                    maxLines = 1,
+                    textAlign = TextAlign.Center
+                )
+            },
+            buttonHeight = 40.dp,
         )
         ExpandableItem(
             visibleContent = {
@@ -72,12 +73,11 @@ fun GradientTypeSelector(
             },
             expandableContent = {
                 Column(
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    modifier = Modifier.padding(horizontal = OneBoxDesignSystem.microSpacing)
                 ) {
                     propertiesContent()
                 }
             },
-            modifier = Modifier.padding(end = 8.dp, start = 8.dp, bottom = 8.dp),
             color = Color.Unspecified
         )
     }

@@ -187,7 +187,6 @@ internal fun LayerOpacitySlider(
         onValueChangeFinished = { dragValue = null },
         valueRange = 0f..1f,
         enabled = enabled,
-        drawContainer = false,
         modifier = modifier
     )
 }
