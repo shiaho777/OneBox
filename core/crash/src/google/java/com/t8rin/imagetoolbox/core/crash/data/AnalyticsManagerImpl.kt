@@ -33,6 +33,7 @@ internal object AnalyticsManagerImpl : AnalyticsManager {
 
     override var allowCollectAnalytics: Boolean = false
 
+
     override fun updateAnalyticsCollectionEnabled(value: Boolean) {
         allowCollectAnalytics = value
         if (!isFirebaseAvailable) return
@@ -55,6 +56,18 @@ internal object AnalyticsManagerImpl : AnalyticsManager {
                 recordException(throwable)
                 sendUnsentReports()
             }
+        }
+    }
+
+    /**
+     * 非致命异常: 只 recordException, 不 sendUnsentReports —— 业务异常不该顺手把
+     * 还没到上传时机的崩溃报告一起推上去。自定义键用于后台按出错位置聚合。
+     */
+    override fun reportNonFatal(throwable: Throwable, keys: Map<String, Any>) {
+        if (!allowCollectCrashlytics || !isFirebaseAvailable) return
+        crashlytics.apply {
+            keys.forEach { (key, value) -> setCustomKey(key, value.toString()) }
+            recordException(throwable)
         }
     }
 

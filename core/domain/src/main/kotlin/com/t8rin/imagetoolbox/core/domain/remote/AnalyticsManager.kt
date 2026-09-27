@@ -29,6 +29,17 @@ interface AnalyticsManager {
 
     fun sendReport(throwable: Throwable)
 
+    /**
+     * 上报非致命异常(业务异常)。
+     *
+     * 与 [sendReport] 的区别: 那是致命崩溃, 会顺带把待发报告一起送出去; 这里是
+     * "用户还能继续用、但这事不该发生", 只记录、不触发强制上传。
+     * 未接入原生统计的渠道是 no-op。
+     *
+     * @param keys 低基数上下文(出错位置、引擎名等), 作为自定义键展示在后台
+     */
+    fun reportNonFatal(throwable: Throwable, keys: Map<String, Any> = emptyMap())
+
     fun registerScreenOpen(screenName: String)
 
     /**

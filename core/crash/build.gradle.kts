@@ -37,6 +37,7 @@ afterEvaluate {
 dependencies {
     implementation(projects.core.ui)
     implementation(projects.core.settings)
+    implementation(projects.core.domain)
     implementation(project(":core:storage"))
 
     // Google Play 渠道专属: Firebase BoM + Crashlytics / Analytics (国内渠道不引入)

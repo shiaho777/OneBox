@@ -18,7 +18,9 @@
 package com.t8rin.imagetoolbox.core.crash.di
 
 import com.t8rin.imagetoolbox.core.crash.data.AnalyticsManagerImpl
+import com.t8rin.imagetoolbox.core.crash.data.ErrorReporterImpl
 import com.t8rin.imagetoolbox.core.domain.remote.AnalyticsManager
+import com.t8rin.imagetoolbox.core.domain.remote.ErrorReporter
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,5 +34,13 @@ internal object CrashModule {
     @Provides
     @Singleton
     fun analyticsManager(): AnalyticsManager = AnalyticsManagerImpl
+
+    /**
+     * 统一错误上报入口: 页面注入 [ErrorReporter] 就能上报, 背后落到当前渠道的
+     * 原生崩溃/异常统计(google = Crashlytics; 国内与 foss 接入 SDK 前是 no-op)。
+     */
+    @Provides
+    @Singleton
+    fun errorReporter(impl: ErrorReporterImpl): ErrorReporter = impl
 
 }
