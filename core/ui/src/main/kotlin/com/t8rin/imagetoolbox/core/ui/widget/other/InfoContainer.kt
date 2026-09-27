@@ -18,6 +18,7 @@
 package com.t8rin.imagetoolbox.core.ui.widget.other
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -34,6 +35,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassSurface
@@ -49,7 +51,9 @@ fun InfoContainer(
     contentColor: Color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f),
     shape: Shape = OneBoxDesignSystem.compactBadgeShape,
     icon: ImageVector? = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineInfo,
-    textAlign: TextAlign = TextAlign.Center
+    textAlign: TextAlign = TextAlign.Center,
+    contentPadding: PaddingValues = PaddingValues(OneBoxDesignSystem.compactSpacing),
+    lineHeight: TextUnit = 14.sp,
 ) {
     GlassSurface(
         modifier = modifier,
@@ -59,7 +63,7 @@ fun InfoContainer(
         borderWidth = 0.dp,
     ) {
         Row(
-            modifier = Modifier.padding(OneBoxDesignSystem.compactSpacing),
+            modifier = Modifier.padding(contentPadding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -77,7 +81,7 @@ fun InfoContainer(
                 fontSize = 12.sp,
                 textAlign = textAlign,
                 fontWeight = FontWeight.SemiBold,
-                lineHeight = 14.sp,
+                lineHeight = lineHeight,
                 color = contentColor
             )
         }

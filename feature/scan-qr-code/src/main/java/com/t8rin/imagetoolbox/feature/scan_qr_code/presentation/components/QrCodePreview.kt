@@ -104,6 +104,7 @@ internal fun QrCodePreview(
                             if (isEmpty) {
                                 ImageNotPickedWidget(
                                     onPickImage = onStartScan,
+                                    modifier = Modifier.fillMaxWidth(),
                                     text = stringResource(R.string.generated_barcode_will_be_here),
                                     containerColor = MaterialTheme
                                         .colorScheme

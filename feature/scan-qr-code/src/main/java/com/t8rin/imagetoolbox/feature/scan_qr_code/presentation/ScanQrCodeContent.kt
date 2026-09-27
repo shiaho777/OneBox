@@ -56,6 +56,7 @@ import com.t8rin.imagetoolbox.core.ui.widget.dialogs.LoadingDialog
 import com.t8rin.imagetoolbox.core.ui.widget.dialogs.OneTimeImagePickingDialog
 import com.t8rin.imagetoolbox.core.ui.widget.dialogs.OneTimeSaveLocationSelectionDialog
 import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedFloatingActionButton
+import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedFloatingActionButtonType
 import com.t8rin.imagetoolbox.core.ui.widget.modifier.scaleOnTap
 import com.t8rin.imagetoolbox.core.ui.widget.other.BarcodeType
 import com.t8rin.imagetoolbox.core.ui.widget.other.TopAppBarEmoji
@@ -268,10 +269,7 @@ fun ScanQrCodeContent(
                         onLongClick = {
                             showOneTimeImagePickingDialog = true
                         },
-                        containerColor = takeColorFromScheme {
-                            if (params.content.raw.isEmpty()) tertiaryContainer
-                            else secondaryContainer
-                        }
+                        type = EnhancedFloatingActionButtonType.Primary
                     ) {
                         Icon(
                             imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineImageSearch,
