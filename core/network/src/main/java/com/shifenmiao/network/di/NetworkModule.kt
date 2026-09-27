@@ -27,9 +27,11 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -139,6 +141,19 @@ object NetworkModule {
             .build()
     }
 
+    // Gson → kotlinx.serialization 迁移(阶段①):与 DefaultRetrofit 同 client/baseUrl,
+    // 仅换 converter,供已切换的低风险 service 使用;仍在用 Gson 的 service 继续走 DefaultRetrofit
+    @Singleton
+    @Provides
+    @Named("KotlinxDefaultRetrofit")
+    fun provideKotlinxDefaultRetrofit(@Named("DefaultOkHttpClient") okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(NetworkBuilder.getBaseUrl())
+            .addConverterFactory(ModelProvider.AppJson.asConverterFactory("application/json".toMediaType()))
+            .client(okHttpClient)
+            .build()
+    }
+
     @Singleton
     @Provides
     @Named("OpenAICompatibleRetrofit")
@@ -152,13 +167,15 @@ object NetworkModule {
             .build()
     }
 
+    // BaiduOcrRetrofit 仅服务 DocConvertApiService / BaiduImageProcessApiService,
+    // 两者均已迁移 kotlinx.serialization(阶段①),converter 就地切换
     @Singleton
     @Provides
     @Named("BaiduOcrRetrofit")
     fun provideBaiduOcrRetrofit(@Named("OkHttpClientForBaiduOcr") okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(UrlConstants.BAIDU_OCR_BASE_URL.ifBlank { "http://localhost/" })
-            .addConverterFactory(GsonConverterFactory.create(ModelProvider.provideGson()))
+            .addConverterFactory(ModelProvider.AppJson.asConverterFactory("application/json".toMediaType()))
             .client(okHttpClient)
             .build()
     }
@@ -199,12 +216,12 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideXiangqiEngineService(@Named("DefaultRetrofit") retrofit: Retrofit): XiangqiEngineService =
+    fun provideXiangqiEngineService(@Named("KotlinxDefaultRetrofit") retrofit: Retrofit): XiangqiEngineService =
         retrofit.create(XiangqiEngineService::class.java)
 
     @Provides
     @Singleton
-    fun provideBoardGameEngineService(@Named("DefaultRetrofit") retrofit: Retrofit): BoardGameEngineService =
+    fun provideBoardGameEngineService(@Named("KotlinxDefaultRetrofit") retrofit: Retrofit): BoardGameEngineService =
         retrofit.create(BoardGameEngineService::class.java)
 
     @Provides

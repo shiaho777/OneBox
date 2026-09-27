@@ -1,6 +1,7 @@
 package com.shifenmiao.tts.di
 
 import com.shifenmiao.core.constants.UrlConstants
+import com.shifenmiao.model.ModelProvider
 import com.shifenmiao.network.api.MimoTTSApi
 import com.shifenmiao.network.api.TTSSpeechApi
 import com.shifenmiao.tts.cache.TTSCacheManagerImpl
@@ -14,8 +15,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -32,11 +34,21 @@ abstract class TTSModule {
     abstract fun bindTTSCacheManager(impl: TTSCacheManagerImpl): TTSCacheManager
 
     companion object {
+        // TTSSpeechApi 已迁移 kotlinx.serialization(阶段①):OpenAICompatibleRetrofit 仍属
+        // Gson 阵营(流式 service 在用),这里用同一 OkHttpClient 单独构造 kotlinx converter 实例;
+        // 实际请求路径由 @Url 传入,baseUrl 仅作占位
         @Provides
         @Singleton
         fun provideTTSSpeechApi(
-            @Named("OpenAICompatibleRetrofit") retrofit: Retrofit
-        ): TTSSpeechApi = retrofit.create(TTSSpeechApi::class.java)
+            @Named("OpenAICompatibleOkHttpClient") okHttpClient: okhttp3.OkHttpClient
+        ): TTSSpeechApi {
+            val retrofit = Retrofit.Builder()
+                .baseUrl(UrlConstants.OPENAI_BASE_URL)
+                .client(okHttpClient)
+                .addConverterFactory(ModelProvider.AppJson.asConverterFactory("application/json".toMediaType()))
+                .build()
+            return retrofit.create(TTSSpeechApi::class.java)
+        }
 
         @Provides
         @Singleton
@@ -47,7 +59,7 @@ abstract class TTSModule {
             val retrofit = Retrofit.Builder()
                 .baseUrl("https://api.xiaomimimo.com/v1/")
                 .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(ModelProvider.AppJson.asConverterFactory("application/json".toMediaType()))
                 .build()
             return retrofit.create(MimoTTSApi::class.java)
         }
@@ -61,7 +73,7 @@ abstract class TTSModule {
             val retrofit = Retrofit.Builder()
                 .baseUrl(UrlConstants.RELEASE_URL.ifBlank { "http://localhost/" })
                 .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(ModelProvider.AppJson.asConverterFactory("application/json".toMediaType()))
                 .build()
             return retrofit.create(MimoTTSApi::class.java)
         }

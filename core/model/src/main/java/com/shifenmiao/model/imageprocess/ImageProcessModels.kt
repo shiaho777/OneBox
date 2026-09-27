@@ -3,6 +3,7 @@ package com.shifenmiao.model.imageprocess
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -14,14 +15,19 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ImageProcessResponse(
     @SerializedName("image")
+    @SerialName("image")
     val image: String? = null,
     @SerializedName("foreground")
+    @SerialName("foreground")
     val foreground: String? = null,
     @SerializedName("log_id")
+    @SerialName("log_id")
     val logId: Long? = null,
     @SerializedName("error_code")
+    @SerialName("error_code")
     val errorCode: Int? = null,
     @SerializedName("error_msg")
+    @SerialName("error_msg")
     val errorMsg: String? = null,
 ) : Parcelable
 
@@ -33,11 +39,15 @@ data class ImageProcessResponse(
 @Serializable
 data class ImageSegmentRequest(
     @SerializedName("image")
+    @SerialName("image")
     val image: String,
     @SerializedName("method")
+    @SerialName("method")
     val method: String = "auto",
     @SerializedName("refine_mask")
+    @SerialName("refine_mask")
     val refineMask: String = "true",
     @SerializedName("return_form")
+    @SerialName("return_form")
     val returnForm: String = "rgba",
 ) : Parcelable

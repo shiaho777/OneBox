@@ -3,6 +3,7 @@ package com.shifenmiao.model.imageprocess
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -57,20 +58,26 @@ data class RetouchParams(
 /**
  * AI 修图创建任务请求体(application/json,struct 参数为嵌套 JSON 对象)
  */
+@Serializable
 data class RetouchCreateRequest(
     @SerializedName("image")
+    @SerialName("image")
     val image: String,
     @SerializedName("PartialHumanOptions")
+    @SerialName("PartialHumanOptions")
     val partialHumanOptions: Map<String, Float>? = null,
     @SerializedName("AllHumanOptions")
+    @SerialName("AllHumanOptions")
     val allHumanOptions: Map<String, Float>? = null,
 )
 
 /**
  * AI 修图查询任务请求体(application/json)
  */
+@Serializable
 data class RetouchQueryRequest(
     @SerializedName("task_id")
+    @SerialName("task_id")
     val taskId: String,
 )
 
@@ -81,12 +88,16 @@ data class RetouchQueryRequest(
 @Serializable
 data class RetouchCreateResponse(
     @SerializedName("log_id")
+    @SerialName("log_id")
     val logId: Long? = null,
     @SerializedName("result")
+    @SerialName("result")
     val result: RetouchTaskResult? = null,
     @SerializedName("error_code")
+    @SerialName("error_code")
     val errorCode: Int? = null,
     @SerializedName("error_msg")
+    @SerialName("error_msg")
     val errorMsg: String? = null,
 ) : Parcelable
 
@@ -94,6 +105,7 @@ data class RetouchCreateResponse(
 @Serializable
 data class RetouchTaskResult(
     @SerializedName("task_id")
+    @SerialName("task_id")
     val taskId: String? = null,
 ) : Parcelable
 
@@ -109,12 +121,16 @@ data class RetouchTaskResult(
 @Serializable
 data class RetouchQueryResponse(
     @SerializedName("log_id")
+    @SerialName("log_id")
     val logId: Long? = null,
     @SerializedName("result")
+    @SerialName("result")
     val result: RetouchQueryResult? = null,
     @SerializedName("error_code")
+    @SerialName("error_code")
     val errorCode: Int? = null,
     @SerializedName("error_msg")
+    @SerialName("error_msg")
     val errorMsg: String? = null,
 ) : Parcelable
 
@@ -122,14 +138,19 @@ data class RetouchQueryResponse(
 @Serializable
 data class RetouchQueryResult(
     @SerializedName("task_id")
+    @SerialName("task_id")
     val taskId: String? = null,
     @SerializedName("status")
+    @SerialName("status")
     val status: String? = null,
     @SerializedName("task_status")
+    @SerialName("task_status")
     val taskStatus: Int? = null,
     @SerializedName("task_errcode")
+    @SerialName("task_errcode")
     val taskErrcode: Int? = null,
     /** 结果图下载链接(有效期 8 小时) */
     @SerializedName("dlink")
+    @SerialName("dlink")
     val dlink: String? = null,
 ) : Parcelable

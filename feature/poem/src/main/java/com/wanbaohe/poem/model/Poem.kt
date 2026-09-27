@@ -3,6 +3,8 @@ package com.wanbaohe.poem.model
 import com.google.gson.annotations.SerializedName
 import com.shifenmiao.database.poem.entity.PoemEntity
 import com.shifenmiao.model.ModelProvider
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /** 中国古诗词领域模型 */
 data class Poem(
@@ -86,17 +88,19 @@ fun Poem.isPinyinAligned(): Boolean {
 // ── 诗泉 API DTO ─────────────────────────────────
 
 /** 命名包装:{ "name": "..." } */
+@Serializable
 data class PoemNameDto(
-    @SerializedName("name") val name: String = "",
+    @SerializedName("name") @SerialName("name") val name: String = "",
 )
 
+@Serializable
 data class PoemDto(
-    @SerializedName("id") val id: Long = 0,
-    @SerializedName("title") val title: String = "",
-    @SerializedName("content") val content: List<String>? = null,
-    @SerializedName("author") val author: PoemNameDto? = null,
-    @SerializedName("dynasty") val dynasty: PoemNameDto? = null,
-    @SerializedName("type") val type: PoemNameDto? = null,
+    @SerializedName("id") @SerialName("id") val id: Long = 0,
+    @SerializedName("title") @SerialName("title") val title: String = "",
+    @SerializedName("content") @SerialName("content") val content: List<String>? = null,
+    @SerializedName("author") @SerialName("author") val author: PoemNameDto? = null,
+    @SerializedName("dynasty") @SerialName("dynasty") val dynasty: PoemNameDto? = null,
+    @SerializedName("type") @SerialName("type") val type: PoemNameDto? = null,
 ) {
     fun toDomain(): Poem = Poem(
         id = id,
@@ -109,16 +113,19 @@ data class PoemDto(
 }
 
 /** GET /api/poems/random 响应 */
+@Serializable
 data class SinglePoemResponse(
-    @SerializedName("data") val data: PoemDto? = null,
+    @SerializedName("data") @SerialName("data") val data: PoemDto? = null,
 )
 
 /** GET /api/search 响应(data 可能缺失或为空数组) */
+@Serializable
 data class PoemListResponse(
-    @SerializedName("data") val data: List<PoemDto>? = null,
+    @SerializedName("data") @SerialName("data") val data: List<PoemDto>? = null,
 )
 
 /** GET /api/dynasties、/api/types 响应 */
+@Serializable
 data class PoemNameListResponse(
-    @SerializedName("data") val data: List<PoemNameDto>? = null,
+    @SerializedName("data") @SerialName("data") val data: List<PoemNameDto>? = null,
 )

@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.decodeFromString
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -37,7 +38,8 @@ class PoemService @Inject constructor(
     private val poemRepository: PoemRepository,
     private val activityLogRecorder: ActivityLogRecorder,
 ) {
-    private val gson = ModelProvider.provideGson()
+    // 诗泉 API 响应解析已迁移 kotlinx.serialization(阶段①),与 Retrofit 侧共用全局 Json 实例
+    private val json = ModelProvider.AppJson
 
     /** 筛选项持久缓存(MMKV):加载过一次就不再请求 */
     private val filterMmkv: MMKV = MMKV.mmkvWithID(MMKVName.POEM_FILTER)
@@ -68,7 +70,7 @@ class PoemService @Inject constructor(
                     char?.takeIf { it.isNotBlank() }?.let { addQueryParameter("char", it) }
                 }
                 .build()
-            val poem = get(url.toString(), SinglePoemResponse::class.java).data?.toDomain()
+            val poem = get<SinglePoemResponse>(url.toString()).data?.toDomain()
                 ?: error("诗泉 API 返回为空")
             poemRepository.upsert(poem.toEntity())
             if (recordLog) {
@@ -111,7 +113,7 @@ class PoemService @Inject constructor(
                 .addPathSegments("api/search")
                 .addQueryParameter("q", keyword)
                 .build()
-            get(url.toString(), PoemListResponse::class.java)
+            get<PoemListResponse>(url.toString())
                 .data.orEmpty()
                 .map { it.toDomain() }
         }.onFailure { it.makeLog(TAG) }
@@ -155,7 +157,7 @@ class PoemService @Inject constructor(
 
     private fun fetchNameList(path: String): List<String> {
         val url = baseUrl.toHttpUrl().newBuilder().addPathSegments(path).build()
-        return get(url.toString(), PoemNameListResponse::class.java)
+        return get<PoemNameListResponse>(url.toString())
             .data.orEmpty()
             .map { it.name }
             .filter { it.isNotBlank() }
@@ -213,13 +215,13 @@ class PoemService @Inject constructor(
 
     // ── 内部 ─────────────────────────────────────
 
-    private fun <T> get(url: String, clazz: Class<T>): T {
+    private inline fun <reified T> get(url: String): T {
         val request = Request.Builder().url(url).get().build()
         okHttpClient.newCall(request).execute().use { response ->
             if (!response.isSuccessful) error("诗泉 API HTTP ${response.code}")
             val body = response.body?.string().orEmpty()
             if (body.isBlank()) error("诗泉 API 响应体为空")
-            return gson.fromJson(body, clazz) ?: error("诗泉 API 响应解析失败")
+            return json.decodeFromString<T>(body)
         }
     }
 

@@ -28,6 +28,7 @@ dependencies {
      */
     api(libs.com.squareup.retrofit2.retrofit)
     api(libs.com.squareup.retrofit2.converter.gson)
+    api(libs.com.squareup.retrofit2.converter.kotlinx.serialization)
     api(libs.okhttp3.logging.interceptor)
     api(libs.com.squareup.okhttp3.okhttp)
 
