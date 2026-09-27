@@ -53,6 +53,7 @@ ktor = "3.5.2"
 coil = "3.5.0"
 appCompat = "1.8.0"
 androidxCore = "1.19.0"
+camerax = "1.4.2"
 
 androidxLifecycle = "2.11.0"
 desugaring-version = "2.1.5"
@@ -258,6 +259,10 @@ kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collec
 coroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 appCompat = { module = "androidx.appcompat:appcompat", version.ref = "appCompat" }
 androidxCore = { module = "androidx.core:core-ktx", version.ref = "androidxCore" }
+camera-core = { module = "androidx.camera:camera-core", version.ref = "camerax" }
+camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
+camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax" }
+camera-view = { module = "androidx.camera:camera-view", version.ref = "camerax" }
 scrollbar = { module = "com.github.nanihadesuka:LazyColumnScrollbar", version.ref = "scrollbar" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 splashScreen = { module = "androidx.core:core-splashscreen", version.ref = "splashScreen" }

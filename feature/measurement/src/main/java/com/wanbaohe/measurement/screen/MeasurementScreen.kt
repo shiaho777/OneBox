@@ -1,5 +1,6 @@
 package com.wanbaohe.measurement.screen
 
+import android.Manifest
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -21,17 +22,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -41,6 +47,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.shifenmiao.common.ui.BaseScreen
+import com.shifenmiao.model.event.PermissionRequest
+import com.t8rin.imagetoolbox.core.ui.utils.helper.ContextUtils
 import com.t8rin.imagetoolbox.core.ui.widget.navigation.BottomNavItem
 import com.t8rin.imagetoolbox.core.ui.widget.navigation.BottomNavigationBar
 import com.wanbaohe.measurement.component.MeasurementComponent
@@ -48,19 +56,62 @@ import com.wanbaohe.measurement.component.MeasurementTab
 import com.wanbaohe.measurement.component.RulerUnit
 import kotlin.math.abs
 import com.shifenmiao.core.R as CoreR
+import com.t8rin.imagetoolbox.core.resources.icons.line.LineCameraAlt
+import com.t8rin.imagetoolbox.core.resources.icons.line.LineSquareFoot
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineStraighten
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineWaterDrop
 
 @Composable
 fun MeasurementScreen(component: MeasurementComponent) {
     val state by component.uiState.collectAsState()
+    val angleState = rememberAngleMeasureState()
+    val rulerMeasureState = rememberRulerMeasureState()
+    var isCameraEnabled by rememberSaveable { mutableStateOf(false) }
 
     BaseScreen(
         title = stringResource(CoreR.string.measurement_tools),
         onGoBack = component.onGoBack,
-        background = if (state.selectedTab == MeasurementTab.RULER) {
-            { FullScreenRulerBackground(ppi = state.ppi, unit = state.rulerUnit) }
-        } else null,
+        actions = {
+            if (state.selectedTab != MeasurementTab.LEVEL) {
+                CameraToggleAction(
+                    isEnabled = isCameraEnabled,
+                    onToggle = {
+                        if (isCameraEnabled) {
+                            isCameraEnabled = false
+                        } else {
+                            ContextUtils.requestPermissionAndExecute(
+                                permissions = arrayOf(Manifest.permission.CAMERA),
+                                permissionRequest = PermissionRequest.CAMERA,
+                                onGranted = { isCameraEnabled = true }
+                            )
+                        }
+                    }
+                )
+            }
+        },
+        background = when (state.selectedTab) {
+            MeasurementTab.RULER -> {
+                {
+                    MeasurementToolBackground(isCameraEnabled = isCameraEnabled) {
+                        FullScreenRulerBackground(
+                            ppi = state.ppi,
+                            unit = state.rulerUnit,
+                            measureState = rulerMeasureState
+                        )
+                    }
+                }
+            }
+
+            MeasurementTab.ANGLE -> {
+                {
+                    MeasurementToolBackground(isCameraEnabled = isCameraEnabled) {
+                        AngleMeasureBackground(state = angleState)
+                    }
+                }
+            }
+
+            MeasurementTab.LEVEL -> null
+        },
         showNavigationBarsPadding = false
     ) {
         AnimatedContent(
@@ -81,6 +132,10 @@ fun MeasurementScreen(component: MeasurementComponent) {
                     unit = state.rulerUnit,
                     onToggleUnit = component::toggleRulerUnit
                 )
+
+                MeasurementTab.ANGLE -> AngleMeasureContent(
+                    angleDegrees = angleState.angleDegrees
+                )
             }
         }
 
@@ -97,19 +152,58 @@ fun MeasurementScreen(component: MeasurementComponent) {
                     label = stringResource(CoreR.string.ruler),
                     icon = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineStraighten,
                     selectedIcon = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineStraighten
+                ),
+                BottomNavItem(
+                    id = "angle",
+                    label = stringResource(CoreR.string.angle_measure),
+                    icon = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineSquareFoot,
+                    selectedIcon = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineSquareFoot
                 )
             ),
             selectedItemId = when (state.selectedTab) {
                 MeasurementTab.LEVEL -> "level"
                 MeasurementTab.RULER -> "ruler"
+                MeasurementTab.ANGLE -> "angle"
             },
             onItemClick = { item ->
                 when (item.id) {
                     "level" -> component.selectTab(MeasurementTab.LEVEL)
                     "ruler" -> component.selectTab(MeasurementTab.RULER)
+                    "angle" -> component.selectTab(MeasurementTab.ANGLE)
                 }
             },
             modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+@Composable
+private fun MeasurementToolBackground(
+    isCameraEnabled: Boolean,
+    overlay: @Composable () -> Unit
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (isCameraEnabled) {
+            CameraPreviewBackground(modifier = Modifier.fillMaxSize())
+        }
+        overlay()
+    }
+}
+
+@Composable
+private fun CameraToggleAction(
+    isEnabled: Boolean,
+    onToggle: () -> Unit
+) {
+    IconButton(onClick = onToggle) {
+        Icon(
+            imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineCameraAlt,
+            contentDescription = stringResource(CoreR.string.camera_background),
+            tint = if (isEnabled) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            }
         )
     }
 }
@@ -416,13 +510,19 @@ private fun RulerContent(
 @Composable
 private fun FullScreenRulerBackground(
     ppi: Float,
-    unit: RulerUnit
+    unit: RulerUnit,
+    measureState: RulerMeasureState
 ) {
     val textMeasurer = rememberTextMeasurer()
     val textColor = MaterialTheme.colorScheme.onSurfaceVariant
     val tickColor = MaterialTheme.colorScheme.outline
     val outlineVariant = MaterialTheme.colorScheme.outlineVariant
     val rulerBackground = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+    val measureLineColor = MaterialTheme.colorScheme.primary
+    val measureChipTextColor = MaterialTheme.colorScheme.onPrimary
+
+    val density = LocalDensity.current
+    val measureTouchRadiusPx = with(density) { 36.dp.toPx() }
 
     val pixelsPerUnit = when (unit) {
         RulerUnit.CM -> ppi / 2.54f
@@ -433,7 +533,13 @@ private fun FullScreenRulerBackground(
         RulerUnit.INCH -> pixelsPerUnit / 16f
     }
 
-    Canvas(modifier = Modifier.fillMaxSize()) {
+    Canvas(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(measureTouchRadiusPx) {
+                detectRulerMeasureDrags(measureState, measureTouchRadiusPx)
+            }
+    ) {
         val isPortrait = size.height > size.width
         val rulerBreadth = 200f
 
@@ -661,5 +767,17 @@ private fun FullScreenRulerBackground(
                 )
             }
         }
+
+        drawRulerMeasureLines(
+            state = measureState,
+            unit = unit,
+            pixelsPerUnit = pixelsPerUnit,
+            isPortrait = isPortrait,
+            rulerBreadth = rulerBreadth,
+            textMeasurer = textMeasurer,
+            lineColor = measureLineColor,
+            chipColor = measureLineColor,
+            chipTextColor = measureChipTextColor
+        )
     }
 }

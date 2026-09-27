@@ -1642,7 +1642,7 @@
     <string name="drag_to_reorder">拖曳排序</string>
     <string name="ai_stream_answer_title">串流問答</string>
     <string name="measurement_tools">測量工具</string>
-    <string name="measurement_tools_description">水平儀與螢幕直尺，應急測量好幫手</string>
+    <string name="measurement_tools_description">水平儀、螢幕直尺與量角器，應急測量好幫手</string>
     <string name="level">水平儀</string>
     <string name="ruler">螢幕直尺</string>
     <string name="level_pitch">前後傾斜</string>
@@ -1651,6 +1651,9 @@
     <string name="level_lock">鎖定讀數</string>
     <string name="level_unlock">解鎖讀數</string>
     <string name="level_unavailable">此裝置不支援加速度計，無法使用水平儀</string>
+    <string name="angle_measure">量角器</string>
+    <string name="camera_background">相機背景</string>
+    <string name="angle_measure_hint">拖動兩個圓點，測量它們與中心構成的夾角</string>
     <string name="ai_chat_cancel_confirm_title">AI 正在回覆中</string>
     <string name="ai_chat_cancel_confirm_message">中斷後已生成的內容會儲存到聊天記錄中，你可以隨時在歷史訊息中查看。</string>
     <string name="ai_chat_cancel_confirm_stop">停止回覆</string>

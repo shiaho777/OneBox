@@ -1626,8 +1626,11 @@
     <string name="level_lock">읽기 잠금</string>
     <string name="level_unlock">읽기 잠금 해제</string>
     <string name="level_unavailable">이 기기는 가속도계를 지원하지 않아 수평계 도구를 사용할 수 없습니다.</string>
+    <string name="angle_measure">각도기</string>
+    <string name="camera_background">카메라 배경</string>
+    <string name="angle_measure_hint">두 점을 드래그하여 사이 각도를 측정하세요</string>
     <string name="measurement_tools">측정 도구</string>
-    <string name="measurement_tools_description">수평계 및 화면 눈금자 — 빠른 측정에 유용합니다.</string>
+    <string name="measurement_tools_description">수평계, 화면 눈금자, 각도기 — 빠른 측정에 유용합니다.</string>
     <string name="ruler">화면 눈금자</string>
     <string name="playground">플레이그라운드</string>
     <string name="playground_description">아이디어 및 기사</string>

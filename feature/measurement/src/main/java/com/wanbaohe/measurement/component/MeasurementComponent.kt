@@ -32,7 +32,7 @@ data class MeasurementUiState(
 )
 
 enum class MeasurementTab {
-    LEVEL, RULER
+    LEVEL, RULER, ANGLE
 }
 
 enum class RulerUnit {

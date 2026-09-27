@@ -1789,7 +1789,7 @@
 
     <!-- Measurement tools -->
     <string name="measurement_tools">测量工具</string>
-    <string name="measurement_tools_description">水平仪与屏幕直尺，应急测量好帮手</string>
+    <string name="measurement_tools_description">水平仪、屏幕直尺与量角器，应急测量好帮手</string>
     <string name="level">水平仪</string>
     <string name="ruler">屏幕直尺</string>
     <string name="level_pitch">前后倾斜</string>
@@ -1798,6 +1798,9 @@
     <string name="level_lock">锁定读数</string>
     <string name="level_unlock">解锁读数</string>
     <string name="level_unavailable">该设备不支持加速度计，无法使用水平仪</string>
+    <string name="angle_measure">量角器</string>
+    <string name="camera_background">相机背景</string>
+    <string name="angle_measure_hint">拖动两个圆点，测量它们与中心构成的夹角</string>
 
     <!-- AI Chat Cancel Confirmation -->
     <string name="ai_chat_cancel_confirm_title">AI 正在回复中</string>

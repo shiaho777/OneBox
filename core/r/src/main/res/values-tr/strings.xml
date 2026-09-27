@@ -1626,8 +1626,11 @@
     <string name="level_lock">Okumayı kilitle</string>
     <string name="level_unlock">Okumayı kilidi aç</string>
     <string name="level_unavailable">Bu cihaz ivmeölçer desteklemiyor, bu nedenle su terazisi aracı kullanılamıyor.</string>
+    <string name="angle_measure">Açıölçer</string>
+    <string name="camera_background">Kamera arka planı</string>
+    <string name="angle_measure_hint">Aralarındaki açıyı ölçmek için iki noktayı sürükleyin</string>
     <string name="measurement_tools">Ölçüm araçları</string>
-    <string name="measurement_tools_description">Su terazisi ve ekran cetveli — hızlı ölçümler için kullanışlı.</string>
+    <string name="measurement_tools_description">Su terazisi, ekran cetveli ve açıölçer — hızlı ölçümler için kullanışlı.</string>
     <string name="ruler">Ekran cetveli</string>
     <string name="playground">Oyun alanı</string>
     <string name="playground_description">Fikirler ve makaleler</string>

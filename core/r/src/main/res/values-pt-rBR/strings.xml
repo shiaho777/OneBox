@@ -1626,8 +1626,11 @@
     <string name="level_lock">Bloquear leitura</string>
     <string name="level_unlock">Desbloquear leitura</string>
     <string name="level_unavailable">Este dispositivo não suporta acelerômetro, então a ferramenta de nível não está disponível.</string>
+    <string name="angle_measure">Transferidor</string>
+    <string name="camera_background">Fundo da câmera</string>
+    <string name="angle_measure_hint">Arraste os dois pontos para medir o ângulo entre eles</string>
     <string name="measurement_tools">Ferramentas de medição</string>
-    <string name="measurement_tools_description">Nível de bolha e régua na tela — práticos para medições rápidas.</string>
+    <string name="measurement_tools_description">Nível de bolha, régua na tela e transferidor — práticos para medições rápidas.</string>
     <string name="ruler">Régua na tela</string>
     <string name="playground">Playground</string>
     <string name="playground_description">Ideias e artigos</string>

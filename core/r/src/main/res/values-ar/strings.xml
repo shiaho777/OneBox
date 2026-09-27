@@ -1735,8 +1735,11 @@
     <string name="level_lock">تثبيت القراءة</string>
     <string name="level_unlock">إلغاء تثبيت القراءة</string>
     <string name="level_unavailable">لا يدعم هذا الجهاز مقياس التسارع، لذا أداة ميزان الاستواء غير متاحة.</string>
+    <string name="angle_measure">المنقلة</string>
+    <string name="camera_background">خلفية الكاميرا</string>
+    <string name="angle_measure_hint">اسحب النقطتين لقياس الزاوية بينهما</string>
     <string name="measurement_tools">أدوات القياس</string>
-    <string name="measurement_tools_description">ميزان الاستواء والمسطرة على الشاشة — مفيدة للقياسات السريعة.</string>
+    <string name="measurement_tools_description">ميزان الاستواء والمسطرة على الشاشة والمنقلة — مفيدة للقياسات السريعة.</string>
     <string name="ruler">المسطرة على الشاشة</string>
     <string name="playground">ساحة الإبداع</string>
     <string name="playground_description">أفكار ومقالات</string>

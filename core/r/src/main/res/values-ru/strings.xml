@@ -1626,8 +1626,11 @@
     <string name="level_lock">Заблокировать чтение</string>
     <string name="level_unlock">Разблокировать чтение</string>
     <string name="level_unavailable">Это устройство не поддерживает акселерометр, поэтому инструмент уровня недоступен.</string>
+    <string name="angle_measure">Транспортир</string>
+    <string name="camera_background">Фон камеры</string>
+    <string name="angle_measure_hint">Перетащите две точки, чтобы измерить угол между ними</string>
     <string name="measurement_tools">Инструменты измерения</string>
-    <string name="measurement_tools_description">Уровень и экранная линейка — удобно для быстрых измерений.</string>
+    <string name="measurement_tools_description">Уровень, экранная линейка и транспортир — удобно для быстрых измерений.</string>
     <string name="ruler">Экранная линейка</string>
     <string name="playground">Песочница</string>
     <string name="playground_description">Идеи и статьи</string>

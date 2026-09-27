@@ -1885,10 +1885,13 @@ Hint: If you choose "Hide Forever", you can bring me back later in Settings > Di
     <string name="level_lock">Lock reading</string>
     <string name="level_unlock">Unlock reading</string>
     <string name="level_unavailable">This device does not support an accelerometer, so the level tool is unavailable.</string>
+    <string name="angle_measure">Protractor</string>
+    <string name="camera_background">Camera background</string>
+    <string name="angle_measure_hint">Drag the two dots to measure the angle between them</string>
 
     <!-- Measurement tools -->
     <string name="measurement_tools">Measurement tools</string>
-    <string name="measurement_tools_description">Bubble level and on-screen ruler — handy for quick measurements.</string>
+    <string name="measurement_tools_description">Bubble level, on-screen ruler and protractor — handy for quick measurements.</string>
     <string name="ruler">On-screen ruler</string>
 
     <!-- Playground -->

@@ -1626,8 +1626,11 @@
     <string name="level_lock">読み取りをロック</string>
     <string name="level_unlock">読み取りのロックを解除</string>
     <string name="level_unavailable">このデバイスは加速度計に対応していないため、レベルツールは利用できません。</string>
+    <string name="angle_measure">分度器</string>
+    <string name="camera_background">カメラ背景</string>
+    <string name="angle_measure_hint">2つの点をドラッグして、間の角度を測定します</string>
     <string name="measurement_tools">測定ツール</string>
-    <string name="measurement_tools_description">水準器と画面定規——すばやく手軽に測定できます。</string>
+    <string name="measurement_tools_description">水準器・画面定規・分度器——すばやく手軽に測定できます。</string>
     <string name="ruler">画面定規</string>
     <string name="playground">游乐场</string>
     <string name="playground_description">创意与文章</string>

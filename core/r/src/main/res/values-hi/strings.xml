@@ -1626,8 +1626,11 @@
     <string name="level_lock">रीडिंग लॉक करें</string>
     <string name="level_unlock">रीडिंग अनलॉक करें</string>
     <string name="level_unavailable">इस डिवाइस में एक्सेलेरोमीटर समर्थित नहीं है, इसलिए लेवल टूल उपलब्ध नहीं है।</string>
+    <string name="angle_measure">कोणमापी</string>
+    <string name="camera_background">कैमरा बैकग्राउंड</string>
+    <string name="angle_measure_hint">दोनों बिंदुओं को खींचकर उनके बीच का कोण मापें</string>
     <string name="measurement_tools">माप उपकरण</string>
-    <string name="measurement_tools_description">बबल लेवल और ऑन-स्क्रीन रूलर — त्वरित माप के लिए उपयोगी।</string>
+    <string name="measurement_tools_description">बबल लेवल, ऑन-स्क्रीन रूलर और कोणमापी — त्वरित माप के लिए उपयोगी।</string>
     <string name="ruler">ऑन-स्क्रीन रूलर</string>
     <string name="playground">प्लेग्राउंड</string>
     <string name="playground_description">विचार और लेख</string>

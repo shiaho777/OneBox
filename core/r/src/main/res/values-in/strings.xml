@@ -1626,8 +1626,11 @@
     <string name="level_lock">Kunci pembacaan</string>
     <string name="level_unlock">Buka kunci pembacaan</string>
     <string name="level_unavailable">Perangkat ini tidak mendukung akselerometer, sehingga alat level tidak tersedia.</string>
+    <string name="angle_measure">Busur derajat</string>
+    <string name="camera_background">Latar kamera</string>
+    <string name="angle_measure_hint">Seret kedua titik untuk mengukur sudut di antaranya</string>
     <string name="measurement_tools">Alat pengukuran</string>
-    <string name="measurement_tools_description">Gelembung level dan penggaris di layar — praktis untuk pengukuran cepat.</string>
+    <string name="measurement_tools_description">Gelembung level, penggaris di layar, dan busur derajat — praktis untuk pengukuran cepat.</string>
     <string name="ruler">Penggaris di layar</string>
     <string name="playground">Taman bermain</string>
     <string name="playground_description">Ide dan artikel</string>

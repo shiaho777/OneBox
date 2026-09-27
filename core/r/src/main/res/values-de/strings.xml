@@ -1626,8 +1626,11 @@
     <string name="level_lock">Lesen sperren</string>
     <string name="level_unlock">Lesen entsperren</string>
     <string name="level_unavailable">Dieses Gerät unterstützt keinen Beschleunigungsmesser, daher ist das Level-Werkzeug nicht verfügbar.</string>
+    <string name="angle_measure">Winkelmesser</string>
+    <string name="camera_background">Kamerahintergrund</string>
+    <string name="angle_measure_hint">Ziehe die beiden Punkte, um den Winkel dazwischen zu messen</string>
     <string name="measurement_tools">Messwerkzeuge</string>
-    <string name="measurement_tools_description">Wasserwaage und Bildschirmlineal – praktisch für schnelle Messungen.</string>
+    <string name="measurement_tools_description">Wasserwaage, Bildschirmlineal und Winkelmesser – praktisch für schnelle Messungen.</string>
     <string name="ruler">Bildschirmlineal</string>
     <string name="playground">Spielplatz</string>
     <string name="playground_description">Ideen und Artikel</string>

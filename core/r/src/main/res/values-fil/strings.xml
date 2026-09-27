@@ -1626,8 +1626,11 @@
     <string name="level_lock">I-lock ang pagbasa</string>
     <string name="level_unlock">I-unlock ang pagbasa</string>
     <string name="level_unavailable">Hindi sinusuportahan ng device na ito ang accelerometer, kaya hindi available ang level tool.</string>
+    <string name="angle_measure">Anggulo</string>
+    <string name="camera_background">Background ng camera</string>
+    <string name="angle_measure_hint">I-drag ang dalawang tuldok para sukatin ang anggulo sa pagitan nila</string>
     <string name="measurement_tools">Mga tool sa pagsukat</string>
-    <string name="measurement_tools_description">Antas ng bula at ruler sa screen — madaling gamitin para sa mabilis na pagsukat.</string>
+    <string name="measurement_tools_description">Antas ng bula, ruler sa screen at panukat ng anggulo — madaling gamitin para sa mabilis na pagsukat.</string>
     <string name="ruler">Ruler sa screen</string>
     <string name="playground">Palaruan</string>
     <string name="playground_description">Mga ideya at artikulo</string>

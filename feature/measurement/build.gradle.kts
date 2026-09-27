@@ -10,6 +10,10 @@ android.namespace = "com.wanbaohe.measurement"
 dependencies {
     implementation(libs.androidxCore)
     implementation(libs.appCompat)
+    implementation(libs.camera.core)
+    implementation(libs.camera.camera2)
+    implementation(libs.camera.lifecycle)
+    implementation(libs.camera.view)
 
     api(projects.core.base)
     api(projects.core.model)

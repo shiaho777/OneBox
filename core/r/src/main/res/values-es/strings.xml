@@ -1626,8 +1626,11 @@
     <string name="level_lock">Bloquear lectura</string>
     <string name="level_unlock">Desbloquear lectura</string>
     <string name="level_unavailable">Este dispositivo no admite acelerómetro, por lo que la herramienta de nivel no está disponible.</string>
+    <string name="angle_measure">Transportador</string>
+    <string name="camera_background">Fondo de cámara</string>
+    <string name="angle_measure_hint">Arrastra los dos puntos para medir el ángulo entre ellos</string>
     <string name="measurement_tools">Herramientas de medición</string>
-    <string name="measurement_tools_description">Nivel de burbuja y regla en pantalla: prácticos para mediciones rápidas.</string>
+    <string name="measurement_tools_description">Nivel de burbuja, regla en pantalla y transportador: prácticos para mediciones rápidas.</string>
     <string name="ruler">Regla en pantalla</string>
     <string name="playground">Área de juegos</string>
     <string name="playground_description">Ideas y artículos</string>
