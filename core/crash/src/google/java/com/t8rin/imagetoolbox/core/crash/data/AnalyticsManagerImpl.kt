@@ -29,10 +29,16 @@ import com.t8rin.imagetoolbox.core.ui.utils.helper.DeviceInfo.Companion.get
 
 internal object AnalyticsManagerImpl : AnalyticsManager {
 
-    override var allowCollectCrashlytics: Boolean = false
+    /**
+     * 初值与 [com.t8rin.imagetoolbox.core.settings.domain.model.SettingsState.Default] 保持一致。
+     *
+     * 以前这里是 false, 意味着"设置还没读出来"这段窗口里的崩溃会被直接丢掉 ——
+     * 而启动期崩溃恰恰是最该看到的一类。设置读出后 [updateAllowCollectCrashlytics]
+     * 会立刻用用户的真实选择覆盖它。
+     */
+    override var allowCollectCrashlytics: Boolean = true
 
     override var allowCollectAnalytics: Boolean = false
-
 
     override fun updateAnalyticsCollectionEnabled(value: Boolean) {
         allowCollectAnalytics = value
