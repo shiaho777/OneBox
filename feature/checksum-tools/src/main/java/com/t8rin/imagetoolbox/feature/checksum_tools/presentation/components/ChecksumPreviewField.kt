@@ -18,12 +18,12 @@
 package com.t8rin.imagetoolbox.feature.checksum_tools.presentation.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -31,9 +31,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.t8rin.imagetoolbox.core.resources.R
 import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedIconButton
-import com.t8rin.imagetoolbox.core.ui.widget.glass.glassTextField
-import com.t8rin.imagetoolbox.core.ui.widget.text.RoundedTextField
-import com.t8rin.imagetoolbox.core.ui.widget.text.RoundedTextFieldColors
+import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassOutlinedTextField
 import com.t8rin.imagetoolbox.core.resources.icons.ContentCopy
 
 @Composable
@@ -42,13 +40,10 @@ internal fun ChecksumPreviewField(
     onCopyText: (String) -> Unit,
     label: String = stringResource(R.string.source_checksum)
 ) {
-    RoundedTextField(
+    GlassOutlinedTextField(
         modifier = Modifier
-            .glassTextField(
-                shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colorScheme.tertiaryContainer
-            )
-            .padding(8.dp),
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text
         ),
@@ -56,7 +51,7 @@ internal fun ChecksumPreviewField(
         singleLine = false,
         readOnly = true,
         value = value,
-        endIcon = {
+        trailingIcon = {
             AnimatedVisibility(value.isNotBlank()) {
                 EnhancedIconButton(
                     onClick = {
@@ -73,14 +68,6 @@ internal fun ChecksumPreviewField(
                 }
             }
         },
-        colors = RoundedTextFieldColors(
-            isError = false,
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(0.3f),
-            focusedIndicatorColor = MaterialTheme.colorScheme.tertiary,
-            unfocusedIndicatorColor = MaterialTheme.colorScheme.onTertiaryContainer.copy(
-                0.5f
-            )
-        ),
-        label = label
+        label = { Text(label) }
     )
 }

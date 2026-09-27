@@ -27,14 +27,19 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,7 +47,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.t8rin.imagetoolbox.core.resources.R
@@ -52,13 +56,12 @@ import com.t8rin.imagetoolbox.core.ui.utils.content_pickers.rememberFolderPicker
 import com.t8rin.imagetoolbox.core.ui.utils.helper.Clipboard
 import com.t8rin.imagetoolbox.core.ui.widget.buttons.PagerScrollPanel
 import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedLoadingIndicator
-import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassSurface
+import com.t8rin.imagetoolbox.core.ui.widget.enhanced.hapticsClickable
 import com.t8rin.imagetoolbox.core.ui.widget.modifier.ShapeDefaults
+import com.t8rin.imagetoolbox.core.ui.widget.modifier.container
 import com.t8rin.imagetoolbox.core.ui.widget.modifier.fadingEdges
 import com.t8rin.imagetoolbox.core.ui.widget.modifier.negativePadding
 import com.t8rin.imagetoolbox.core.ui.widget.other.InfoContainer
-import com.t8rin.imagetoolbox.core.ui.widget.preferences.PreferenceItemDefaults
-import com.t8rin.imagetoolbox.core.ui.widget.preferences.PreferenceRow
 import com.t8rin.imagetoolbox.feature.checksum_tools.presentation.components.ChecksumEnterField
 import com.t8rin.imagetoolbox.feature.checksum_tools.presentation.components.ChecksumResultCard
 import com.t8rin.imagetoolbox.feature.checksum_tools.presentation.components.UriWithHashItem
@@ -97,46 +100,56 @@ internal fun ColumnScope.CompareWithUrisPage(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.height(IntrinsicSize.Max)
     ) {
-        GlassSurface(
-            onClick = filePicker::pickFile,
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .weight(1f)
-                .fillMaxHeight(),
-            shape = ShapeDefaults.start,
-            color = MaterialTheme.colorScheme.secondaryContainer
+                .fillMaxHeight()
+                .container(
+                    shape = ShapeDefaults.start,
+                    resultPadding = 0.dp
+                )
+                .hapticsClickable(onClick = filePicker::pickFile)
+                .padding(vertical = 16.dp)
         ) {
-            PreferenceRow(
-                title = stringResource(R.string.pick_files),
-                onClick = {},
-                shape = ShapeDefaults.start,
-                titleFontStyle = PreferenceItemDefaults.TitleFontStyleCenteredSmall,
-                startIcon = com.t8rin.imagetoolbox.core.resources.Icons.Rounded.ContentCopy,
-                drawStartIconContainer = false,
-                modifier = Modifier.fillMaxHeight(),
-                color = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            Icon(
+                imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Rounded.ContentCopy,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.pick_files),
+                style = MaterialTheme.typography.titleSmall
             )
         }
-        GlassSurface(
-            onClick = {
-                openDirectoryLauncher.pickFolder(previousFolder)
-            },
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .weight(1f)
-                .fillMaxHeight(),
-            shape = ShapeDefaults.end,
-            color = MaterialTheme.colorScheme.secondaryContainer
+                .fillMaxHeight()
+                .container(
+                    shape = ShapeDefaults.end,
+                    resultPadding = 0.dp
+                )
+                .hapticsClickable(
+                    onClick = {
+                        openDirectoryLauncher.pickFolder(previousFolder)
+                    }
+                )
+                .padding(vertical = 16.dp)
         ) {
-            PreferenceRow(
-                title = stringResource(R.string.pick_directory),
-                onClick = {},
-                shape = ShapeDefaults.end,
-                titleFontStyle = PreferenceItemDefaults.TitleFontStyleCenteredSmall,
-                startIcon = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.FolderOpened,
-                drawStartIconContainer = false,
-                modifier = Modifier.fillMaxHeight(),
-                color = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            Icon(
+                imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.FolderOpened,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.pick_directory),
+                style = MaterialTheme.typography.titleSmall
             )
         }
     }
@@ -162,9 +175,9 @@ internal fun ColumnScope.CompareWithUrisPage(
                 pageSpacing = 16.dp,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .negativePadding(horizontal = 20.dp)
+                    .negativePadding(horizontal = 16.dp)
                     .fadingEdges(nestedPagerState),
-                contentPadding = PaddingValues(horizontal = 20.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp),
                 beyondViewportPageCount = 10
             ) { nestedPage ->
                 UriWithHashItem(

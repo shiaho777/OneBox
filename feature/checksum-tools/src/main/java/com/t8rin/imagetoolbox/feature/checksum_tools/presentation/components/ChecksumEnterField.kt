@@ -18,11 +18,12 @@
 package com.t8rin.imagetoolbox.feature.checksum_tools.presentation.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -30,8 +31,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.t8rin.imagetoolbox.core.resources.R
 import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedIconButton
-import com.t8rin.imagetoolbox.core.ui.widget.glass.glassTextField
-import com.t8rin.imagetoolbox.core.ui.widget.text.RoundedTextField
+import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassOutlinedTextField
 import com.t8rin.imagetoolbox.core.resources.icons.Close
 
 @Composable
@@ -40,17 +40,15 @@ internal fun ChecksumEnterField(
     onValueChange: (String) -> Unit,
     label: String = stringResource(R.string.checksum_to_compare)
 ) {
-    RoundedTextField(
+    GlassOutlinedTextField(
         modifier = Modifier
-            .glassTextField(
-                shape = MaterialTheme.shapes.large
-            )
-            .padding(8.dp),
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text
         ),
         onValueChange = onValueChange,
-        endIcon = {
+        trailingIcon = {
             AnimatedVisibility(value.isNotBlank()) {
                 EnhancedIconButton(
                     onClick = {
@@ -67,6 +65,6 @@ internal fun ChecksumEnterField(
         },
         singleLine = false,
         value = value,
-        label = label
+        label = { Text(label) }
     )
 }

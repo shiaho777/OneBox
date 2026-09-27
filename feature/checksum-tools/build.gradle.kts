@@ -23,3 +23,7 @@ plugins {
 }
 
 android.namespace = "com.t8rin.imagetoolbox.feature.checksum_tools"
+
+dependencies {
+    api(projects.feature.common)
+}
