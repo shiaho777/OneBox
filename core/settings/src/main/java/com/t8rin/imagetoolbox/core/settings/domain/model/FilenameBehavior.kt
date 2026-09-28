@@ -18,14 +18,25 @@
 package com.t8rin.imagetoolbox.core.settings.domain.model
 
 import com.t8rin.imagetoolbox.core.domain.model.HashingType
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 sealed interface FilenameBehavior {
+    @SerialName("None")
+    @Serializable
     class None : FilenameBehavior
 
+    @SerialName("Overwrite")
+    @Serializable
     class Overwrite : FilenameBehavior
 
+    @SerialName("Random")
+    @Serializable
     class Random : FilenameBehavior
 
+    @SerialName("Checksum")
+    @Serializable
     data class Checksum(
         val hashingType: HashingType
     ) : FilenameBehavior

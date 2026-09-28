@@ -17,6 +17,10 @@
 
 package com.t8rin.imagetoolbox.core.settings.domain.model
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
 sealed interface ShapeType {
     val ordinal: Int get() = entries.indexOf(this)
 
@@ -29,18 +33,26 @@ sealed interface ShapeType {
         is Smooth -> Smooth(strength = strength)
     }
 
+    @SerialName("Rounded")
+    @Serializable
     class Rounded(
         override val strength: Float = 1f
     ) : ShapeType
 
+    @SerialName("Cut")
+    @Serializable
     class Cut(
         override val strength: Float = 1f
     ) : ShapeType
 
+    @SerialName("Squircle")
+    @Serializable
     class Squircle(
         override val strength: Float = 1f
     ) : ShapeType
 
+    @SerialName("Smooth")
+    @Serializable
     class Smooth(
         override val strength: Float = 1f
     ) : ShapeType

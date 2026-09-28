@@ -49,8 +49,7 @@ dependencies {
     implementation(libs.aire)
     implementation(libs.jpegli.coder)
 
-    implementation(libs.moshi)
-    implementation(libs.moshi.adapters)
+    implementation(libs.kotlinx.serialization.json)
 
     api(libs.androidx.documentfile)
 
@@ -68,6 +67,7 @@ dependencies {
     implementation(libs.trickle)
 
     implementation(projects.core.domain)
+    implementation(projects.core.model)
     implementation(projects.core.resources)
     implementation(projects.core.r)
 

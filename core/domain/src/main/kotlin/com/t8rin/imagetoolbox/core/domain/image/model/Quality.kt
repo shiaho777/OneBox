@@ -18,7 +18,15 @@
 package com.t8rin.imagetoolbox.core.domain.image.model
 
 import androidx.annotation.IntRange
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+/**
+ * 持久化于 DataStore(DEFAULT_QUALITY),JSON 判别字段为 "Quality"、
+ * 子类判别值 PngLossy/Tiff/Base —— 与 Moshi 时代 PolymorphicJsonAdapterFactory 一致,
+ * kotlinx 侧经 classDiscriminator="Quality"(core/data KotlinxJsonParser)+ @SerialName 对齐。
+ */
+@Serializable
 sealed interface Quality {
     val qualityValue: Int
 
@@ -60,6 +68,8 @@ sealed interface Quality {
         is Tiff -> this == Tiff()
     }
 
+    @SerialName("PngLossy")
+    @Serializable
     data class PngLossy(
         @IntRange(from = 2, to = 1024)
         val maxColors: Int = 512,
@@ -69,12 +79,16 @@ sealed interface Quality {
         override val qualityValue: Int = compressionLevel
     }
 
+    @SerialName("Tiff")
+    @Serializable
     data class Tiff(
         val compressionScheme: Int = 5
     ) : Quality {
         override val qualityValue: Int = compressionScheme
     }
 
+    @SerialName("Base")
+    @Serializable
     data class Base(
         override val qualityValue: Int = 100
     ) : Quality

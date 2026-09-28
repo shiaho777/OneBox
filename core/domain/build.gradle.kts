@@ -24,5 +24,6 @@ android.namespace = "com.t8rin.imagetoolbox.core.domain"
 
 dependencies {
     implementation(libs.coil)
+    implementation(libs.kotlinx.serialization.json)
     implementation(projects.core.resources)
 }

@@ -17,28 +17,42 @@
 
 package com.t8rin.imagetoolbox.core.data.json
 
-import com.squareup.moshi.Moshi
+import com.shifenmiao.model.ModelProvider
 import com.t8rin.imagetoolbox.core.domain.json.JsonParser
 import com.t8rin.logger.makeLog
 import java.lang.reflect.Type
 import javax.inject.Inject
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
 
-internal class MoshiParser @Inject constructor(
-    private val moshi: Moshi
-) : JsonParser {
+/**
+ * [JsonParser] 的 kotlinx.serialization 实现(Moshi 收编,阶段④)。
+ *
+ * 多态判别:Moshi 的 PolymorphicJsonAdapterFactory 用 label key "Quality",
+ * 这里 classDiscriminator 取同值,Quality 子类的 @SerialName 与 Moshi label
+ * (PngLossy/Tiff/Base)一致,DataStore 里 Moshi 时代的旧数据可直接读。
+ */
+internal class KotlinxJsonParser @Inject constructor() : JsonParser {
 
+    private val json = Json(ModelProvider.AppJson) {
+        classDiscriminator = "Quality"
+    }
+
+    @Suppress("UNCHECKED_CAST")
     override fun <T> toJson(
         obj: T,
         type: Type,
     ): String? = runCatching {
-        moshi.adapter<T>(type).toJson(obj)
-    }.onFailure { it.makeLog("MoshiParser toJson") }.getOrNull()
+        json.encodeToString(serializer(type) as KSerializer<T>, obj)
+    }.onFailure { it.makeLog("KotlinxJsonParser toJson") }.getOrNull()
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T> fromJson(
         json: String,
         type: Type,
     ): T? = runCatching {
-        moshi.adapter<T>(type).fromJson(json)
-    }.onFailure { it.makeLog("MoshiParser fromJson") }.getOrNull()
+        this.json.decodeFromString(serializer(type) as KSerializer<T>, json)
+    }.onFailure { it.makeLog("KotlinxJsonParser fromJson") }.getOrNull()
 
 }

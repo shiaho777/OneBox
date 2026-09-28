@@ -17,9 +17,17 @@
 
 package com.t8rin.imagetoolbox.core.domain.model
 
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+
 import com.t8rin.imagetoolbox.core.domain.model.HashingType.Companion.registerSecurityMessageDigests
 
 
+@Serializable(HashingTypeKSerializer::class)
 @ConsistentCopyVisibility
 /**
  * [HashingType] multiplatform domain wrapper for java MessageDigest, in order to add custom digests, you need to call [registerSecurityMessageDigests] when process created
@@ -78,5 +86,33 @@ data class HashingType private constructor(
                 it.digest == digest
             }
         }
+    }
+}
+/**
+ * [HashingType] 的 kotlinx 序列化器(Gson/Moshi → kotlinx 收编):
+ * 写出与 Moshi KotlinJsonAdapterFactory 相同的对象形状 {"digest","name"};
+ * 读取经 [HashingType.entries] 注册表匹配,未知值抛异常由上层按默认值兜底
+ * (与 Moshi 时代私有构造导致解析失败 → 默认值的最终行为一致)。
+ */
+object HashingTypeKSerializer : KSerializer<HashingType> {
+
+    @Serializable
+    private data class Surrogate(
+        val digest: String,
+        val name: String = digest
+    )
+
+    override val descriptor: SerialDescriptor = Surrogate.serializer().descriptor
+
+    override fun serialize(encoder: Encoder, value: HashingType) {
+        encoder.encodeSerializableValue(Surrogate.serializer(), Surrogate(value.digest, value.name))
+    }
+
+    override fun deserialize(decoder: Decoder): HashingType {
+        val surrogate = decoder.decodeSerializableValue(Surrogate.serializer())
+        return HashingType.entries.firstOrNull {
+            it.digest.equals(surrogate.digest, ignoreCase = true) ||
+                it.name.equals(surrogate.name, ignoreCase = true)
+        } ?: throw SerializationException("Unknown HashingType: ${surrogate.digest}")
     }
 }
