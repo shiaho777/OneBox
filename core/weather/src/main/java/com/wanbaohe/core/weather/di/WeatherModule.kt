@@ -7,7 +7,6 @@ import com.wanbaohe.core.weather.data.repository.WeatherRepositoryImpl
 import com.wanbaohe.core.weather.data.source.QWeatherDataSource
 import com.wanbaohe.core.weather.domain.repository.LocationProvider
 import com.wanbaohe.core.weather.domain.repository.WeatherRepository
-import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,18 +29,16 @@ object WeatherModule {
     @Singleton
     fun provideLocationCityCache(
         @ApplicationContext context: Context,
-        gson: Gson
     ): LocationCityCache {
-        return LocationCityCache(context, gson)
+        return LocationCityCache(context)
     }
 
     @Provides
     @Singleton
     fun provideWeatherDataCache(
         @ApplicationContext context: Context,
-        gson: Gson
     ): WeatherDataCache {
-        return WeatherDataCache(context, gson)
+        return WeatherDataCache(context)
     }
 
     @Provides

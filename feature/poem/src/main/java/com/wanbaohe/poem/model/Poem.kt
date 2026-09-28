@@ -2,7 +2,9 @@ package com.wanbaohe.poem.model
 
 import com.google.gson.annotations.SerializedName
 import com.shifenmiao.database.poem.entity.PoemEntity
-import com.shifenmiao.model.ModelProvider
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -31,12 +33,10 @@ data class Poem(
             .joinToString("·")
 }
 
-private val gson = ModelProvider.provideGson()
-
 fun Poem.toEntity(): PoemEntity = PoemEntity(
     id = id,
     title = title,
-    content = gson.toJson(content),
+    content = AppJson.encodeToString(content),
     author = author,
     dynasty = dynasty,
     type = type,
@@ -51,7 +51,7 @@ fun PoemEntity.toDomain(): Poem = Poem(
     id = id,
     title = title,
     content = runCatching {
-        gson.fromJson(content, Array<String>::class.java)?.toList()
+        AppJson.decodeFromString<List<String>>(content)
     }.getOrNull() ?: emptyList(),
     author = author,
     dynasty = dynasty,

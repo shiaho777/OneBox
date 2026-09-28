@@ -4,16 +4,17 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.google.gson.Gson
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.wanbaohe.core.weather.domain.model.CityInfo
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 private val Context.cityDataStore by preferencesDataStore(name = "location_city_cache")
 
 class LocationCityCache(
-    private val context: Context,
-    private val gson: Gson
+    private val context: Context
 ) {
 
     // 将经纬度格式化为网格 Key，保留2位小数，大约代表 1.1km 的网格中心
@@ -27,12 +28,12 @@ class LocationCityCache(
             preferences[key]
         }.first()
 
-        return json?.let { gson.fromJson(it, CityInfo::class.java) }
+        return json?.let { runCatching { AppJson.decodeFromString<CityInfo>(it) }.getOrNull() }
     }
 
     suspend fun saveCity(lat: Double, lon: Double, cityInfo: CityInfo) {
         val key = stringPreferencesKey(getGridKey(lat, lon))
-        val json = gson.toJson(cityInfo)
+        val json = AppJson.encodeToString(cityInfo)
 
         context.cityDataStore.edit { preferences ->
             preferences[key] = json

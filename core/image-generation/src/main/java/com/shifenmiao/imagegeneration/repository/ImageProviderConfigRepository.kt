@@ -4,9 +4,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.shifenmiao.imagegeneration.model.ImageProviderConfig
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +22,6 @@ class ImageProviderConfigRepository @Inject constructor(
     private val legacyPreferences = context.getSharedPreferences(LEGACY_PREFS_NAME, Context.MODE_PRIVATE)
     private val preferences = createEncryptedPreferences(context)
     private val migrationComplete = migrateLegacyPreferences()
-    private val gson = Gson()
     private val _configs = MutableStateFlow(loadConfigs())
     private val _activeConfigId = MutableStateFlow(preferences.getString(KEY_ACTIVE_CONFIG_ID, null))
 
@@ -35,7 +35,7 @@ class ImageProviderConfigRepository @Inject constructor(
         _configs.value = normalized
         _activeConfigId.value = activeId
         preferences.edit()
-            .putString(KEY_CONFIGS, gson.toJson(normalized))
+            .putString(KEY_CONFIGS, AppJson.encodeToString(normalized))
             .putString(KEY_ACTIVE_CONFIG_ID, activeId)
             .putBoolean(KEY_INITIALIZED, true)
             .apply()
@@ -63,8 +63,7 @@ class ImageProviderConfigRepository @Inject constructor(
         val json = preferences.getString(KEY_CONFIGS, null).orEmpty()
         if (json.isBlank()) return emptyList()
         return runCatching {
-            val type = object : TypeToken<List<ImageProviderConfig>>() {}.type
-            gson.fromJson<List<ImageProviderConfig>>(json, type).orEmpty()
+            AppJson.decodeFromString<List<ImageProviderConfig>>(json)
         }.getOrDefault(emptyList())
     }
 

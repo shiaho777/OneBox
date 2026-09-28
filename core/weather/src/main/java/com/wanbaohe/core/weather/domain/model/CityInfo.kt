@@ -1,14 +1,18 @@
 package com.wanbaohe.core.weather.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class CityInfo(
+    // 默认值兜底 DataStore 里 Gson 时代的缓存(缺字段时 Gson 给 null/0.0)
     /** 地区/城市ID */
-    val id: String,
+    val id: String = "",
     /** 地区/城市名称 */
-    val name: String,
+    val name: String = "",
     /** 地区/城市纬度 */
-    val lat: Double,
+    val lat: Double = 0.0,
     /** 地区/城市经度 */
-    val lon: Double,
+    val lon: Double = 0.0,
     /** 地区/城市的上级行政区划名称 */
     val adm2: String = "",
     /** 地区/城市所属一级行政区域 */

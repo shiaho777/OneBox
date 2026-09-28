@@ -1,10 +1,14 @@
 package com.shifenmiao.imagegeneration.model
 
+import kotlinx.serialization.Serializable
+
 /** 独立于聊天模型的图片 Provider 配置。 */
+@Serializable
 data class ImageProviderConfig(
-    val id: String,
-    val providerId: String,
-    val displayName: String,
+    // 默认值兜底 Gson 时代的 EncryptedSharedPreferences 旧数据(缺字段时 Gson 给 null)
+    val id: String = "",
+    val providerId: String = "",
+    val displayName: String = "",
     val baseUrl: String = "",
     val apiToken: String = "",
     val proxyUrl: String = "",

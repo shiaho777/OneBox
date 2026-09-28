@@ -1,5 +1,8 @@
 package com.wanbaohe.core.weather.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class WeatherInfo(
     /** 当前API的最近更新时间 */
     val updateTime: String = "",

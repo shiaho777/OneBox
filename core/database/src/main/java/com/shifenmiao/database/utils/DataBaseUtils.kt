@@ -14,6 +14,7 @@ import com.shifenmiao.model.Source
 import com.shifenmiao.model.StrapiImage
 import com.shifenmiao.model.ai.Agent
 import com.shifenmiao.model.ai.ChatPrompt
+import kotlinx.serialization.encodeToString
 
 object DataBaseUtils {
 
@@ -163,7 +164,7 @@ object DataBaseUtils {
                     documentId = agent.documentId?.takeIf { it.isNotBlank() },
                     title = agent.title.orEmpty(),
                     description = agent.description,
-                    header = ModelProvider.provideGson().toJson(agent.header),
+                    header = ModelProvider.AppJson.encodeToString(agent.header),
                     body = agent.dynamicBody ?: "",
                     prompt = agent.prompt,
                     source = Source.REMOTE,
