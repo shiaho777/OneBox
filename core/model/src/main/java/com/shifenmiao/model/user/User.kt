@@ -1,8 +1,8 @@
 package com.shifenmiao.model.user
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Parcelize
@@ -57,20 +57,20 @@ data class RegisterRequest(
 @Parcelize
 @Serializable
 data class Login(
-    val jwt: String,
-    val user: User
+    val jwt: String = "",
+    val user: User = User()
 ) : Parcelable
 
 @Parcelize
 @Serializable
 data class WechatUserInfo(
-    @SerializedName("openid") val openid: String,
-    @SerializedName("nickname") val nickname: String,
-    @SerializedName("sex") val sex: Int,
-    @SerializedName("province") val province: String,
-    @SerializedName("city") val city: String,
-    @SerializedName("country") val country: String,
-    @SerializedName("headimgurl") val headimgurl: String,
-    @SerializedName("privilege") val privilege: List<String> = emptyList(), // Provide default value
-    @SerializedName("unionid") val unionid: String
+    @SerialName("openid") val openid: String,
+    @SerialName("nickname") val nickname: String,
+    @SerialName("sex") val sex: Int,
+    @SerialName("province") val province: String,
+    @SerialName("city") val city: String,
+    @SerialName("country") val country: String,
+    @SerialName("headimgurl") val headimgurl: String,
+    @SerialName("privilege") val privilege: List<String> = emptyList(), // Provide default value
+    @SerialName("unionid") val unionid: String
 ) : Parcelable

@@ -34,7 +34,6 @@ dependencies {
     implementation(libs.androidx.compose.foundation.layout)
     ksp(libs.androidx.room.compiler)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.com.squareup.retrofit2.converter.gson)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.com.squareup.retrofit2.retrofit)
 

@@ -30,7 +30,6 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
@@ -130,41 +129,13 @@ object NetworkModule {
         .build()
     }
 
+    // Gson → kotlinx.serialization 迁移完成(阶段⑤b):全站统一 kotlinx converter
     @Singleton
     @Provides
     @Named("DefaultRetrofit")
     fun provideDefaultRetrofit(@Named("DefaultOkHttpClient") okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(NetworkBuilder.getBaseUrl())
-            .addConverterFactory(GsonConverterFactory.create(ModelProvider.provideGson()))
-            .client(okHttpClient)
-            .build()
-    }
-
-    // Gson → kotlinx.serialization 迁移(阶段①):与 DefaultRetrofit 同 client/baseUrl,
-    // 仅换 converter,供已切换的低风险 service 使用;仍在用 Gson 的 service 继续走 DefaultRetrofit
-    @Singleton
-    @Provides
-    @Named("KotlinxDefaultRetrofit")
-    fun provideKotlinxDefaultRetrofit(@Named("DefaultOkHttpClient") okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(NetworkBuilder.getBaseUrl())
-            .addConverterFactory(ModelProvider.AppJson.asConverterFactory("application/json".toMediaType()))
-            .client(okHttpClient)
-            .build()
-    }
-
-    // Gson → kotlinx 迁移(阶段⑤a):JevService 的 @Body JevRequest 已迁移 kotlinx,
-    // 与 OpenAICompatibleRetrofit 同 client/baseUrl,仅换 converter;
-    // 其余流式 service 继续走 Gson 的 OpenAICompatibleRetrofit
-    @Singleton
-    @Provides
-    @Named("KotlinxOpenAICompatibleRetrofit")
-    fun provideKotlinxOpenAICompatibleRetrofit(
-        @Named("OpenAICompatibleOkHttpClient") okHttpClient: OkHttpClient
-    ): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(UrlConstants.OPENAI_BASE_URL)
             .addConverterFactory(ModelProvider.AppJson.asConverterFactory("application/json".toMediaType()))
             .client(okHttpClient)
             .build()
@@ -178,13 +149,12 @@ object NetworkModule {
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl(UrlConstants.OPENAI_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(ModelProvider.provideGson()))
+            .addConverterFactory(ModelProvider.AppJson.asConverterFactory("application/json".toMediaType()))
             .client(okHttpClient)
             .build()
     }
 
-    // BaiduOcrRetrofit 仅服务 DocConvertApiService / BaiduImageProcessApiService,
-    // 两者均已迁移 kotlinx.serialization(阶段①),converter 就地切换
+    // BaiduOcrRetrofit 仅服务 DocConvertApiService / BaiduImageProcessApiService
     @Singleton
     @Provides
     @Named("BaiduOcrRetrofit")
@@ -226,26 +196,26 @@ object NetworkModule {
     @Provides
     @Singleton
     @Named("JevProxyService")
-    // 代理路由走 KotlinxDefaultRetrofit: AuthInterceptor 注入 App 登录 JWT
-    fun provideJevProxyService(@Named("KotlinxDefaultRetrofit") retrofit: Retrofit): JevService =
+    // 代理路由走 DefaultRetrofit: AuthInterceptor 注入 App 登录 JWT
+    fun provideJevProxyService(@Named("DefaultRetrofit") retrofit: Retrofit): JevService =
         retrofit.create(JevService::class.java)
 
     @Provides
     @Singleton
-    fun provideXiangqiEngineService(@Named("KotlinxDefaultRetrofit") retrofit: Retrofit): XiangqiEngineService =
+    fun provideXiangqiEngineService(@Named("DefaultRetrofit") retrofit: Retrofit): XiangqiEngineService =
         retrofit.create(XiangqiEngineService::class.java)
 
     @Provides
     @Singleton
-    fun provideBoardGameEngineService(@Named("KotlinxDefaultRetrofit") retrofit: Retrofit): BoardGameEngineService =
+    fun provideBoardGameEngineService(@Named("DefaultRetrofit") retrofit: Retrofit): BoardGameEngineService =
         retrofit.create(BoardGameEngineService::class.java)
 
     @Provides
     @Singleton
     @Named("JevDirectService")
-    // 直连 typesafe.ai 走 KotlinxOpenAICompatibleRetrofit: 不挂 AuthInterceptor,
+    // 直连 typesafe.ai 走 OpenAICompatibleRetrofit: 不挂 AuthInterceptor,
     // 避免把 App 登录 JWT 泄露给第三方, 用户 key 由 @Header 按引擎配置传递
-    fun provideJevDirectService(@Named("KotlinxOpenAICompatibleRetrofit") retrofit: Retrofit): JevService =
+    fun provideJevDirectService(@Named("OpenAICompatibleRetrofit") retrofit: Retrofit): JevService =
         retrofit.create(JevService::class.java)
 
     @Provides

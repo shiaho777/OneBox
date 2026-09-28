@@ -1,7 +1,6 @@
 package com.shifenmiao.imagegeneration.provider.openai
 
 import android.content.Context
-import com.google.gson.annotations.SerializedName
 import com.shifenmiao.model.ModelProvider.AppJson
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -166,28 +165,28 @@ interface OpenAiImageApi {
     ): Response<OpenAiImageResponse>
 }
 
-// R8 full mode 下字段名会被混淆,Gson 序列化依赖 @SerializedName 固定 JSON key。
+// R8 full mode 下字段名会被混淆,kotlinx 序列化依赖 @SerialName 固定 JSON key。
 // null 字段默认不参与序列化,未传的 size 不会出现在请求体里。
 data class OpenAiImageRequest(
-    @SerializedName("model") @SerialName("model") val model: String,
-    @SerializedName("prompt") @SerialName("prompt") val prompt: String,
-    @SerializedName("n") @SerialName("n") val n: Int = 1,
-    @SerializedName("size") @SerialName("size") val size: String? = null,
+    @SerialName("model") val model: String,
+    @SerialName("prompt") val prompt: String,
+    @SerialName("n") val n: Int = 1,
+    @SerialName("size") val size: String? = null,
 )
 
 data class OpenAiImageResponse(
-    @SerializedName("data") @SerialName("data") val data: List<OpenAiImageData>? = null,
-    @SerializedName("error") @SerialName("error") val error: OpenAiImageError? = null,
+    @SerialName("data") val data: List<OpenAiImageData>? = null,
+    @SerialName("error") val error: OpenAiImageError? = null,
 )
 
 // gpt-image-1 只回 b64_json,dall-e-3 回 url,两种都兼容解析
 data class OpenAiImageData(
-    @SerializedName("url") @SerialName("url") val url: String? = null,
-    @SerializedName("b64_json") @SerialName("b64_json") val b64Json: String? = null,
+    @SerialName("url") val url: String? = null,
+    @SerialName("b64_json") val b64Json: String? = null,
 )
 
 data class OpenAiImageError(
-    @SerializedName("message") @SerialName("message") val message: String? = null,
-    @SerializedName("type") @SerialName("type") val type: String? = null,
-    @SerializedName("code") @SerialName("code") val code: String? = null,
+    @SerialName("message") val message: String? = null,
+    @SerialName("type") val type: String? = null,
+    @SerialName("code") val code: String? = null,
 )

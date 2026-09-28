@@ -1,6 +1,5 @@
 package com.shifenmiao.imagegeneration.provider.hunyuan
 
-import com.google.gson.annotations.SerializedName
 import com.shifenmiao.model.ModelProvider.AppJson
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -192,49 +191,49 @@ interface HunyuanImageApi {
     ): Response<HunyuanResponse>
 }
 
-// R8 full mode 下字段名会被混淆,Gson 序列化依赖 @SerializedName 固定 JSON key。
+// R8 full mode 下字段名会被混淆,kotlinx 序列化依赖 @SerialName 固定 JSON key。
 // null 字段默认不参与序列化,未传的 size/seed 不会出现在请求体里。
 data class HunyuanRequest(
-    @SerializedName("model") @SerialName("model") val model: String,
-    @SerializedName("size") @SerialName("size") val size: String? = null,
-    @SerializedName("seed") @SerialName("seed") val seed: Long? = null,
-    @SerializedName("messages") @SerialName("messages") val messages: List<HunyuanMessage>,
+    @SerialName("model") val model: String,
+    @SerialName("size") val size: String? = null,
+    @SerialName("seed") val seed: Long? = null,
+    @SerialName("messages") val messages: List<HunyuanMessage>,
 )
 
 data class HunyuanMessage(
-    @SerializedName("role") @SerialName("role") val role: String = "user",
-    @SerializedName("content") @SerialName("content") val content: List<HunyuanContent>,
+    @SerialName("role") val role: String = "user",
+    @SerialName("content") val content: List<HunyuanContent>,
 )
 
 data class HunyuanContent(
-    @SerializedName("type") @SerialName("type") val type: String,
-    @SerializedName("text") @SerialName("text") val text: String? = null,
-    @SerializedName("image_url") @SerialName("image_url") val imageUrl: HunyuanImageUrl? = null,
+    @SerialName("type") val type: String,
+    @SerialName("text") val text: String? = null,
+    @SerialName("image_url") val imageUrl: HunyuanImageUrl? = null,
 )
 
-data class HunyuanImageUrl(@SerializedName("url") @SerialName("url") val url: String)
+data class HunyuanImageUrl(@SerialName("url") val url: String)
 
 data class HunyuanResponse(
-    @SerializedName("choices") @SerialName("choices") val choices: List<HunyuanChoice>? = null,
-    @SerializedName("error") @SerialName("error") val error: HunyuanError? = null,
+    @SerialName("choices") val choices: List<HunyuanChoice>? = null,
+    @SerialName("error") val error: HunyuanError? = null,
 )
 
 data class HunyuanChoice(
-    @SerializedName("delta") @SerialName("delta") val delta: HunyuanDelta? = null,
+    @SerialName("delta") val delta: HunyuanDelta? = null,
 )
 
 data class HunyuanDelta(
-    @SerializedName("image") @SerialName("image") val image: HunyuanImage? = null,
+    @SerialName("image") val image: HunyuanImage? = null,
 )
 
 data class HunyuanImage(
-    @SerializedName("url") @SerialName("url") val url: String? = null,
-    @SerializedName("width") @SerialName("width") val width: Int? = null,
-    @SerializedName("height") @SerialName("height") val height: Int? = null,
+    @SerialName("url") val url: String? = null,
+    @SerialName("width") val width: Int? = null,
+    @SerialName("height") val height: Int? = null,
 )
 
 data class HunyuanError(
-    @SerializedName("type") @SerialName("type") val type: String? = null,
-    @SerializedName("code") @SerialName("code") val code: String? = null,
-    @SerializedName("message") @SerialName("message") val message: String? = null,
+    @SerialName("type") val type: String? = null,
+    @SerialName("code") val code: String? = null,
+    @SerialName("message") val message: String? = null,
 )

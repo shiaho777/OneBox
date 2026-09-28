@@ -2,7 +2,6 @@ package com.shifenmiao.ai.model
 
 import android.os.Parcelable
 import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
 import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.AiEngine
 import kotlinx.parcelize.Parcelize
@@ -17,31 +16,18 @@ import kotlinx.serialization.json.jsonObject
 @Keep
 @Parcelize
 data class AIDuelConfig(
-    @SerializedName("personaA")
     val personaA: String = "",
-    @SerializedName("personaB")
     val personaB: String = "",
-    @SerializedName("avatarA")
     val avatarA: String = "",
-    @SerializedName("avatarB")
     val avatarB: String = "",
-    @SerializedName("maxRounds")
     val maxRounds: Int = 5,
-    @SerializedName("engineA")
     val engineA: AiEngine? = null,
-    @SerializedName("engineB")
     val engineB: AiEngine? = null,
-    @SerializedName("promptIdA")
     val promptIdA: Int = 0,
-    @SerializedName("promptIdB")
     val promptIdB: Int = 0,
-    @SerializedName("promptNameA")
     val promptNameA: String = "",
-    @SerializedName("promptNameB")
     val promptNameB: String = "",
-    @SerializedName("roleNameA")
     val roleNameA: String = "",
-    @SerializedName("roleNameB")
     val roleNameB: String = ""
 ) : Parcelable
 

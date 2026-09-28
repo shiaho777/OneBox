@@ -1,8 +1,8 @@
 package com.shifenmiao.model.ai
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 enum class ContentType(val value: String) {
@@ -15,17 +15,17 @@ enum class ContentType(val value: String) {
 @Parcelize
 @Serializable
 data class RequestMessage(
-    @SerializedName("role")
+    @SerialName("role")
     val role: String,
-    @SerializedName("content")
+    @SerialName("content")
     val content: ListOrStringContent? = null, // nullable: assistant tool_calls 消息可能没有 content
-    @SerializedName("reasoning_content")
+    @SerialName("reasoning_content")
     val reasoningContent: String? = null,
-    @SerializedName("tool_call_id")
+    @SerialName("tool_call_id")
     val toolCallId: String? = null,
-    @SerializedName("name")
+    @SerialName("name")
     val name: String? = null,
-    @SerializedName("tool_calls")
+    @SerialName("tool_calls")
     val toolCalls: List<ToolCall>? = null
 ) : Parcelable {
     companion object {
@@ -85,7 +85,7 @@ data class RequestMessage(
 }
 
 @Parcelize
-@Serializable
+@Serializable(ListOrStringContentKSerializer::class)
 sealed class ListOrStringContent : Parcelable {
     @Parcelize
     @Serializable
@@ -103,18 +103,18 @@ sealed class ContentItem : Parcelable {
     @Parcelize
     @Serializable
     data class TextContent(
-        @SerializedName("text")
+        @SerialName("text")
         val text: String,
-        @SerializedName("type")
+        @SerialName("type")
         val type: String = ContentType.TEXT.value
     ) : ContentItem()
 
     @Parcelize
     @Serializable
     data class ImageContent(
-        @SerializedName("image_url")
+        @SerialName("image_url")
         val imageUrl: ImageUrl,
-        @SerializedName("type")
+        @SerialName("type")
         val type: String = ContentType.IMAGE_URL.value
     ) : ContentItem()
 }
@@ -122,6 +122,6 @@ sealed class ContentItem : Parcelable {
 @Parcelize
 @Serializable
 data class ImageUrl(
-    @SerializedName("url")
+    @SerialName("url")
     val url: String = ""
 ) : Parcelable

@@ -28,7 +28,6 @@ dependencies {
 
     // Coroutines and networking
     implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.gson)
     implementation(libs.androidxCore)
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.compose.ui)

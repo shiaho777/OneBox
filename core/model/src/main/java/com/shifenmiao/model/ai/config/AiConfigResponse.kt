@@ -1,8 +1,13 @@
 package com.shifenmiao.model.ai.config
 
-import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonTransformingSerializer
+import kotlinx.serialization.json.jsonArray
 
 /**
  * AI 配置响应
@@ -19,11 +24,10 @@ data class AiConfigResponse(
  */
 @Serializable
 data class AiConfigData(
-    @SerializedName(value = "version")
     val version: String = "",
-    @SerializedName(value = "engines")
+    @Serializable(EngineConfigListSerializer::class)
     val engines: List<EngineConfig> = emptyList(),
-    @SerializedName(value = "models")
+    @Serializable(ModelConfigListSerializer::class)
     val models: List<ModelConfig> = emptyList()
 )
 
@@ -32,41 +36,28 @@ data class AiConfigData(
  */
 @Serializable
 data class EngineConfig(
-    @SerializedName(value = "name", alternate = ["engineName"])
     val name: String? = null,
-    @SerializedName(value = "title", alternate = ["engineTitle"])
     val title: String? = null,
     val description: String? = null,
     @SerialName("requestUrl")
-    @SerializedName(value = "requestUrl", alternate = ["request_url", "baseUrl", "base_url", "apiUrl", "api_url"])
     val requestUrl: String? = null,
     @SerialName("requestPath")
-    @SerializedName(value = "requestPath", alternate = ["request_path", "path"])
     val requestPath: String? = null,
     @SerialName("proxyUrl")
-    @SerializedName(value = "proxyUrl", alternate = ["proxy_url"])
     val proxyUrl: String? = null,
     @SerialName("proxyPath")
-    @SerializedName(value = "proxyPath", alternate = ["proxy_path"])
     val proxyPath: String? = null,
     @SerialName("requestProtocol")
-    @SerializedName(value = "requestProtocol", alternate = ["request_protocol", "protocol"])
     val requestProtocol: String? = null,
     @SerialName("authType")
-    @SerializedName(value = "authType", alternate = ["auth_type"])
     val authType: String? = null,
-    @SerializedName(value = "stream")
     val stream: Boolean? = true,
     @SerialName("vipLevel")
-    @SerializedName(value = "vipLevel", alternate = ["vip_level"])
     val vipLevel: Int? = 0,
-    @SerializedName(value = "enabled")
     val enabled: Boolean? = true,
     @SerialName("sortOrder")
-    @SerializedName(value = "sortOrder", alternate = ["sort_order"])
     val sortOrder: Int? = 0,
     @SerialName("supportToolCalls")
-    @SerializedName(value = "supportToolCalls", alternate = ["support_tool_calls"])
     val supportToolCalls: Boolean? = false
 )
 
@@ -75,66 +66,114 @@ data class EngineConfig(
  */
 @Serializable
 data class ModelConfig(
-    @SerializedName(value = "name", alternate = ["modelName"])
     val name: String? = null,
-    @SerializedName(value = "title", alternate = ["modelTitle"])
     val title: String? = null,
     val description: String? = null,
-    @SerializedName(value = "provider", alternate = ["engineName", "engine_name"])
     val provider: String? = null,
     @SerialName("canUploadFile")
-    @SerializedName(value = "canUploadFile", alternate = ["can_upload_file"])
     val canUploadFile: Boolean? = false,
     @SerialName("canNetwork")
-    @SerializedName(value = "canNetwork", alternate = ["can_network"])
     val canNetwork: Boolean? = false,
     @SerialName("canReasoning")
-    @SerializedName(value = "canReasoning", alternate = ["can_reasoning"])
     val canReasoning: Boolean? = false,
     @SerialName("canImage")
-    @SerializedName(value = "canImage", alternate = ["can_image"])
     val canImage: Boolean? = false,
     @SerialName("canVideo")
-    @SerializedName(value = "canVideo", alternate = ["can_video"])
     val canVideo: Boolean? = false,
     @SerialName("apiCanSet")
-    @SerializedName(value = "apiCanSet", alternate = ["api_can_set"])
     val apiCanSet: Boolean? = false,
     @SerialName("canUseTempApi")
-    @SerializedName(value = "canUseTempApi", alternate = ["can_use_temp_api"])
     val canUseTempApi: Boolean? = false,
     @SerialName("isFast")
-    @SerializedName(value = "isFast", alternate = ["is_fast", "fast"])
     val isFast: Boolean? = false,
     @SerialName("isCode")
-    @SerializedName(value = "isCode", alternate = ["is_code", "code", "canCode", "can_code"])
     val isCode: Boolean? = false,
     @SerialName("supportToolCalls")
-    @SerializedName(value = "supportToolCalls", alternate = ["support_tool_calls"])
     val supportToolCalls: Boolean? = true,
     @SerialName("canEdit")
-    @SerializedName(value = "canEdit", alternate = ["can_edit"])
     val canEdit: Boolean? = false,
-    @SerializedName(value = "temperature")
     val temperature: Double? = 0.95,
     @SerialName("topP")
-    @SerializedName(value = "topP", alternate = ["top_p"])
     val topP: Double? = 0.8,
     @SerialName("maxTokens")
-    @SerializedName(value = "maxTokens", alternate = ["max_tokens"])
     val maxTokens: Int? = 2048,
     @SerialName("contextWindowTokens")
-    @SerializedName(value = "contextWindowTokens", alternate = ["context_window_tokens"])
     val contextWindowTokens: Int? = 264000,
-    @SerializedName(value = "free")
     val free: Boolean? = false,
     @SerialName("basePoints")
-    @SerializedName(value = "basePoints", alternate = ["base_points"])
     val basePoints: Float? = 1.0f,
-    @SerializedName(value = "enabled")
     val enabled: Boolean? = true,
     @SerialName("sortOrder")
-    @SerializedName(value = "sortOrder", alternate = ["sort_order"])
     val sortOrder: Int? = 0
 )
 
+
+// ── Gson alternate 兼容层(阶段⑤b) ─────────────────────────────
+// Gson @SerializedName(alternate=[...]) 在 kotlinx 无对应能力,这里在反序列化前
+// 把 alternate 键归一到主键。语义对齐:主键缺失时才用 alternate 补齐
+// (Gson 对同 JSON 同时含主键与 alternate 时按出现顺序后者胜,此处主键优先,
+// 线上配置同一语义键只会下发一种写法,无实际差异)。
+
+/** EngineConfig 主键 ← alternate 键(与 Gson 注解逐条对应) */
+private val ENGINE_KEY_ALTERNATES: Map<String, List<String>> = mapOf(
+    "name" to listOf("engineName"),
+    "title" to listOf("engineTitle"),
+    "requestUrl" to listOf("request_url", "baseUrl", "base_url", "apiUrl", "api_url"),
+    "requestPath" to listOf("request_path", "path"),
+    "proxyUrl" to listOf("proxy_url"),
+    "proxyPath" to listOf("proxy_path"),
+    "requestProtocol" to listOf("request_protocol", "protocol"),
+    "authType" to listOf("auth_type"),
+    "vipLevel" to listOf("vip_level"),
+    "sortOrder" to listOf("sort_order"),
+    "supportToolCalls" to listOf("support_tool_calls"),
+)
+
+/** ModelConfig 主键 ← alternate 键(与 Gson 注解逐条对应) */
+private val MODEL_KEY_ALTERNATES: Map<String, List<String>> = mapOf(
+    "name" to listOf("modelName"),
+    "title" to listOf("modelTitle"),
+    "provider" to listOf("engineName", "engine_name"),
+    "canUploadFile" to listOf("can_upload_file"),
+    "canNetwork" to listOf("can_network"),
+    "canReasoning" to listOf("can_reasoning"),
+    "canImage" to listOf("can_image"),
+    "canVideo" to listOf("can_video"),
+    "apiCanSet" to listOf("api_can_set"),
+    "canUseTempApi" to listOf("can_use_temp_api"),
+    "isFast" to listOf("is_fast", "fast"),
+    "isCode" to listOf("is_code", "code", "canCode", "can_code"),
+    "supportToolCalls" to listOf("support_tool_calls"),
+    "canEdit" to listOf("can_edit"),
+    "topP" to listOf("top_p"),
+    "maxTokens" to listOf("max_tokens"),
+    "contextWindowTokens" to listOf("context_window_tokens"),
+    "basePoints" to listOf("base_points"),
+    "sortOrder" to listOf("sort_order"),
+)
+
+private fun JsonElement.normalizeAlternateKeys(alternates: Map<String, List<String>>): JsonElement {
+    val obj = this as? JsonObject ?: return this
+    val normalized = obj.toMutableMap()
+    alternates.forEach { (primary, aliases) ->
+        if (normalized[primary] == null) {
+            aliases.firstNotNullOfOrNull { normalized[it] }
+                ?.let { normalized[primary] = it }
+        }
+    }
+    return JsonObject(normalized)
+}
+
+object EngineConfigListSerializer : JsonTransformingSerializer<List<EngineConfig>>(
+    ListSerializer(EngineConfig.serializer())
+) {
+    override fun transformDeserialize(element: JsonElement): JsonElement =
+        JsonArray(element.jsonArray.map { it.normalizeAlternateKeys(ENGINE_KEY_ALTERNATES) })
+}
+
+object ModelConfigListSerializer : JsonTransformingSerializer<List<ModelConfig>>(
+    ListSerializer(ModelConfig.serializer())
+) {
+    override fun transformDeserialize(element: JsonElement): JsonElement =
+        JsonArray(element.jsonArray.map { it.normalizeAlternateKeys(MODEL_KEY_ALTERNATES) })
+}

@@ -1,7 +1,6 @@
 package com.shifenmiao.model.ai
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 import kotlinx.serialization.Contextual
@@ -20,39 +19,30 @@ import kotlinx.serialization.Serializable
 @Parcelize
 @Serializable
 data class AnthropicMessagesRequest(
-    @SerializedName("model")
     @SerialName("model")
     val model: String = "",
 
-    @SerializedName("max_tokens")
     @SerialName("max_tokens")
     val maxTokens: Int = 4096,
 
-    @SerializedName("system")
     @SerialName("system")
     val system: String? = null,
 
-    @SerializedName("messages")
     @SerialName("messages")
     val messages: List<AnthropicMessage> = emptyList(),
 
-    @SerializedName("stream")
     @SerialName("stream")
     val stream: Boolean = true,
 
-    @SerializedName("temperature")
     @SerialName("temperature")
     val temperature: Double? = null,
 
-    @SerializedName("top_p")
     @SerialName("top_p")
     val topP: Double? = null,
 
-    @SerializedName("tools")
     @SerialName("tools")
     val tools: List<AnthropicTool>? = null,
 
-    @SerializedName("metadata")
     @SerialName("metadata")
     val metadata: AnthropicMetadata? = null
 ) : Parcelable
@@ -67,11 +57,9 @@ data class AnthropicMessagesRequest(
 @Parcelize
 @Serializable
 data class AnthropicMessage(
-    @SerializedName("role")
     @SerialName("role")
     val role: String,  // "user" 或 "assistant"
 
-    @SerializedName("content")
     @SerialName("content")
     @Contextual
     val content: @RawValue Any  // String 或 List<ContentBlock>
@@ -89,39 +77,30 @@ data class AnthropicMessage(
 @Parcelize
 @Serializable
 data class ContentBlock(
-    @SerializedName("type")
     @SerialName("type")
     val type: String = "text",
 
-    @SerializedName("text")
     @SerialName("text")
     val text: String? = null,
 
-    @SerializedName("source")
     @SerialName("source")
     val source: ImageSource? = null,
 
-    @SerializedName("id")
     @SerialName("id")
     val id: String? = null,
 
-    @SerializedName("name")
     @SerialName("name")
     val name: String? = null,
 
-    @SerializedName("input")
     @SerialName("input")
     val input: @Contextual @RawValue Any? = null,
 
-    @SerializedName("tool_use_id")
     @SerialName("tool_use_id")
     val toolUseId: String? = null,
 
-    @SerializedName("content")
     @SerialName("content")
     val toolContent: String? = null,
 
-    @SerializedName("is_error")
     @SerialName("is_error")
     val isError: Boolean? = null
 ) : Parcelable
@@ -136,19 +115,15 @@ data class ContentBlock(
 @Parcelize
 @Serializable
 data class ImageSource(
-    @SerializedName("type")
     @SerialName("type")
     val type: String = "base64",
 
-    @SerializedName("media_type")
     @SerialName("media_type")
     val mediaType: String = "image/jpeg",
 
-    @SerializedName("data")
     @SerialName("data")
     val data: String = "",
 
-    @SerializedName("url")
     @SerialName("url")
     val url: String? = null
 ) : Parcelable
@@ -164,15 +139,12 @@ data class ImageSource(
 @Parcelize
 @Serializable
 data class AnthropicTool(
-    @SerializedName("name")
     @SerialName("name")
     val name: String,
 
-    @SerializedName("description")
     @SerialName("description")
     val description: String = "",
 
-    @SerializedName("input_schema")
     @SerialName("input_schema")
     val inputSchema: @Contextual @RawValue Any
 ) : Parcelable
@@ -183,7 +155,6 @@ data class AnthropicTool(
 @Parcelize
 @Serializable
 data class AnthropicMetadata(
-    @SerializedName("user_id")
     @SerialName("user_id")
     val userId: String? = null
 ) : Parcelable
@@ -194,35 +165,27 @@ data class AnthropicMetadata(
 @Parcelize
 @Serializable
 data class AnthropicMessagesResponse(
-    @SerializedName("id")
     @SerialName("id")
     val id: String = "",
 
-    @SerializedName("type")
     @SerialName("type")
     val type: String = "message",
 
-    @SerializedName("role")
     @SerialName("role")
     val role: String = "assistant",
 
-    @SerializedName("content")
     @SerialName("content")
     val content: List<ContentBlock> = emptyList(),
 
-    @SerializedName("model")
     @SerialName("model")
     val model: String = "",
 
-    @SerializedName("stop_reason")
     @SerialName("stop_reason")
     val stopReason: String? = null,
 
-    @SerializedName("stop_sequence")
     @SerialName("stop_sequence")
     val stopSequence: String? = null,
 
-    @SerializedName("usage")
     @SerialName("usage")
     val usage: AnthropicUsage? = null
 ) : Parcelable
@@ -233,11 +196,9 @@ data class AnthropicMessagesResponse(
 @Parcelize
 @Serializable
 data class AnthropicUsage(
-    @SerializedName("input_tokens")
     @SerialName("input_tokens")
     val inputTokens: Int = 0,
 
-    @SerializedName("output_tokens")
     @SerialName("output_tokens")
     val outputTokens: Int = 0
 ) : Parcelable
@@ -268,31 +229,24 @@ enum class AnthropicEventType(val value: String) {
 @Parcelize
 @Serializable
 data class AnthropicStreamEvent(
-    @SerializedName("type")
     @SerialName("type")
     val type: String = "",
 
-    @SerializedName("index")
     @SerialName("index")
     val index: Int? = null,
 
-    @SerializedName("delta")
     @SerialName("delta")
     val delta: AnthropicDelta? = null,
 
-    @SerializedName("message")
     @SerialName("message")
     val message: AnthropicMessagesResponse? = null,
 
-    @SerializedName("content_block")
     @SerialName("content_block")
     val contentBlock: ContentBlock? = null,
 
-    @SerializedName("usage")
     @SerialName("usage")
     val usage: AnthropicUsage? = null,
 
-    @SerializedName("error")
     @SerialName("error")
     val error: AnthropicError? = null
 ) : Parcelable
@@ -307,19 +261,15 @@ data class AnthropicStreamEvent(
 @Parcelize
 @Serializable
 data class AnthropicDelta(
-    @SerializedName("type")
     @SerialName("type")
     val type: String = "",
 
-    @SerializedName("text")
     @SerialName("text")
     val text: String? = null,
 
-    @SerializedName("stop_reason")
     @SerialName("stop_reason")
     val stopReason: String? = null,
 
-    @SerializedName("partial_json")
     @SerialName("partial_json")
     val partialJson: String? = null
 ) : Parcelable
@@ -330,11 +280,9 @@ data class AnthropicDelta(
 @Parcelize
 @Serializable
 data class AnthropicError(
-    @SerializedName("type")
     @SerialName("type")
     val type: String = "",
 
-    @SerializedName("message")
     @SerialName("message")
     val message: String = ""
 ) : Parcelable

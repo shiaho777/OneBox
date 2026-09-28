@@ -1,6 +1,5 @@
 package com.wanbaohe.poem.model
 
-import com.google.gson.annotations.SerializedName
 import com.shifenmiao.database.poem.entity.PoemEntity
 import com.shifenmiao.model.ModelProvider.AppJson
 import kotlinx.serialization.decodeFromString
@@ -90,17 +89,17 @@ fun Poem.isPinyinAligned(): Boolean {
 /** 命名包装:{ "name": "..." } */
 @Serializable
 data class PoemNameDto(
-    @SerializedName("name") @SerialName("name") val name: String = "",
+    @SerialName("name") val name: String = "",
 )
 
 @Serializable
 data class PoemDto(
-    @SerializedName("id") @SerialName("id") val id: Long = 0,
-    @SerializedName("title") @SerialName("title") val title: String = "",
-    @SerializedName("content") @SerialName("content") val content: List<String>? = null,
-    @SerializedName("author") @SerialName("author") val author: PoemNameDto? = null,
-    @SerializedName("dynasty") @SerialName("dynasty") val dynasty: PoemNameDto? = null,
-    @SerializedName("type") @SerialName("type") val type: PoemNameDto? = null,
+    @SerialName("id") val id: Long = 0,
+    @SerialName("title") val title: String = "",
+    @SerialName("content") val content: List<String>? = null,
+    @SerialName("author") val author: PoemNameDto? = null,
+    @SerialName("dynasty") val dynasty: PoemNameDto? = null,
+    @SerialName("type") val type: PoemNameDto? = null,
 ) {
     fun toDomain(): Poem = Poem(
         id = id,
@@ -115,17 +114,17 @@ data class PoemDto(
 /** GET /api/poems/random 响应 */
 @Serializable
 data class SinglePoemResponse(
-    @SerializedName("data") @SerialName("data") val data: PoemDto? = null,
+    @SerialName("data") val data: PoemDto? = null,
 )
 
 /** GET /api/search 响应(data 可能缺失或为空数组) */
 @Serializable
 data class PoemListResponse(
-    @SerializedName("data") @SerialName("data") val data: List<PoemDto>? = null,
+    @SerialName("data") val data: List<PoemDto>? = null,
 )
 
 /** GET /api/dynasties、/api/types 响应 */
 @Serializable
 data class PoemNameListResponse(
-    @SerializedName("data") @SerialName("data") val data: List<PoemNameDto>? = null,
+    @SerialName("data") val data: List<PoemNameDto>? = null,
 )

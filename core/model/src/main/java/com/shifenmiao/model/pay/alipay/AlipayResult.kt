@@ -1,9 +1,9 @@
 package com.shifenmiao.model.pay.alipay
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import com.shifenmiao.model.pay.PayResult
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -21,29 +21,29 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Parcelize
 data class AlipayResult(
-    @SerializedName("memo") val memo: String,
-    @SerializedName("result") val result: String,
-    @SerializedName("resultStatus") val resultStatus: String
+    @SerialName("memo") val memo: String,
+    @SerialName("result") val result: String,
+    @SerialName("resultStatus") val resultStatus: String
 ) : Parcelable, PayResult
 
 @Serializable
 @Parcelize
 data class Result(
-    @SerializedName("alipay_trade_app_pay_response") val alipayTradeAppPayResponse: AlipayTradeAppPayResponse,
-    @SerializedName("sign") val sign: String,
-    @SerializedName("sign_type") val signType: String
+    @SerialName("alipay_trade_app_pay_response") val alipayTradeAppPayResponse: AlipayTradeAppPayResponse,
+    @SerialName("sign") val sign: String,
+    @SerialName("sign_type") val signType: String
 ) : Parcelable
 
 @Serializable
 @Parcelize
 data class AlipayTradeAppPayResponse(
-    @SerializedName("code") val code: String,
-    @SerializedName("msg") val msg: String,
-    @SerializedName("app_id") val appId: String,
-    @SerializedName("out_trade_no") val outTradeNo: String,
-    @SerializedName("trade_no") val tradeNo: String,
-    @SerializedName("total_amount") val totalAmount: String,
-    @SerializedName("seller_id") val sellerId: String,
-    @SerializedName("charset") val charset: String,
-    @SerializedName("timestamp") val timestamp: String
+    @SerialName("code") val code: String,
+    @SerialName("msg") val msg: String,
+    @SerialName("app_id") val appId: String,
+    @SerialName("out_trade_no") val outTradeNo: String,
+    @SerialName("trade_no") val tradeNo: String,
+    @SerialName("total_amount") val totalAmount: String,
+    @SerialName("seller_id") val sellerId: String,
+    @SerialName("charset") val charset: String,
+    @SerialName("timestamp") val timestamp: String
 ) : Parcelable

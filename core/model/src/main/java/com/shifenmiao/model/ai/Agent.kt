@@ -1,7 +1,6 @@
 package com.shifenmiao.model.ai
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import com.shifenmiao.model.Source
 import com.shifenmiao.model.StrapiImage
 import com.shifenmiao.model.common.Meta
@@ -22,9 +21,9 @@ data class Agent(
     val description: String? = "",
     val prompt: String? = null,
     val header: AgentHeader? = null,
-    @SerializedName("body")
+    @SerialName("body")
     val dynamicBody: String? = null,
-    @SerializedName("background_image")
+    @SerialName("background_image")
     val backgroundImage: StrapiImage? = null,
     val source: Source? = null
 ) : Parcelable
@@ -32,8 +31,8 @@ data class Agent(
 @Parcelize
 @Serializable
 data class AgentItem(
-    val data: Agent,
-    val meta: Meta
+    val data: Agent = Agent(),
+    val meta: Meta = Meta()
 ) : Parcelable
 
 

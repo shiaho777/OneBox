@@ -24,7 +24,6 @@ afterEvaluate {
 
 dependencies {
     api(libs.kotlinx.serialization.json)
-    api(libs.com.squareup.retrofit2.converter.gson)
     api(projects.core.r)
     api(projects.core.model)
     api(projects.core.base)

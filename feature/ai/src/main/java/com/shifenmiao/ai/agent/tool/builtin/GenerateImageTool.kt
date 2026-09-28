@@ -1,6 +1,5 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.SerialName
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
@@ -187,18 +186,18 @@ class GenerateImageTool @Inject constructor(
      */
     @Serializable
     private data class GenerateImageParams(
-        @SerializedName("prompt") @SerialName("prompt") val prompt: String? = null,
-        @SerializedName("size") @SerialName("size") val size: String? = null,
-        @SerializedName("negative_prompt") @SerialName("negative_prompt") val negative_prompt: String? = null,
-        @SerializedName("force_refresh") @SerialName("force_refresh") val force_refresh: Boolean? = null,
+        @SerialName("prompt") val prompt: String? = null,
+        @SerialName("size") val size: String? = null,
+        @SerialName("negative_prompt") val negative_prompt: String? = null,
+        @SerialName("force_refresh") val force_refresh: Boolean? = null,
     )
 
     @Serializable
     private data class GenerateImageResult(
-        @SerializedName("filePath") @SerialName("filePath") val filePath: String,
-        @SerializedName("fileName") @SerialName("fileName") val fileName: String,
-        @SerializedName("fromCache") @SerialName("fromCache") val fromCache: Boolean,
-        @SerializedName("cacheKey") @SerialName("cacheKey") val cacheKey: String,
+        @SerialName("filePath") val filePath: String,
+        @SerialName("fileName") val fileName: String,
+        @SerialName("fromCache") val fromCache: Boolean,
+        @SerialName("cacheKey") val cacheKey: String,
     )
 
     private companion object {

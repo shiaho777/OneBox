@@ -1,6 +1,5 @@
 package com.wanbaohe.chess.data.online
 
-import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
@@ -51,10 +50,10 @@ data class RoomJoinRequest(
 )
 
 @Serializable
-data class RoomResponse(@SerializedName("data") @SerialName("data") val room: RoomDto? = null)
+data class RoomResponse(@SerialName("data") val room: RoomDto? = null)
 
 @Serializable
-data class RoomsListResponse(@SerializedName("data") @SerialName("data") val rooms: List<RoomDto>? = null)
+data class RoomsListResponse(@SerialName("data") val rooms: List<RoomDto>? = null)
 
 @Serializable
 data class SuccessResponse(val message: String = "")

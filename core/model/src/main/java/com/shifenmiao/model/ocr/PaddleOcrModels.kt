@@ -1,7 +1,6 @@
 package com.shifenmiao.model.ocr
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -35,16 +34,12 @@ import kotlinx.serialization.Serializable
 @Parcelize
 @Serializable
 data class PaddleOcrSubmitRequest(
-    @SerializedName("file_data")
     @SerialName("file_data")
     val fileData: String? = null,
-    @SerializedName("file_url")
     @SerialName("file_url")
     val fileUrl: String? = null,
-    @SerializedName("file_name")
     @SerialName("file_name")
     val fileName: String,
-    @SerializedName("analysis_chart")
     @SerialName("analysis_chart")
     val analysisChart: Boolean? = null
 ) : Parcelable
@@ -55,16 +50,12 @@ data class PaddleOcrSubmitRequest(
 @Parcelize
 @Serializable
 data class PaddleOcrSubmitResponse(
-    @SerializedName("log_id")
     @SerialName("log_id")
     val logId: String? = null,
-    @SerializedName("error_code")
     @SerialName("error_code")
     val errorCode: Int = 0,
-    @SerializedName("error_msg")
     @SerialName("error_msg")
     val errorMsg: String? = null,
-    @SerializedName("result")
     @SerialName("result")
     val result: PaddleOcrTaskResult? = null
 ) : Parcelable {
@@ -74,7 +65,6 @@ data class PaddleOcrSubmitResponse(
 @Parcelize
 @Serializable
 data class PaddleOcrTaskResult(
-    @SerializedName("task_id")
     @SerialName("task_id")
     val taskId: String
 ) : Parcelable
@@ -87,7 +77,6 @@ data class PaddleOcrTaskResult(
 @Parcelize
 @Serializable
 data class PaddleOcrQueryRequest(
-    @SerializedName("task_id")
     @SerialName("task_id")
     val taskId: String
 ) : Parcelable
@@ -98,16 +87,12 @@ data class PaddleOcrQueryRequest(
 @Parcelize
 @Serializable
 data class PaddleOcrQueryResponse(
-    @SerializedName("log_id")
     @SerialName("log_id")
     val logId: String? = null,
-    @SerializedName("error_code")
     @SerialName("error_code")
     val errorCode: Int = 0,
-    @SerializedName("error_msg")
     @SerialName("error_msg")
     val errorMsg: String? = null,
-    @SerializedName("result")
     @SerialName("result")
     val result: PaddleOcrQueryResult? = null
 ) : Parcelable {
@@ -134,19 +119,14 @@ enum class OcrTaskStatus(val value: String) {
 @Parcelize
 @Serializable
 data class PaddleOcrQueryResult(
-    @SerializedName("task_id")
     @SerialName("task_id")
     val taskId: String? = null,
-    @SerializedName("status")
     @SerialName("status")
     val status: String? = null,
-    @SerializedName("task_error")
     @SerialName("task_error")
     val taskError: String? = null,
-    @SerializedName("markdown_url")
     @SerialName("markdown_url")
     val markdownUrl: String? = null,
-    @SerializedName("parse_result_url")
     @SerialName("parse_result_url")
     val parseResultUrl: String? = null
 ) : Parcelable
@@ -159,13 +139,10 @@ data class PaddleOcrQueryResult(
 @Parcelize
 @Serializable
 data class PaddleOcrParseResult(
-    @SerializedName("file_name")
     @SerialName("file_name")
     val fileName: String? = null,
-    @SerializedName("file_id")
     @SerialName("file_id")
     val fileId: String? = null,
-    @SerializedName("pages")
     @SerialName("pages")
     val pages: List<OcrPage>? = null
 ) : Parcelable
@@ -176,25 +153,18 @@ data class PaddleOcrParseResult(
 @Parcelize
 @Serializable
 data class OcrPage(
-    @SerializedName("page_id")
     @SerialName("page_id")
     val pageId: String? = null,
-    @SerializedName("page_num")
     @SerialName("page_num")
     val pageNum: Int = 0,
-    @SerializedName("text")
     @SerialName("text")
     val text: String? = null,
-    @SerializedName("layouts")
     @SerialName("layouts")
     val layouts: List<OcrLayout>? = null,
-    @SerializedName("tables")
     @SerialName("tables")
     val tables: List<OcrTable>? = null,
-    @SerializedName("images")
     @SerialName("images")
     val images: List<OcrImage>? = null,
-    @SerializedName("meta")
     @SerialName("meta")
     val meta: OcrPageMeta? = null
 ) : Parcelable
@@ -205,16 +175,12 @@ data class OcrPage(
 @Parcelize
 @Serializable
 data class OcrLayout(
-    @SerializedName("layout_id")
     @SerialName("layout_id")
     val layoutId: String? = null,
-    @SerializedName("text")
     @SerialName("text")
     val text: String? = null,
-    @SerializedName("position")
     @SerialName("position")
     val position: List<Int>? = null, // [x, y, w, h]
-    @SerializedName("type")
     @SerialName("type")
     val type: String? = null
 ) : Parcelable
@@ -255,19 +221,14 @@ object OcrLayoutType {
 @Parcelize
 @Serializable
 data class OcrTable(
-    @SerializedName("layout_id")
     @SerialName("layout_id")
     val layoutId: String? = null,
-    @SerializedName("markdown")
     @SerialName("markdown")
     val markdown: String? = null,
-    @SerializedName("position")
     @SerialName("position")
     val position: List<Int>? = null, // [x, y, w, h]
-    @SerializedName("cells")
     @SerialName("cells")
     val cells: List<OcrTableCell>? = null,
-    @SerializedName("matrix")
     @SerialName("matrix")
     val matrix: List<List<Int>>? = null
 ) : Parcelable
@@ -278,16 +239,12 @@ data class OcrTable(
 @Parcelize
 @Serializable
 data class OcrTableCell(
-    @SerializedName("layout_id")
     @SerialName("layout_id")
     val layoutId: String? = null,
-    @SerializedName("text")
     @SerialName("text")
     val text: String? = null,
-    @SerializedName("position")
     @SerialName("position")
     val position: List<Int>? = null,
-    @SerializedName("type")
     @SerialName("type")
     val type: String? = null
 ) : Parcelable
@@ -298,16 +255,12 @@ data class OcrTableCell(
 @Parcelize
 @Serializable
 data class OcrImage(
-    @SerializedName("layout_id")
     @SerialName("layout_id")
     val layoutId: String? = null,
-    @SerializedName("position")
     @SerialName("position")
     val position: List<Int>? = null, // [x, y, w, h]
-    @SerializedName("data_url")
     @SerialName("data_url")
     val dataUrl: String? = null,
-    @SerializedName("image_description")
     @SerialName("image_description")
     val imageDescription: String? = null // 对统计图表进行内容解析和描述，JSON字符串
 ) : Parcelable
@@ -318,10 +271,8 @@ data class OcrImage(
 @Parcelize
 @Serializable
 data class OcrPageMeta(
-    @SerializedName("page_width")
     @SerialName("page_width")
     val pageWidth: Int = 0,
-    @SerializedName("page_height")
     @SerialName("page_height")
     val pageHeight: Int = 0
 ) : Parcelable

@@ -74,7 +74,6 @@ dependencies {
      */
 
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.com.squareup.retrofit2.converter.gson)
     implementation(libs.com.squareup.retrofit2.retrofit)
     implementation(libs.okhttp3.logging.interceptor)
     implementation(libs.com.squareup.okhttp3.okhttp)

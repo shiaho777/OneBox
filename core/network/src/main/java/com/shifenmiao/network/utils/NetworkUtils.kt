@@ -1,14 +1,13 @@
 package com.shifenmiao.network.utils
 
-import com.google.gson.GsonBuilder
 import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
 import com.shifenmiao.interfaces.singleton.AppContext
 import com.shifenmiao.model.DataValue
 import com.shifenmiao.model.StrapiErrorResponse
-import com.shifenmiao.model.deserializer.DataValueTypeAdapter
 import com.shifenmiao.network.R
 import com.t8rin.logger.makeLog
 import retrofit2.Response
@@ -50,7 +49,7 @@ object NetworkUtils {
             is javax.net.ssl.SSLException -> context.getString(R.string.error_ssl_failed)
             is java.io.IOException -> context.getString(R.string.error_network_exception)
             is kotlinx.coroutines.CancellationException -> context.getString(R.string.error_request_cancelled)
-            is com.google.gson.JsonSyntaxException -> context.getString(R.string.error_data_parse_failed)
+            is kotlinx.serialization.SerializationException -> context.getString(R.string.error_data_parse_failed)
             is retrofit2.HttpException -> {
                 when (exception.code()) {
                     400 -> context.getString(R.string.error_bad_request)
@@ -159,12 +158,8 @@ object NetworkUtils {
     }
 
     private fun parseStrapiError(errorString: String): ErrorResult {
-        val gson = GsonBuilder()
-            .registerTypeAdapter(DataValue::class.java, DataValueTypeAdapter())
-            .create()
-
         val errorResponse: StrapiErrorResponse =
-            gson.fromJson(errorString, StrapiErrorResponse::class.java)
+            AppJson.decodeFromString<StrapiErrorResponse>(errorString)
 
         val detailsMessage = when (val details = errorResponse.error.details) {
             is DataValue.StringValue -> details.value

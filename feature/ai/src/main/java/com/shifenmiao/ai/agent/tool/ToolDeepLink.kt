@@ -1,6 +1,5 @@
 package com.shifenmiao.ai.agent.tool
 
-import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -21,8 +20,8 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ToolDeepLink(
-    @SerializedName("uri") @SerialName("uri") val uri: String,
-    @SerializedName("label") @SerialName("label") val label: String,
-    @SerializedName("guidance") @SerialName("guidance") val guidance: String? = null,
-    @SerializedName("primary") @SerialName("primary") val primary: Boolean = false,
+    @SerialName("uri") val uri: String,
+    @SerialName("label") val label: String,
+    @SerialName("guidance") val guidance: String? = null,
+    @SerialName("primary") val primary: Boolean = false,
 )

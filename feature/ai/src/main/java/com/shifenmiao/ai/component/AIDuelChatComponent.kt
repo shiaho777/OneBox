@@ -3,7 +3,6 @@ package com.shifenmiao.ai.component
 import android.content.Context
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.doOnDestroy
-import com.google.gson.annotations.SerializedName
 import com.shifenmiao.model.ModelProvider.AppJson
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -88,23 +87,23 @@ import kotlin.math.ceil
 
 @Serializable
 private data class DuelPromptTemplates(
-    @SerializedName("roleNameInstruction") val roleNameInstruction: String = "",
-    @SerializedName("responseRules") val responseRules: String = "",
-    @SerializedName("seedMessage") val seedMessage: String = "",
-    @SerializedName("continuePrompt") val continuePrompt: String = "",
-    @SerializedName("systemInstruction") val systemInstruction: String = "",
-    @SerializedName("firstTurnInstruction") val firstTurnInstruction: String = "",
-    @SerializedName("followUpInstruction") val followUpInstruction: String = "",
-    @SerializedName("responseEnvelope") val responseEnvelope: String = "",
-    @SerializedName("opponentLineLabel") val opponentLineLabel: String = "",
+    val roleNameInstruction: String = "",
+    val responseRules: String = "",
+    val seedMessage: String = "",
+    val continuePrompt: String = "",
+    val systemInstruction: String = "",
+    val firstTurnInstruction: String = "",
+    val followUpInstruction: String = "",
+    val responseEnvelope: String = "",
+    val opponentLineLabel: String = "",
     // 旧版按模式分 key 的 map，仅用于兼容解析存量数据：扁平字段为空时回退读取
-    @SerializedName("seedMessages") val legacySeedMessages: Map<String, String> = emptyMap(),
-    @SerializedName("continuePrompts") val legacyContinuePrompts: Map<String, String> = emptyMap(),
-    @SerializedName("modeSystemInstructions") val legacySystemInstructions: Map<String, String> = emptyMap(),
-    @SerializedName("firstTurnInstructions") val legacyFirstTurnInstructions: Map<String, String> = emptyMap(),
-    @SerializedName("followUpInstructions") val legacyFollowUpInstructions: Map<String, String> = emptyMap(),
-    @SerializedName("responseEnvelopes") val legacyResponseEnvelopes: Map<String, String> = emptyMap(),
-    @SerializedName("opponentLineLabels") val legacyOpponentLineLabels: Map<String, String> = emptyMap()
+    @SerialName("seedMessages") val legacySeedMessages: Map<String, String> = emptyMap(),
+    @SerialName("continuePrompts") val legacyContinuePrompts: Map<String, String> = emptyMap(),
+    @SerialName("modeSystemInstructions") val legacySystemInstructions: Map<String, String> = emptyMap(),
+    @SerialName("firstTurnInstructions") val legacyFirstTurnInstructions: Map<String, String> = emptyMap(),
+    @SerialName("followUpInstructions") val legacyFollowUpInstructions: Map<String, String> = emptyMap(),
+    @SerialName("responseEnvelopes") val legacyResponseEnvelopes: Map<String, String> = emptyMap(),
+    @SerialName("opponentLineLabels") val legacyOpponentLineLabels: Map<String, String> = emptyMap()
 )
 
 class AIDuelChatComponent @AssistedInject internal constructor(

@@ -65,6 +65,7 @@ import com.shifenmiao.network.BuildConfig
 import com.shifenmiao.storage.TokenStorage
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
@@ -83,7 +84,7 @@ import retrofit2.http.Query
 /**
  * val retrofit = Retrofit.Builder()
  *     .baseUrl("https://your_base_url/")
- *     .addConverterFactory(GsonConverterFactory.create())
+ *     .addConverterFactory(ModelProvider.AppJson.asConverterFactory("application/json".toMediaType()))
  *     .build()
  *
  * val apiService = retrofit.create(ApiService::class.java)
@@ -188,7 +189,7 @@ interface ApiService {
     @POST("api/ai/models")
     suspend fun submitAiModels(
         @Body request: com.shifenmiao.model.ai.SubmitModelsRequest
-    ): Response<Any>
+    ): Response<ResponseBody>
 
     @GET("/api/announcements")
     suspend fun fetchAnnouncements(
@@ -443,11 +444,11 @@ interface ApiService {
     @POST("/api/user-notifications/{id}/read")
     suspend fun markNotificationRead(
         @Path("id") id: Int,
-    ): Response<Any>
+    ): Response<ResponseBody>
 
     /** 全部标记已读 */
     @POST("/api/user-notifications/read-all")
-    suspend fun markAllNotificationsRead(): Response<Any>
+    suspend fun markAllNotificationsRead(): Response<ResponseBody>
 
     /** 未读数 */
     @GET("/api/user-notifications/unread-count")
@@ -459,11 +460,11 @@ interface ApiService {
     @POST("user/fcm-token")
     suspend fun uploadFcmToken(
         @Body body: FcmTokenRequest,
-    ): Response<Any>
+    ): Response<ResponseBody>
 
     /** 解绑 FCM token(DELETE 带 body 需显式 hasBody) */
     @HTTP(method = "DELETE", path = "user/fcm-token", hasBody = true)
     suspend fun deleteFcmToken(
         @Body body: FcmTokenDeleteRequest,
-    ): Response<Any>
+    ): Response<ResponseBody>
 }

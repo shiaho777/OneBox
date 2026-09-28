@@ -13,7 +13,6 @@ dependencies {
 
     // Serialization
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.com.squareup.retrofit2.converter.gson)
 
     // NanoHTTPD - 轻量级HTTP服务器
     implementation(libs.nanohttpd)

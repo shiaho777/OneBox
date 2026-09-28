@@ -4,10 +4,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ErrorResponse(
-    val status: Int,
-    val name: String,
-    val message: String,
-    val details: DataValue,
+    val status: Int = 0,
+    val name: String = "",
+    val message: String = "",
+    val details: DataValue = DataValue.StringValue(""),
 )
 
 
@@ -15,11 +15,11 @@ data class ErrorResponse(
 @Serializable
 data class StrapiErrorResponse(
     val data: Map<String, DataValue>? = emptyMap(),
-    val error: ErrorResponse
+    val error: ErrorResponse = ErrorResponse()
 )
 
 
-@Serializable
+@Serializable(com.shifenmiao.model.deserializer.DataValueKSerializer::class)
 sealed class DataValue {
     @Serializable
     data class StringValue(val value: String) : DataValue()

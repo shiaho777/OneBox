@@ -1,10 +1,6 @@
 package com.shifenmiao.model.ai
 
 import android.os.Parcelable
-import com.google.gson.TypeAdapter
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonToken
-import com.google.gson.stream.JsonWriter
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -88,44 +84,6 @@ sealed class AiProvider(val value: String) : Parcelable {
     }
 }
 
-class AiProviderTypeAdapter : TypeAdapter<AiProvider>() {
-    override fun write(out: JsonWriter, value: AiProvider?) {
-        if (value == null) {
-            out.nullValue()
-            return
-        }
-        out.value(value.value)
-    }
-
-    override fun read(reader: JsonReader): AiProvider {
-        val providerString = when (reader.peek()) {
-            JsonToken.STRING -> reader.nextString()
-            JsonToken.BEGIN_OBJECT -> {
-                var value: String? = null
-                reader.beginObject()
-                while (reader.hasNext()) {
-                    val name = reader.nextName()
-                    if (name == "value" && reader.peek() == JsonToken.STRING) {
-                        value = reader.nextString()
-                    } else {
-                        reader.skipValue()
-                    }
-                }
-                reader.endObject()
-                value.orEmpty()
-            }
-            JsonToken.NULL -> {
-                reader.nextNull()
-                ""
-            }
-            else -> {
-                reader.skipValue()
-                ""
-            }
-        }
-        return AiProvider.fromValue(providerString)
-    }
-}
 
 /**
  * kotlinx.serialization 版 [AiProviderTypeAdapter](Gson → kotlinx 迁移阶段②b):

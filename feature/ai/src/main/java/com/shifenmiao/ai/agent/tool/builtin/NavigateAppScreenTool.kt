@@ -1,6 +1,5 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.SerialName
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.callback.ToolCallback
@@ -201,7 +200,6 @@ class NavigateAppScreenTool @Inject constructor(
 
     @Serializable
     private data class NavigateAppScreenParams(
-        @SerializedName("deeplink")
         @SerialName("deeplink")
         val deeplink: String? = null,
         val action: String? = null,

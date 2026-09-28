@@ -1,8 +1,8 @@
 package com.shifenmiao.model.webview
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -90,7 +90,7 @@ data class WebResourceRuleDto(
     /**
      * 匹配策略。取值见 [MATCH_HOST] / [MATCH_EXACT_URL] / [MATCH_URL_PREFIX]。
      */
-    @SerializedName("matchKind")
+    @SerialName("matchKind")
     val matchKind: String,
 
     /**
@@ -99,27 +99,27 @@ data class WebResourceRuleDto(
      * - `exactUrl` 模式：完整 URL，包含 query string
      * - `urlPrefix` 模式：URL 前缀，包含 query string
      */
-    @SerializedName("matchValue")
+    @SerialName("matchValue")
     val matchValue: String,
 
     /**
      * 规则行为。取值见 [RULE_ASSET] / [RULE_REMOTE_URL]。
      */
-    @SerializedName("ruleKind")
+    @SerialName("ruleKind")
     val ruleKind: String,
 
     /**
      * 本地资源路径（`ruleKind=asset` 时必填）。
      * 相对 `assets/` 目录，**不**带前导 `/`。例：`js/tailwindcss.js`。
      */
-    @SerializedName("assetPath")
+    @SerialName("assetPath")
     val assetPath: String? = null,
 
     /**
      * 真实资源 URL（`ruleKind=remoteUrl` 时必填）。
      * WebView 请求命中本规则后，实际从该 URL 拉取内容（带磁盘缓存）。
      */
-    @SerializedName("realUrl")
+    @SerialName("realUrl")
     val realUrl: String? = null,
 
     /**
@@ -127,7 +127,7 @@ data class WebResourceRuleDto(
      * 设置后会在响应中追加 `Cache-Control: max-age=...`，OkHttp 按此判定过期。
      * 不设置则尊重服务端 `Cache-Control` 头。
      */
-    @SerializedName("cacheTtlSeconds")
+    @SerialName("cacheTtlSeconds")
     val cacheTtlSeconds: Long? = null,
 ) : Parcelable {
 

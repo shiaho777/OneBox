@@ -1,6 +1,5 @@
 package com.shifenmiao.ai.request
 
-import com.google.gson.Gson
 import com.shifenmiao.model.parseLooseJsonObject
 import com.shifenmiao.model.ModelProvider.AppJson
 import kotlinx.serialization.decodeFromString
@@ -10,7 +9,10 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.put
 import com.shifenmiao.ai.BuildConfig
 import com.shifenmiao.ai.upload.AttachmentContentResolver
 import com.shifenmiao.ai.utils.AiUtils
@@ -76,7 +78,6 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
     private val anthropicCompatibleService: AnthropicCompatibleService,
     private val attachmentContentResolver: AttachmentContentResolver,
     private val imageDao: ImageDao,
-    private val gson: Gson
 ) : AIRequestHandler {
 
     override fun startChatWithStreaming(
@@ -508,14 +509,12 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
     }
 
     private fun mapToResponsesRequest(request: LlmTurnRequest): ResponsesApiRequest {
-        // 请求模型 ResponsesApiRequest 经流式 service 的 Gson converter 上送,
-        // 该侧 Gson 树构造保留,与流式 service 一起纳入后续阶段迁移
-        val tools = buildList<com.google.gson.JsonObject> {
+        val tools = buildList<JsonObject> {
             request.tools?.forEach { tool ->
                 add(tool.toResponsesToolJson())
             }
             if (request.webSearchEnabled) {
-                add(gson.toJsonTree(ResponsesWebSearchTool()).asJsonObject)
+                add(AppJson.encodeToJsonElement(ResponsesWebSearchTool()).jsonObject)
             }
         }.takeIf { it.isNotEmpty() }
         return ResponsesApiRequest(
@@ -532,12 +531,12 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
         )
     }
 
-    private fun ToolDefinition.toResponsesToolJson(): com.google.gson.JsonObject {
-        return com.google.gson.JsonObject().apply {
-            addProperty("type", type)
-            addProperty("name", function.name)
-            addProperty("description", function.description)
-            function.parameters?.let { add("parameters", gson.toJsonTree(it)) }
+    private fun ToolDefinition.toResponsesToolJson(): JsonObject {
+        return buildJsonObject {
+            put("type", type)
+            put("name", function.name)
+            put("description", function.description)
+            function.parameters?.let { put("parameters", AppJson.encodeToJsonElement(it)) }
         }
     }
 

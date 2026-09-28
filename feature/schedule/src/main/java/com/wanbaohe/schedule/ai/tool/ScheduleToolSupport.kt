@@ -23,7 +23,7 @@ internal fun scheduleScreenDeeplink(): String {
     )
 }
 
-/** 一条结构化 deep link(键名与 ToolDeepLink 的 SerializedName 对齐) */
+/** 一条结构化 deep link(键名与 ToolDeepLink 的 @SerialName 对齐) */
 internal fun toolDeepLinkJson(
     uri: String,
     label: String,

@@ -1,6 +1,5 @@
 package com.shifenmiao.model.ai
 
-import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
@@ -13,26 +12,20 @@ import kotlinx.serialization.json.JsonObject
  */
 @Serializable
 data class JevRequest(
-    @SerializedName("state")
     @SerialName("state")
     val state: JsonObject,
-    @SerializedName("model")
     @SerialName("model")
     val model: String,
-    @SerializedName("questions")
     @SerialName("questions")
     val questions: JsonObject,
 )
 
 @Serializable
 data class JevResponse(
-    @SerializedName("model")
     @SerialName("model")
     val model: String = "",
-    @SerializedName("answers")
     @SerialName("answers")
     val answers: Map<String, JevChoiceAnswer> = emptyMap(),
-    @SerializedName("usage")
     @SerialName("usage")
     val usage: JsonObject? = null,
 )
@@ -45,16 +38,12 @@ data class JevResponse(
  */
 @Serializable
 data class JevChoiceAnswer(
-    @SerializedName("type")
     @SerialName("type")
     val type: String = "",
-    @SerializedName("choice")
     @SerialName("choice")
     val choice: String = "",
-    @SerializedName("confidence")
     @SerialName("confidence")
     val confidence: Double = 0.0,
-    @SerializedName("probabilities")
     @SerialName("probabilities")
     val probabilities: Map<String, Double> = emptyMap(),
 )

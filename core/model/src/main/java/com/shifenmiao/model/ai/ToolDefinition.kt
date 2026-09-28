@@ -1,8 +1,8 @@
 package com.shifenmiao.model.ai
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -12,9 +12,9 @@ import kotlinx.serialization.Serializable
 @Parcelize
 @Serializable
 data class ToolDefinition(
-    @SerializedName("type")
+    @SerialName("type")
     val type: String = "function",
-    @SerializedName("function")
+    @SerialName("function")
     val function: ToolFunctionDef
 ) : Parcelable
 
@@ -24,11 +24,11 @@ data class ToolDefinition(
 @Parcelize
 @Serializable
 data class ToolFunctionDef(
-    @SerializedName("name")
+    @SerialName("name")
     val name: String,
-    @SerializedName("description")
+    @SerialName("description")
     val description: String,
-    @SerializedName("parameters")
+    @SerialName("parameters")
     val parameters: ToolParameters? = null
 ) : Parcelable
 
@@ -38,11 +38,11 @@ data class ToolFunctionDef(
 @Parcelize
 @Serializable
 data class ToolParameters(
-    @SerializedName("type")
+    @SerialName("type")
     val type: String = "object",
-    @SerializedName("properties")
+    @SerialName("properties")
     val properties: Map<String, ToolParameterProperty> = emptyMap(),
-    @SerializedName("required")
+    @SerialName("required")
     val required: List<String> = emptyList()
 ) : Parcelable
 
@@ -63,17 +63,17 @@ data class ToolParameters(
 @Parcelize
 @Serializable
 data class ToolParameterProperty(
-    @SerializedName("type")
+    @SerialName("type")
     val type: String,
-    @SerializedName("description")
+    @SerialName("description")
     val description: String = "",
-    @SerializedName("enum")
+    @SerialName("enum")
     val enum: List<String>? = null,
-    @SerializedName("properties")
+    @SerialName("properties")
     val properties: Map<String, ToolParameterProperty>? = null,
-    @SerializedName("required")
+    @SerialName("required")
     val required: List<String>? = null,
-    @SerializedName("items")
+    @SerialName("items")
     val items: ToolParameterProperty? = null
 ) : Parcelable
 
@@ -84,13 +84,13 @@ data class ToolParameterProperty(
 @Parcelize
 @Serializable
 data class ToolCallDelta(
-    @SerializedName("index")
+    @SerialName("index")
     val index: Int = 0,
-    @SerializedName("id")
+    @SerialName("id")
     val id: String? = null,
-    @SerializedName("type")
+    @SerialName("type")
     val type: String? = null,
-    @SerializedName("function")
+    @SerialName("function")
     val function: FunctionCallDelta? = null
 ) : Parcelable
 
@@ -100,8 +100,8 @@ data class ToolCallDelta(
 @Parcelize
 @Serializable
 data class FunctionCallDelta(
-    @SerializedName("name")
+    @SerialName("name")
     val name: String? = null,
-    @SerializedName("arguments")
+    @SerialName("arguments")
     val arguments: String? = null
 ) : Parcelable

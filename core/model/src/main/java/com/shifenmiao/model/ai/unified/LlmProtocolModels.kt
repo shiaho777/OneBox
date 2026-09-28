@@ -1,7 +1,6 @@
 package com.shifenmiao.model.ai.unified
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import com.shifenmiao.model.ai.ContentItem
 import com.shifenmiao.model.ai.ImageUrl
 import com.shifenmiao.model.ai.ListOrStringContent
@@ -14,6 +13,7 @@ import com.shifenmiao.model.ai.ToolCallDelta
 import com.shifenmiao.model.ai.ToolDefinition
 import com.shifenmiao.model.ai.Usage
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -159,11 +159,11 @@ fun RequestMessage.toLlmMessage(): LlmMessage {
 sealed class LlmContentPart : Parcelable {
     @Parcelize
     @Serializable
-    data class Text(@SerializedName("text") val text: String) : LlmContentPart()
+    data class Text(@SerialName("text") val text: String) : LlmContentPart()
 
     @Parcelize
     @Serializable
-    data class ImageUrlPart(@SerializedName("url") val url: String) : LlmContentPart()
+    data class ImageUrlPart(@SerialName("url") val url: String) : LlmContentPart()
 }
 
 /**

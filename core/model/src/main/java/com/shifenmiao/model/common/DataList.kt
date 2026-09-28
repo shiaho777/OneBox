@@ -21,7 +21,7 @@ data class DataObject<T : Parcelable>(
 @Parcelize
 @Serializable
 data class Meta(
-    val pagination: Pagination,
+    val pagination: Pagination = Pagination(),
     val serverTime: String? = null,
 ) : Parcelable
 
@@ -34,8 +34,8 @@ data class Meta(
 @Parcelize
 @Serializable
 data class Pagination(
-    val page: Int,
-    val pageSize: Int,
-    val pageCount: Int,
-    val total: Int
+    val page: Int = 0,
+    val pageSize: Int = 0,
+    val pageCount: Int = 0,
+    val total: Int = 0
 ) : Parcelable

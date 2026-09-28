@@ -23,7 +23,6 @@ dependencies {
     implementation(libs.androidx.room.paging)
     ksp(libs.androidx.room.compiler)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.com.squareup.retrofit2.converter.gson)
 
     implementation(projects.core.r)
     implementation(projects.core.model)

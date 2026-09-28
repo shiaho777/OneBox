@@ -16,10 +16,8 @@ dependencies {
      * 发起网络请求
      */
     api(libs.com.squareup.retrofit2.retrofit)
-    api(libs.com.squareup.retrofit2.converter.gson)
     api(libs.okhttp3.logging.interceptor)
     api(libs.com.squareup.okhttp3.okhttp)
-    api(libs.gson)
     api(libs.eddsa)
     api(projects.core.base)
     api(projects.core.model)

@@ -1,40 +1,45 @@
 package com.shifenmiao.model.moderation
 
 import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Keep
+@Serializable
 data class SensitiveWordCheckRequest(
-    @SerializedName("scene")
+    @SerialName("scene")
     val scene: String,
-    @SerializedName("fields")
+    @SerialName("fields")
     val fields: List<SensitiveWordCheckField>
 )
 
 @Keep
+@Serializable
 data class SensitiveWordCheckField(
-    @SerializedName("key")
+    @SerialName("key")
     val key: String,
-    @SerializedName("text")
+    @SerialName("text")
     val text: String
 )
 
 @Keep
+@Serializable
 data class SensitiveWordCheckResponse(
-    @SerializedName("hit")
+    @SerialName("hit")
     val hit: Boolean = false,
-    @SerializedName("hits")
+    @SerialName("hits")
     val hits: List<SensitiveWordHit> = emptyList(),
-    @SerializedName("message")
+    @SerialName("message")
     val message: String? = null
 )
 
 @Keep
+@Serializable
 data class SensitiveWordHit(
-    @SerializedName("key")
+    @SerialName("key")
     val key: String,
-    @SerializedName("words")
+    @SerialName("words")
     val words: List<String> = emptyList(),
-    @SerializedName("reason")
+    @SerialName("reason")
     val reason: String? = null
 )

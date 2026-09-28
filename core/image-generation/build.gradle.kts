@@ -24,9 +24,7 @@ dependencies {
 
     api(libs.kotlinx.coroutines.core)
     api(libs.com.squareup.retrofit2.retrofit)
-    api(libs.com.squareup.retrofit2.converter.gson)
     api(libs.com.squareup.okhttp3.okhttp)
-    implementation(libs.gson)
     implementation(libs.androidx.security.crypto)
 
     testImplementation(kotlin("test"))
