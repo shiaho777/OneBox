@@ -161,6 +161,12 @@ object NetworkUtils {
         val errorResponse: StrapiErrorResponse =
             AppJson.decodeFromString<StrapiErrorResponse>(errorString)
 
+        // 合法 JSON 但非 Strapi 形状(如 nginx/上游透传的 {"message":"..."})也会
+        // 因字段默认值"解码成功"且 message 为空,按退化形状抛出让调用方回退 generic 解析
+        if (errorResponse.error.message.isBlank() && errorResponse.error.status == 0) {
+            throw kotlinx.serialization.SerializationException("Not a Strapi-shaped error body")
+        }
+
         val detailsMessage = when (val details = errorResponse.error.details) {
             is DataValue.StringValue -> details.value
             is DataValue.StringListValue -> details.value.joinToString(", ")

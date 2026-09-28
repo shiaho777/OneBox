@@ -9,8 +9,8 @@ data class WechatPrepayResponse(
     val appId: String = "",
     val partnerId: String = "",
     val prepayId: String = "",
-    @SerialName("package") val packageStr: String,
-    val nonceStr: String,
-    val timeStamp: String,
-    val sign: String
+    @SerialName("package") val packageStr: String = "",
+    val nonceStr: String = "",
+    val timeStamp: String = "",
+    val sign: String = ""
 ) : PrePayResponse

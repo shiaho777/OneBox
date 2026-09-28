@@ -13,7 +13,6 @@ import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
-import kotlinx.serialization.json.jsonPrimitive
 
 @Parcelize
 @Serializable
@@ -86,9 +85,11 @@ sealed class AiProvider(val value: String) : Parcelable {
 
 
 /**
- * kotlinx.serialization 版 [AiProviderTypeAdapter](Gson → kotlinx 迁移阶段②b):
- * 写出与 Gson 完全一致的 `"provider":"openai"` 字符串格式;读取兼容三种历史形态
- * (字符串 / 带 value 字段的对象 / null),未知值一律回退 [AiProvider.Default]。
+ * kotlinx.serialization 版 AiProvider 序列化器:
+ * 写出 `"provider":"openai"` 字符串格式;读取兼容四种历史形态 ——
+ * 字符串 / Gson 时代带 value 字段的对象 / v1.3.1 起 Room 存量的 kotlinx 多态形态
+ * `{"type":"com.shifenmiao.model.ai.DeepSeek"}`(取末段类名)/ null,
+ * 未知值一律回退 [AiProvider.Default]。
  */
 object AiProviderKSerializer : KSerializer<AiProvider> {
     override val descriptor: SerialDescriptor =
@@ -102,7 +103,9 @@ object AiProviderKSerializer : KSerializer<AiProvider> {
         if (decoder is JsonDecoder) {
             return when (val element = decoder.decodeJsonElement()) {
                 is JsonObject -> AiProvider.fromValue(
-                    element["value"]?.jsonPrimitive?.contentOrNull
+                    (element["value"] as? JsonPrimitive)?.contentOrNull
+                        ?: (element["type"] as? JsonPrimitive)?.contentOrNull
+                            ?.substringAfterLast('.')
                 )
                 is JsonPrimitive -> AiProvider.fromValue(element.contentOrNull)
                 else -> AiProvider.fromValue(null)

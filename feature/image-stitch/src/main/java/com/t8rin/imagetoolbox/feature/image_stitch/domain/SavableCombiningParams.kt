@@ -17,6 +17,9 @@
 
 package com.t8rin.imagetoolbox.feature.image_stitch.domain
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class SavableCombiningParams(
     val stitchMode: Int,
     val spacing: Int,

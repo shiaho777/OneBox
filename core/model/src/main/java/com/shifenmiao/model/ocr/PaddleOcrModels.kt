@@ -66,7 +66,7 @@ data class PaddleOcrSubmitResponse(
 @Serializable
 data class PaddleOcrTaskResult(
     @SerialName("task_id")
-    val taskId: String
+    val taskId: String = ""
 ) : Parcelable
 
 // ==================== 查询结果相关 ====================

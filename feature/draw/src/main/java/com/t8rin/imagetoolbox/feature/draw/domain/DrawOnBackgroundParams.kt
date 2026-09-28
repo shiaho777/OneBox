@@ -17,6 +17,9 @@
 
 package com.t8rin.imagetoolbox.feature.draw.domain
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class DrawOnBackgroundParams(
     val width: Int,
     val height: Int,

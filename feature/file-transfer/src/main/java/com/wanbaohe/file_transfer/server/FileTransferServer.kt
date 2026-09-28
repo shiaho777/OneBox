@@ -8,6 +8,7 @@ import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.jsonStringOf
 import com.shifenmiao.model.parseLooseJsonObject
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.encodeToJsonElement
 import com.shifenmiao.database.FeatureDatabase
 import com.shifenmiao.database.transfer.ChatMessageEntity
 import com.shifenmiao.database.transfer.ChatSessionEntity
@@ -304,10 +305,12 @@ class FileTransferServer(
     private fun handleChatSessions(): Response {
         return try {
             val sessions = listChatSessions()
+            // sessions/messages 是 @Serializable data class,jsonStringOf 的 toJsonElement 不认,
+            // 必须先编码为 JsonElement 再入 Map(审查问题2:否则恒定 HTTP 500)
             jsonResponse(
                 mapOf(
                     "success" to true,
-                    "sessions" to sessions
+                    "sessions" to AppJson.encodeToJsonElement(sessions)
                 )
             )
         } catch (e: Exception) {
@@ -1206,7 +1209,7 @@ class FileTransferServer(
                 mapOf(
                     "success" to true,
                     "channelId" to channelId,
-                    "messages" to messages
+                    "messages" to AppJson.encodeToJsonElement(messages)
                 )
             )
 

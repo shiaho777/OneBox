@@ -4,7 +4,6 @@ import com.shifenmiao.model.jsonStringOf
 import com.shifenmiao.model.ModelProvider.AppJson
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.contentOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -168,7 +167,8 @@ class FunAsrClient(
         try {
             val root = AppJson.parseToJsonElement(text) as? JsonObject ?: return
             fun str(key: String): String? = (root[key] as? JsonPrimitive)?.contentOrNull
-            fun bool(key: String): Boolean = (root[key] as? JsonPrimitive)?.booleanOrNull ?: false
+            fun bool(key: String): Boolean =
+                (root[key] as? JsonPrimitive)?.contentOrNull.equals("true", ignoreCase = true)
             val mode = str("mode").orEmpty()
             val recognized = str("text").orEmpty()
             val isFinal = bool("is_final")

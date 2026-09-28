@@ -61,19 +61,11 @@
 -keepnames class com.shifenmiao.network.model.*
 -keepnames class com.shifenmiao.network.model.** { *; }
 
-##---------------Begin: proguard configuration for Gson  ----------
-# Gson uses generic type information stored in a class file when working with fields. Proguard
-# removes such information by default, so configure it to keep all of it.
--keepattributes Signature
+##---------------Begin: 序列化模型保护(kotlinx.serialization)  ----------
+# kotlinx serializer 由编译期生成,但 KotlinxJsonParser 的 serializer(Type) 反射桥接
+# (ObjectSaver 参数记忆)与 R8 横向类合并仍需以下 keep 兜底
 
-# For using GSON @Expose annotation
--keepattributes *Annotation*
-
-# Gson specific classes
--dontwarn sun.misc.**
-#-keep class com.google.gson.stream.** { *; }
-
-# Application classes that will be serialized/deserialized over Gson
+# Application classes that will be serialized/deserialized
 -keep class com.shifenmiao.network.model.** { <fields>; }
 # TTS 响应模型仅作为 Retrofit 泛型参数出现,R8 full mode 会把整个类 shrink 掉,必须用强 keep
 -keep class com.shifenmiao.model.tts.** { *; }
@@ -86,36 +78,19 @@
   <fields>;
 }
 
-# Prevent proguard from stripping interface information from TypeAdapter, TypeAdapterFactory,
-# JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
--keep class * extends com.google.gson.TypeAdapter
--keep class * implements com.google.gson.TypeAdapterFactory
--keep class * implements com.google.gson.JsonSerializer
--keep class * implements com.google.gson.JsonDeserializer
-
-# Prevent R8 from leaving Data object members always null
--keepclassmembers,allowobfuscation class * {
-  @com.google.gson.annotations.SerializedName <fields>;
-}
-
-# Retain generic signatures of TypeToken and its subclasses with R8 version 3.0 and higher.
--keep,allowobfuscation,allowshrinking class com.google.gson.reflect.TypeToken
--keep,allowobfuscation,allowshrinking class * extends com.google.gson.reflect.TypeToken
-
-# Keep ALL Gson-reflected classes inside AgentTool packages — argument Params/Args DTOs and
+# Keep ALL AgentTool DTO classes — argument Params/Args DTOs and
 # Result/Payload/Response classes alike, nested in the tool class or top-level in the file.
-# Without this, R8 obfuscates field names and strips constructors, breaking gson.fromJson/toJson
-# in release builds. NOTE: the rules must not use `$` (nested-only): several DTOs are top-level
+# NOTE: the rules must not use `$` (nested-only): several DTOs are top-level
 # file-private classes (e.g. webp_tool's WebpParamsDto, browse_files' BrowseFilesParams).
 -keep class com.shifenmiao.ai.agent.tool.builtin.** { *; }
 
-# Same Gson reflection hazard in feature-module AgentTools (e.g. teleprompter's
+# Same hazard in feature-module AgentTools (e.g. teleprompter's
 # ManageTeleprompterParams, calendar's LunarCalendarArgs).
 -keep class com.wanbaohe.**.ai.tool.** { *; }
 
-# Keep top-level data classes deserialized by Gson at runtime.
+# Keep top-level data classes decoded by kotlinx at runtime.
 # R8's horizontal class merging can merge a public data class (e.g. AgentUserQuestionRequest)
-# with unrelated classes into a synthetic abstract class, breaking gson.fromJson(...::class.java).
+# with unrelated classes into a synthetic abstract class, breaking serializer lookup.
 -keep class com.shifenmiao.ai.agent.tool.AgentUserQuestionRequest { *; }
 -keep class com.shifenmiao.ai.agent.tool.AgentUserQuestionItem { *; }
 -keep class com.shifenmiao.ai.agent.tool.AgentUserQuestionOption { *; }
@@ -125,14 +100,14 @@
 -keep class com.shifenmiao.ai.agent.tool.ToolConfirmationRequest { *; }
 -keep class com.shifenmiao.model.ai.tool.ConversationToolPolicy { *; }
 -keep class com.shifenmiao.model.ai.tool.ToolCatalogItem { *; }
-# Jev(System One) 判断模型 DTO: Gson 反射解析/构造, 防横向类合并与字段混淆
+# Jev(System One) 判断模型 DTO: 防横向类合并与字段混淆
 -keep class com.shifenmiao.model.ai.JevRequest { *; }
 -keep class com.shifenmiao.model.ai.JevResponse { *; }
 -keep class com.shifenmiao.model.ai.JevChoiceAnswer { *; }
 -keep class com.shifenmiao.ai.utils.AgentToolCallRecord { *; }
 -keep class com.shifenmiao.ai.agent.ToolCallRecord { *; }
 
-##---------------End: proguard configuration for Gson  ----------
+##---------------End: 序列化模型保护  ----------
 
 -keep class androidx.lifecycle.LiveData { *; }
 

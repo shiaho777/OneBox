@@ -28,9 +28,11 @@ import androidx.compose.ui.graphics.toArgb
 import com.t8rin.imagetoolbox.core.domain.model.IntegerSize
 import com.t8rin.imagetoolbox.core.domain.model.pt
 import com.t8rin.imagetoolbox.core.ui.theme.toColor
+import kotlinx.serialization.Serializable
 
 @Stable
 @Immutable
+@Serializable
 data class HelperGridParams(
     val color: Int = Color.Black.copy(0.5f).toArgb(),
     val cellWidth: Float = 20f,

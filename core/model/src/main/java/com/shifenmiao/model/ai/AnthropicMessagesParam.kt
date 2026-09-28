@@ -3,7 +3,6 @@ package com.shifenmiao.model.ai
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -61,7 +60,7 @@ data class AnthropicMessage(
     val role: String,  // "user" 或 "assistant"
 
     @SerialName("content")
-    @Contextual
+    @Serializable(with = AnthropicAnySerializer::class)
     val content: @RawValue Any  // String 或 List<ContentBlock>
 ) : Parcelable
 
@@ -93,7 +92,8 @@ data class ContentBlock(
     val name: String? = null,
 
     @SerialName("input")
-    val input: @Contextual @RawValue Any? = null,
+    @Serializable(with = AnthropicAnySerializer::class)
+    val input: @RawValue Any? = null,
 
     @SerialName("tool_use_id")
     val toolUseId: String? = null,
@@ -146,7 +146,8 @@ data class AnthropicTool(
     val description: String = "",
 
     @SerialName("input_schema")
-    val inputSchema: @Contextual @RawValue Any
+    @Serializable(with = AnthropicAnySerializer::class)
+    val inputSchema: @RawValue Any
 ) : Parcelable
 
 /**

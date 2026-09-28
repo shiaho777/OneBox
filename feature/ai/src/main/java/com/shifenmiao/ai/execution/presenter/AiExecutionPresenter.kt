@@ -6,7 +6,6 @@ import com.shifenmiao.model.ModelProvider.AppJson
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.contentOrNull
 import com.shifenmiao.ai.agent.ToolCallRecord
 import com.shifenmiao.ai.component.AgentToolCallUIState
@@ -205,7 +204,7 @@ object AiExecutionPresenter {
                 val uri = obj.str("uri") ?: return@mapNotNull null
                 val label = obj.str("label") ?: uri
                 val rawGuidance = obj.str("guidance")
-                val primary = (obj["primary"] as? JsonPrimitive)?.booleanOrNull ?: false
+                val primary = (obj["primary"] as? JsonPrimitive)?.contentOrNull.equals("true", ignoreCase = true)
                 DeepLinkItemUiModel(
                     uri = uri,
                     label = label,

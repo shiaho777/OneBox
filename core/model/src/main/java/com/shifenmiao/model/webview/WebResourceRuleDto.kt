@@ -91,7 +91,7 @@ data class WebResourceRuleDto(
      * 匹配策略。取值见 [MATCH_HOST] / [MATCH_EXACT_URL] / [MATCH_URL_PREFIX]。
      */
     @SerialName("matchKind")
-    val matchKind: String,
+    val matchKind: String = "",
 
     /**
      * 匹配目标字符串。
@@ -100,13 +100,13 @@ data class WebResourceRuleDto(
      * - `urlPrefix` 模式：URL 前缀，包含 query string
      */
     @SerialName("matchValue")
-    val matchValue: String,
+    val matchValue: String = "",
 
     /**
      * 规则行为。取值见 [RULE_ASSET] / [RULE_REMOTE_URL]。
      */
     @SerialName("ruleKind")
-    val ruleKind: String,
+    val ruleKind: String = "",
 
     /**
      * 本地资源路径（`ruleKind=asset` 时必填）。

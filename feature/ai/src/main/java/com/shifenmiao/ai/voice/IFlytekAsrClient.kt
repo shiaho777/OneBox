@@ -6,7 +6,6 @@ import com.shifenmiao.model.ModelProvider.AppJson
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.intOrNull
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -244,7 +243,7 @@ class IFlytekAsrClient(
             }
         }
         val full = synchronized(segments) { segments.joinToString("") }
-        if ((obj["ls"] as? JsonPrimitive)?.booleanOrNull == true) {
+        if ((obj["ls"] as? JsonPrimitive)?.contentOrNull.equals("true", ignoreCase = true)) {
             state.value = AsrState.Finished(full)
         } else if (state.value !is AsrState.Finished) {
             state.value = AsrState.Listening(full)

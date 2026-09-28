@@ -18,8 +18,15 @@
 package com.t8rin.imagetoolbox.core.domain.model
 
 import com.t8rin.imagetoolbox.core.domain.model.CipherType.Companion.registerSecurityCiphers
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 
+@Serializable(CipherTypeKSerializer::class)
 @ConsistentCopyVisibility
 /**
  * [CipherType] multiplatform domain wrapper for java Cipher, in order to add custom digests, you need to call [registerSecurityCiphers] when process created
@@ -132,5 +139,32 @@ data class CipherType private constructor(
             cipher = cipher,
             name = name
         )
+    }
+}
+/**
+ * [CipherType] 的 kotlinx 序列化器(Moshi → kotlinx 收编,与 [HashingTypeKSerializer] 同模式):
+ * 写出 {"cipher","name"} 对象形状(与 Moshi KotlinJsonAdapterFactory 反射产物一致);
+ * 读取经 [CipherType.entries] 注册表匹配,未知值抛异常由 ObjectSaver 回落默认值。
+ */
+object CipherTypeKSerializer : KSerializer<CipherType> {
+
+    @Serializable
+    private data class Surrogate(
+        val cipher: String,
+        val name: String = cipher
+    )
+
+    override val descriptor: SerialDescriptor = Surrogate.serializer().descriptor
+
+    override fun serialize(encoder: Encoder, value: CipherType) {
+        encoder.encodeSerializableValue(Surrogate.serializer(), Surrogate(value.cipher, value.name))
+    }
+
+    override fun deserialize(decoder: Decoder): CipherType {
+        val surrogate = decoder.decodeSerializableValue(Surrogate.serializer())
+        return CipherType.entries.firstOrNull {
+            it.cipher.equals(surrogate.cipher, ignoreCase = true) ||
+                it.name.equals(surrogate.name, ignoreCase = true)
+        } ?: throw SerializationException("Unknown CipherType: ${surrogate.cipher}")
     }
 }

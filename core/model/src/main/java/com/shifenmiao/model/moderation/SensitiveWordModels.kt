@@ -17,7 +17,7 @@ data class SensitiveWordCheckRequest(
 @Serializable
 data class SensitiveWordCheckField(
     @SerialName("key")
-    val key: String,
+    val key: String = "",
     @SerialName("text")
     val text: String
 )
@@ -37,7 +37,7 @@ data class SensitiveWordCheckResponse(
 @Serializable
 data class SensitiveWordHit(
     @SerialName("key")
-    val key: String,
+    val key: String = "",
     @SerialName("words")
     val words: List<String> = emptyList(),
     @SerialName("reason")

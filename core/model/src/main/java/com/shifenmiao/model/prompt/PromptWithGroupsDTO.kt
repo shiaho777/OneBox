@@ -3,8 +3,6 @@ package com.shifenmiao.model.prompt
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
-import java.util.Date
-import kotlinx.serialization.Contextual
 
 /**
  * DTO stands for Data Transfer Object.
@@ -26,7 +24,8 @@ data class PromptDTO(
     val description: String,
     val templates: String = "",
     val placeholder: String = "",
-    val updateTime: @Contextual Date,
+    // 原 @Contextual Date:该类无调用方,kotlinx 无 Date serializer,降为 epoch millis
+    val updateTime: Long,
     val canEdit: Boolean
 ) : Parcelable
 

@@ -35,6 +35,10 @@ import kotlinx.serialization.serializer
  */
 internal class KotlinxJsonParser @Inject constructor() : JsonParser {
 
+    // classDiscriminator="Quality" 是解析器全局设置:为兼容 Moshi 时代
+    // PolymorphicJsonAdapterFactory.of(Quality, "Quality") 写入 DataStore 的旧数据;
+    // 经此解析器的其它 sealed 类型(ShapeType/FilenameBehavior)判别 key 也会是
+    // "Quality"(值仍为各自子类名,语义错位但互不影响,这两类当前无存量数据)
     private val json = Json(ModelProvider.AppJson) {
         classDiscriminator = "Quality"
     }

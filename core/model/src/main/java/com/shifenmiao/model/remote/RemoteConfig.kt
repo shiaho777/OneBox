@@ -559,7 +559,7 @@ data class AppUpdateConfig(
 @Parcelize
 @Serializable
 data class DataConfig(
-    val id: Int,
+    val id: Int = 0,
     val version: Int = 0,
     val versionCode: Int = BuildConfig.VersionCode.toInt(),
     val config: RemoteConfig = RemoteConfig()
@@ -568,8 +568,8 @@ data class DataConfig(
 @Serializable
 @Parcelize
 data class RemoteConfigListResponse(
-    val data: List<DataConfig>,
-    val meta: Meta
+    val data: List<DataConfig> = emptyList(),
+    val meta: Meta = Meta()
 ) : Parcelable
 
 private fun defaultChatQuickStartPrompts(): List<String> = listOf(
