@@ -39,6 +39,7 @@ import com.shifenmiao.model.ai.StreamOptions
 import com.shifenmiao.model.ai.RoleType
 import com.shifenmiao.model.ai.ToolCallDelta
 import com.shifenmiao.model.ai.ToolDefinition
+import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.openai.responses.ResponsesApiContentItem
 import com.shifenmiao.model.ai.openai.responses.ResponsesApiInputItem
 import com.shifenmiao.model.ai.openai.responses.ResponsesApiRequest
@@ -1056,7 +1057,7 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
             AnthropicTool(
                 name = toolDef.function.name,
                 description = toolDef.function.description,
-                inputSchema = toolDef.function.parameters ?: emptyMap<String, Any>()
+                inputSchema = toolDef.function.parameters ?: ToolParameters()
             )
         }?.takeIf { it.isNotEmpty() }
 

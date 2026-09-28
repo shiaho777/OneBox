@@ -146,8 +146,7 @@ data class AnthropicTool(
     val description: String = "",
 
     @SerialName("input_schema")
-    @Serializable(with = AnthropicAnySerializer::class)
-    val inputSchema: @RawValue Any
+    val inputSchema: ToolParameters = ToolParameters()
 ) : Parcelable
 
 /**
