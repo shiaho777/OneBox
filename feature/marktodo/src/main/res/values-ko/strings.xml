@@ -9,8 +9,8 @@
     <string name="schedule_created_success">로컬 일정이 생성되었습니다</string>
     <string name="schedule_created_failed">일정 생성에 실패했습니다. 나중에 다시 시도해 주세요</string>
     <string name="dialog_delete_category_title">카테고리 삭제</string>
-    <string name="dialog_delete_category_message">\"%1$s\"을(를) 삭제하시겠습니까?\n이 카테고리의 모든 작업도 삭제됩니다.</string>
-    <string name="dialog_delete_task_message">\"%1$s\"을(를) 삭제하시겠습니까?</string>
+    <string name="dialog_delete_category_message">\"%1$s\" 삭제하시겠습니까?\n이 카테고리의 모든 작업도 삭제됩니다.</string>
+    <string name="dialog_delete_task_message">\"%1$s\" 삭제하시겠습니까?</string>
     <string name="cd_switch_to_list_view">목록 보기로 전환</string>
     <string name="cd_switch_to_grid_view">그리드 보기로 전환</string>
     <string name="cd_edit_mode_done">완료</string>

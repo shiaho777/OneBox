@@ -44,7 +44,7 @@
     <string name="speed_test_config_delete_desc">삭제</string>
     <string name="speed_test_config_info">%1$d MB · %2$d초</string>
     <string name="speed_test_config_delete_dialog_title">구성 삭제</string>
-    <string name="speed_test_config_delete_dialog_msg">\"%1$s\"을(를) 삭제하시겠습니까?</string>
+    <string name="speed_test_config_delete_dialog_msg">\"%1$s\" 삭제하시겠습니까?</string>
     <string name="speed_test_config_confirm_delete">삭제</string>
     <string name="speed_test_config_add_title">구성 추가</string>
     <string name="speed_test_config_edit_title">구성 편집</string>

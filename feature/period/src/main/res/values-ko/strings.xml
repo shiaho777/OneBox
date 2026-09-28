@@ -112,7 +112,7 @@
     <string name="agent_tool_delete_period_record_title">생리 기록 삭제</string>
     <string name="agent_tool_delete_period_record_summary">record_id로 생리 기록을 삭제합니다</string>
     <string name="agent_tool_delete_period_record_description">생리 기록을 영구적으로 삭제합니다. record_id와 사용자 확인이 필요합니다.</string>
-    <string name="agent_tool_delete_period_record_done">생리 기록 %1$s을(를) 삭제했습니다</string>
+    <string name="agent_tool_delete_period_record_done">생리 기록 %1$s 삭제했습니다</string>
     <string name="agent_tool_delete_period_record_failed">생리 기록 삭제 실패: %1$s</string>
     <string name="agent_tool_period_param_date">기록 날짜, yyyy-MM-dd</string>
     <string name="agent_tool_period_param_is_start">이 날짜가 생리 시작일인지 여부</string>

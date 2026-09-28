@@ -108,7 +108,7 @@
     <string name="agent_tool_create_note_category_missing_for_update">노트를 업데이트할 때 카테고리가 제공되지 않았고 원래 노트에 유지할 카테고리가 없습니다. 카테고리를 명시적으로 전달하세요.</string>
     <string name="agent_tool_create_note_success">노트가 성공적으로 저장되었습니다!\n제목: %1$s\nID: %2$d</string>
     <string name="agent_tool_create_note_open_confirm_title">노트 저장됨</string>
-    <string name="agent_tool_create_note_open_confirm_message">노트 \"%1$s\"이(가) 저장되었습니다. 지금 여시겠습니까?</string>
+    <string name="agent_tool_create_note_open_confirm_message">노트 \"%1$s\" 저장되었습니다. 지금 여시겠습니까?</string>
     <string name="agent_tool_create_note_opened">노트 저장 및 열림</string>
     <string name="agent_tool_create_note_not_opened">노트 저장됨; 사용자가 열지 않기로 선택함</string>
     <string name="agent_tool_create_note_failed">노트 저장 실패: %1$s</string>
@@ -162,7 +162,7 @@
     <string name="agent_tool_theme_setting_no_preset_arg">apply 작업에는 preset_id 또는 preset_name이 필요함</string>
     <string name="agent_tool_theme_setting_deeplink_label">테마 설정</string>
     <string name="agent_tool_theme_setting_deeplink_guidance">탭하여 테마 보기 및 미세 조정</string>
-    <string name="agent_tool_theme_setting_invalid_color">%1$s은(는) 유효한 색상이 아님: %2$s. #RRGGBB 또는 #AARRGGBB 사용(\"#\" 선택 사항)</string>
+    <string name="agent_tool_theme_setting_invalid_color">%1$s: 유효하지 않은 색상 %2$s. #RRGGBB 또는 #AARRGGBB 사용(\"#\" 선택 사항)</string>
     <string name="agent_tool_theme_setting_invalid_night_mode">잘못된 night_mode: %1$s. Light / Dark / System 중 하나여야 함</string>
     <string name="agent_tool_theme_setting_unknown_style">알 수 없는 그라데이션 스타일: %1$s</string>
     <string name="agent_tool_theme_setting_unknown_preset">일치하는 테마 프리셋 없음: %1$s. 사용 가능한 프리셋: %2$s</string>
@@ -530,11 +530,11 @@
     <string name="agent_tool_download_file_success">파일 다운로드 성공: %1$s</string>
     <string name="agent_tool_download_file_failed">파일 다운로드 실패: %1$s</string>
     <string name="agent_tool_download_file_confirm_title">파일 다운로드 확인</string>
-    <string name="agent_tool_download_file_confirm_message">파일 %1$s을(를) 다운로드하려고 합니다. 확인하시겠습니까?</string>
+    <string name="agent_tool_download_file_confirm_message">파일 %1$s 다운로드하려고 합니다. 확인하시겠습니까?</string>
     <string name="agent_tool_open_pdf_preview_title">PDF 미리보기 열기</string>
     <string name="agent_tool_open_pdf_preview_summary">앱 내에서 PDF 문서 미리보기</string>
     <string name="agent_tool_open_pdf_preview_param_uri">PDF 문서 주소; http(s):// 원격 링크, content:// 및 file:// 로컬 URI 지원.</string>
-    <string name="agent_tool_open_pdf_preview_success">PDF 미리보기에서 %1$s을(를) 열었습니다</string>
+    <string name="agent_tool_open_pdf_preview_success">PDF 미리보기에서 %1$s 열었습니다</string>
     <string name="agent_tool_open_pdf_preview_failed">PDF 미리보기 열기 실패: %1$s</string>
     <string name="agent_tool_open_pdf_preview_missing_uri">uri 매개변수가 필요합니다</string>
     <string name="agent_tool_convert_pdf_to_images_title">PDF를 이미지로</string>
@@ -582,7 +582,7 @@
     <string name="agent_tool_manage_todo_task_not_found">작업을 찾을 수 없음: %1$s</string>
     <string name="agent_tool_manage_todo_task_created">작업 생성됨: %1$s</string>
     <string name="agent_tool_manage_todo_category_created">카테고리 생성됨: %1$s</string>
-    <string name="agent_tool_manage_todo_toggled">작업 %1$s이(가) %2$s되었습니다</string>
+    <string name="agent_tool_manage_todo_toggled">작업 %1$s: %2$s</string>
     <string name="agent_tool_manage_todo_task_deleted">작업 삭제됨: %1$s</string>
     <string name="agent_tool_manage_xiangqi_title">샹치 게임 관리</string>
     <string name="agent_tool_manage_xiangqi_summary">중국 체스 게임의 잔여/오프닝 조회, 생성, 가져오기, 게임 기록 가져오기, 삭제 및 내보내기</string>
@@ -593,7 +593,7 @@
     <string name="agent_tool_manage_xiangqi_param_export_format">내보내기 형식: fen / json / both (export에 선택적, 기본값 both)</string>
     <string name="agent_tool_manage_xiangqi_missing_game_id">game_id 매개변수 누락</string>
     <string name="agent_tool_manage_xiangqi_missing_title">title 매개변수 누락</string>
-    <string name="agent_tool_manage_xiangqi_not_found">게임 %1$s이(가) 존재하지 않습니다</string>
+    <string name="agent_tool_manage_xiangqi_not_found">게임 %1$s 찾을 수 없습니다</string>
     <string name="agent_tool_manage_xiangqi_unknown_action">알 수 없는 동작: %1$s</string>
     <string name="agent_tool_manage_xiangqi_failed">샹치 작업 실패: %1$s</string>
     <string name="agent_tool_manage_xiangqi_created">게임 생성됨: %1$s</string>
@@ -853,7 +853,7 @@
     <string name="agent_tool_switch_ai_model_param_slot">작업 슬롯: default = 기본 채팅 모델, fast = 빠른 작업 모델, 기본값은 default</string>
     <string name="agent_tool_switch_ai_model_invalid_params">매개변수를 구문 분석하지 못했습니다. engine_name은 필수입니다</string>
     <string name="agent_tool_switch_ai_model_engine_not_found">%1$s 엔진을 찾을 수 없습니다. 사용 가능한 엔진: %2$s</string>
-    <string name="agent_tool_switch_ai_model_model_not_found">모델 %2$s을(를) 엔진 %1$s에서 찾을 수 없습니다. 사용 가능한 모델: %3$s</string>
+    <string name="agent_tool_switch_ai_model_model_not_found">엔진 %1$s에서 모델 %2$s 찾을 수 없습니다. 사용 가능한 모델: %3$s</string>
     <string name="agent_tool_switch_ai_model_success">모델 전환 완료: %1$s · %2$s</string>
     <string name="agent_tool_switch_ai_model_failed">모델 전환 실패: %1$s</string>
     <string name="agent_tool_font_scale_setting_title">글꼴 크기</string>
@@ -916,7 +916,7 @@
     <string name="agent_tool_memory_get_result_truncated_bytes">[출력 크기 제한에 도달해 %1$d개 항목이 생략되었습니다. 키워드를 좁혀 주세요.]</string>
     <string name="agent_tool_use_skill_description">&lt;available_skills&gt;에 나열된 스킬의 전체 지침을 이름으로 불러옵니다. 스킬을 적용하기 전에 항상 이 도구를 호출하세요.</string>
     <string name="agent_tool_use_skill_param_name">&lt;available_skills&gt;에 나열된 그대로의 스킬 이름(슬러그)</string>
-    <string name="agent_tool_use_skill_not_found">스킬 \'%1$s\'을(를) 찾을 수 없거나 비활성화되어 있습니다. 사용 가능한 스킬: %2$s</string>
+    <string name="agent_tool_use_skill_not_found">스킬 \'%1$s\' 찾을 수 없거나 비활성화되어 있습니다. 사용 가능한 스킬: %2$s</string>
     <string name="agent_tool_use_skill_none_available">(없음)</string>
     <string name="agent_memory_prompt_omitted_hint">(예산에 맞추기 위해 이전 메모리를 생략했습니다. memory_get으로 검색하세요.)</string>
     <string name="agent_memory_prompt_omitted_hint_no_search">(예산에 맞추기 위해 이전 메모리를 생략했습니다.)</string>

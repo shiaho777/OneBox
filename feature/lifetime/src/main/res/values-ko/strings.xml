@@ -271,7 +271,7 @@
     <string name="agent_tool_delete_lifetime_entry_param_id">항목 ID, query_life_events 결과에서 가져옵니다.</string>
     <string name="agent_tool_delete_lifetime_entry_id_required">id 매개변수는 필수이며 숫자여야 합니다.</string>
     <string name="agent_tool_delete_lifetime_entry_not_found">ID %1$d에 해당하는 항목이 없습니다.</string>
-    <string name="agent_tool_delete_lifetime_entry_deleted">\"%1$s\"을(를) 삭제했습니다.</string>
+    <string name="agent_tool_delete_lifetime_entry_deleted">\"%1$s\" 삭제했습니다.</string>
     <string name="agent_tool_delete_lifetime_entry_confirm_title">인생 이벤트 삭제</string>
     <string name="agent_tool_delete_lifetime_entry_confirm_presentation">카운트다운 이벤트 또는 인생 이정표를 삭제합니다. 이 작업은 되돌릴 수 없습니다.</string>
     <string name="agent_tool_delete_lifetime_entry_failed">인생 이벤트 삭제 실패: %1$s</string>

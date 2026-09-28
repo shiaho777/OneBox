@@ -173,7 +173,7 @@
     <string name="dsh_workspace_title_hint">워크스페이스 이름</string>
     <string name="dsh_workspace_rename">워크스페이스 이름 바꾸기</string>
     <string name="dsh_workspace_delete">삭제</string>
-    <string name="dsh_workspace_delete_title">워크스페이스 "%1$s"을(를) 삭제할까요?</string>
+    <string name="dsh_workspace_delete_title">워크스페이스 "%1$s" 삭제할까요?</string>
     <string name="dsh_workspace_delete_detail">이 워크스페이스의 세션은 삭제되지 않고 그룹 없음으로 이동합니다.</string>
     <string name="dsh_workspace_ungrouped">그룹 없음</string>
     <string name="dsh_workspace_new_session">이 워크스페이스에 새 세션</string>
@@ -309,7 +309,7 @@
     <string name="dsh_pair_waiting">컴퓨터의 클레임을 기다리는 중…</string>
     <string name="dsh_pair_own_code">내 코드 %1$s</string>
     <string name="dsh_pair_offers_title">Mac 터미널에 표시된 호스트 코드를 선택하세요</string>
-    <string name="dsh_pair_offers_anchored">원하는 Mac에 호스트 코드 %1$s이(가) 표시됩니다</string>
+    <string name="dsh_pair_offers_anchored">원하는 Mac에 호스트 코드가 표시됩니다: %1$s</string>
     <string name="dsh_pair_offers_from">%1$s에서 — 녹색 카드가 스캔한 Mac입니다</string>
     <string name="dsh_pair_verify_ok">코드가 Mac 화면과 일치 → 카드를 눌러 확인</string>
     <string name="dsh_pair_verify_warn">일치하지 않는 코드가 나타남 → 악의적인 연결 가능성: 게이트웨이 서버가 침해되었을 수 있으니 선택하지 마세요</string>

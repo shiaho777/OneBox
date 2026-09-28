@@ -308,7 +308,7 @@
     <string name="delete">삭제</string>
     <string name="delete_color_scheme_warn">선택한 색상 구성표를 삭제하려고 합니다. 이 작업은 되돌릴 수 없습니다</string>
     <string name="delete_color_scheme_title">구성표 삭제</string>
-    <string name="delete_item_confirm_message">\"%1$s\"을(를) 삭제하시겠습니까?</string>
+    <string name="delete_item_confirm_message">\"%1$s\" 삭제하시겠습니까?</string>
     <string name="font">글꼴</string>
     <string name="text">텍스트</string>
     <string name="settings_restored">설정이 성공적으로 복원되었습니다</string>
@@ -862,7 +862,7 @@
     <string name="generate_previews_sub">미리보기 생성을 활성화합니다 — 일부 기기에서 충돌을 방지하는 데 도움이 되지만 단일 편집에서 일부 편집 옵션을 비활성화합니다</string>
     <string name="lanczos_bessel_sub">픽셀 값에 베셀(jinc) 함수를 적용하여 고품질 보간을 유지하는 리샘플링 방법입니다</string>
     <string name="compression_type">압축 유형</string>
-    <string name="speed_sub">생성된 이미지의 디코딩 속도를 제어합니다 — 더 빠르게 열 수 있도록 도와줍니다. %1$d은(는) 가장 느린 디코딩 속도를 의미하고 %2$d은(는) 가장 빠른 속도를 의미합니다. 이 설정은 출력 이미지 크기를 증가시킬 수 있습니다</string>
+    <string name="speed_sub">생성된 이미지의 디코딩 속도를 제어합니다 — 이미지를 더 빠르게 열 수 있도록 도와줍니다. 디코딩 속도 값은 %1$d(가장 느림)부터 %2$d(가장 빠름)까지이며, 이 설정은 출력 이미지 크기를 늘릴 수 있습니다</string>
     <string name="sorting">정렬</string>
     <string name="sort_by_date">수정 시간순 정렬</string>
     <string name="sort_by_date_reversed">날짜순 정렬(역순)</string>
@@ -1517,8 +1517,8 @@
     <string name="fast_settings_side">빠른 설정 측면</string>
     <string name="fast_settings_side_sub">이미지 편집 중 선택한 측면에 빠른 설정을 여는 플로팅 바를 추가합니다</string>
     <string name="clear_selection">선택 지우기</string>
-    <string name="settings_group_visibility_hidden">설정 그룹 \"%s\"은(는) 기본적으로 접혀 있습니다</string>
-    <string name="settings_group_visibility_visible">설정 그룹 \"%s\"은(는) 기본적으로 펼쳐져 있습니다</string>
+    <string name="settings_group_visibility_hidden">설정 그룹 \"%s\"의 기본 상태는 접혀 있습니다</string>
+    <string name="settings_group_visibility_visible">설정 그룹 \"%s\"의 기본 상태는 펼쳐져 있습니다</string>
     <string name="base_64_tools">Base64 도구</string>
     <string name="base_64_tools_sub">Base64 문자열을 이미지로 디코딩하거나 이미지를 Base64 형식으로 인코딩합니다</string>
     <string name="base_64">Base64</string>
@@ -1901,7 +1901,7 @@
     <string name="pulse_grid_pixelization">펄스 그리드 픽셀화</string>
     <string name="nucleus_pixelization">핵 픽셀화</string>
     <string name="radial_weave_pixelization">방사형 직조 픽셀화</string>
-    <string name="cannot_open_uri">URI \"%s\"을(를) 열 수 없습니다</string>
+    <string name="cannot_open_uri">URI \"%s\"을 열 수 없습니다</string>
     <string name="open">열기</string>
     <string name="snowfall_mode">눈 내리는 모드</string>
     <string name="enabled">활성화됨</string>
