@@ -3,7 +3,7 @@ package com.shifenmiao.ai.agent.tool.builtin
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
-import com.shifenmiao.ai.agent.tool.jsonStringOf
+import com.shifenmiao.model.jsonStringOf
 import com.shifenmiao.ai.component.EffectHost
 import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty

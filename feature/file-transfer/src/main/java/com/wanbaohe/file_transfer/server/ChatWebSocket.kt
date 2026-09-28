@@ -1,7 +1,13 @@
 package com.wanbaohe.file_transfer.server
 
 import android.util.Log
-import com.google.gson.Gson
+import com.shifenmiao.model.ModelProvider.AppJson
+import com.shifenmiao.model.jsonStringOf
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
 import com.shifenmiao.model.transfer.ChatMessage
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoWSD
@@ -19,8 +25,6 @@ import java.util.concurrent.Executors
  * 支持实时聊天和文件传输
  */
 class ChatWebSocket(handshake: NanoHTTPD.IHTTPSession) : NanoWSD.WebSocket(handshake) {
-
-    private val gson = Gson()
 
     /**
      * 当前连接所属频道。一个浏览器（或一个标签页）对应一个频道，从而实现互不串频道。
@@ -62,7 +66,7 @@ class ChatWebSocket(handshake: NanoHTTPD.IHTTPSession) : NanoWSD.WebSocket(hands
          * 广播消息到指定频道
          */
         fun broadcastToChannel(channelId: String, message: ChatMessage) {
-            val jsonMessage = Gson().toJson(message)
+            val jsonMessage = AppJson.encodeToString(message)
             val sockets = channelConnections[channelId]
             Log.d(TAG, "Broadcasting message to channel=$channelId clients=${sockets?.size ?: 0}: $jsonMessage")
 
@@ -203,7 +207,7 @@ class ChatWebSocket(handshake: NanoHTTPD.IHTTPSession) : NanoWSD.WebSocket(hands
         // 发送连接成功消息（包含 channelId，方便前端保存/重连）
         try {
             send(
-                gson.toJson(
+                jsonStringOf(
                     mapOf(
                         "type" to "system",
                         "event" to "connected",
@@ -231,14 +235,14 @@ class ChatWebSocket(handshake: NanoHTTPD.IHTTPSession) : NanoWSD.WebSocket(hands
         Log.d(TAG, "Received message (channelId=$channelId): $text")
 
         try {
-            // 先尝试解析为通用 Map，用于识别 system/error 等非 ChatMessage 包
+            // 先尝试解析为通用对象，用于识别 system/error 等非 ChatMessage 包
             val raw = try {
-                gson.fromJson(text, Map::class.java) as Map<*, *>
+                AppJson.parseToJsonElement(text) as? JsonObject
             } catch (_: Exception) {
                 null
             }
 
-            val type = raw?.get("type") as? String
+            val type = (raw?.get("type") as? JsonPrimitive)?.contentOrNull
 
             // 忽略系统/错误类消息
             if (type == "system" || type == "error") {
@@ -247,7 +251,7 @@ class ChatWebSocket(handshake: NanoHTTPD.IHTTPSession) : NanoWSD.WebSocket(hands
             }
 
             // 解析为 ChatMessage（频道由服务端绑定，不能信任前端）
-            val chatMessage = gson.fromJson(text, ChatMessage::class.java)
+            val chatMessage = AppJson.decodeFromString<ChatMessage>(text)
 
             if (chatMessage.id.isBlank()) {
                 Log.w(TAG, "Ignoring invalid chat message (blank id): $text")
@@ -265,7 +269,7 @@ class ChatWebSocket(handshake: NanoHTTPD.IHTTPSession) : NanoWSD.WebSocket(hands
             Log.e(TAG, "Error processing message", e)
             try {
                 send(
-                    gson.toJson(
+                    jsonStringOf(
                         mapOf(
                             "type" to "error",
                             "message" to "消息处理失败: ${e.message}",

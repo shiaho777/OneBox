@@ -1,7 +1,10 @@
 package com.shifenmiao.network.utils
 
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
 import com.shifenmiao.interfaces.singleton.AppContext
 import com.shifenmiao.model.DataValue
 import com.shifenmiao.model.StrapiErrorResponse
@@ -188,12 +191,13 @@ object NetworkUtils {
         val responseInfo = getResponseInfo(response)
 
         val errorMessage = try {
-            val jsonObject = JsonParser.parseString(errorBodyString).asJsonObject
+            val jsonObject = AppJson.parseToJsonElement(errorBodyString) as? JsonObject
+            fun JsonObject.str(key: String) = (this[key] as? JsonPrimitive)?.contentOrNull
             when {
-                jsonObject.has("message") -> jsonObject.get("message").asString
-                jsonObject.has("error") && jsonObject.get("error").isJsonObject -> {
-                    val errorObj = jsonObject.getAsJsonObject("error")
-                    if (errorObj.has("message")) errorObj.get("message").asString else errorBodyString
+                jsonObject?.str("message") != null -> jsonObject.str("message")!!
+                (jsonObject?.get("error") as? JsonObject) != null -> {
+                    val errorObj = jsonObject.get("error") as JsonObject
+                    errorObj.str("message") ?: errorBodyString
                 }
 
                 else -> errorBodyString

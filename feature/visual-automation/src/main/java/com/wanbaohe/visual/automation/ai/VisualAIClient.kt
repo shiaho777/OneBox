@@ -1,16 +1,35 @@
 package com.wanbaohe.visual.automation.ai
 
 import android.content.Context
-import com.google.gson.Gson
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.common.manager.AIEngineManager
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ai.ChatCompletionChunk
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ai.ChatCompletionRequest
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ai.ContentItem
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ai.RequestMessage
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ai.RoleType
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.automation.AIAction
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.network.AiRequestUrlResolver
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.network.api.OpenAICompatibleService
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.network.api.OwnProxyAIService
 import com.t8rin.logger.makeLog
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -29,8 +48,6 @@ class VisualAIClient @Inject constructor(
     private val openAICompatibleService: OpenAICompatibleService,
     private val ownProxyAIService: OwnProxyAIService,
 ) {
-
-    private val gson = Gson()
 
     companion object {
         /** 系统提示词 raw 资源 ID,首次访问时一次性读入内存。 */
@@ -129,7 +146,7 @@ class VisualAIClient @Inject constructor(
             }
 
             val chunk = try {
-                gson.fromJson(body, ChatCompletionChunk::class.java)
+                AppJson.decodeFromString<ChatCompletionChunk>(body)
             } catch (e: Exception) {
                 makeLog { "VisualAIClient: JSON parse failed: ${e.message}" }
                 return AIAction.Error("Failed to parse response: ${e.message}")
@@ -213,7 +230,7 @@ class VisualAIClient @Inject constructor(
             }
 
             val body = response.body()?.string().orEmpty()
-            val chunk = gson.fromJson(body, ChatCompletionChunk::class.java)
+            val chunk = AppJson.decodeFromString<ChatCompletionChunk>(body)
             val content = chunk.choices.firstOrNull()?.message?.content.orEmpty()
             AIAction.parse(content)
         } catch (t: Throwable) {

@@ -1,8 +1,11 @@
 package com.shifenmiao.model.transfer
 
+import kotlinx.serialization.Serializable
+
 /**
  * 文件项数据模型
  */
+@Serializable
 data class FileItem(
     /** 文件名 */
     val name: String,
@@ -25,6 +28,7 @@ data class FileItem(
 /**
  * 文件列表响应
  */
+@Serializable
 data class FileListResponse(
     /** 是否成功 */
     val success: Boolean,
@@ -43,6 +47,7 @@ data class FileListResponse(
 /**
  * 上传结果响应
  */
+@Serializable
 data class UploadResponse(
     val success: Boolean,
     val message: String? = null,
@@ -53,6 +58,7 @@ data class UploadResponse(
 /**
  * 设备信息
  */
+@Serializable
 data class DeviceInfo(
     val deviceName: String,
     val totalSpace: Long,

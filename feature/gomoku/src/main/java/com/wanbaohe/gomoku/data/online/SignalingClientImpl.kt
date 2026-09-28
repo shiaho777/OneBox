@@ -6,7 +6,12 @@ import com.wanbaohe.gomoku.application.port.outbound.SignalingClient
 import com.wanbaohe.gomoku.domain.model.OnlineMessage
 import com.wanbaohe.gomoku.domain.model.OnlineRoomConfig
 import com.wanbaohe.gomoku.domain.model.Side
-import com.google.gson.JsonObject
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.put
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -217,21 +222,23 @@ class SignalingClientImpl @Inject constructor(
         config = gameConfig.toRoomConfig(),
     )
 
-    private fun OnlineRoomConfig.toJsonObject() = JsonObject().apply {
-        addProperty("initialFen", initialFen)
-        addProperty("hostSide", hostSide.name)
-        addProperty("guestSide", guestSide.name)
-        addProperty("allowUndo", allowUndo)
+    // 与线上服务协议字段一一对应,Gson 时代产物逐字节等价(字符串/布尔,无数字格式差异)
+    private fun OnlineRoomConfig.toJsonObject() = buildJsonObject {
+        put("initialFen", initialFen)
+        put("hostSide", hostSide.name)
+        put("guestSide", guestSide.name)
+        put("allowUndo", allowUndo)
     }
 
     private fun JsonObject?.toRoomConfig(): OnlineRoomConfig {
         if (this == null) return OnlineRoomConfig()
+        fun str(key: String): String? = (this[key] as? JsonPrimitive)?.contentOrNull
         return runCatching {
             OnlineRoomConfig(
-                initialFen = get("initialFen")?.asString.orEmpty().ifBlank { OnlineRoomConfig().initialFen },
-                hostSide = get("hostSide")?.asString.toSideOrDefault(Side.BLACK),
-                guestSide = get("guestSide")?.asString.toSideOrDefault(Side.WHITE),
-                allowUndo = get("allowUndo")?.asBoolean ?: false,
+                initialFen = str("initialFen").orEmpty().ifBlank { OnlineRoomConfig().initialFen },
+                hostSide = str("hostSide").toSideOrDefault(Side.BLACK),
+                guestSide = str("guestSide").toSideOrDefault(Side.WHITE),
+                allowUndo = (this["allowUndo"] as? JsonPrimitive)?.booleanOrNull ?: false,
             )
         }.getOrDefault(OnlineRoomConfig())
     }

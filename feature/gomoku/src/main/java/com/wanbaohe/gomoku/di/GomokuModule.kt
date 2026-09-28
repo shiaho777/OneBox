@@ -77,7 +77,7 @@ abstract class GomokuModule {
     companion object {
         @Provides
         @Singleton
-        fun provideSignalingApi(@Named("DefaultRetrofit") retrofit: Retrofit): SignalingApi =
+        fun provideSignalingApi(@Named("KotlinxDefaultRetrofit") retrofit: Retrofit): SignalingApi =
             retrofit.create(SignalingApi::class.java)
     }
 }

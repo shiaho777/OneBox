@@ -9,7 +9,7 @@ import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.agent.tool.AppNavigationCatalogRepository
 import com.shifenmiao.ai.agent.tool.InteractiveAgentTool
 import com.shifenmiao.ai.agent.tool.ScreenNavigationToolSupport
-import com.shifenmiao.ai.agent.tool.toJsonElement
+import com.shifenmiao.model.toJsonElement
 import com.shifenmiao.common.handle.ItemScreenAction
 import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty

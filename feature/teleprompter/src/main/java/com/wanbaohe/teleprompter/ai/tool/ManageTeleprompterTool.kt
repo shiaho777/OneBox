@@ -1,7 +1,10 @@
 package com.wanbaohe.teleprompter.ai.tool
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.agent.tool.AgentTool
+import com.shifenmiao.model.ModelProvider.AppJson
+import com.shifenmiao.model.jsonStringOf
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.common.handle.navigation.AppNavigationRegistry
@@ -24,7 +27,6 @@ import kotlinx.coroutines.flow.firstOrNull
 class ManageTeleprompterTool @Inject constructor(
     private val textProvider: AgentToolTextProvider,
     private val teleprompterService: TeleprompterService,
-    private val gson: Gson,
 ) : AgentTool {
 
     override val name: String = "manage_teleprompter"
@@ -74,7 +76,7 @@ class ManageTeleprompterTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         val params = try {
-            gson.fromJson(arguments, ManageTeleprompterParams::class.java)
+            AppJson.decodeFromString<ManageTeleprompterParams>(arguments)
         } catch (e: Exception) {
             return errorResult(
                 textProvider.string(
@@ -124,7 +126,7 @@ class ManageTeleprompterTool @Inject constructor(
             "scripts" to data,
             "deepLinks" to listOf(listDeepLink())
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleGet(params: ManageTeleprompterParams): AgentToolResult {
@@ -144,7 +146,7 @@ class ManageTeleprompterTool @Inject constructor(
                     "updated_at" to script.updatedAt,
                     "deepLinks" to listOf(editDeepLink(script.id, primary = true), playDeepLink(script.id, primary = false))
                 )
-                AgentToolResult(content = gson.toJson(result))
+                AgentToolResult(content = jsonStringOf(result))
             },
             onFailure = {
                 errorResult(textProvider.string(R.string.agent_tool_manage_teleprompter_not_found, scriptId))
@@ -176,7 +178,7 @@ class ManageTeleprompterTool @Inject constructor(
                     ),
                     "deepLinks" to listOf(playDeepLink(saved.id, primary = true), listDeepLink())
                 )
-                AgentToolResult(content = gson.toJson(result))
+                AgentToolResult(content = jsonStringOf(result))
             },
             onFailure = { e ->
                 errorResult(
@@ -218,7 +220,7 @@ class ManageTeleprompterTool @Inject constructor(
                     ),
                     "deepLinks" to listOf(editDeepLink(saved.id, primary = true), playDeepLink(saved.id, primary = false))
                 )
-                AgentToolResult(content = gson.toJson(result))
+                AgentToolResult(content = jsonStringOf(result))
             },
             onFailure = { e ->
                 errorResult(
@@ -247,7 +249,7 @@ class ManageTeleprompterTool @Inject constructor(
                     "message" to textProvider.string(R.string.agent_tool_manage_teleprompter_deleted),
                     "deepLinks" to listOf(listDeepLink())
                 )
-                AgentToolResult(content = gson.toJson(result))
+                AgentToolResult(content = jsonStringOf(result))
             },
             onFailure = { e ->
                 errorResult(
@@ -303,6 +305,7 @@ class ManageTeleprompterTool @Inject constructor(
     private fun errorResult(message: String): AgentToolResult =
         AgentToolResult(content = message, isError = true)
 
+    @Serializable
     private data class ManageTeleprompterParams(
         val action: String? = null,
         val script_id: String? = null,

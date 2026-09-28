@@ -1,19 +1,46 @@
 package com.shifenmiao.common.ai
 
-import com.google.gson.Gson
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.common.manager.AIEngineManager
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.common.utils.BaseUtils
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.base.utils.StringUtils
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.core.R
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.storage.TokenStorage
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ai.AiEngine
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ai.AiRequestProtocol
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ai.ChatCompletionChunk
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ai.ChatCompletionRequest
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ai.RequestMessage
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ai.RoleType
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.network.AiRequestUrlResolver
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.network.api.OpenAICompatibleService
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.network.api.OwnProxyAIService
 import com.t8rin.imagetoolbox.core.domain.coroutines.DispatchersHolder
 import com.t8rin.imagetoolbox.core.utils.getString
@@ -50,8 +77,6 @@ class AIPromptExecutor @Inject constructor(
     private val ownProxyAIService: OwnProxyAIService,
     dispatchersHolder: DispatchersHolder,
 ) : DispatchersHolder by dispatchersHolder {
-
-    private val gson = Gson()
 
     enum class EngineMode {
         DEFAULT,
@@ -156,7 +181,7 @@ class AIPromptExecutor @Inject constructor(
             }
 
             val chunk = try {
-                gson.fromJson(body, ChatCompletionChunk::class.java)
+                AppJson.decodeFromString<ChatCompletionChunk>(body)
             } catch (e: Exception) {
                 makeLog { "AIPromptExecutor: JSON parse failed: ${e.message}" }
                 return AIPromptResult(
@@ -291,7 +316,7 @@ class AIPromptExecutor @Inject constructor(
                                     if (payload.isEmpty()) continue
                                     if (payload.equals("[DONE]", ignoreCase = true)) break
                                     val chunk = try {
-                                        gson.fromJson(payload, ChatCompletionChunk::class.java)
+                                        AppJson.decodeFromString<ChatCompletionChunk>(payload)
                                     } catch (e: Exception) {
                                         // 单行解析失败属厂商兼容问题,丢弃该行即可
                                         makeLog { "AIPromptExecutor: drop malformed SSE line: ${e.message}" }

@@ -4,7 +4,7 @@ import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
-import com.shifenmiao.ai.agent.tool.parseLooseJsonObject
+import com.shifenmiao.model.parseLooseJsonObject
 import com.shifenmiao.model.ai.AttachedMedia
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters

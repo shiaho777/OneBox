@@ -5,8 +5,9 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import androidx.room.withTransaction
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import com.shifenmiao.database.AppDatabase
 import com.shifenmiao.database.blog.entity.BlogArticleEntity
 import com.shifenmiao.model.StrapiImage
@@ -24,7 +25,6 @@ class BlogRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val appDatabase: AppDatabase,
     private val dispatchersHolder: DispatchersHolder,
-    private val gson: Gson = Gson(),
 ) : BlogRepository {
 
     override fun pagingFlow(blogType: Int): Flow<PagingData<BlogItem>> {
@@ -38,7 +38,7 @@ class BlogRepositoryImpl @Inject constructor(
                 appDatabase.blogArticleDao().pagingSourceByType(blogType)
             },
         ).flow.map { pagingData ->
-            pagingData.map { entity -> entity.toBlogItem(gson) }
+            pagingData.map { entity -> entity.toBlogItem() }
         }
     }
 
@@ -65,7 +65,7 @@ class BlogRepositoryImpl @Inject constructor(
                 allEntities.addAll(
                     body.data
                         .filter { it.publishedAt != null }
-                        .map { it.toEntity(blogType, syncedAt, gson) }
+                        .map { it.toEntity(blogType, syncedAt) }
                 )
 
                 pageCount = body.meta.pagination.pageCount.coerceAtLeast(1)
@@ -89,7 +89,6 @@ class BlogRepositoryImpl @Inject constructor(
 private fun BlogItem.toEntity(
     blogType: Int,
     syncedAt: Long,
-    gson: Gson,
 ): BlogArticleEntity = BlogArticleEntity(
     remoteId = id,
     blogType = blogType,
@@ -98,8 +97,8 @@ private fun BlogItem.toEntity(
     content = content,
     authorName = author?.nickname.orEmpty(),
     authorAvatar = author?.avatar.orEmpty(),
-    picturesJson = picture?.let { gson.toJson(it) },
-    tagsJson = tags.takeIf { it.isNotEmpty() }?.let { gson.toJson(it) },
+    picturesJson = picture?.let { AppJson.encodeToString(it) },
+    tagsJson = tags.takeIf { it.isNotEmpty() }?.let { AppJson.encodeToString(it) },
     fixed = fixed,
     publishedAt = publishedAt,
     createdAt = createdAt,
@@ -107,23 +106,17 @@ private fun BlogItem.toEntity(
     syncedAt = syncedAt,
 )
 
-private fun BlogArticleEntity.toBlogItem(gson: Gson): BlogItem {
+private fun BlogArticleEntity.toBlogItem(): BlogItem {
     val pictureList = picturesJson?.let { json ->
         try {
-            gson.fromJson<List<StrapiImage>>(
-                json,
-                object : TypeToken<List<StrapiImage>>() {}.type
-            )
+            AppJson.decodeFromString<List<StrapiImage>>(json)
         } catch (_: Exception) {
             null
         }
     }
     val tagList = tagsJson?.let { json ->
         try {
-            gson.fromJson<List<Tag>>(
-                json,
-                object : TypeToken<List<Tag>>() {}.type
-            )
+            AppJson.decodeFromString<List<Tag>>(json)
         } catch (_: Exception) {
             emptyList()
         }

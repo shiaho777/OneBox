@@ -1,7 +1,10 @@
 package com.wanbaohe.aidetect.ai.tool
 
 import android.net.Uri
-import com.google.gson.Gson
+import com.shifenmiao.model.ModelProvider.AppJson
+import com.shifenmiao.model.jsonStringOf
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
@@ -24,7 +27,6 @@ import javax.inject.Inject
  */
 class DetectAiImageTool @Inject constructor(
     private val service: AiDetectService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider
 ) : AgentTool {
 
@@ -62,7 +64,7 @@ class DetectAiImageTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         val args = try {
-            gson.fromJson(arguments, DetectAiImageArgs::class.java)
+            AppJson.decodeFromString<DetectAiImageArgs>(arguments)
         } catch (_: Exception) {
             return AgentToolResult(
                 content = textProvider.string(R.string.agent_tool_detect_ai_image_error_args),
@@ -83,7 +85,7 @@ class DetectAiImageTool @Inject constructor(
                     put("verdict_label", verdictLabel(verdict))
                     put("confidence", result.confidence)
                 }
-                AgentToolResult(content = gson.toJson(payload))
+                AgentToolResult(content = jsonStringOf(payload))
             },
             onFailure = { error ->
                 AgentToolResult(content = errorMessage(error), isError = true)
@@ -108,6 +110,7 @@ class DetectAiImageTool @Inject constructor(
         }
     )
 
+    @Serializable
     private data class DetectAiImageArgs(
         val image_uri: String? = null
     )

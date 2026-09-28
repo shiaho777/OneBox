@@ -1,6 +1,6 @@
 package com.shifenmiao.ai.voice
 
-import com.shifenmiao.ai.agent.tool.jsonStringOf
+import com.shifenmiao.model.jsonStringOf
 import com.shifenmiao.model.ModelProvider.AppJson
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive

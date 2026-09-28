@@ -23,7 +23,9 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.shifenmiao.model.ModelProvider
+import okhttp3.MediaType.Companion.toMediaType
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -92,7 +94,7 @@ abstract class ImageGenerationModule {
             @Named("DirectImageGenerationClient") client: OkHttpClient,
         ): QwenImageApi = Retrofit.Builder()
             .baseUrl(UrlConstants.Q_WEN_AI_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(ModelProvider.AppJson.asConverterFactory("application/json".toMediaType()))
             .client(client)
             .build()
             .create(QwenImageApi::class.java)
@@ -104,7 +106,7 @@ abstract class ImageGenerationModule {
             @Named("ProxyImageGenerationClient") client: OkHttpClient,
         ): QwenImageApi = Retrofit.Builder()
             .baseUrl(NetworkBuilder.getBaseUrl())
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(ModelProvider.AppJson.asConverterFactory("application/json".toMediaType()))
             .client(client)
             .build()
             .create(QwenImageApi::class.java)
@@ -116,7 +118,7 @@ abstract class ImageGenerationModule {
             @Named("DirectImageGenerationClient") client: OkHttpClient,
         ): HunyuanImageApi = Retrofit.Builder()
             .baseUrl(UrlConstants.HUNYUAN_IMAGE_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(ModelProvider.AppJson.asConverterFactory("application/json".toMediaType()))
             .client(client)
             .build()
             .create(HunyuanImageApi::class.java)
@@ -128,7 +130,7 @@ abstract class ImageGenerationModule {
             @Named("ProxyImageGenerationClient") client: OkHttpClient,
         ): HunyuanImageApi = Retrofit.Builder()
             .baseUrl(NetworkBuilder.getBaseUrl())
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(ModelProvider.AppJson.asConverterFactory("application/json".toMediaType()))
             .client(client)
             .build()
             .create(HunyuanImageApi::class.java)

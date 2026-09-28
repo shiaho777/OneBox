@@ -1,7 +1,7 @@
 package com.shifenmiao.ai.voice
 
 import android.util.Base64
-import com.shifenmiao.ai.agent.tool.jsonStringOf
+import com.shifenmiao.model.jsonStringOf
 import com.shifenmiao.model.ModelProvider.AppJson
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject

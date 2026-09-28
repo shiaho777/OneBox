@@ -1,6 +1,9 @@
 package com.wanbaohe.aidetect.ai.tool
 
-import com.google.gson.Gson
+import com.shifenmiao.model.ModelProvider.AppJson
+import com.shifenmiao.model.jsonStringOf
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
@@ -23,7 +26,6 @@ import javax.inject.Inject
  */
 class DetectAiTextTool @Inject constructor(
     private val service: AiDetectService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider
 ) : AgentTool {
 
@@ -61,7 +63,7 @@ class DetectAiTextTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         val args = try {
-            gson.fromJson(arguments, DetectAiTextArgs::class.java)
+            AppJson.decodeFromString<DetectAiTextArgs>(arguments)
         } catch (_: Exception) {
             return AgentToolResult(
                 content = textProvider.string(R.string.agent_tool_detect_ai_text_error_args),
@@ -96,7 +98,7 @@ class DetectAiTextTool @Inject constructor(
                         })
                     }
                 }
-                AgentToolResult(content = gson.toJson(payload))
+                AgentToolResult(content = jsonStringOf(payload))
             },
             onFailure = { error ->
                 AgentToolResult(content = errorMessage(error), isError = true)
@@ -121,6 +123,7 @@ class DetectAiTextTool @Inject constructor(
         }
     )
 
+    @Serializable
     private data class DetectAiTextArgs(
         val text: String? = null
     )

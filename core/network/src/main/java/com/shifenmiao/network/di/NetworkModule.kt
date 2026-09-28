@@ -154,6 +154,22 @@ object NetworkModule {
             .build()
     }
 
+    // Gson → kotlinx 迁移(阶段⑤a):JevService 的 @Body JevRequest 已迁移 kotlinx,
+    // 与 OpenAICompatibleRetrofit 同 client/baseUrl,仅换 converter;
+    // 其余流式 service 继续走 Gson 的 OpenAICompatibleRetrofit
+    @Singleton
+    @Provides
+    @Named("KotlinxOpenAICompatibleRetrofit")
+    fun provideKotlinxOpenAICompatibleRetrofit(
+        @Named("OpenAICompatibleOkHttpClient") okHttpClient: OkHttpClient
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(UrlConstants.OPENAI_BASE_URL)
+            .addConverterFactory(ModelProvider.AppJson.asConverterFactory("application/json".toMediaType()))
+            .client(okHttpClient)
+            .build()
+    }
+
     @Singleton
     @Provides
     @Named("OpenAICompatibleRetrofit")
@@ -210,8 +226,8 @@ object NetworkModule {
     @Provides
     @Singleton
     @Named("JevProxyService")
-    // 代理路由走 DefaultRetrofit: AuthInterceptor 注入 App 登录 JWT
-    fun provideJevProxyService(@Named("DefaultRetrofit") retrofit: Retrofit): JevService =
+    // 代理路由走 KotlinxDefaultRetrofit: AuthInterceptor 注入 App 登录 JWT
+    fun provideJevProxyService(@Named("KotlinxDefaultRetrofit") retrofit: Retrofit): JevService =
         retrofit.create(JevService::class.java)
 
     @Provides
@@ -227,9 +243,9 @@ object NetworkModule {
     @Provides
     @Singleton
     @Named("JevDirectService")
-    // 直连 typesafe.ai 走 OpenAICompatibleRetrofit: 不挂 AuthInterceptor,
+    // 直连 typesafe.ai 走 KotlinxOpenAICompatibleRetrofit: 不挂 AuthInterceptor,
     // 避免把 App 登录 JWT 泄露给第三方, 用户 key 由 @Header 按引擎配置传递
-    fun provideJevDirectService(@Named("OpenAICompatibleRetrofit") retrofit: Retrofit): JevService =
+    fun provideJevDirectService(@Named("KotlinxOpenAICompatibleRetrofit") retrofit: Retrofit): JevService =
         retrofit.create(JevService::class.java)
 
     @Provides

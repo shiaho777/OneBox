@@ -16,18 +16,41 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import android.graphics.Bitmap
-import com.google.gson.Gson
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.common.handle.ItemScreenAction
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.common.handle.ItemScreenResolver
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.common.file.AigcFileMetadataReader
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.common.ai.aigc.AigcInfoGenerator
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.database.AppDatabase
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.database.schedule.entity.ScheduleEventEntity
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.database.schedule.repo.ScheduleRepository
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.interfaces.singleton.AppContext
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ListItemType
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ai.AIGCInfo
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ai.AiEngine
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ai.AiModel
 import com.wanbaohe.a2ui.catalog.A2uiComponentRegistry
 import com.wanbaohe.a2ui.catalog.A2uiThemeMapper
@@ -159,7 +182,7 @@ class DemoComponent @AssistedInject internal constructor(
 
             val parsed = aigc?.raw
                 ?.takeIf { it.isNotBlank() }
-                ?.let { runCatching { Gson().fromJson(it, AIGCInfo::class.java) }.getOrNull() }
+                ?.let { runCatching { AppJson.decodeFromString<AIGCInfo>(it) }.getOrNull() }
 
             _state.update {
                 it.copy(
@@ -217,7 +240,7 @@ class DemoComponent @AssistedInject internal constructor(
             entryTypeName = "DEMO",
             entryRefId = "demo-ref-0001"
         )
-        val parsed = runCatching { Gson().fromJson(raw, AIGCInfo::class.java) }.getOrNull()
+        val parsed = runCatching { AppJson.decodeFromString<AIGCInfo>(raw) }.getOrNull()
         _state.update {
             it.copy(
                 aigcInfo = raw,

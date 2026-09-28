@@ -1,6 +1,6 @@
 package com.shifenmiao.ai.component
 
-import com.shifenmiao.ai.agent.tool.jsonStringOf
+import com.shifenmiao.model.jsonStringOf
 import com.shifenmiao.ai.agent.tool.AgentUserQuestionRequest
 import com.shifenmiao.ai.agent.tool.FilePickerRequest
 import com.shifenmiao.ai.agent.tool.FolderPickerRequest

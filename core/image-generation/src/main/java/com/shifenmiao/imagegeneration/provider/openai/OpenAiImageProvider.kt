@@ -1,8 +1,13 @@
 package com.shifenmiao.imagegeneration.provider.openai
 
 import android.content.Context
-import com.google.gson.JsonParser
 import com.google.gson.annotations.SerializedName
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
 import com.shifenmiao.core.constants.UrlConstants
 import com.shifenmiao.imagegeneration.R
 import com.shifenmiao.imagegeneration.model.GeneratedImage
@@ -129,11 +134,13 @@ class OpenAiImageProvider @Inject constructor(
         val raw = runCatching { errorBody()?.string().orEmpty() }.getOrDefault("")
         if (raw.isBlank()) return "Image generation failed: HTTP ${code()}"
         val parsed = runCatching {
-            val error = JsonParser.parseString(raw).asJsonObject.get("error")
+            val error = (AppJson.parseToJsonElement(raw) as? JsonObject)?.get("error")
             when {
-                error == null || error.isJsonNull -> null
-                error.isJsonPrimitive -> error.asString
-                else -> error.asJsonObject.get("message")?.asString
+                error == null || error is kotlinx.serialization.json.JsonNull -> null
+                error is JsonPrimitive -> error.contentOrNull
+                else -> (error as? JsonObject)?.let {
+                    (it["message"] as? JsonPrimitive)?.contentOrNull
+                }
             }
         }.getOrNull()
         return parsed ?: raw
@@ -162,25 +169,25 @@ interface OpenAiImageApi {
 // R8 full mode 下字段名会被混淆,Gson 序列化依赖 @SerializedName 固定 JSON key。
 // null 字段默认不参与序列化,未传的 size 不会出现在请求体里。
 data class OpenAiImageRequest(
-    @SerializedName("model") val model: String,
-    @SerializedName("prompt") val prompt: String,
-    @SerializedName("n") val n: Int = 1,
-    @SerializedName("size") val size: String? = null,
+    @SerializedName("model") @SerialName("model") val model: String,
+    @SerializedName("prompt") @SerialName("prompt") val prompt: String,
+    @SerializedName("n") @SerialName("n") val n: Int = 1,
+    @SerializedName("size") @SerialName("size") val size: String? = null,
 )
 
 data class OpenAiImageResponse(
-    @SerializedName("data") val data: List<OpenAiImageData>? = null,
-    @SerializedName("error") val error: OpenAiImageError? = null,
+    @SerializedName("data") @SerialName("data") val data: List<OpenAiImageData>? = null,
+    @SerializedName("error") @SerialName("error") val error: OpenAiImageError? = null,
 )
 
 // gpt-image-1 只回 b64_json,dall-e-3 回 url,两种都兼容解析
 data class OpenAiImageData(
-    @SerializedName("url") val url: String? = null,
-    @SerializedName("b64_json") val b64Json: String? = null,
+    @SerializedName("url") @SerialName("url") val url: String? = null,
+    @SerializedName("b64_json") @SerialName("b64_json") val b64Json: String? = null,
 )
 
 data class OpenAiImageError(
-    @SerializedName("message") val message: String? = null,
-    @SerializedName("type") val type: String? = null,
-    @SerializedName("code") val code: String? = null,
+    @SerializedName("message") @SerialName("message") val message: String? = null,
+    @SerializedName("type") @SerialName("type") val type: String? = null,
+    @SerializedName("code") @SerialName("code") val code: String? = null,
 )

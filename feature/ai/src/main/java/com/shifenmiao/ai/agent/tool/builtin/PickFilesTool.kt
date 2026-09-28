@@ -10,7 +10,7 @@ import com.shifenmiao.ai.agent.tool.ContextAwareAgentTool
 import com.shifenmiao.ai.agent.tool.FilePickerRequest
 import com.shifenmiao.ai.agent.tool.InteractiveAgentTool
 import com.shifenmiao.ai.agent.tool.InteractiveToolRuntime
-import com.shifenmiao.ai.agent.tool.jsonStringOf
+import com.shifenmiao.model.jsonStringOf
 import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters

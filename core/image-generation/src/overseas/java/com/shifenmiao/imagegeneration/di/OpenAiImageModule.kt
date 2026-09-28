@@ -13,7 +13,9 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.shifenmiao.model.ModelProvider
+import okhttp3.MediaType.Companion.toMediaType
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -38,7 +40,7 @@ abstract class OpenAiImageModule {
             @Named("DirectImageGenerationClient") client: OkHttpClient,
         ): OpenAiImageApi = Retrofit.Builder()
             .baseUrl(UrlConstants.OPENAI_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(ModelProvider.AppJson.asConverterFactory("application/json".toMediaType()))
             .client(client)
             .build()
             .create(OpenAiImageApi::class.java)

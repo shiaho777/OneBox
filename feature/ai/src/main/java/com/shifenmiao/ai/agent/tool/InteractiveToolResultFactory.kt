@@ -1,6 +1,7 @@
 package com.shifenmiao.ai.agent.tool
 
 import com.shifenmiao.model.ModelProvider
+import com.shifenmiao.model.jsonStringOf
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject

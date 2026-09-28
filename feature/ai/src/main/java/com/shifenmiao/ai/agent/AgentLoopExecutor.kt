@@ -6,7 +6,7 @@ import com.shifenmiao.ai.agent.auth.ToolAuthorizationGuard
 import com.shifenmiao.ai.agent.callback.ToolCallbackRouter
 import com.shifenmiao.ai.agent.tool.AgentToolExecutionPolicy
 import com.shifenmiao.ai.agent.tool.AgentToolLoginChecker
-import com.shifenmiao.ai.agent.tool.jsonStringOf
+import com.shifenmiao.model.jsonStringOf
 import com.shifenmiao.ai.agent.tool.AgentToolPermissionRequester
 import com.shifenmiao.ai.agent.tool.AgentToolRegistry
 import com.shifenmiao.ai.agent.tool.AgentToolResult

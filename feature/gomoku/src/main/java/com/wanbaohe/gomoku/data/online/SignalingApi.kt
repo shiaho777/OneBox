@@ -1,7 +1,9 @@
 package com.wanbaohe.gomoku.data.online
 
 import com.google.gson.annotations.SerializedName
-import com.google.gson.JsonObject
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -12,7 +14,7 @@ import retrofit2.http.Query
 
 /**
  * REST API for generic game online room management.
- * 服务端按 gameType 隔离房间存储,五子棋固定传 "gomoku"。
+ * 服务端按 gameType 隔离房间存储,五子棋(固定传 "gomoku")固定传 "gomoku"。
  */
 interface SignalingApi {
 
@@ -34,6 +36,7 @@ interface SignalingApi {
     suspend fun leaveRoom(@Path("roomId") roomId: String): Response<SuccessResponse>
 }
 
+@Serializable
 data class RoomCreateRequest(
     val gameType: String,
     val hostName: String,
@@ -41,29 +44,35 @@ data class RoomCreateRequest(
     val gameConfig: JsonObject? = null,
 )
 
+@Serializable
 data class RoomJoinRequest(
     val guestName: String,
     val guestAvatarUrl: String = "",
 )
 
-data class RoomResponse(@SerializedName("data") val room: RoomDto?)
+@Serializable
+data class RoomResponse(@SerializedName("data") @SerialName("data") val room: RoomDto? = null)
 
-data class RoomsListResponse(@SerializedName("data") val rooms: List<RoomDto>?)
+@Serializable
+data class RoomsListResponse(@SerializedName("data") @SerialName("data") val rooms: List<RoomDto>? = null)
 
-data class SuccessResponse(val message: String)
+@Serializable
+data class SuccessResponse(val message: String = "")
 
+@Serializable
 data class RoomDto(
-    val id: String,
-    val gameType: String,
-    val hostId: Int,
-    val hostName: String,
+    // 默认值对齐 Gson 容错:服务端(go-proxy game 模块)字段稳定,缺字段时不至于整包解析失败
+    val id: String = "",
+    val gameType: String = "",
+    val hostId: Int = 0,
+    val hostName: String = "",
     val hostAvatarUrl: String? = null,
     val hostAvatar: String? = null,
-    val guestId: Int,
-    val guestName: String,
+    val guestId: Int = 0,
+    val guestName: String = "",
     val guestAvatarUrl: String? = null,
     val guestAvatar: String? = null,
-    val status: String,
-    val createdAt: Long,
+    val status: String = "",
+    val createdAt: Long = 0L,
     val gameConfig: JsonObject? = null,
 )

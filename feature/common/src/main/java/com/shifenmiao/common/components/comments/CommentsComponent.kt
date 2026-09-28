@@ -5,8 +5,10 @@ import com.arkivanov.decompose.ComponentContext
 import com.shifenmiao.common.logic.CommonComponent
 import com.shifenmiao.common.upload.UploadingImage
 import com.shifenmiao.database.AppDatabase
-import com.google.gson.Gson
-import com.google.gson.JsonSyntaxException
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.interfaces.singleton.AppContext
 import com.shifenmiao.network.api.ApiService
 import com.shifenmiao.network.model.comment.Comment
@@ -464,6 +466,7 @@ data class CommentUserSnapshot(
  * 服务端评论错误响应结构 — 与 go-proxy controllers/comments.go
  * formatBlockedMessage / StrapiErrorResponse 输出对齐.
  */
+@Serializable
 private data class CommentErrorBody(
     val error: String? = null,
     val code: String? = null,
@@ -478,10 +481,10 @@ private data class CommentErrorBody(
 private fun parseCommentErrorMessage(errorBody: String?): String? {
     if (errorBody.isNullOrBlank()) return null
     return try {
-        val parsed = Gson().fromJson(errorBody, CommentErrorBody::class.java)
+        val parsed = AppJson.decodeFromString<CommentErrorBody>(errorBody)
         // 优先用服务端 message (已经是面向用户的中文); 兜底用 error 字段.
         parsed?.message?.takeIf { it.isNotBlank() } ?: parsed?.error
-    } catch (e: JsonSyntaxException) {
+    } catch (e: SerializationException) {
         null
     }
 }

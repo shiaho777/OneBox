@@ -8,7 +8,8 @@ import android.os.Looper
 import android.os.Message
 import android.text.TextUtils
 import com.alipay.sdk.app.PayTask
-import com.google.gson.Gson
+import com.shifenmiao.model.ModelProvider.AppJson
+import com.shifenmiao.model.toJsonElement
 import com.shifenmiao.base.utils.ActionUtils
 import com.shifenmiao.core.R
 import com.shifenmiao.interfaces.singleton.AppContext
@@ -85,11 +86,13 @@ class Alipay : PaymentMethod<PrePayResponse> {
             when (msg.what) {
                 SDK_PAY_FLAG -> {
                     try {
-                        val gson = Gson()
+                        // SDK 返回 Map 桥接为 AlipayResult(键即字段名,与原 Gson 桥接等价)
                         @Suppress("UNCHECKED_CAST")
-                        val json = gson.toJson(msg.obj as Map<String?, String?>)
-                        val alipayResult = gson.fromJson(json, AlipayResult::class.java)
-                        if (alipayResult != null) {
+                        val alipayResult = AppJson.decodeFromJsonElement(
+                            AlipayResult.serializer(),
+                            (msg.obj as Map<String?, String?>).toJsonElement()
+                        )
+                        run {
                             val resultStatus = alipayResult.resultStatus
                             when {
                                 TextUtils.equals(resultStatus, "9000") -> {

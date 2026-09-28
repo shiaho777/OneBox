@@ -1,6 +1,7 @@
 package com.shifenmiao.common.ai.aigc
 
-import com.google.gson.Gson
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.encodeToString
 import com.shifenmiao.common.ai.aigc.AigcServiceProviderCode.generatorCode
 import com.shifenmiao.common.ai.aigc.AigcServiceProviderCode.propagatorCode
 import com.shifenmiao.common.ai.aigc.AigcServiceProviderCode.resolveModelCode
@@ -33,8 +34,6 @@ import java.util.UUID
  */
 object AigcInfoGenerator {
 
-    private val gson = Gson()
-
     /**
      * 生成符合 GB 45438-2025 / GB/T 44284-2024 标准的 AIGC 隐式标识 JSON 字符串。
      *
@@ -63,7 +62,7 @@ object AigcInfoGenerator {
         entryTypeName: String,
         entryRefId: String?,
     ): String {
-        return gson.toJson(
+        return AppJson.encodeToString(
             generate(
                 engine = engine,
                 model = model,

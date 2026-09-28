@@ -5,7 +5,9 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Base64
-import com.google.gson.Gson
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import com.shifenmiao.database.aidetect.entity.AiDetectRecordEntity
 import com.shifenmiao.database.aidetect.repo.AiDetectRecordRepository
 import com.shifenmiao.model.aidetect.AiDetectImageRequest
@@ -64,8 +66,6 @@ class AiDetectService @Inject constructor(
     private val repository: AiDetectRecordRepository,
 ) {
 
-    private val gson = Gson()
-
     // ── 检测 ─────────────────────────────────────────────────────────────
 
     suspend fun detectText(text: String): Result<TextDetectResult> = withContext(Dispatchers.IO) {
@@ -87,7 +87,7 @@ class AiDetectService @Inject constructor(
                     inputSummary = text.take(SUMMARY_MAX_LENGTH),
                     probability = result.probability,
                     verdict = verdictKey(result.probability),
-                    detailJson = gson.toJson(body),
+                    detailJson = AppJson.encodeToString(body),
                 )
             )
             result
@@ -124,7 +124,7 @@ class AiDetectService @Inject constructor(
                     inputSummary = thumbPath.orEmpty(),
                     probability = result.confidence,
                     verdict = verdictKey(result.confidence),
-                    detailJson = gson.toJson(body),
+                    detailJson = AppJson.encodeToString(body),
                 )
             )
             pruned.filter { it.type == TYPE_IMAGE }.forEach { deleteThumbnail(it.inputSummary) }
@@ -149,7 +149,7 @@ class AiDetectService @Inject constructor(
 
     /** 从历史记录的 detailJson 还原文本检测结果(详情页用) */
     fun parseTextDetail(detailJson: String): AiDetectTextResponse? = runCatching {
-        gson.fromJson(detailJson, AiDetectTextResponse::class.java)
+        AppJson.decodeFromString<AiDetectTextResponse>(detailJson)
     }.getOrNull()
 
     // ── 内部 ─────────────────────────────────────────────────────────────

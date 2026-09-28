@@ -1,7 +1,7 @@
 package com.shifenmiao.ai.request
 
 import com.google.gson.Gson
-import com.shifenmiao.ai.agent.tool.parseLooseJsonObject
+import com.shifenmiao.model.parseLooseJsonObject
 import com.shifenmiao.model.ModelProvider.AppJson
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.JsonArray

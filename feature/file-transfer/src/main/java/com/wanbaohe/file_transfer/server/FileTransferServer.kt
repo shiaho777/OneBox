@@ -4,7 +4,10 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
 import android.util.Log
-import com.google.gson.Gson
+import com.shifenmiao.model.ModelProvider.AppJson
+import com.shifenmiao.model.jsonStringOf
+import com.shifenmiao.model.parseLooseJsonObject
+import kotlinx.serialization.encodeToString
 import com.shifenmiao.database.FeatureDatabase
 import com.shifenmiao.database.transfer.ChatMessageEntity
 import com.shifenmiao.database.transfer.ChatSessionEntity
@@ -41,8 +44,6 @@ class FileTransferServer(
     private val context: Context,
     private var config: TransferConfig
 ) : NanoWSD(config.port) {
-
-    private val gson = Gson()
     private val connectedClients = AtomicInteger(0)
 
     private val db by lazy { FeatureDatabase.getInstanceOrCreate(context) }
@@ -360,8 +361,7 @@ class FileTransferServer(
 
         val postData = files["postData"] ?: ""
         val params = try {
-            @Suppress("UNCHECKED_CAST")
-            gson.fromJson(postData, Map::class.java) as Map<String, Any>
+            parseLooseJsonObject(postData)
         } catch (_: Exception) {
             emptyMap()
         }
@@ -376,7 +376,7 @@ class FileTransferServer(
             val response = newFixedLengthResponse(
                 Response.Status.OK,
                 "application/json",
-                gson.toJson(mapOf("success" to true))
+                jsonStringOf(mapOf("success" to true))
             )
             response.addHeader("Set-Cookie", "session_id=$sessionId; Path=/; HttpOnly")
             response
@@ -384,7 +384,7 @@ class FileTransferServer(
             newFixedLengthResponse(
                 Response.Status.UNAUTHORIZED,
                 "application/json",
-                gson.toJson(mapOf("success" to false, "message" to "密码错误"))
+                jsonStringOf(mapOf("success" to false, "message" to "密码错误"))
             )
         }
     }
@@ -488,7 +488,7 @@ class FileTransferServer(
             )
 
             // 使用流式方式返回 JSON，避免大字符串内存问题
-            val jsonString = gson.toJson(response)
+            val jsonString = AppJson.encodeToString(response)
             val jsonBytes = jsonString.toByteArray(Charsets.UTF_8)
             val inputStream = ByteArrayInputStream(jsonBytes)
 
@@ -731,8 +731,7 @@ class FileTransferServer(
 
             val postData = files["postData"] ?: ""
             val params = try {
-                @Suppress("UNCHECKED_CAST")
-                gson.fromJson(postData, Map::class.java) as Map<String, Any>
+                parseLooseJsonObject(postData)
             } catch (_: Exception) {
                 return jsonResponse(
                     mapOf(
@@ -842,8 +841,7 @@ class FileTransferServer(
 
             val postData = files["postData"] ?: ""
             val params = try {
-                @Suppress("UNCHECKED_CAST")
-                gson.fromJson(postData, Map::class.java) as Map<String, Any>
+                parseLooseJsonObject(postData)
             } catch (_: Exception) {
                 return jsonResponse(
                     mapOf(
@@ -959,8 +957,7 @@ class FileTransferServer(
 
             val postData = files["postData"] ?: ""
             val params = try {
-                @Suppress("UNCHECKED_CAST")
-                gson.fromJson(postData, Map::class.java) as Map<String, Any>
+                parseLooseJsonObject(postData)
             } catch (_: Exception) {
                 return jsonResponse(
                     mapOf(
@@ -1136,9 +1133,12 @@ class FileTransferServer(
     /**
      * 流式 JSON 响应，避免大字符串内存问题
      */
-    private fun <T> jsonResponse(data: T): Response {
+    private inline fun <reified T> jsonResponse(data: T): Response {
         return try {
-            val jsonString = gson.toJson(data)
+            val jsonString = when (data) {
+                is Map<*, *>, is List<*>, is String, is Number, is Boolean -> jsonStringOf(data)
+                else -> AppJson.encodeToString(data)
+            }
             val jsonBytes = jsonString.toByteArray(Charsets.UTF_8)
             val inputStream = ByteArrayInputStream(jsonBytes)
             newFixedLengthResponse(
@@ -1163,7 +1163,7 @@ class FileTransferServer(
 
     private fun errorResponse(message: String): Response {
         return try {
-            val jsonString = gson.toJson(mapOf("success" to false, "message" to message))
+            val jsonString = jsonStringOf(mapOf("success" to false, "message" to message))
             val jsonBytes = jsonString.toByteArray(Charsets.UTF_8)
             val inputStream = ByteArrayInputStream(jsonBytes)
             newFixedLengthResponse(

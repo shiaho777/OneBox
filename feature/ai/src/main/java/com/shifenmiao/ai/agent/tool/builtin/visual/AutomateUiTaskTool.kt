@@ -2,7 +2,7 @@ package com.shifenmiao.ai.agent.tool.builtin.visual
 
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentToolResult
-import com.shifenmiao.ai.agent.tool.parseLooseJsonObject
+import com.shifenmiao.model.parseLooseJsonObject
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.agent.tool.InteractiveAgentTool
 import com.shifenmiao.model.ai.ToolParameterProperty

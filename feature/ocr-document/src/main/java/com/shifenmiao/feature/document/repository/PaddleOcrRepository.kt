@@ -1,14 +1,29 @@
 package com.shifenmiao.feature.document.repository
 
 import android.util.Base64
-import com.google.gson.Gson
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.database.ocr.dao.PaddleOcrTaskDao
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.database.ocr.entity.PaddleOcrTaskEntity
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ocr.OcrTaskStatus
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ocr.PaddleOcrParseResult
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ocr.PaddleOcrQueryResponse
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ocr.PaddleOcrQueryResult
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.model.ocr.PaddleOcrSubmitResponse
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.network.api.DocConvertApiService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -30,11 +45,6 @@ class PaddleOcrRepository @Inject constructor(
     private val docConvertService: DocConvertApiService,
     private val paddleOcrTaskDao: PaddleOcrTaskDao
 ) {
-
-    /**
-     * Gson 实例用于 JSON 序列化和反序列化
-     */
-    val gson = Gson()
 
     companion object {
         /** 默认轮询间隔（毫秒） */
@@ -366,7 +376,7 @@ class PaddleOcrRepository @Inject constructor(
             connection.readTimeout = 30000
 
             val jsonText = connection.getInputStream().bufferedReader().use { it.readText() }
-            gson.fromJson(jsonText, PaddleOcrParseResult::class.java)
+            AppJson.decodeFromString<PaddleOcrParseResult>(jsonText)
         }
     }
 

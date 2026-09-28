@@ -1,10 +1,12 @@
 package com.shifenmiao.base.ui.utils
 
 import android.content.Context
-import com.google.gson.GsonBuilder
+import com.shifenmiao.model.ModelProvider.AppJson
+import com.shifenmiao.model.ui.picker.CityData
 import com.shifenmiao.model.ui.picker.CountryData
-import com.shifenmiao.model.ui.picker.CountryDataDeserializer
+import com.shifenmiao.model.ui.picker.ProvinceData
 import java.io.IOException
+import kotlinx.serialization.decodeFromString
 
 object BaseUIUtils {
     fun loadJsonFromAssets(context: Context, fileName: String): String? {
@@ -16,16 +18,23 @@ object BaseUIUtils {
         }
     }
 
+    /**
+     * 解析 pca.json(省 → 市 → 区县三级嵌套对象)。
+     * 顶层是 {省名: {市名: [区县]}},与 Gson 时代 CountryDataDeserializer 的产物同构。
+     */
     fun parseProvinces(jsonString: String): CountryData {
-        try {
-            val gson = GsonBuilder()
-                .registerTypeAdapter(CountryData::class.java, CountryDataDeserializer())
-                .create()
-
-            val countryData: CountryData = gson.fromJson(jsonString, CountryData::class.java)
-            return countryData
+        return try {
+            val map = AppJson.decodeFromString<Map<String, Map<String, List<String>>>>(jsonString)
+            CountryData(
+                map.map { (provinceName, cities) ->
+                    ProvinceData(
+                        name = provinceName,
+                        cities = cities.map { (cityName, districts) -> CityData(cityName, districts) }
+                    )
+                }
+            )
         } catch (e: Exception) {
-            return CountryData(emptyList())
+            CountryData(emptyList())
         }
     }
 }

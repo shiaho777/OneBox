@@ -1,6 +1,5 @@
-package com.shifenmiao.ai.agent.tool
+package com.shifenmiao.model
 
-import com.shifenmiao.model.ModelProvider
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull

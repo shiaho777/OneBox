@@ -1,8 +1,12 @@
 package com.wanbaohe.xiangqi.data
 
-import com.google.gson.Gson
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import com.shifenmiao.model.ai.AiEngine
 import com.shifenmiao.model.ai.AiProvider
 import com.shifenmiao.model.ai.JevChoiceAnswer
@@ -163,8 +167,6 @@ internal object JevBestMoveResolver {
 
     /** 每个候选最多描述几个威胁(多一个就多一次着法推演) */
     private const val MAX_THREATS = 2
-
-    private val gson = Gson()
 
     data class Selection(
         val move: XiangqiMove,
@@ -330,32 +332,31 @@ internal object JevBestMoveResolver {
         model: String,
     ): JevRequest {
         val side = boardState.sideToMove
-        val state = JsonObject().apply {
-            addProperty("game", "Chinese Chess (Xiangqi)")
-            addProperty("board_fen", fen)
-            addProperty("side_to_move", side.englishLabel())
-            add("recent_moves", JsonArray().apply { history.takeLast(6).forEach(::add) })
-            add("piece_values", JsonObject().apply {
-                PIECE_VALUES.forEach { (type, value) -> addProperty(type.englishName(), value) }
+        // Jev 协议报文(对端 go-proxy → typesafe.ai):键名与嵌套结构与 Gson 时代逐字节等价
+        val state = buildJsonObject {
+            put("game", "Chinese Chess (Xiangqi)")
+            put("board_fen", fen)
+            put("side_to_move", side.englishLabel())
+            put("recent_moves", JsonArray(history.takeLast(6).map { JsonPrimitive(it) }))
+            put("piece_values", buildJsonObject {
+                PIECE_VALUES.forEach { (type, value) -> put(type.englishName(), value) }
             })
-            addProperty("legal_move_count", candidates.size)
-            add("your_pieces_in_danger", JsonArray().apply {
-                inDanger.forEach { add(it.text()) }
-            })
-            addProperty(
+            put("legal_move_count", candidates.size)
+            put("your_pieces_in_danger", JsonArray(inDanger.map { JsonPrimitive(it.text()) }))
+            put(
                 "task",
                 "The options below are all ${candidates.size} legal moves for the side to move. " +
                     "Pick the strongest one.",
             )
         }
-        val criteria = JsonObject().apply {
-            candidates.forEach { addProperty(it.move.notationUcci, describe(it, inDanger)) }
+        val criteria = buildJsonObject {
+            candidates.forEach { put(it.move.notationUcci, describe(it, inDanger)) }
         }
-        val questions = JsonObject().apply {
-            add(QUESTION_BEST_MOVE, JsonObject().apply {
-                addProperty("type", "choice")
-                addProperty("instructions", BEST_MOVE_INSTRUCTIONS)
-                add("criteria", criteria)
+        val questions = buildJsonObject {
+            put(QUESTION_BEST_MOVE, buildJsonObject {
+                put("type", "choice")
+                put("instructions", BEST_MOVE_INSTRUCTIONS)
+                put("criteria", criteria)
             })
         }
         return JevRequest(state = state, model = model, questions = questions)
@@ -414,7 +415,7 @@ internal object JevBestMoveResolver {
 
     fun resolve(rawJson: String, legalMoves: List<XiangqiMove>): Selection? {
         val response = runCatching {
-            gson.fromJson(rawJson, JevResponse::class.java)
+            AppJson.decodeFromString<JevResponse>(rawJson)
         }.getOrNull() ?: return null
         val answer = response.answers[QUESTION_BEST_MOVE] ?: return null
         val chosenUcci = selectUcci(answer) ?: return null
