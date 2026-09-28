@@ -267,4 +267,14 @@
     <string name="xiangqi_tts_default_checkmate">외통장군!</string>
     <string name="xiangqi_tts_default_draw">무승부!</string>
     <string name="xiangqi_new_ai_create">AI로 게임 만들기</string>
+    <string name="xiangqi_settings_local_engine_title">오프라인 엔진</string>
+    <string name="xiangqi_settings_local_engine_subtitle">내장 샹치 엔진과 신경망 — 네트워크가 없어도 강한 상대를 만날 수 있습니다.</string>
+    <string name="xiangqi_local_engine_download">다운로드</string>
+    <string name="xiangqi_local_engine_downloading">다운로드 중… %1$d%%</string>
+    <string name="xiangqi_local_engine_installed">준비 완료(%1$s). 이제 대국이 서버 엔진에 의존하지 않습니다.</string>
+    <string name="xiangqi_local_engine_not_installed">아직 다운로드되지 않았습니다. (%1$s) 한 번만 다운로드하면 오프라인으로 대국할 수 있습니다.</string>
+    <string name="xiangqi_local_engine_unavailable">현재 빌드에 이 엔진이 포함되어 있지 않습니다.</string>
+    <string name="xiangqi_local_engine_delete">삭제</string>
+    <string name="xiangqi_local_engine_delete_confirm_title">오프라인 엔진 데이터를 삭제할까요?</string>
+    <string name="xiangqi_local_engine_delete_confirm_message">%1$s의 신경망 파일이 삭제됩니다. 나중에 다시 다운로드할 수 있습니다.</string>
 </resources>
