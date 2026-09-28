@@ -1,9 +1,9 @@
 package com.shifenmiao.ai.agent.tool.builtin.cloud
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.CloudAgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -14,6 +14,9 @@ import com.wanbaohe.cloud.storage.model.CloudStorageConnection
 import com.wanbaohe.cloud.storage.agent.CloudAgentToolConnectionHolder
 import com.wanbaohe.cloud.storage.service.CloudFileService
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 /**
  * 浏览远程存储目录 / 读取对象元信息。
@@ -25,7 +28,6 @@ class BrowseCloudFilesTool @Inject constructor(
     private val textProvider: CloudAgentToolTextProvider,
     private val cloudFileService: CloudFileService,
     private val connectionHolder: CloudAgentToolConnectionHolder,
-    private val gson: Gson,
 ) : AgentTool {
 
     override val name: String = "browse_cloud_files"
@@ -63,7 +65,7 @@ class BrowseCloudFilesTool @Inject constructor(
     )
 
     override suspend fun execute(arguments: String): AgentToolResult {
-        val params = if (arguments.isBlank()) BrowseParams() else gson.fromJson(arguments, BrowseParams::class.java)
+        val params = if (arguments.isBlank()) BrowseParams() else AppJson.decodeFromString<BrowseParams>(arguments)
         val connection = resolveConnection(params.connection_id)
             ?: return AgentToolResult(
                 content = textProvider.string(R.string.agent_tool_browse_cloud_files_connection_not_found, params.connection_id.orEmpty()),
@@ -74,7 +76,7 @@ class BrowseCloudFilesTool @Inject constructor(
             "list_roots" -> {
                 cloudFileService.listRoots(connection).fold(
                     onSuccess = { roots ->
-                        AgentToolResult(content = gson.toJson(BrowseListRootsResult(roots.map { it.name })))
+                        AgentToolResult(content = AppJson.encodeToString(BrowseListRootsResult(roots.map { it.name })))
                     },
                     onFailure = { failure(it) },
                 )
@@ -90,7 +92,7 @@ class BrowseCloudFilesTool @Inject constructor(
                 cloudFileService.listDirectory(connection, root, path).fold(
                     onSuccess = { items ->
                         AgentToolResult(
-                            content = gson.toJson(
+                            content = AppJson.encodeToString(
                                 BrowseListResult(
                                     connectionId = connection.id,
                                     connectionName = connection.displayName,
@@ -120,7 +122,7 @@ class BrowseCloudFilesTool @Inject constructor(
                     )
                 cloudFileService.stat(connection, root, path).fold(
                     onSuccess = { item ->
-                        AgentToolResult(content = gson.toJson(BrowseStatResult(connection.id, connection.displayName, root, toPayload(item))))
+                        AgentToolResult(content = AppJson.encodeToString(BrowseStatResult(connection.id, connection.displayName, root, toPayload(item))))
                     },
                     onFailure = { failure(it) },
                 )
@@ -152,6 +154,7 @@ class BrowseCloudFilesTool @Inject constructor(
         eTag = item.eTag,
     )
 
+    @Serializable
     private data class BrowseParams(
         val action: String? = null,
         val connection_id: String? = null,
@@ -159,6 +162,7 @@ class BrowseCloudFilesTool @Inject constructor(
         val path: String? = null,
     )
 
+    @Serializable
     private data class ItemPayload(
         val key: String,
         val displayName: String,
@@ -169,6 +173,7 @@ class BrowseCloudFilesTool @Inject constructor(
         val eTag: String?,
     )
 
+    @Serializable
     private data class BrowseListResult(
         val connectionId: String,
         val connectionName: String,
@@ -179,10 +184,12 @@ class BrowseCloudFilesTool @Inject constructor(
         val items: List<ItemPayload>,
     )
 
+    @Serializable
     private data class BrowseListRootsResult(
         val roots: List<String>,
     )
 
+    @Serializable
     private data class BrowseStatResult(
         val connectionId: String,
         val connectionName: String,

@@ -2,7 +2,6 @@ package com.shifenmiao.ai.agent.tool.builtin
 
 import android.content.Context
 import androidx.core.net.toUri
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentToolExecutionContext
 import com.shifenmiao.ai.agent.tool.AgentToolResult
@@ -11,6 +10,8 @@ import com.shifenmiao.ai.agent.tool.ContextAwareAgentTool
 import com.shifenmiao.ai.agent.tool.FilePickerRequest
 import com.shifenmiao.ai.agent.tool.InteractiveAgentTool
 import com.shifenmiao.ai.agent.tool.InteractiveToolRuntime
+import com.shifenmiao.ai.agent.tool.jsonStringOf
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -18,6 +19,8 @@ import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.t8rin.imagetoolbox.core.data.utils.SafUriUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * 让用户通过系统文件选择器选取一个或多个文件。
@@ -29,7 +32,6 @@ import javax.inject.Inject
  */
 class PickFilesTool @Inject constructor(
     private val bridge: InteractiveToolRuntime,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
     @ApplicationContext private val context: Context
 ) : InteractiveAgentTool, ContextAwareAgentTool {
@@ -116,7 +118,7 @@ class PickFilesTool @Inject constructor(
     private fun parseArguments(arguments: String): PickFilesParams {
         if (arguments.isBlank() || arguments.trim() == "{}") return PickFilesParams()
         return runCatching {
-            gson.fromJson(arguments, PickFilesParams::class.java) ?: PickFilesParams()
+            runCatching { AppJson.decodeFromString<PickFilesParams>(arguments) }.getOrNull() ?: PickFilesParams()
         }.getOrElse { PickFilesParams() }
     }
 
@@ -124,7 +126,7 @@ class PickFilesTool @Inject constructor(
         val uris = urisCsv.split(",").filter { it.isNotBlank() }
         val fileUris = uris.map { raw -> convertToFileUri(raw) ?: raw }
         return AgentToolResult(
-            content = gson.toJson(
+            content = jsonStringOf(
                 mapOf(
                     "status" to "selected",
                     "count" to fileUris.size,
@@ -143,10 +145,11 @@ class PickFilesTool @Inject constructor(
 
     private fun buildCancelledResult(): AgentToolResult =
         AgentToolResult(
-            content = gson.toJson(mapOf("status" to "cancelled")),
+            content = jsonStringOf(mapOf("status" to "cancelled")),
             isError = false
         )
 
+    @Serializable
     private data class PickFilesParams(
         val message: String? = null,
         val mimeType: String? = null,

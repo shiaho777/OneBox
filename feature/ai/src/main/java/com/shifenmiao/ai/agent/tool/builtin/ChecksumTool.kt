@@ -1,10 +1,10 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.file.AgentFileService
 import com.shifenmiao.model.ai.ToolParameters
@@ -15,11 +15,13 @@ import com.t8rin.imagetoolbox.feature.checksum_tools.domain.ChecksumManager
 import com.t8rin.imagetoolbox.feature.checksum_tools.domain.ChecksumSource
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 class ChecksumTool @Inject constructor(
     private val checksumManager: ChecksumManager,
     private val agentFileService: AgentFileService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider
 ) : AgentTool {
 
@@ -76,7 +78,7 @@ class ChecksumTool @Inject constructor(
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
             val params = if (arguments.isBlank()) ChecksumParams() else {
-                gson.fromJson(arguments, ChecksumParams::class.java)
+                AppJson.decodeFromString<ChecksumParams>(arguments)
             }
             val action = params.action?.trim().orEmpty()
             val type = resolveAlgorithm(params.algorithm)
@@ -94,7 +96,7 @@ class ChecksumTool @Inject constructor(
                 "calculate" -> {
                     val value = checksumManager.calculateChecksum(type = type, source = source)
                     AgentToolResult(
-                        content = gson.toJson(
+                        content = AppJson.encodeToString(
                             ChecksumCalculateResult(
                                 action = action,
                                 algorithm = type.digest,
@@ -115,7 +117,7 @@ class ChecksumTool @Inject constructor(
                     }
                     val actual = checksumManager.calculateChecksum(type = type, source = source)
                     AgentToolResult(
-                        content = gson.toJson(
+                        content = AppJson.encodeToString(
                             ChecksumCompareResult(
                                 action = action,
                                 algorithm = type.digest,
@@ -190,6 +192,7 @@ class ChecksumTool @Inject constructor(
     }
 }
 
+@Serializable
 private data class ChecksumParams(
     val action: String? = null,
     val algorithm: String? = null,
@@ -199,6 +202,7 @@ private data class ChecksumParams(
     val expected_checksum: String? = null
 )
 
+@Serializable
 private data class ChecksumCalculateResult(
     val action: String,
     val algorithm: String,
@@ -206,6 +210,7 @@ private data class ChecksumCalculateResult(
     val checksum: String
 )
 
+@Serializable
 private data class ChecksumCompareResult(
     val action: String,
     val algorithm: String,

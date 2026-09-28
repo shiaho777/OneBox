@@ -1,13 +1,14 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.agent.tool.ToolDeepLink
+import com.shifenmiao.ai.agent.tool.jsonStringOf
 import com.shifenmiao.common.handle.navigation.AppNavigationRegistry
 import com.shifenmiao.common.handle.navigation.AppNavigationTargetType
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -15,6 +16,8 @@ import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.t8rin.imagetoolbox.core.settings.domain.SettingsManager
 import com.t8rin.imagetoolbox.core.settings.domain.model.NightMode
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * 日夜间模式设置工具(独立窄入口,只负责 Light / Dark / System)。
@@ -24,7 +27,6 @@ import javax.inject.Inject
  */
 class NightModeSettingTool @Inject constructor(
     private val settingsManager: SettingsManager,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -155,7 +157,7 @@ class NightModeSettingTool @Inject constructor(
 
     private fun parseArguments(arguments: String): NightModeSettingParams {
         if (arguments.isBlank()) return NightModeSettingParams()
-        return gson.fromJson(arguments, NightModeSettingParams::class.java) ?: NightModeSettingParams()
+        return runCatching { AppJson.decodeFromString<NightModeSettingParams>(arguments) }.getOrNull() ?: NightModeSettingParams()
     }
 
     private fun successResult(
@@ -170,7 +172,7 @@ class NightModeSettingTool @Inject constructor(
             "nightMode" to nightMode.name,
             "validNightModes" to NIGHT_MODE_NAMES,
         )
-        return AgentToolResult(content = gson.toJson(payload))
+        return AgentToolResult(content = jsonStringOf(payload))
     }
 
     private fun errorResult(
@@ -186,9 +188,10 @@ class NightModeSettingTool @Inject constructor(
             "message" to message,
         )
         if (validOptions != null) payload["validOptions"] = validOptions
-        return AgentToolResult(content = gson.toJson(payload), isError = true)
+        return AgentToolResult(content = jsonStringOf(payload), isError = true)
     }
 
+    @Serializable
     private data class NightModeSettingParams(
         val action: String? = null,
         val mode: String? = null,

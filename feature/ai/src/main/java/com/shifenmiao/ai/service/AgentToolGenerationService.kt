@@ -1,8 +1,13 @@
 package com.shifenmiao.ai.service
 
 import android.content.Context
-import com.google.gson.Gson
-import com.google.gson.JsonObject
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonObject
 import com.shifenmiao.core.R
 import com.shifenmiao.ai.agent.tool.AgentToolRegistry
 import com.shifenmiao.common.ai.AIPromptExecutor
@@ -31,6 +36,7 @@ data class AgentToolGenerationResult(
     val modelName: String = ""
 )
 
+@Serializable
 data class AgentToolDraft(
     val identity: AgentToolDraftIdentity,
     val metadata: AgentToolDraftMetadata,
@@ -43,6 +49,7 @@ data class AgentToolDraft(
     val implementationNotes: List<String>
 )
 
+@Serializable
 data class AgentToolDraftIdentity(
     val toolName: String,
     val className: String,
@@ -50,6 +57,7 @@ data class AgentToolDraftIdentity(
     val title: String
 )
 
+@Serializable
 data class AgentToolDraftMetadata(
     val summary: String,
     val description: String,
@@ -64,11 +72,13 @@ data class AgentToolDraftMetadata(
     val examples: List<String>
 )
 
+@Serializable
 data class AgentToolDraftParameterSchema(
     val required: List<String>,
     val properties: List<AgentToolDraftParameterProperty>
 )
 
+@Serializable
 data class AgentToolDraftParameterProperty(
     val name: String,
     val type: String,
@@ -76,6 +86,7 @@ data class AgentToolDraftParameterProperty(
     val enumValues: List<String> = emptyList()
 )
 
+@Serializable
 data class AgentToolDraftExecutionContract(
     val inputParsing: String,
     val validationRules: List<String>,
@@ -83,6 +94,7 @@ data class AgentToolDraftExecutionContract(
     val failurePayload: String
 )
 
+@Serializable
 data class AgentToolDraftFilePlan(
     val kotlinFilePath: String,
     val rawDescriptionFileName: String,
@@ -90,27 +102,32 @@ data class AgentToolDraftFilePlan(
     val arrayKeys: List<String>
 )
 
+@Serializable
 data class AgentToolDraftCodeTemplates(
     val toolKotlin: String,
     val hiltBinding: String
 )
 
+@Serializable
 data class AgentToolDraftResourceDrafts(
     val rawDescription: String,
     val stringEntries: List<AgentToolDraftStringEntry>,
     val arrayEntries: List<AgentToolDraftArrayEntry>
 )
 
+@Serializable
 data class AgentToolDraftStringEntry(
     val key: String,
     val value: String
 )
 
+@Serializable
 data class AgentToolDraftArrayEntry(
     val key: String,
     val values: List<String>
 )
 
+@Serializable
 data class AgentToolDraftRegistrationDraft(
     val moduleClass: String,
     val stringKey: String,
@@ -123,8 +140,7 @@ class AgentToolGenerationService @Inject constructor(
     @ApplicationContext private val context: Context,
     private val aiPromptExecutor: AIPromptExecutor,
     private val agentToolRegistry: AgentToolRegistry,
-    private val creationMetaService: CreationMetaService,
-    private val gson: Gson
+    private val creationMetaService: CreationMetaService
 ) {
 
     suspend fun generateDraft(request: AgentToolGenerationRequest): AgentToolGenerationResult {
@@ -183,13 +199,13 @@ class AgentToolGenerationService @Inject constructor(
     private fun parseDraftPayload(content: String): AgentToolDraftPayload? {
         if (content.isBlank()) return null
         return runCatching {
-            val root = gson.fromJson(content, JsonObject::class.java) ?: return null
-            val draftRoot = root.getAsJsonObject("tool_draft") ?: root
+            val root = AppJson.parseToJsonElement(content).jsonObject
+            val draftRoot = root["tool_draft"] as? JsonObject ?: root
             AgentToolDraftPayload(
-                toolDraft = gson.fromJson(draftRoot, AgentToolDraft::class.java),
-                recommendedBindings = root.getAsJsonArray("recommended_related_tools")
+                toolDraft = AppJson.decodeFromJsonElement(AgentToolDraft.serializer(), draftRoot),
+                recommendedBindings = (root["recommended_related_tools"] as? JsonArray)
                     ?.mapNotNull { element ->
-                        element?.takeIf { it.isJsonPrimitive }?.asString?.trim()?.takeIf(String::isNotEmpty)
+                        (element as? JsonPrimitive)?.contentOrNull?.trim()?.takeIf(String::isNotEmpty)
                     }
                     .orEmpty()
             )

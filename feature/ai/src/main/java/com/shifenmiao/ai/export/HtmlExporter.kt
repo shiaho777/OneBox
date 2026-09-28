@@ -2,7 +2,6 @@ package com.shifenmiao.ai.export
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.toArgb
-import com.google.gson.Gson
 import com.shifenmiao.ai.BuildConfig
 import com.shifenmiao.ai.utils.AttachmentPayloadUtils
 import com.shifenmiao.common.ai.aigc.AigcInfoGenerator
@@ -248,7 +247,7 @@ class HtmlExporter {
         if (message.attachmentsJson.isBlank()) return ""
 
         val attachments = try {
-            AttachmentPayloadUtils.deserialize(message.attachmentsJson, Gson())
+            AttachmentPayloadUtils.deserialize(message.attachmentsJson)
         } catch (_: Exception) {
             emptyList()
         }

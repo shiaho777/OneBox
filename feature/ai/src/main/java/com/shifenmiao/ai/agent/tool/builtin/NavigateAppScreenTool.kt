@@ -1,7 +1,7 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.callback.ToolCallback
 import com.shifenmiao.ai.agent.tool.AgentToolResult
@@ -9,7 +9,9 @@ import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.agent.tool.AppNavigationCatalogRepository
 import com.shifenmiao.ai.agent.tool.InteractiveAgentTool
 import com.shifenmiao.ai.agent.tool.ScreenNavigationToolSupport
+import com.shifenmiao.ai.agent.tool.toJsonElement
 import com.shifenmiao.common.handle.ItemScreenAction
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ChatWorkingMode
@@ -17,10 +19,13 @@ import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.t8rin.imagetoolbox.core.ui.utils.navigation.ScreenCallbackResult
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.JsonElement
 
 class NavigateAppScreenTool @Inject constructor(
     private val appNavigationCatalogRepository: AppNavigationCatalogRepository,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider
 ) : InteractiveAgentTool {
 
@@ -109,7 +114,7 @@ class NavigateAppScreenTool @Inject constructor(
             )
 
             AgentToolResult(
-                content = gson.toJson(
+                content = AppJson.encodeToString(
                     NavigateAppScreenResponse(
                         deeplink = target.deeplink.takeIf { it.isNotBlank() },
                         deeplinkMarkdownLink = target.deeplink
@@ -126,7 +131,7 @@ class NavigateAppScreenTool @Inject constructor(
                         action = action.name.lowercase(),
                         screen = target.screen.simpleName,
                         navigationMode = execution.mode,
-                        callbackResult = execution.callbackResult
+                        callbackResult = (execution.callbackResult as? ScreenCallbackResult)?.toJsonElement()
                     )
                 )
             )
@@ -144,7 +149,7 @@ class NavigateAppScreenTool @Inject constructor(
     private fun parseParams(arguments: String): NavigateAppScreenParams? {
         return runCatching {
             if (arguments.isBlank()) NavigateAppScreenParams()
-            else gson.fromJson(arguments, NavigateAppScreenParams::class.java)
+            else AppJson.decodeFromString<NavigateAppScreenParams>(arguments)
         }.getOrNull()
     }
 
@@ -194,8 +199,10 @@ class NavigateAppScreenTool @Inject constructor(
             .replace(">", "&gt;")
     }
 
+    @Serializable
     private data class NavigateAppScreenParams(
         @SerializedName("deeplink")
+        @SerialName("deeplink")
         val deeplink: String? = null,
         val action: String? = null,
         val wait_for_result: Boolean? = null
@@ -203,6 +210,7 @@ class NavigateAppScreenTool @Inject constructor(
         val waitForResult: Boolean? get() = wait_for_result
     }
 
+    @Serializable
     private data class NavigateAppScreenResponse(
         val deeplink: String?,
         val deeplinkMarkdownLink: String?,
@@ -215,7 +223,28 @@ class NavigateAppScreenTool @Inject constructor(
         val action: String,
         val screen: String,
         val navigationMode: String,
-        val callbackResult: Any?
+        val callbackResult: JsonElement?
     )
+
+    /**
+     * ScreenCallbackResult 转 JSON,字段名/顺序/null 省略行为与原 Gson 反射产物一致
+     * (core/ui 的类不引入序列化注解,在边界手工映射)。
+     */
+    private fun ScreenCallbackResult.toJsonElement(): JsonElement = mapOf(
+        "status" to status.name,
+        "id" to id,
+        "idLong" to idLong,
+        "url" to url,
+        "data" to data,
+        "message" to message,
+        "extra" to extra,
+        "lifecycleTrace" to lifecycleTrace.map { event ->
+            mapOf(
+                "status" to event.status.name,
+                "timestamp" to event.timestamp,
+                "message" to event.message
+            )
+        }
+    ).toJsonElement()
 }
 

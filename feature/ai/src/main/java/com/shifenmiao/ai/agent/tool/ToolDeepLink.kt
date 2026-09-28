@@ -1,6 +1,8 @@
 package com.shifenmiao.ai.agent.tool
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /**
  * 工具执行结果里的 deep link 引导项。
@@ -17,9 +19,10 @@ import com.google.gson.annotations.SerializedName
  * @property guidance   引导语，如 "点击查看并微调主题"，null 时 UI 使用默认模板
  * @property primary    是否为主要链接；UI 可对 primary=true 的项加视觉强调（icon 着色、边框等）
  */
+@Serializable
 data class ToolDeepLink(
-    @SerializedName("uri") val uri: String,
-    @SerializedName("label") val label: String,
-    @SerializedName("guidance") val guidance: String? = null,
-    @SerializedName("primary") val primary: Boolean = false,
+    @SerializedName("uri") @SerialName("uri") val uri: String,
+    @SerializedName("label") @SerialName("label") val label: String,
+    @SerializedName("guidance") @SerialName("guidance") val guidance: String? = null,
+    @SerializedName("primary") @SerialName("primary") val primary: Boolean = false,
 )

@@ -1,11 +1,11 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
 import android.graphics.Bitmap
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.file.AgentFileService
 import com.shifenmiao.model.ai.ToolParameters
@@ -23,6 +23,9 @@ import com.t8rin.imagetoolbox.core.domain.saving.model.SaveResult
 import com.t8rin.imagetoolbox.feature.limits_resize.domain.LimitsImageScaler
 import com.t8rin.imagetoolbox.feature.limits_resize.domain.LimitsResizeType
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 class LimitResizeTool @Inject constructor(
     private val imageGetter: ImageGetter<Bitmap>,
@@ -30,7 +33,6 @@ class LimitResizeTool @Inject constructor(
     private val imageCompressor: ImageCompressor<Bitmap>,
     private val fileController: FileController,
     private val agentFileService: AgentFileService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -85,7 +87,7 @@ class LimitResizeTool @Inject constructor(
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
             val params = if (arguments.isBlank()) LimitResizeParams() else {
-                gson.fromJson(arguments, LimitResizeParams::class.java)
+                AppJson.decodeFromString<LimitResizeParams>(arguments)
             }
             val imageUri = params.image_uri?.takeIf { it.isNotBlank() }
                 ?: return AgentToolResult(
@@ -163,7 +165,7 @@ class LimitResizeTool @Inject constructor(
                         format = imageFormat.title,
                         quality = quality.qualityValue
                     )
-                    AgentToolResult(content = gson.toJson(result))
+                    AgentToolResult(content = AppJson.encodeToString(result))
                 }
 
                 is SaveResult.Error -> {
@@ -205,6 +207,7 @@ class LimitResizeTool @Inject constructor(
     }
 }
 
+@Serializable
 private data class LimitResizeParams(
     val image_uri: String? = null,
     val max_width: Int? = null,
@@ -214,6 +217,7 @@ private data class LimitResizeParams(
     val quality: Int? = null
 )
 
+@Serializable
 private data class LimitResizeResult(
     val output_uri: String?,
     val original_width: Int,

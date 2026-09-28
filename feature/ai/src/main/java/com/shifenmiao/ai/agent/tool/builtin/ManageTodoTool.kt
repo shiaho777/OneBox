@@ -1,12 +1,13 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.R
+import com.shifenmiao.ai.agent.tool.jsonStringOf
 import com.shifenmiao.common.handle.navigation.AppNavigationTargetType
 import com.shifenmiao.common.handle.navigation.AppNavigationRegistry
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -17,10 +18,11 @@ import com.shifenmiao.model.todo.TaskInput
 import com.shifenmiao.model.todo.TodoCategoryDto
 import com.shifenmiao.model.todo.TodoTaskDto
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 class ManageTodoTool @Inject constructor(
     private val todoService: MarkTodoServiceInterface,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -84,7 +86,7 @@ class ManageTodoTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
-            val params = gson.fromJson(arguments, ManageTodoParams::class.java)
+            val params = AppJson.decodeFromString<ManageTodoParams>(arguments)
             when (params.action) {
                 "list" -> handleList(params)
                 "create_task" -> handleCreateTask(params)
@@ -127,7 +129,7 @@ class ManageTodoTool @Inject constructor(
             "categories" to data,
             "deeplink" to markTodoDeeplink()
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleCreateTask(params: ManageTodoParams): AgentToolResult {
@@ -165,7 +167,7 @@ class ManageTodoTool @Inject constructor(
             "message" to textProvider.string(R.string.agent_tool_manage_todo_task_created, taskTitle),
             "deeplink" to markTodoDeeplink("category_id" to lookup.id)
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleCreateCategory(params: ManageTodoParams): AgentToolResult {
@@ -188,7 +190,7 @@ class ManageTodoTool @Inject constructor(
             "message" to textProvider.string(R.string.agent_tool_manage_todo_category_created, catTitle),
             "deeplink" to markTodoDeeplink()
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleToggleComplete(params: ManageTodoParams): AgentToolResult {
@@ -215,7 +217,7 @@ class ManageTodoTool @Inject constructor(
             "message" to textProvider.string(R.string.agent_tool_manage_todo_toggled, task.title, newStatus),
             "deeplink" to markTodoDeeplink()
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleToggleStar(params: ManageTodoParams): AgentToolResult {
@@ -242,7 +244,7 @@ class ManageTodoTool @Inject constructor(
             "message" to textProvider.string(R.string.agent_tool_manage_todo_toggled, task.title, newStatus),
             "deeplink" to markTodoDeeplink()
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleDeleteTask(params: ManageTodoParams): AgentToolResult {
@@ -266,7 +268,7 @@ class ManageTodoTool @Inject constructor(
             "message" to textProvider.string(R.string.agent_tool_manage_todo_task_deleted, task.title),
             "deeplink" to markTodoDeeplink()
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     // ── helpers ───────────────────────────────────
@@ -300,6 +302,7 @@ class ManageTodoTool @Inject constructor(
         "is_starred" to isStarred
     )
 
+    @Serializable
     private data class ManageTodoParams(
         val action: String = "",
         val category_name: String? = null,

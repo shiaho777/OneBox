@@ -6,7 +6,18 @@ import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonDecoder
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonPrimitive
 
 @Parcelize
 @Serializable
@@ -113,5 +124,32 @@ class AiProviderTypeAdapter : TypeAdapter<AiProvider>() {
             }
         }
         return AiProvider.fromValue(providerString)
+    }
+}
+
+/**
+ * kotlinx.serialization 版 [AiProviderTypeAdapter](Gson → kotlinx 迁移阶段②b):
+ * 写出与 Gson 完全一致的 `"provider":"openai"` 字符串格式;读取兼容三种历史形态
+ * (字符串 / 带 value 字段的对象 / null),未知值一律回退 [AiProvider.Default]。
+ */
+object AiProviderKSerializer : KSerializer<AiProvider> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("AiProvider", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: AiProvider) {
+        encoder.encodeString(value.value)
+    }
+
+    override fun deserialize(decoder: Decoder): AiProvider {
+        if (decoder is JsonDecoder) {
+            return when (val element = decoder.decodeJsonElement()) {
+                is JsonObject -> AiProvider.fromValue(
+                    element["value"]?.jsonPrimitive?.contentOrNull
+                )
+                is JsonPrimitive -> AiProvider.fromValue(element.contentOrNull)
+                else -> AiProvider.fromValue(null)
+            }
+        }
+        return AiProvider.fromValue(decoder.decodeString())
     }
 }

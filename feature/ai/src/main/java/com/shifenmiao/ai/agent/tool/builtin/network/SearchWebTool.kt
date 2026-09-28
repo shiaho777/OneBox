@@ -1,17 +1,19 @@
 package com.shifenmiao.ai.agent.tool.builtin.network
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.agent.tool.RetryPolicy
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.shifenmiao.network.service.WebSearchService
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * Agent 工具：网络搜索
@@ -21,7 +23,6 @@ import javax.inject.Inject
 class SearchWebTool @Inject constructor(
     private val textProvider: AgentToolTextProvider,
     private val webSearchService: WebSearchService,
-    private val gson: Gson
 ) : AgentTool {
 
     override val name: String = "search_web"
@@ -69,7 +70,7 @@ class SearchWebTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
-            val params = gson.fromJson(arguments, SearchWebParams::class.java)
+            val params = AppJson.decodeFromString<SearchWebParams>(arguments)
             val engine = when (params.engine?.lowercase()) {
                 "google" -> WebSearchService.SearchEngine.GOOGLE
                 "bing" -> WebSearchService.SearchEngine.BING
@@ -127,6 +128,7 @@ class SearchWebTool @Inject constructor(
         }
     }
 
+    @Serializable
     private data class SearchWebParams(
         val query: String,
         val engine: String?,

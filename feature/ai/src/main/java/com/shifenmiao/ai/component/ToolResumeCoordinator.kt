@@ -1,7 +1,8 @@
 package com.shifenmiao.ai.component
 
 import android.content.Context
-import com.google.gson.Gson
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
 import com.shifenmiao.ai.agent.AgentLoopExecutor
 import com.shifenmiao.ai.agent.AgentLoopSessionState
 import com.shifenmiao.ai.agent.ResumeState
@@ -33,7 +34,6 @@ import com.t8rin.logger.makeLog
 class ToolResumeCoordinator(
     private val agentLoopExecutor: AgentLoopExecutor,
     private val interactiveToolBridge: InteractiveToolRuntime,
-    private val gson: Gson,
     private val appContext: Context,
 ) {
 
@@ -148,7 +148,6 @@ class ToolResumeCoordinator(
                         reason = restored?.confirmationRequest?.dialogMessage
                             ?.takeIf { it.isNotBlank() }
                             ?: appContext.getString(R.string.agent_tool_confirmation_required),
-                        gson = gson,
                     )
                     agentLoopExecutor.taskManager.markCompleted(task.id, rejection.content, rejection.isError)
                     resumeState.remainingTasks
@@ -156,11 +155,10 @@ class ToolResumeCoordinator(
             }
             InteractivePendingRequestSnapshot.KIND_QUESTION -> {
                 val result = if (restored?.payload.isNullOrBlank()) {
-                    InteractiveToolResultFactory.buildQuestionCancelledResult(gson)
+                    InteractiveToolResultFactory.buildQuestionCancelledResult()
                 } else {
                     InteractiveToolResultFactory.buildQuestionSubmittedResult(
                         answersJson = restored.payload.orEmpty(),
-                        gson = gson,
                     )
                 }
                 agentLoopExecutor.taskManager.markCompleted(task.id, result.content, result.isError)
@@ -240,8 +238,9 @@ class ToolResumeCoordinator(
 
     private fun parseInteractiveRequestKind(task: ToolCallTaskEntity): String? {
         if (task.formRequestJson.isNullOrBlank()) return null
+        val json = task.formRequestJson ?: return null
         return runCatching {
-            gson.fromJson(task.formRequestJson, InteractivePendingRequestSnapshot::class.java)?.kind
+            AppJson.decodeFromString<InteractivePendingRequestSnapshot>(json).kind
         }.getOrNull()
     }
 }

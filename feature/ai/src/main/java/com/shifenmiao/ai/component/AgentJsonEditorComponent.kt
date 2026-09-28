@@ -3,10 +3,12 @@ package com.shifenmiao.ai.component
 import androidx.compose.runtime.Immutable
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.doOnDestroy
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonElement
-import com.google.gson.JsonParser
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import com.shifenmiao.model.event.AppEventBus
 import com.shifenmiao.database.data_draft.DataDraftHelper
 import com.t8rin.imagetoolbox.core.domain.coroutines.DispatchersHolder
@@ -49,7 +51,6 @@ class AgentJsonEditorComponent @AssistedInject internal constructor(
     @Assisted("editTitle") val editTitle: String?,
     @Assisted val onGoBack: () -> Unit,
     private val dataDraftHelper: DataDraftHelper,
-    private val gson: Gson,
     dispatchersHolder: DispatchersHolder
 ) : BaseComponent(dispatchersHolder, componentContext) {
 
@@ -127,16 +128,18 @@ class AgentJsonEditorComponent @AssistedInject internal constructor(
         }
     }
 
+    /** 展示用的美化实例,在全局 AppJson 配置基础上开 prettyPrint */
+    private val prettyJson = Json(AppJson) { prettyPrint = true }
+
     /**
-     * 用 Gson 美化格式化当前 JSON
+     * 美化格式化当前 JSON
      */
     fun formatJson() {
         val content = _uiState.value.content
         if (content.isBlank()) return
         try {
-            val element = JsonParser.parseString(content)
-            val prettyGson = GsonBuilder().setPrettyPrinting().create()
-            val formatted = prettyGson.toJson(element)
+            val element = AppJson.parseToJsonElement(content)
+            val formatted = prettyJson.encodeToString(JsonElement.serializer(), element)
             _uiState.update { it.copy(content = formatted, isDirty = true) }
         } catch (_: Exception) {
             // 格式错误时静默忽略，不破坏用户输入
@@ -153,10 +156,9 @@ class AgentJsonEditorComponent @AssistedInject internal constructor(
         val content = _uiState.value.content
         if (content.isBlank() || path.isEmpty()) return
         try {
-            val root = JsonParser.parseString(content)
-            if (updateElementAtPath(root, path, 0, newValue)) {
-                val updated = gson.toJson(root)
-                _uiState.update { it.copy(content = updated, isDirty = true) }
+            val root = AppJson.parseToJsonElement(content)
+            updateElementAtPath(root, path, 0, newValue)?.let { updated ->
+                _uiState.update { it.copy(content = updated.toString(), isDirty = true) }
             }
         } catch (_: Exception) {
             // 解析失败时忽略
@@ -164,36 +166,34 @@ class AgentJsonEditorComponent @AssistedInject internal constructor(
     }
 
     /**
-     * 递归更新 JsonElement 指定路径的值
+     * 递归更新 JsonElement 指定路径的值(kotlinx 树不可变,返回替换后的新树;失败返回 null)
      */
-    private fun updateElementAtPath(element: JsonElement, path: List<String>, index: Int, newValue: String): Boolean {
-        if (index >= path.size) return false
+    private fun updateElementAtPath(element: JsonElement, path: List<String>, index: Int, newValue: String): JsonElement? {
+        if (index >= path.size) return null
         val key = path[index]
         val isLast = index == path.size - 1
 
-        return when {
-            element.isJsonObject -> {
-                val obj = element.asJsonObject
+        return when (element) {
+            is JsonObject -> {
                 if (isLast) {
-                    obj.addProperty(key, newValue)
-                    true
+                    JsonObject(element + (key to JsonPrimitive(newValue)))
                 } else {
-                    val child = obj.get(key) ?: return false
-                    updateElementAtPath(child, path, index + 1, newValue)
+                    val child = element[key] ?: return null
+                    val updatedChild = updateElementAtPath(child, path, index + 1, newValue) ?: return null
+                    JsonObject(element + (key to updatedChild))
                 }
             }
-            element.isJsonArray -> {
-                val arr = element.asJsonArray
-                val arrIndex = key.toIntOrNull() ?: return false
-                if (arrIndex < 0 || arrIndex >= arr.size()) return false
+            is JsonArray -> {
+                val arrIndex = key.toIntOrNull() ?: return null
+                if (arrIndex < 0 || arrIndex >= element.size) return null
                 if (isLast) {
-                    arr.set(arrIndex, com.google.gson.JsonPrimitive(newValue))
-                    true
+                    JsonArray(element.toMutableList().apply { set(arrIndex, JsonPrimitive(newValue)) })
                 } else {
-                    updateElementAtPath(arr.get(arrIndex), path, index + 1, newValue)
+                    val updatedChild = updateElementAtPath(element[arrIndex], path, index + 1, newValue) ?: return null
+                    JsonArray(element.toMutableList().apply { set(arrIndex, updatedChild) })
                 }
             }
-            else -> false
+            else -> null
         }
     }
 
@@ -202,7 +202,7 @@ class AgentJsonEditorComponent @AssistedInject internal constructor(
      */
     private fun validateJson(json: String): String? {
         return try {
-            JsonParser.parseString(json)
+            AppJson.parseToJsonElement(json)
             null
         } catch (e: Exception) {
             e.message

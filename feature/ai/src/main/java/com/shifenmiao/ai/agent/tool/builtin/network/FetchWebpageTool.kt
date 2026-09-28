@@ -1,17 +1,19 @@
 package com.shifenmiao.ai.agent.tool.builtin.network
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.agent.tool.RetryPolicy
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.shifenmiao.network.service.WebFetchService
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * Agent 工具：获取网页内容
@@ -21,7 +23,6 @@ import javax.inject.Inject
 class FetchWebpageTool @Inject constructor(
     private val textProvider: AgentToolTextProvider,
     private val webFetchService: WebFetchService,
-    private val gson: Gson
 ) : AgentTool {
 
     override val name: String = "fetch_webpage"
@@ -69,7 +70,7 @@ class FetchWebpageTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
-            val params = gson.fromJson(arguments, FetchWebpageParams::class.java)
+            val params = AppJson.decodeFromString<FetchWebpageParams>(arguments)
             val extractMode = when (params.extract_mode?.lowercase()) {
                 "html" -> WebFetchService.ExtractMode.HTML
                 "links" -> WebFetchService.ExtractMode.LINKS
@@ -119,6 +120,7 @@ class FetchWebpageTool @Inject constructor(
         }
     }
 
+    @Serializable
     private data class FetchWebpageParams(
         val url: String,
         val extract_mode: String?,

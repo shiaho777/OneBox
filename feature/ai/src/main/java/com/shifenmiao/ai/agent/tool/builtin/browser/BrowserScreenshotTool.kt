@@ -1,10 +1,10 @@
 package com.shifenmiao.ai.agent.tool.builtin.browser
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.ai.agent.tool.jsonStringOf
 import com.shifenmiao.interfaces.browser.BrowserAutomationService
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -13,7 +13,6 @@ import javax.inject.Inject
 
 class BrowserScreenshotTool @Inject constructor(
     private val automationService: BrowserAutomationService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider
 ) : AgentTool {
 
@@ -61,7 +60,7 @@ class BrowserScreenshotTool @Inject constructor(
                 )
             }
             AgentToolResult(
-                content = gson.toJson(
+                content = jsonStringOf(
                     mapOf(
                         "tool" to name,
                         "success" to true,

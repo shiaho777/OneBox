@@ -1,11 +1,11 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
 import android.graphics.Bitmap
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.file.AgentFileService
 import com.shifenmiao.model.ai.ToolParameters
@@ -19,13 +19,15 @@ import com.t8rin.imagetoolbox.core.domain.saving.model.ImageSaveTarget
 import com.t8rin.imagetoolbox.core.domain.saving.model.SaveResult
 import com.t8rin.imagetoolbox.feature.weight_resize.domain.WeightImageScaler
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 class CompressImageTool @Inject constructor(
     private val imageGetter: ImageGetter<Bitmap>,
     private val imageScaler: WeightImageScaler<Bitmap>,
     private val fileController: FileController,
     private val agentFileService: AgentFileService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -67,7 +69,7 @@ class CompressImageTool @Inject constructor(
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
             val params = if (arguments.isBlank()) CompressImageParams() else {
-                gson.fromJson(arguments, CompressImageParams::class.java)
+                AppJson.decodeFromString<CompressImageParams>(arguments)
             }
             val imageUri = params.image_uri?.takeIf { it.isNotBlank() }
                 ?: return AgentToolResult(
@@ -127,7 +129,7 @@ class CompressImageTool @Inject constructor(
                         target_size_bytes = maxBytes,
                         format = imageFormat.title
                     )
-                    AgentToolResult(content = gson.toJson(result))
+                    AgentToolResult(content = AppJson.encodeToString(result))
                 }
 
                 is SaveResult.Error -> {
@@ -169,12 +171,14 @@ class CompressImageTool @Inject constructor(
     }
 }
 
+@Serializable
 private data class CompressImageParams(
     val image_uri: String? = null,
     val max_bytes: Long? = null,
     val image_format: String? = null
 )
 
+@Serializable
 private data class CompressImageResult(
     val output_uri: String?,
     val original_width: Int,

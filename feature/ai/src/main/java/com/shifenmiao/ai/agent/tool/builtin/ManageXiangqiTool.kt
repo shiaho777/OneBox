@@ -1,22 +1,24 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.R
+import com.shifenmiao.ai.agent.tool.jsonStringOf
 import com.shifenmiao.common.handle.navigation.AppNavigationTargetType
 import com.shifenmiao.common.handle.navigation.AppNavigationRegistry
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.shifenmiao.model.xiangqi.XiangqiServiceInterface
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 class ManageXiangqiTool @Inject constructor(
     private val xiangqiService: XiangqiServiceInterface,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -80,7 +82,7 @@ class ManageXiangqiTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
-            val params = gson.fromJson(arguments, ManageXiangqiParams::class.java)
+            val params = AppJson.decodeFromString<ManageXiangqiParams>(arguments)
             when (params.action) {
                 "list" -> handleList()
                 "detail" -> handleDetail(params)
@@ -129,7 +131,7 @@ class ManageXiangqiTool @Inject constructor(
             "games" to data,
             "deepLinks" to listOf(xiangqiDeepLink())
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleDetail(params: ManageXiangqiParams): AgentToolResult {
@@ -168,7 +170,7 @@ class ManageXiangqiTool @Inject constructor(
                 )
             )
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleCreate(params: ManageXiangqiParams): AgentToolResult {
@@ -197,7 +199,7 @@ class ManageXiangqiTool @Inject constructor(
                 )
             )
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleImportFen(params: ManageXiangqiParams): AgentToolResult {
@@ -226,7 +228,7 @@ class ManageXiangqiTool @Inject constructor(
                 )
             )
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleImportJson(params: ManageXiangqiParams): AgentToolResult {
@@ -252,7 +254,7 @@ class ManageXiangqiTool @Inject constructor(
                 )
             )
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleDelete(params: ManageXiangqiParams): AgentToolResult {
@@ -281,7 +283,7 @@ class ManageXiangqiTool @Inject constructor(
                 )
             )
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleExport(params: ManageXiangqiParams): AgentToolResult {
@@ -312,7 +314,7 @@ class ManageXiangqiTool @Inject constructor(
         )
         if (!fen.isNullOrEmpty()) result["fen"] = fen
         if (!json.isNullOrEmpty()) result["json_record"] = json
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     // ── helpers ───────────────────────────────────
@@ -336,6 +338,7 @@ class ManageXiangqiTool @Inject constructor(
         "primary" to primary,
     )
 
+    @Serializable
     private data class ManageXiangqiParams(
         val action: String = "",
         val game_id: String? = null,

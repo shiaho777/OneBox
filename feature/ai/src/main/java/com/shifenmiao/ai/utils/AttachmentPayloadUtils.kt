@@ -1,13 +1,12 @@
 package com.shifenmiao.ai.utils
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.AttachmentPayloadDto
 import com.shifenmiao.model.ai.AttachedMedia
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 object AttachmentPayloadUtils {
-
-    private val payloadListType = object : TypeToken<List<AttachmentPayloadDto>>() {}.type
 
     /**
      * 序列化附件列表为 JSON。
@@ -17,18 +16,16 @@ object AttachmentPayloadUtils {
      */
     fun serialize(
         attachments: List<AttachedMedia>,
-        gson: Gson,
         stripLocalContent: Boolean = true
     ): String {
-        return gson.toJson(attachments.map { AttachmentPayloadDto.from(it, stripLocalContent) })
+        return AppJson.encodeToString(attachments.map { AttachmentPayloadDto.from(it, stripLocalContent) })
     }
 
     fun deserialize(
-        json: String,
-        gson: Gson
+        json: String
     ): List<AttachmentPayloadDto> {
         if (json.isBlank()) return emptyList()
-        return gson.fromJson<List<AttachmentPayloadDto>>(json, payloadListType).orEmpty()
+        return AppJson.decodeFromString<List<AttachmentPayloadDto>>(json)
     }
 
     /**
@@ -39,12 +36,12 @@ object AttachmentPayloadUtils {
      *
      * @return 剥离 localContent 后的 JSON；如果 json 为空或解析失败，返回原始 json。
      */
-    fun stripLocalContent(json: String, gson: Gson): String {
+    fun stripLocalContent(json: String): String {
         if (json.isBlank()) return json
         return try {
-            val dtos = deserialize(json, gson)
+            val dtos = deserialize(json)
             val strippedDtos = dtos.map { it.copy(localContent = null) }
-            gson.toJson(strippedDtos)
+            AppJson.encodeToString(strippedDtos)
         } catch (_: Exception) {
             // 反序列化失败时保留原始 JSON（不含 localContent 的旧格式也不会受影响）
             json

@@ -1,6 +1,5 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.callback.ToolCallback
 import com.shifenmiao.ai.agent.tool.AgentTool
@@ -11,6 +10,7 @@ import com.shifenmiao.ai.agent.tool.ContextAwareCallbackAgentTool
 import com.shifenmiao.ai.agent.tool.InteractiveToolRuntime
 import com.shifenmiao.ai.service.CreationMetaService
 import com.shifenmiao.model.ListItemType
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.note.NoteDetail
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
@@ -21,6 +21,8 @@ import com.shifenmiao.model.note.NoteResult
 import com.shifenmiao.model.note.NoteSaveParams
 import com.shifenmiao.model.note.NoteService
 import com.t8rin.imagetoolbox.core.ui.utils.navigation.Screen
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import org.json.JSONObject
 import javax.inject.Inject
 
@@ -37,7 +39,6 @@ class CreateNoteTool @Inject constructor(
     private val textProvider: AgentToolTextProvider,
     private val interactiveToolRuntime: InteractiveToolRuntime,
     private val creationMetaService: CreationMetaService,
-    private val gson: Gson
 ) : AgentTool, ContextAwareCallbackAgentTool {
     override val name = "create_note"
     override val description = textProvider.string(R.string.agent_tool_create_note_description)
@@ -155,7 +156,7 @@ class CreateNoteTool @Inject constructor(
                     }
 
                     AgentToolResult(
-                        content = gson.toJson(
+                        content = AppJson.encodeToString(
                             CreateNoteResponse(
                                 tool = name,
                                 mode = if (existingNoteId == null) OperationMode.CREATE else OperationMode.UPDATE,
@@ -295,6 +296,7 @@ class CreateNoteTool @Inject constructor(
         callback.openScreen(screen)
     }
 
+    @Serializable
     private data class CreateNoteResponse(
         val tool: String,
         val mode: OperationMode,
@@ -311,6 +313,7 @@ class CreateNoteTool @Inject constructor(
         val message: String
     )
 
+    @Serializable
     private data class NoteCategorySelection(
         val categoryIds: List<Long>,
         val categoryNames: List<String>,

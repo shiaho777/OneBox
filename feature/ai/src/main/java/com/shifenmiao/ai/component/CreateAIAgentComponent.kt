@@ -1,7 +1,9 @@
 package com.shifenmiao.ai.component
 
 import com.arkivanov.decompose.ComponentContext
-import com.google.gson.Gson
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import com.shifenmiao.ai.mediator.MessageRemoteMediator
 import com.shifenmiao.ai.agent.tool.AgentToolRegistry
 import com.shifenmiao.ai.service.AgentCreationService
@@ -78,7 +80,6 @@ class CreateAIAgentComponent @AssistedInject internal constructor(
     private val agentCreationService: AgentCreationService,
     private val sensitiveWordChecker: SensitiveWordChecker,
     private val messageRemoteMediator: MessageRemoteMediator,
-    private val gson: Gson,
     val a2uiRenderProvider: A2uiRenderProvider
 ) : BaseComponent(dispatchersHolder, componentContext), ResourceManager by resourceManager {
 
@@ -110,8 +111,6 @@ class CreateAIAgentComponent @AssistedInject internal constructor(
     private val categoryDao = appDatabase.categoryDao()
 
     private var generateJob: Job? = null
-
-    // Gson 由 Hilt 注入，无需每次创建实例
 
     /** 对话历史记录，用于多轮对话（assistant回复 + 用户追加修改） */
     private val conversationHistory = mutableListOf<MessageEntity>()
@@ -851,7 +850,7 @@ class CreateAIAgentComponent @AssistedInject internal constructor(
         componentScope.launch(Dispatchers.IO) {
             dataDraftHelper.updateDraft(
                 draftId = currentDraftId,
-                url = gson.toJson(currentState.selectedToolNames.toList()),
+                url = AppJson.encodeToString(currentState.selectedToolNames.toList()),
                 selectedCategoryIds = currentState.selectedCategoryIds,
             )
         }
@@ -882,7 +881,7 @@ class CreateAIAgentComponent @AssistedInject internal constructor(
     }
 
     private fun decodeDraftToolNames(raw: String): Set<String> = try {
-        gson.fromJson(raw, Array<String>::class.java)?.toSet().orEmpty()
+        runCatching { AppJson.decodeFromString<List<String>>(raw) }.getOrNull()?.toSet().orEmpty()
     } catch (_: Exception) {
         emptySet()
     }

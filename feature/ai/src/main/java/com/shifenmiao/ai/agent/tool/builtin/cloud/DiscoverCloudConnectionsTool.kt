@@ -1,9 +1,9 @@
 package com.shifenmiao.ai.agent.tool.builtin.cloud
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.CloudAgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -13,6 +13,9 @@ import com.wanbaohe.cloud.storage.model.CloudStorageConnection
 import com.wanbaohe.cloud.storage.agent.CloudAgentToolConnectionHolder
 import com.wanbaohe.cloud.storage.service.CloudFileService
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 /**
  * 浏览已保存的远程存储连接 —— LLM 用来发现可用的连接。
@@ -23,7 +26,6 @@ class DiscoverCloudConnectionsTool @Inject constructor(
     private val textProvider: CloudAgentToolTextProvider,
     private val cloudFileService: CloudFileService,
     private val connectionHolder: CloudAgentToolConnectionHolder,
-    private val gson: Gson,
 ) : AgentTool {
 
     override val name: String = "discover_cloud_connections"
@@ -53,7 +55,7 @@ class DiscoverCloudConnectionsTool @Inject constructor(
     )
 
     override suspend fun execute(arguments: String): AgentToolResult {
-        val params = if (arguments.isBlank()) DiscoverParams() else gson.fromJson(arguments, DiscoverParams::class.java)
+        val params = if (arguments.isBlank()) DiscoverParams() else AppJson.decodeFromString<DiscoverParams>(arguments)
         val all = connectionHolder.current()
         val connections = run {
             val filtered = params.protocol?.let { proto -> all.filter { it.protocol.name == proto } } ?: all
@@ -73,14 +75,16 @@ class DiscoverCloudConnectionsTool @Inject constructor(
                 )
             },
         )
-        return AgentToolResult(content = gson.toJson(payload))
+        return AgentToolResult(content = AppJson.encodeToString(payload))
     }
 
+    @Serializable
     private data class DiscoverParams(
         val name_filter: String? = null,
         val protocol: String? = null,
     )
 
+    @Serializable
     private data class DiscoverConnectionPayload(
         val id: String,
         val displayName: String,
@@ -89,6 +93,7 @@ class DiscoverCloudConnectionsTool @Inject constructor(
         val isDefault: Boolean,
     )
 
+    @Serializable
     private data class DiscoverResult(
         val totalCount: Int,
         val connections: List<DiscoverConnectionPayload>,

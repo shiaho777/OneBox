@@ -1,6 +1,5 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolExecutionContext
@@ -8,6 +7,7 @@ import com.shifenmiao.ai.agent.tool.AgentToolRegistry
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.agent.tool.ContextAwareAgentTool
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ChatWorkingMode
@@ -15,6 +15,9 @@ import com.shifenmiao.model.ai.tool.ToolCatalogItem
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 /**
  * 工具发现：检索可用 Agent 工具列表。
@@ -24,7 +27,6 @@ import javax.inject.Inject
  */
 class DiscoverToolsTool @Inject constructor(
     private val agentToolRegistry: AgentToolRegistry,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider
 ) : AgentTool, ContextAwareAgentTool {
 
@@ -97,7 +99,7 @@ class DiscoverToolsTool @Inject constructor(
             val toolNames = toolCandidates.map { it.item.name }
 
             AgentToolResult(
-                content = gson.toJson(toolNames),
+                content = AppJson.encodeToString(toolNames),
                 isError = false
             )
         }.getOrElse { error ->
@@ -172,11 +174,12 @@ class DiscoverToolsTool @Inject constructor(
 
     private fun parseArguments(arguments: String): DiscoverToolsParams {
         if (arguments.isBlank()) return DiscoverToolsParams()
-        return gson.fromJson(arguments, DiscoverToolsParams::class.java)
+        return AppJson.decodeFromString<DiscoverToolsParams>(arguments)
     }
 
     // ==================== Data Classes ====================
 
+    @Serializable
     private data class DiscoverToolsParams(
         val keywords: List<String?>? = null,
         val limit: Int? = null

@@ -1,10 +1,14 @@
 package com.shifenmiao.ai.agent.tool.expression
 
-import com.google.gson.JsonElement
-import com.google.gson.JsonNull
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
+import com.shifenmiao.model.ModelProvider.AppJson
 import java.math.BigDecimal
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.doubleOrNull
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,7 +45,7 @@ class AgentToolExpressionValidator @Inject constructor() {
         }
 
         val args = runCatching {
-            if (arguments.isBlank()) JsonObject() else JsonParser.parseString(arguments)
+            if (arguments.isBlank()) JsonObject(emptyMap()) else AppJson.parseToJsonElement(arguments)
         }.getOrElse { error ->
             return AgentToolExpressionValidationResult.Denied(
                 "执行前表达式校验失败：工具参数不是合法 JSON（${error.message ?: "unknown"}）"
@@ -309,9 +313,7 @@ class AgentToolExpressionValidator @Inject constructor() {
                 when {
                     match(TokenType.DOT) -> {
                         val property = expect(TokenType.IDENTIFIER, "点号后需要属性名").text
-                        currentElement = currentElement?.takeIf { it.isJsonObject }
-                            ?.asJsonObject
-                            ?.get(property)
+                        currentElement = (currentElement as? JsonObject)?.get(property)
                     }
                     match(TokenType.L_BRACKET) -> {
                         val indexToken = expect(TokenType.NUMBER, "数组下标必须是非负整数")
@@ -321,9 +323,7 @@ class AgentToolExpressionValidator @Inject constructor() {
                             throw IllegalArgumentException("数组下标不能为负数，位置 ${indexToken.position}")
                         }
                         expect(TokenType.R_BRACKET, "缺少右中括号")
-                        currentElement = currentElement?.takeIf { it.isJsonArray }
-                            ?.asJsonArray
-                            ?.getOrNull(arrayIndex)
+                        currentElement = (currentElement as? JsonArray)?.getOrNull(arrayIndex)
                     }
                     else -> return Value.fromJson(currentElement)
                 }
@@ -348,9 +348,6 @@ class AgentToolExpressionValidator @Inject constructor() {
             return advance()
         }
 
-        private fun com.google.gson.JsonArray.getOrNull(index: Int): JsonElement? {
-            return if (index in 0 until size()) get(index) else null
-        }
     }
 
     private sealed class Value {
@@ -386,13 +383,13 @@ class AgentToolExpressionValidator @Inject constructor() {
 
         companion object {
             fun fromJson(element: JsonElement?): Value {
-                if (element == null || element is JsonNull || element.isJsonNull) return NullValue
-                if (!element.isJsonPrimitive) return StringValue(element.toString())
-                val primitive = element.asJsonPrimitive
+                if (element == null || element is JsonNull) return NullValue
+                if (element !is JsonPrimitive) return StringValue(element.toString())
                 return when {
-                    primitive.isBoolean -> BooleanValue(primitive.asBoolean)
-                    primitive.isNumber -> NumberValue(primitive.asBigDecimal)
-                    primitive.isString -> StringValue(primitive.asString)
+                    // 顺序与 Gson isString/isBoolean/isNumber 判别一致:带引号的 "true"/"1" 仍是字符串
+                    element.isString -> StringValue(element.content)
+                    element.booleanOrNull != null -> BooleanValue(element.content.toBoolean())
+                    element.doubleOrNull != null -> NumberValue(BigDecimal(element.content))
                     else -> StringValue(element.toString())
                 }
             }

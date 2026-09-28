@@ -3,7 +3,6 @@ package com.shifenmiao.ai.component
 import android.content.Context
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.doOnDestroy
-import com.google.gson.Gson
 import com.halilibo.richtext.markwon.MarkdownAstNodeParser
 import com.shifenmiao.ai.BuildConfig
 import com.shifenmiao.ai.agent.AgentLoopExecutor
@@ -126,7 +125,6 @@ open class AIChatComponent @AssistedInject internal constructor(
     a2uiRenderProvider: A2uiRenderProvider,
     markdownAstNodeParserFactory: MarkdownAstNodeParser.Factory,
     chatInputComponentFactory: ChatInputComponent.Factory,
-    private val gson: Gson,
     private val imageDao: ImageDao
 ) : AIChatBaseComponent(
     componentContext,
@@ -168,7 +166,6 @@ open class AIChatComponent @AssistedInject internal constructor(
         fileUploadRouter = fileUploadRouter,
         attachmentContentResolver = attachmentContentResolver,
         imageDao = imageDao,
-        gson = gson,
         sharedState = sharedState,
         chatInputComponent = chatInputComponent,
         onProgressStateChanged = { uri, state ->
@@ -231,7 +228,6 @@ open class AIChatComponent @AssistedInject internal constructor(
         agentToolRegistry = agentToolRegistry,
         promptAssemblyService = promptAssemblyService,
         contextCompactor = contextCompactor,
-        gson = gson,
         contentReader = { path -> attachmentContentResolver.readContentFromPath(path) },
         imageDao = imageDao,
         streamCollector = { flow, pendingQuestionMessages, watchdogReason ->
@@ -1153,7 +1149,7 @@ open class AIChatComponent @AssistedInject internal constructor(
         ).also { it.uId = MessageUIState.NORMAL.value }
         // 正常入库（expired = false），用户可在聊天列表中看到这条消息
         val questionEntityForDb = _questionMessageEntity.value.let { entity ->
-            val strippedJson = AttachmentPayloadUtils.stripLocalContent(entity.attachmentsJson, gson)
+            val strippedJson = AttachmentPayloadUtils.stripLocalContent(entity.attachmentsJson)
             if (strippedJson == entity.attachmentsJson) entity
             else entity.copy(attachmentsJson = strippedJson)
         }

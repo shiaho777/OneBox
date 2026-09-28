@@ -1,10 +1,10 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -15,10 +15,12 @@ import com.shifenmiao.model.file.AgentFileOperationResult
 import com.shifenmiao.model.file.AgentFileService
 import com.shifenmiao.model.file.AgentLocateFileData
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 class BrowseFilesTool @Inject constructor(
     private val agentFileService: AgentFileService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider
 ) : AgentTool {
 
@@ -73,7 +75,7 @@ class BrowseFilesTool @Inject constructor(
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
             val params = if (arguments.isBlank()) BrowseFilesParams() else {
-                gson.fromJson(arguments, BrowseFilesParams::class.java)
+                AppJson.decodeFromString<BrowseFilesParams>(arguments)
             }
             when (params.action?.trim()) {
                 "list" -> executeList(params)
@@ -127,7 +129,7 @@ class BrowseFilesTool @Inject constructor(
 
     private fun successListResult(data: AgentBrowseFilesData): AgentToolResult {
         return AgentToolResult(
-            content = gson.toJson(
+            content = AppJson.encodeToString(
                 BrowseFilesListResult(
                     action = "list",
                     directoryUri = data.directoryUri,
@@ -154,7 +156,7 @@ class BrowseFilesTool @Inject constructor(
 
     private fun successLocateResult(data: AgentLocateFileData): AgentToolResult {
         return AgentToolResult(
-            content = gson.toJson(
+            content = AppJson.encodeToString(
                 BrowseFilesLocateResult(
                     action = "locate",
                     targetUri = data.targetUri,
@@ -179,6 +181,7 @@ class BrowseFilesTool @Inject constructor(
     }
 }
 
+@Serializable
 private data class BrowseFilesParams(
     val action: String? = null,
     val directory_uri: String? = null,
@@ -188,6 +191,7 @@ private data class BrowseFilesParams(
     val include_files: Boolean? = null
 )
 
+@Serializable
 private data class BrowseFilesListResult(
     val action: String,
     val directoryUri: String?,
@@ -198,6 +202,7 @@ private data class BrowseFilesListResult(
     val deeplink: String?
 )
 
+@Serializable
 private data class BrowseFilesLocateResult(
     val action: String,
     val targetUri: String,
@@ -208,6 +213,7 @@ private data class BrowseFilesLocateResult(
     val deeplink: String?
 )
 
+@Serializable
 private data class BrowseFileItemPayload(
     val uri: String,
     val name: String,

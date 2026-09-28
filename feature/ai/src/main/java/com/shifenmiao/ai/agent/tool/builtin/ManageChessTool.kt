@@ -1,22 +1,24 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.R
+import com.shifenmiao.ai.agent.tool.jsonStringOf
 import com.shifenmiao.common.handle.navigation.AppNavigationTargetType
 import com.shifenmiao.common.handle.navigation.AppNavigationRegistry
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.shifenmiao.model.chess.ChessServiceInterface
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 class ManageChessTool @Inject constructor(
     private val chessService: ChessServiceInterface,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -80,7 +82,7 @@ class ManageChessTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
-            val params = gson.fromJson(arguments, ManageChessParams::class.java)
+            val params = AppJson.decodeFromString<ManageChessParams>(arguments)
             when (params.action) {
                 "list" -> handleList()
                 "detail" -> handleDetail(params)
@@ -129,7 +131,7 @@ class ManageChessTool @Inject constructor(
             "games" to data,
             "deepLinks" to listOf(chessDeepLink())
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleDetail(params: ManageChessParams): AgentToolResult {
@@ -168,7 +170,7 @@ class ManageChessTool @Inject constructor(
                 )
             )
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleCreate(params: ManageChessParams): AgentToolResult {
@@ -197,7 +199,7 @@ class ManageChessTool @Inject constructor(
                 )
             )
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleImportFen(params: ManageChessParams): AgentToolResult {
@@ -226,7 +228,7 @@ class ManageChessTool @Inject constructor(
                 )
             )
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleImportJson(params: ManageChessParams): AgentToolResult {
@@ -255,7 +257,7 @@ class ManageChessTool @Inject constructor(
                 )
             )
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleDelete(params: ManageChessParams): AgentToolResult {
@@ -284,7 +286,7 @@ class ManageChessTool @Inject constructor(
                 )
             )
         )
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     private suspend fun handleExport(params: ManageChessParams): AgentToolResult {
@@ -315,7 +317,7 @@ class ManageChessTool @Inject constructor(
         )
         if (!fen.isNullOrEmpty()) result["fen"] = fen
         if (!json.isNullOrEmpty()) result["json_record"] = json
-        return AgentToolResult(content = gson.toJson(result))
+        return AgentToolResult(content = jsonStringOf(result))
     }
 
     // ── helpers ───────────────────────────────────
@@ -339,6 +341,7 @@ class ManageChessTool @Inject constructor(
         "primary" to primary,
     )
 
+    @Serializable
     private data class ManageChessParams(
         val action: String = "",
         val game_id: String? = null,

@@ -2,15 +2,16 @@ package com.shifenmiao.ai.model
 
 import android.os.Parcelable
 import androidx.annotation.Keep
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
 import com.google.gson.annotations.SerializedName
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.AiEngine
-import com.shifenmiao.model.ai.AiProvider
-import com.shifenmiao.model.ai.AiProviderTypeAdapter
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.jsonObject
 
 @Serializable
 @Keep
@@ -45,26 +46,24 @@ data class AIDuelConfig(
 ) : Parcelable
 
 internal object AIDuelConfigCodec {
-    private val gson: Gson = GsonBuilder()
-        .registerTypeAdapter(AiProvider::class.java, AiProviderTypeAdapter())
-        .create()
-
-    fun encode(config: AIDuelConfig): String = gson.toJson(config)
+    // AiModel.provider 经 AiProviderKSerializer 序列化为与 Gson 一致的字符串格式,
+    // 持久化在 conversation.prompt 里的旧数据可直接读
+    fun encode(config: AIDuelConfig): String = AppJson.encodeToString(config)
 
     fun decodeOrNull(prompt: String): AIDuelConfig? = kotlin.runCatching {
-        val obj = JsonParser.parseString(prompt).asJsonObject
+        val obj = AppJson.parseToJsonElement(prompt).jsonObject
 
         fun str(key: String): String =
-            obj.get(key)?.takeIf { it.isJsonPrimitive }?.asString.orEmpty()
+            (obj[key] as? JsonPrimitive)?.contentOrNull.orEmpty()
 
         fun int(key: String, default: Int): Int =
-            obj.get(key)?.takeIf { it.isJsonPrimitive }?.asInt ?: default
+            (obj[key] as? JsonPrimitive)?.intOrNull ?: default
 
         val engineA = kotlin.runCatching {
-            obj.get("engineA")?.let { gson.fromJson(it, AiEngine::class.java) }
+            obj["engineA"]?.let { AppJson.decodeFromJsonElement(AiEngine.serializer(), it) }
         }.getOrNull()
         val engineB = kotlin.runCatching {
-            obj.get("engineB")?.let { gson.fromJson(it, AiEngine::class.java) }
+            obj["engineB"]?.let { AppJson.decodeFromJsonElement(AiEngine.serializer(), it) }
         }.getOrNull()
 
         AIDuelConfig(

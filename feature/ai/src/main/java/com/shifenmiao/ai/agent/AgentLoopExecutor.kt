@@ -1,12 +1,12 @@
 package com.shifenmiao.ai.agent
 
 import android.content.Context
-import com.google.gson.Gson
 import com.shifenmiao.ai.agent.auth.AuthorizationResult
 import com.shifenmiao.ai.agent.auth.ToolAuthorizationGuard
 import com.shifenmiao.ai.agent.callback.ToolCallbackRouter
 import com.shifenmiao.ai.agent.tool.AgentToolExecutionPolicy
 import com.shifenmiao.ai.agent.tool.AgentToolLoginChecker
+import com.shifenmiao.ai.agent.tool.jsonStringOf
 import com.shifenmiao.ai.agent.tool.AgentToolPermissionRequester
 import com.shifenmiao.ai.agent.tool.AgentToolRegistry
 import com.shifenmiao.ai.agent.tool.AgentToolResult
@@ -17,6 +17,10 @@ import com.shifenmiao.ai.component.AgentLoopInterceptor
 import com.shifenmiao.ai.component.forEachInterceptor
 import com.shifenmiao.core.R
 import com.shifenmiao.database.ai.entity.ToolCallTaskEntity
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import com.shifenmiao.model.ai.FunctionCall
 import com.shifenmiao.model.ai.ToolCall
 import com.shifenmiao.model.ai.ToolCallDelta
@@ -56,7 +60,6 @@ class AgentLoopExecutor @Inject constructor(
     private val permissionRequester: AgentToolPermissionRequester,
     private val loginChecker: AgentToolLoginChecker,
     private val interactiveToolBridge: InteractiveToolRuntime,
-    private val gson: Gson,
     private val agentLoopInterceptors: Set<@JvmSuppressWildcards AgentLoopInterceptor>,
     @ApplicationContext private val context: Context
 ) {
@@ -491,7 +494,7 @@ class AgentLoopExecutor @Inject constructor(
             )
         }
         return try {
-            gson.toJson(chain)
+            AppJson.encodeToString(chain)
         } catch (e: Exception) {
             "[]"
         }
@@ -503,8 +506,7 @@ class AgentLoopExecutor @Inject constructor(
     fun deserializeToolCallsChain(json: String): List<ToolCallRecord> {
         if (json.isBlank()) return emptyList()
         return try {
-            val type = object : com.google.gson.reflect.TypeToken<List<ToolCallRecord>>() {}.type
-            gson.fromJson(json, type)
+            AppJson.decodeFromString<List<ToolCallRecord>>(json)
         } catch (e: Exception) {
             emptyList()
         }
@@ -835,7 +837,7 @@ class AgentLoopExecutor @Inject constructor(
         policy: AgentToolExecutionPolicy
     ): AgentToolResult {
         return AgentToolResult(
-            content = gson.toJson(
+            content = jsonStringOf(
                 mapOf(
                     "toolName" to toolName,
                     "executed" to false,
@@ -851,7 +853,7 @@ class AgentLoopExecutor @Inject constructor(
 
     private fun buildLoginRequiredResult(toolName: String): AgentToolResult {
         return AgentToolResult(
-            content = gson.toJson(
+            content = jsonStringOf(
                 mapOf(
                     "toolName" to toolName,
                     "executed" to false,
@@ -869,7 +871,7 @@ class AgentLoopExecutor @Inject constructor(
         reason: String
     ): AgentToolResult {
         return AgentToolResult(
-            content = gson.toJson(
+            content = jsonStringOf(
                 mapOf(
                     "toolName" to toolName,
                     "decision" to "rejected",
@@ -891,24 +893,24 @@ private data class ToolConfirmationDecision(
 /**
  * 工具调用记录，用于持久化存储和历史回放。
  */
+@Serializable
 data class ToolCallRecord(
-    val id: String,
-    val name: String,
-    val arguments: String,
-    val result: String,
+    // 默认值是为兼容 Gson 时代的持久化数据:Gson 对 null 字段直接省略,
+    // 旧 JSON 可能缺字段,kotlinx 无默认值会整行解析失败
+    val id: String = "",
+    val name: String = "",
+    val arguments: String = "",
+    val result: String = "",
     val isError: Boolean = false,
     val displayTitle: String? = null,
     val displaySummary: String? = null
 ) {
     companion object {
-        private val gson = com.google.gson.Gson()
-
         /** 从 JSON 字符串解析 ToolCallRecord 列表，解析失败返回空列表 */
         fun parseFromJson(json: String): List<ToolCallRecord> {
             if (json.isBlank()) return emptyList()
             return runCatching {
-                val type = object : com.google.gson.reflect.TypeToken<List<ToolCallRecord>>() {}.type
-                gson.fromJson<List<ToolCallRecord>>(json, type).orEmpty()
+                AppJson.decodeFromString<List<ToolCallRecord>>(json)
             }.getOrElse { emptyList() }
         }
 
@@ -917,7 +919,7 @@ data class ToolCallRecord(
             val merged = LinkedHashMap<String, ToolCallRecord>()
             parseFromJson(existingJson).forEach { merged[it.id] = it }
             merged[record.id] = record
-            return gson.toJson(merged.values.toList())
+            return AppJson.encodeToString(merged.values.toList())
         }
 
         /** 合并两组记录（按 id 去重，incoming 覆盖 existing） */

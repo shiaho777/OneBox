@@ -1,11 +1,11 @@
 package com.shifenmiao.ai.agent.tool.builtin.pdf
 
 import android.net.Uri
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -19,11 +19,13 @@ import com.t8rin.imagetoolbox.feature.pdf_tools.service.PdfToolsService
 import com.t8rin.imagetoolbox.feature.pdf_tools.service.model.PdfToImagesStage
 import kotlinx.coroutines.flow.toList
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 class ConvertPdfToImagesTool @Inject constructor(
     private val pdfToolsService: PdfToolsService,
     private val pdfConversionService: PdfConversionService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -77,7 +79,7 @@ class ConvertPdfToImagesTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         return runCatching {
-            val params = gson.fromJson(arguments, ConvertPdfToImagesParams::class.java)
+            val params = AppJson.decodeFromString<ConvertPdfToImagesParams>(arguments)
             val rawUri = params.uri?.trim()?.takeIf { it.isNotEmpty() }
                 ?: return AgentToolResult(
                     content = textProvider.string(R.string.agent_tool_convert_pdf_to_images_missing_uri),
@@ -161,7 +163,7 @@ class ConvertPdfToImagesTool @Inject constructor(
             saveResult.fold(
                 onSuccess = { savedFiles ->
                     AgentToolResult(
-                        content = gson.toJson(
+                        content = AppJson.encodeToString(
                             ConvertPdfToImagesResult(
                                 page_count = savedFiles.size,
                                 format = format.title,
@@ -224,6 +226,7 @@ class ConvertPdfToImagesTool @Inject constructor(
         return base.takeIf { it.isNotBlank() } ?: "pdf_pages"
     }
 
+    @Serializable
     private data class ConvertPdfToImagesParams(
         val uri: String? = null,
         val pages: List<Int>? = null,
@@ -232,12 +235,14 @@ class ConvertPdfToImagesTool @Inject constructor(
         val preset: Int? = null
     )
 
+    @Serializable
     private data class ConvertPdfToImagesResult(
         val page_count: Int,
         val format: String,
         val files: List<SavedImageFile>
     )
 
+    @Serializable
     private data class SavedImageFile(
         val file_name: String,
         val file_uri: String,

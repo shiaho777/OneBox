@@ -1,20 +1,22 @@
 package com.shifenmiao.ai.agent.tool.builtin.browser
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.ai.agent.tool.jsonStringOf
 import com.shifenmiao.interfaces.browser.BrowserAutomationService
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 class BrowserExecuteJsTool @Inject constructor(
     private val automationService: BrowserAutomationService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider
 ) : AgentTool {
 
@@ -69,7 +71,7 @@ class BrowserExecuteJsTool @Inject constructor(
         }
         return try {
             val params = if (arguments.isBlank()) BrowserExecuteJsParams() else {
-                gson.fromJson(arguments, BrowserExecuteJsParams::class.java)
+                AppJson.decodeFromString<BrowserExecuteJsParams>(arguments)
             }
             val script = params.script?.trim().orEmpty()
             if (script.isBlank()) {
@@ -80,7 +82,7 @@ class BrowserExecuteJsTool @Inject constructor(
             }
             val result = automationService.executeJavaScript(script)
             AgentToolResult(
-                content = gson.toJson(
+                content = jsonStringOf(
                     mapOf(
                         "tool" to name,
                         "executed" to true,
@@ -99,6 +101,7 @@ class BrowserExecuteJsTool @Inject constructor(
         }
     }
 
+    @Serializable
     private data class BrowserExecuteJsParams(
         val script: String? = null
     )

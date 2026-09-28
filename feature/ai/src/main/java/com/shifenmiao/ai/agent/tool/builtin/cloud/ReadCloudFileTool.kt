@@ -1,10 +1,10 @@
 package com.shifenmiao.ai.agent.tool.builtin.cloud
 
 import android.util.Base64
-import com.google.gson.Gson
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.CloudAgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -14,6 +14,9 @@ import com.wanbaohe.cloud.storage.model.CloudStorageConnection
 import com.wanbaohe.cloud.storage.agent.CloudAgentToolConnectionHolder
 import com.wanbaohe.cloud.storage.service.CloudFileService
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 /**
  * 读取远端文件并以 base64 返回。
@@ -24,7 +27,6 @@ class ReadCloudFileTool @Inject constructor(
     private val textProvider: CloudAgentToolTextProvider,
     private val cloudFileService: CloudFileService,
     private val connectionHolder: CloudAgentToolConnectionHolder,
-    private val gson: Gson,
 ) : AgentTool {
 
     override val name: String = "read_cloud_file"
@@ -57,7 +59,7 @@ class ReadCloudFileTool @Inject constructor(
     )
 
     override suspend fun execute(arguments: String): AgentToolResult {
-        val params = if (arguments.isBlank()) ReadParams() else gson.fromJson(arguments, ReadParams::class.java)
+        val params = if (arguments.isBlank()) ReadParams() else AppJson.decodeFromString<ReadParams>(arguments)
         val connection = resolveConnection(params.connection_id)
             ?: return AgentToolResult(
                 content = textProvider.string(R.string.agent_tool_read_cloud_file_connection_not_found, params.connection_id.orEmpty()),
@@ -84,7 +86,7 @@ class ReadCloudFileTool @Inject constructor(
                     )
                 }
                 AgentToolResult(
-                    content = gson.toJson(
+                    content = AppJson.encodeToString(
                         ReadOkResult(
                             connectionId = connection.id,
                             root = root,
@@ -123,12 +125,14 @@ class ReadCloudFileTool @Inject constructor(
         return connectionHolder.current().firstOrNull { it.id == connectionId }
     }
 
+    @Serializable
     private data class ReadParams(
         val connection_id: String? = null,
         val root: String? = null,
         val path: String? = null,
     )
 
+    @Serializable
     private data class ReadOkResult(
         val connectionId: String,
         val root: String,

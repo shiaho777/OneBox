@@ -1,15 +1,18 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
+import com.shifenmiao.ai.agent.tool.jsonStringOf
 import com.shifenmiao.ai.component.EffectHost
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * 内置工具：触发视觉效果。
@@ -19,7 +22,6 @@ import javax.inject.Inject
  */
 class ShowEffectTool @Inject constructor(
     private val effectHost: EffectHost,
-    private val gson: Gson
 ) : AgentTool {
 
     override val name: String = "show_effect"
@@ -60,12 +62,12 @@ class ShowEffectTool @Inject constructor(
             val params = if (arguments.isBlank()) {
                 EffectParams()
             } else {
-                gson.fromJson(arguments, EffectParams::class.java)
+                AppJson.decodeFromString<EffectParams>(arguments)
             }
             val effect = params.effect.orEmpty().ifBlank { "confetti" }
             effectHost.triggerEffect(effect, params.message)
             AgentToolResult(
-                content = gson.toJson(
+                content = jsonStringOf(
                     mapOf("effect" to effect, "triggered" to true)
                 )
             )
@@ -77,6 +79,7 @@ class ShowEffectTool @Inject constructor(
         }
     }
 
+    @Serializable
     private data class EffectParams(
         val effect: String? = null,
         val message: String? = null

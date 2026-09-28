@@ -2,6 +2,7 @@ package com.shifenmiao.ai.agent.tool.builtin.visual
 
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentToolResult
+import com.shifenmiao.ai.agent.tool.parseLooseJsonObject
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.agent.tool.InteractiveAgentTool
 import com.shifenmiao.model.ai.ToolParameterProperty
@@ -137,11 +138,8 @@ class AutomateUiTaskTool @Inject constructor(
         is AIAction.Error -> "error(${action.message})"
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun parseArgs(arguments: String): Map<String, Any?> {
         if (arguments.isBlank() || arguments == "{}") return emptyMap()
-        return runCatching {
-            com.google.gson.Gson().fromJson(arguments, Map::class.java) as Map<String, Any?>
-        }.getOrElse { emptyMap() }
+        return parseLooseJsonObject(arguments)
     }
 }

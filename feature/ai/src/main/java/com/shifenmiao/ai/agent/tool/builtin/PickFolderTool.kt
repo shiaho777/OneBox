@@ -2,7 +2,6 @@ package com.shifenmiao.ai.agent.tool.builtin
 
 import android.content.Context
 import androidx.core.net.toUri
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentToolExecutionContext
 import com.shifenmiao.ai.agent.tool.AgentToolResult
@@ -11,6 +10,8 @@ import com.shifenmiao.ai.agent.tool.ContextAwareAgentTool
 import com.shifenmiao.ai.agent.tool.FolderPickerRequest
 import com.shifenmiao.ai.agent.tool.InteractiveAgentTool
 import com.shifenmiao.ai.agent.tool.InteractiveToolRuntime
+import com.shifenmiao.ai.agent.tool.jsonStringOf
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -18,6 +19,8 @@ import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.t8rin.imagetoolbox.core.data.utils.SafUriUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * 让用户通过系统目录选择器选取一个工作目录。
@@ -29,7 +32,6 @@ import javax.inject.Inject
  */
 class PickFolderTool @Inject constructor(
     private val bridge: InteractiveToolRuntime,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
     @ApplicationContext private val context: Context
 ) : InteractiveAgentTool, ContextAwareAgentTool {
@@ -106,14 +108,14 @@ class PickFolderTool @Inject constructor(
     private fun parseArguments(arguments: String): PickFolderParams {
         if (arguments.isBlank() || arguments.trim() == "{}") return PickFolderParams()
         return runCatching {
-            gson.fromJson(arguments, PickFolderParams::class.java) ?: PickFolderParams()
+            runCatching { AppJson.decodeFromString<PickFolderParams>(arguments) }.getOrNull() ?: PickFolderParams()
         }.getOrElse { PickFolderParams() }
     }
 
     private fun buildSuccessResult(uriString: String): AgentToolResult {
         val fileUri = convertToFileUri(uriString) ?: uriString
         return AgentToolResult(
-            content = gson.toJson(
+            content = jsonStringOf(
                 mapOf(
                     "status" to "selected",
                     "folderUri" to fileUri
@@ -131,10 +133,11 @@ class PickFolderTool @Inject constructor(
 
     private fun buildCancelledResult(): AgentToolResult =
         AgentToolResult(
-            content = gson.toJson(mapOf("status" to "cancelled")),
+            content = jsonStringOf(mapOf("status" to "cancelled")),
             isError = false
         )
 
+    @Serializable
     private data class PickFolderParams(
         val message: String? = null
     )

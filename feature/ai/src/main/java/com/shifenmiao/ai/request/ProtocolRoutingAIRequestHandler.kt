@@ -1,9 +1,16 @@
 package com.shifenmiao.ai.request
 
 import com.google.gson.Gson
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
+import com.shifenmiao.ai.agent.tool.parseLooseJsonObject
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.jsonObject
 import com.shifenmiao.ai.BuildConfig
 import com.shifenmiao.ai.upload.AttachmentContentResolver
 import com.shifenmiao.ai.utils.AiUtils
@@ -276,7 +283,7 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
             if (response.isSuccessful) {
                 try {
                     val json = response.body()?.string()
-                    gson.fromJson(json, ChatCompletionChunk::class.java)
+                    json?.let { AppJson.decodeFromString<ChatCompletionChunk>(it) }
                 } catch (_: Exception) {
                     AiUtils.extractDetailedErrorInfo(response)
                 }
@@ -284,7 +291,10 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
                 AiUtils.extractDetailedErrorInfo(response)
             }
         }
-        mapChatChunkToEvents(chunk).forEach { emit(it) }
+        if (chunk != null) {
+            // Gson 时代 json 为 null 会以平台类型裸奔 NPE;这里显式判空,解析失败走 catch 的错误事件
+            mapChatChunkToEvents(chunk).forEach { emit(it) }
+        }
     }
 
     /**
@@ -498,7 +508,9 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
     }
 
     private fun mapToResponsesRequest(request: LlmTurnRequest): ResponsesApiRequest {
-        val tools = buildList<JsonObject> {
+        // 请求模型 ResponsesApiRequest 经流式 service 的 Gson converter 上送,
+        // 该侧 Gson 树构造保留,与流式 service 一起纳入后续阶段迁移
+        val tools = buildList<com.google.gson.JsonObject> {
             request.tools?.forEach { tool ->
                 add(tool.toResponsesToolJson())
             }
@@ -520,8 +532,8 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
         )
     }
 
-    private fun ToolDefinition.toResponsesToolJson(): JsonObject {
-        return JsonObject().apply {
+    private fun ToolDefinition.toResponsesToolJson(): com.google.gson.JsonObject {
+        return com.google.gson.JsonObject().apply {
             addProperty("type", type)
             addProperty("name", function.name)
             addProperty("description", function.description)
@@ -623,7 +635,7 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
         contentStates: MutableMap<ResponseContentKey, StringBuilder>
     ): List<LlmStreamEvent> {
         if (payload.isBlank() || payload == "[DONE]") return emptyList()
-        val json = runCatching { JsonParser.parseString(payload).asJsonObject }.getOrNull()
+        val json = runCatching { AppJson.parseToJsonElement(payload).jsonObject }.getOrNull()
             ?: return listOf(LlmStreamEvent.Error(errorMessage = payload))
         val type = json.string("type") ?: eventName.orEmpty()
         return when (type) {
@@ -781,7 +793,7 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
 
     private fun parseResponsesResponse(body: String): List<LlmStreamEvent> {
         if (body.isBlank()) return listOf(LlmStreamEvent.Error(errorMessage = "Empty response body"))
-        val json = runCatching { JsonParser.parseString(body).asJsonObject }.getOrNull()
+        val json = runCatching { AppJson.parseToJsonElement(body).jsonObject }.getOrNull()
             ?: return listOf(LlmStreamEvent.Error(errorMessage = body))
         val events = mutableListOf<LlmStreamEvent>()
         val responseId = json.string("id")
@@ -962,7 +974,7 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
 
     private fun JsonObject.toUsageEvent(): LlmStreamEvent.UsageUpdated? {
         return runCatching {
-            gson.fromJson(this, com.shifenmiao.model.ai.Usage::class.java)
+            AppJson.decodeFromJsonElement(com.shifenmiao.model.ai.Usage.serializer(), this)
         }.getOrNull()?.takeIf { it.totalTokens > 0 }?.let { LlmStreamEvent.UsageUpdated(it) }
     }
 
@@ -980,15 +992,15 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
     }
 
     private fun JsonObject.string(name: String): String? =
-        get(name)?.takeIf { !it.isJsonNull && it.isJsonPrimitive }?.asString
+        (get(name) as? JsonPrimitive)?.contentOrNull
 
     private fun JsonObject.stringOrJson(name: String): String? =
-        get(name)?.takeIf { !it.isJsonNull }?.let { element ->
-            if (element.isJsonPrimitive) element.asString else element.toString()
+        get(name)?.takeIf { it !is JsonNull }?.let { element ->
+            if (element is JsonPrimitive) element.content else element.toString()
         }
 
     private fun JsonObject.intValue(name: String): Int? =
-        get(name)?.takeIf { !it.isJsonNull }?.asInt
+        (get(name) as? JsonPrimitive)?.intOrNull
 
     private fun JsonObject.responseToolCallId(): String? =
         string("call_id")
@@ -996,10 +1008,10 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
             ?: string("id")
 
     private fun JsonObject.objectValue(name: String): JsonObject? =
-        getAsJsonObject(name)
+        get(name) as? JsonObject
 
     private fun JsonObject.arrayValue(name: String): JsonArray? =
-        getAsJsonArray(name)
+        get(name) as? JsonArray
 
     private data class ResponseToolState(
         val index: Int,
@@ -1084,13 +1096,7 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
                         blocks.add(ContentBlock(type = "text", text = textContent))
                     }
                     for (tc in msg.toolCalls) {
-                        val inputMap = try {
-                            @Suppress("UNCHECKED_CAST")
-                            Gson().fromJson(tc.function.arguments, Map::class.java) as? Map<String, Any?>
-                                ?: emptyMap()
-                        } catch (_: Exception) {
-                            emptyMap<String, Any?>()
-                        }
+                        val inputMap = parseLooseJsonObject(tc.function.arguments)
                         blocks.add(
                             ContentBlock(
                                 type = "tool_use",

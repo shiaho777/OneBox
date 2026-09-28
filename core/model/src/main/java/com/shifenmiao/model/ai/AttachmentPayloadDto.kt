@@ -1,5 +1,7 @@
 package com.shifenmiao.model.ai
 
+import kotlinx.serialization.Serializable
+
 /**
  * 附件序列化 DTO — 用于 DB 持久化和 UI 展示。
  *
@@ -8,6 +10,7 @@ package com.shifenmiao.model.ai
  * - 位于 :core:model 模块，供 feature:ai、feature:common 等多模块复用。
  * - DB 序列化时由 [from] 生成（排除 localContent），UI 展示时保留完整字段。
  */
+@Serializable
 data class AttachmentPayloadDto(
     val uri: String,
     val name: String,

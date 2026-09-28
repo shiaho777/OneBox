@@ -1,28 +1,33 @@
 package com.shifenmiao.ai.agent.tool
 
-import com.google.gson.Gson
-import com.google.gson.JsonParser
+import com.shifenmiao.model.ModelProvider
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 object InteractiveToolResultFactory {
 
     fun buildQuestionSubmittedResult(
-        answersJson: String,
-        gson: Gson
+        answersJson: String
     ): AgentToolResult {
+        // answersJson 结构由提问方自定义,原样透传嵌入,不重解析字段
+        val answers = runCatching { ModelProvider.AppJson.parseToJsonElement(answersJson) }
+            .getOrDefault(buildJsonObject { })
         return AgentToolResult(
-            content = gson.toJson(
+            content = jsonStringOf(
                 mapOf(
                     "status" to "submitted",
-                    "answers" to gson.fromJson(answersJson, Map::class.java).orEmpty()
+                    "answers" to answers
                 )
             ),
             isError = false
         )
     }
 
-    fun buildQuestionCancelledResult(gson: Gson): AgentToolResult {
+    fun buildQuestionCancelledResult(): AgentToolResult {
         return AgentToolResult(
-            content = gson.toJson(
+            content = jsonStringOf(
                 mapOf(
                     "status" to "cancelled"
                 )
@@ -33,11 +38,10 @@ object InteractiveToolResultFactory {
 
     fun buildConfirmationRejectedResult(
         toolName: String,
-        reason: String,
-        gson: Gson
+        reason: String
     ): AgentToolResult {
         return AgentToolResult(
-            content = gson.toJson(
+            content = jsonStringOf(
                 mapOf(
                     "toolName" to toolName,
                     "decision" to "rejected",
@@ -64,9 +68,9 @@ object InteractiveToolResultFactory {
     fun isConfirmationApproved(payload: String?): Boolean {
         if (payload.isNullOrBlank()) return false
         return runCatching {
-            val obj = JsonParser.parseString(payload).asJsonObject
-            obj.get("decision")?.takeIf { it.isJsonPrimitive }?.asString == "approved" ||
-                obj.get("approved")?.takeIf { it.isJsonPrimitive }?.asBoolean == true
+            val obj = ModelProvider.AppJson.parseToJsonElement(payload).jsonObject
+            obj["decision"]?.jsonPrimitive?.content == "approved" ||
+                obj["approved"]?.jsonPrimitive?.booleanOrNull == true
         }.getOrDefault(false)
     }
 }

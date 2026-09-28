@@ -1,21 +1,21 @@
 package com.shifenmiao.ai.agent.tool
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.shifenmiao.database.ai.dao.ConversationToolPolicyDao
 import com.shifenmiao.database.ai.entity.ConversationToolPolicyEntity
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.AIConversationEntryType
 import com.shifenmiao.model.ai.Conversation
 import com.shifenmiao.model.ai.tool.ChatWorkingMode
 import com.shifenmiao.model.ai.tool.ConversationToolPolicy
 import com.shifenmiao.storage.AIChatStorage
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ConversationToolPolicyRepository @Inject constructor(
-    private val dao: ConversationToolPolicyDao,
-    private val gson: Gson
+    private val dao: ConversationToolPolicyDao
 ) {
 
     suspend fun getPolicy(conversation: Conversation): ConversationToolPolicy? {
@@ -34,7 +34,7 @@ class ConversationToolPolicyRepository @Inject constructor(
         dao.upsert(
             ConversationToolPolicyEntity(
                 conversationId = buildScopeKey(conversation),
-                enabledToolNamesJson = gson.toJson(policy.normalize())
+                enabledToolNamesJson = AppJson.encodeToString(policy.normalize())
             )
         )
     }
@@ -42,7 +42,7 @@ class ConversationToolPolicyRepository @Inject constructor(
     private fun ConversationToolPolicyEntity.toModel(): ConversationToolPolicy {
         if (enabledToolNamesJson.isBlank()) return ConversationToolPolicy()
         runCatching {
-            gson.fromJson(enabledToolNamesJson, ConversationToolPolicy::class.java)
+            AppJson.decodeFromString<ConversationToolPolicy>(enabledToolNamesJson)
         }.getOrNull()?.let { return it.normalize() }
 
         return ConversationToolPolicy(
@@ -103,8 +103,7 @@ class ConversationToolPolicyRepository @Inject constructor(
     private fun decodeStringList(json: String): List<String> {
         if (json.isBlank()) return emptyList()
         return try {
-            val type = object : TypeToken<List<String>>() {}.type
-            gson.fromJson<List<String>>(json, type) ?: emptyList()
+            AppJson.decodeFromString<List<String>>(json)
         } catch (_: Exception) {
             emptyList()
         }

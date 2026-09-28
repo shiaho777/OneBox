@@ -2,7 +2,6 @@ package com.shifenmiao.ai.component
 
 import android.content.Context
 import com.arkivanov.decompose.ComponentContext
-import com.google.gson.Gson
 import com.halilibo.richtext.markwon.MarkdownAstNodeParser
 import com.shifenmiao.ai.agent.AgentLoopExecutor
 import com.shifenmiao.ai.agent.tool.ConversationToolPolicyRepository
@@ -89,7 +88,6 @@ open class AgentDetailComponent @AssistedInject internal constructor(
     messageListUseCase: MessageListUseCase,
     markdownAstNodeParserFactory: MarkdownAstNodeParser.Factory,
     chatInputComponentFactory: ChatInputComponent.Factory,
-    gson: Gson,
     imageDao: ImageDao,
     a2uiRenderProvider: A2uiRenderProvider
 ) : AIChatComponent(
@@ -130,7 +128,6 @@ open class AgentDetailComponent @AssistedInject internal constructor(
     conversationTitleSummaryService = conversationTitleSummaryService,
     contextCompactor = contextCompactor,
     localLlmSessionManager = localLlmSessionManager,
-    gson = gson,
     imageDao = imageDao,
     a2uiRenderProvider = a2uiRenderProvider
 ) {

@@ -1,13 +1,13 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
 import android.net.Uri
-import com.google.gson.Gson
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolLoginChecker
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.agent.tool.ToolDeepLink
 import com.shifenmiao.ai.R
+import com.shifenmiao.ai.agent.tool.jsonStringOf
 import com.shifenmiao.base.utils.aiImageProcessPointsCost
 import com.shifenmiao.common.handle.navigation.AppNavigationRegistry
 import com.shifenmiao.common.handle.navigation.AppNavigationTargetType
@@ -15,6 +15,7 @@ import com.shifenmiao.common.utils.BaseUtils
 import com.shifenmiao.imagegeneration.loader.ImageGenerationLoader
 import com.shifenmiao.imagegeneration.model.ImageGenerationRequest
 import com.shifenmiao.imagegeneration.service.ImageGenerationManager
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -28,13 +29,14 @@ import com.t8rin.imagetoolbox.core.settings.domain.model.AppThemePreset
 import com.t8rin.imagetoolbox.core.settings.domain.model.GradientBackgroundStyle
 import com.t8rin.imagetoolbox.core.settings.domain.model.NightMode
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 class ThemeSettingTool @Inject constructor(
     private val themeSettingService: ThemeSettingService,
     private val imageGenerationManager: ImageGenerationManager,
     private val imageGenerationLoader: ImageGenerationLoader,
     private val loginChecker: AgentToolLoginChecker,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -502,6 +504,7 @@ class ThemeSettingTool @Inject constructor(
     }
 
     private sealed interface BackgroundResolution {
+        @Serializable
         data class Resolved(
             val imageUri: String? = null,
             val cleared: Boolean = false,
@@ -705,24 +708,28 @@ class ThemeSettingTool @Inject constructor(
 
     private sealed class OptionalColor {
         data object Absent : OptionalColor()
+        @Serializable
         data class Set(val value: Int) : OptionalColor()
         data object Invalid : OptionalColor()
     }
 
     private sealed class OptionalBool {
         data object Absent : OptionalBool()
+        @Serializable
         data class Set(val value: Boolean) : OptionalBool()
         data object Invalid : OptionalBool()
     }
 
     private sealed class OptionalAlpha {
         data object Absent : OptionalAlpha()
+        @Serializable
         data class Set(val value: Float) : OptionalAlpha()
         data object Invalid : OptionalAlpha()
     }
 
     private sealed class OptionalContrast {
         data object Absent : OptionalContrast()
+        @Serializable
         data class Set(val value: Double) : OptionalContrast()
         data object Invalid : OptionalContrast()
     }
@@ -806,7 +813,7 @@ class ThemeSettingTool @Inject constructor(
 
     private fun parseArguments(arguments: String): ThemeSettingParams {
         if (arguments.isBlank()) return ThemeSettingParams()
-        return gson.fromJson(arguments, ThemeSettingParams::class.java) ?: ThemeSettingParams()
+        return runCatching { AppJson.decodeFromString<ThemeSettingParams>(arguments) }.getOrNull() ?: ThemeSettingParams()
     }
 
     private fun successResult(
@@ -822,7 +829,7 @@ class ThemeSettingTool @Inject constructor(
             "theme" to theme?.let(::themeSummary),
         )
         payload.putAll(extra)
-        return AgentToolResult(content = gson.toJson(payload))
+        return AgentToolResult(content = jsonStringOf(payload))
     }
 
     private fun errorResult(
@@ -838,7 +845,7 @@ class ThemeSettingTool @Inject constructor(
             "message" to message,
         )
         if (validOptions != null) payload["validOptions"] = validOptions
-        return AgentToolResult(content = gson.toJson(payload), isError = true)
+        return AgentToolResult(content = jsonStringOf(payload), isError = true)
     }
 
     private fun themeSummary(theme: AppThemePreset): Map<String, Any?> {
@@ -868,6 +875,7 @@ class ThemeSettingTool @Inject constructor(
         "expressiveMotion" to system.isExpressiveTheme,
     )
 
+    @Serializable
     private data class ThemeSettingParams(
         val action: String? = null,
         val preset_id: String? = null,

@@ -1,7 +1,7 @@
 package com.wanbaohe.calendar.ai.tool
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.agent.tool.AgentTool
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.model.ai.ToolParameterProperty
@@ -13,6 +13,8 @@ import com.wanbaohe.calendar.data.LunarCalendarCalculator
 import com.wanbaohe.calendar.data.LunarJavaBridge
 import com.wanbaohe.calendar.data.YiJiCalculator
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * AI Agent 工具：农历查询
@@ -65,7 +67,7 @@ class LunarCalendarTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         val args = try {
-            Gson().fromJson(arguments, LunarCalendarArgs::class.java)
+            AppJson.decodeFromString<LunarCalendarArgs>(arguments)
         } catch (_: Exception) {
             return AgentToolResult(
                 content = textProvider.string(R.string.agent_tool_lunar_calendar_error_date),
@@ -142,6 +144,7 @@ class LunarCalendarTool @Inject constructor(
         }
     }
 
+    @Serializable
     private data class LunarCalendarArgs(
         val year: Int = 0,
         val month: Int = 0,

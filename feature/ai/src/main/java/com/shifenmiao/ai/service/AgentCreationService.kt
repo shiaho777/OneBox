@@ -1,10 +1,17 @@
 package com.shifenmiao.ai.service
 
 import android.content.Context
-import com.google.gson.Gson
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonSyntaxException
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.putJsonObject
 import com.shifenmiao.common.ai.AIPromptExecutor
 import com.shifenmiao.common.ai.AiLanguagePrompt
 import com.shifenmiao.ai.agent.tool.AgentToolRegistry
@@ -66,7 +73,6 @@ class AgentCreationService @Inject constructor(
     private val toolBindingRepository: ToolBindingRepository,
     private val agentToolRegistry: AgentToolRegistry,
     private val aiPromptExecutor: AIPromptExecutor,
-    private val gson: Gson
 ) {
 
     suspend fun buildSystemPrompt(): String {
@@ -155,7 +161,7 @@ class AgentCreationService @Inject constructor(
             draftType = ListItemType.AGENT.id,
             title = title,
             description = description,
-            url = gson.toJson(selectedToolNames.toList()),
+            url = AppJson.encodeToString(selectedToolNames.toList()),
             data = rawJson,
             selectedCategoryIds = selectedCategoryIds,
             status = if (isSuccess) {
@@ -250,7 +256,7 @@ class AgentCreationService @Inject constructor(
         draftId?.let {
             dataDraftHelper.updateDraft(
                 draftId = it,
-                url = gson.toJson(selectedToolNames.toList()),
+                url = AppJson.encodeToString(selectedToolNames.toList()),
                 selectedCategoryIds = selectedCategoryIds,
                 itemId = itemId.takeIf { savedItemId -> savedItemId > 0 },
                 relatedEntityId = agentResourceId.takeIf { it > 0 }
@@ -369,21 +375,21 @@ class AgentCreationService @Inject constructor(
         suggestedCategoryNames: List<String> = emptyList(),
         suggestedToolNames: List<String> = emptyList()
     ): String {
-        val root = JsonObject().apply {
-            add("agent", JsonObject().apply {
-                addProperty("id", agent.id)
-                addProperty("title", agent.title)
-                addProperty("description", agent.description)
-                addProperty("prompt", agent.prompt)
+        val root = buildJsonObject {
+            putJsonObject("agent") {
+                put("id", agent.id)
+                put("title", agent.title)
+                put("description", agent.description)
+                put("prompt", agent.prompt)
                 val body = agent.dynamicBody?.takeIf { it.isNotBlank() }
                 if (body != null) {
-                    add("body", gson.fromJson(body, JsonElement::class.java))
+                    put("body", AppJson.parseToJsonElement(body))
                 }
-            })
-            add("suggested_categories", gson.toJsonTree(suggestedCategoryNames))
-            add("suggested_tools", gson.toJsonTree(suggestedToolNames))
+            }
+            put("suggested_categories", JsonArray(suggestedCategoryNames.map { JsonPrimitive(it) }))
+            put("suggested_tools", JsonArray(suggestedToolNames.map { JsonPrimitive(it) }))
         }
-        return gson.toJson(root)
+        return root.toString()
     }
 
     suspend fun createAndSaveFromRequirement(
@@ -442,26 +448,31 @@ class AgentCreationService @Inject constructor(
     private fun parsePayload(json: String, inputText: String): AgentGenerationPayload {
         if (json.isBlank()) return AgentGenerationPayload()
         return try {
-            val root = gson.fromJson(json, JsonObject::class.java) ?: return AgentGenerationPayload()
-            val agentRoot = root.getAsJsonObject("agent") ?: root
+            val root = AppJson.parseToJsonElement(json).jsonObject
+            val agentRoot = root["agent"] as? JsonObject ?: root
             val bodyJson = when {
-                agentRoot.has("body") -> gson.toJson(agentRoot.get("body"))
-                agentRoot.has("type") || agentRoot.has("component") || agentRoot.has("children") || agentRoot.has("props") -> gson.toJson(agentRoot)
+                agentRoot.containsKey("body") -> agentRoot["body"].toString()
+                agentRoot.containsKey("type") || agentRoot.containsKey("component") || agentRoot.containsKey("children") || agentRoot.containsKey("props") -> agentRoot.toString()
                 else -> null
             } ?: return AgentGenerationPayload()
 
+            fun JsonObject.field(key: String): String? =
+                (this[key] as? JsonPrimitive)?.contentOrNull
+            fun JsonObject.fieldInt(key: String): Int? =
+                (this[key] as? JsonPrimitive)?.intOrNull
+
             AgentGenerationPayload(
                 agent = Agent(
-                    id = agentRoot.get("id")?.takeIf { !it.isJsonNull }?.asInt ?: 0,
-                    title = agentRoot.get("title")?.takeIf { !it.isJsonNull }?.asString ?: inputText.take(20),
-                    description = agentRoot.get("description")?.takeIf { !it.isJsonNull }?.asString ?: inputText,
-                    prompt = agentRoot.get("prompt")?.takeIf { !it.isJsonNull }?.asString,
+                    id = agentRoot.fieldInt("id") ?: 0,
+                    title = agentRoot.field("title") ?: inputText.take(20),
+                    description = agentRoot.field("description") ?: inputText,
+                    prompt = agentRoot.field("prompt"),
                     dynamicBody = bodyJson
                 ),
                 suggestedCategoryNames = extractStringList(root, "suggested_categories"),
                 suggestedToolNames = extractStringList(root, "suggested_tools")
             )
-        } catch (_: JsonSyntaxException) {
+        } catch (_: kotlinx.serialization.SerializationException) {
             AgentGenerationPayload()
         } catch (_: Exception) {
             AgentGenerationPayload()
@@ -471,13 +482,10 @@ class AgentCreationService @Inject constructor(
     private fun buildErrorMessage(json: String): String {
         if (json.isBlank()) return context.getString(R.string.create_ai_agent_error_no_response)
         return try {
-            val jsonElement = gson.fromJson(json, JsonElement::class.java)
-            if (jsonElement == null) {
-                context.getString(R.string.create_ai_agent_error_unrecognized)
-            } else if (jsonElement.isJsonObject) {
-                val obj = jsonElement.asJsonObject
-                val contentObj = obj.getAsJsonObject("agent") ?: obj
-                if (!contentObj.has("body") && !contentObj.has("type")) {
+            val jsonElement = AppJson.parseToJsonElement(json)
+            if (jsonElement is JsonObject) {
+                val contentObj = jsonElement["agent"] as? JsonObject ?: jsonElement
+                if (!contentObj.containsKey("body") && !contentObj.containsKey("type")) {
                     context.getString(R.string.create_ai_agent_error_incomplete)
                 } else {
                     context.getString(R.string.create_ai_agent_error_content)
@@ -531,8 +539,8 @@ class AgentCreationService @Inject constructor(
 }
 
 internal fun extractStringList(root: JsonObject, key: String): List<String> {
-    val array = root.getAsJsonArray(key) ?: return emptyList()
+    val array = root[key] as? JsonArray ?: return emptyList()
     return array.mapNotNull { element ->
-        element?.takeIf { it.isJsonPrimitive }?.asString?.trim()?.takeIf(String::isNotEmpty)
+        (element as? JsonPrimitive)?.contentOrNull?.trim()?.takeIf(String::isNotEmpty)
     }
 }

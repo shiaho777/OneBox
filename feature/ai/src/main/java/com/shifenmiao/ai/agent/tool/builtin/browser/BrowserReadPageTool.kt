@@ -1,20 +1,22 @@
 package com.shifenmiao.ai.agent.tool.builtin.browser
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.ai.agent.tool.jsonStringOf
 import com.shifenmiao.interfaces.browser.BrowserAutomationService
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 class BrowserReadPageTool @Inject constructor(
     private val automationService: BrowserAutomationService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider
 ) : AgentTool {
 
@@ -70,14 +72,14 @@ class BrowserReadPageTool @Inject constructor(
         }
         return try {
             val params = if (arguments.isBlank()) BrowserReadPageParams() else {
-                gson.fromJson(arguments, BrowserReadPageParams::class.java)
+                AppJson.decodeFromString<BrowserReadPageParams>(arguments)
             }
             when (params.mode?.trim()) {
                 "full_text" -> {
                     val maxLength = params.max_length?.takeIf { it > 0 } ?: 8192
                     val text = automationService.extractPageText(maxLength)
                     AgentToolResult(
-                        content = gson.toJson(
+                        content = jsonStringOf(
                             mapOf(
                                 "tool" to name,
                                 "mode" to "full_text",
@@ -91,7 +93,7 @@ class BrowserReadPageTool @Inject constructor(
                     val selector = params.selector?.trim()?.takeIf { it.isNotBlank() } ?: "body"
                     val html = automationService.extractDom(selector)
                     AgentToolResult(
-                        content = gson.toJson(
+                        content = jsonStringOf(
                             mapOf(
                                 "tool" to name,
                                 "mode" to "dom",
@@ -109,7 +111,7 @@ class BrowserReadPageTool @Inject constructor(
                             isError = true
                         )
                     AgentToolResult(
-                        content = gson.toJson(
+                        content = jsonStringOf(
                             mapOf(
                                 "tool" to name,
                                 "mode" to "info",
@@ -129,7 +131,7 @@ class BrowserReadPageTool @Inject constructor(
                             isError = true
                         )
                     AgentToolResult(
-                        content = gson.toJson(
+                        content = jsonStringOf(
                             mapOf(
                                 "tool" to name,
                                 "mode" to "snapshot",
@@ -161,6 +163,7 @@ class BrowserReadPageTool @Inject constructor(
         }
     }
 
+    @Serializable
     private data class BrowserReadPageParams(
         val mode: String? = null,
         val selector: String? = null,

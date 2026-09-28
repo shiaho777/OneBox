@@ -1,8 +1,14 @@
 package com.shifenmiao.ai.voice
 
 import android.util.Base64
-import com.google.gson.Gson
-import com.google.gson.JsonParser
+import com.shifenmiao.ai.agent.tool.jsonStringOf
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.intOrNull
 import kotlinx.coroutines.flow.MutableStateFlow
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -45,7 +51,6 @@ class IFlytekAsrClient(
     private val state: MutableStateFlow<AsrState>,
 ) : AsrStreamClient {
 
-    private val gson = Gson()
     private val httpClient = OkHttpClient.Builder()
         .readTimeout(0, TimeUnit.MILLISECONDS)
         .pingInterval(20, TimeUnit.SECONDS)
@@ -167,29 +172,31 @@ class IFlytekAsrClient(
                 )
             )
         }
-        return gson.toJson(frame)
+        return jsonStringOf(frame)
     }
 
     private fun handleMessage(text: String) {
         // 解析失败的帧直接忽略,不 crash
         try {
-            val root = JsonParser.parseString(text).asJsonObject
-            val header = root.getAsJsonObject("header") ?: return
-            val code = header.get("code")?.asInt ?: -1
+            val root = AppJson.parseToJsonElement(text) as? JsonObject ?: return
+            val header = root["header"] as? JsonObject ?: return
+            fun JsonObject.str(key: String): String? = (this[key] as? JsonPrimitive)?.contentOrNull
+            fun JsonObject.int(key: String): Int? = (this[key] as? JsonPrimitive)?.intOrNull
+            val code = header.int("code") ?: -1
             if (code != 0) {
-                val sid = header.get("sid")?.asString.orEmpty()
-                val message = header.get("message")?.asString ?: "asr error"
+                val sid = header.str("sid").orEmpty()
+                val message = header.str("message") ?: "asr error"
                 // 联调定位:logcat 过滤 IFlytekAsr 可看到讯飞错误码与 sid(提工单用)
                 android.util.Log.e("IFlytekAsr", "asr error code=$code message=$message sid=$sid")
                 state.value = AsrState.Error("$code: $message")
                 return
             }
-            root.getAsJsonObject("payload")
-                ?.getAsJsonObject("result")
-                ?.get("text")?.asString
+            ((root["payload"] as? JsonObject)
+                ?.get("result") as? JsonObject)
+                ?.str("text")
                 ?.takeIf { it.isNotEmpty() }
                 ?.let { applyResult(String(Base64.decode(it, Base64.DEFAULT))) }
-            if (header.get("status")?.asInt == STATUS_END) {
+            if (header.int("status") == STATUS_END) {
                 finishWithSegments()
             }
         } catch (_: Exception) {
@@ -205,21 +212,23 @@ class IFlytekAsrClient(
             if (state.value !is AsrState.Finished) state.value = AsrState.Listening(full)
             return
         }
-        val obj = JsonParser.parseString(decoded).asJsonObject
+        val obj = AppJson.parseToJsonElement(decoded) as? JsonObject ?: return
+        fun JsonObject.str(key: String): String? = (this[key] as? JsonPrimitive)?.contentOrNull
+        fun JsonObject.int(key: String): Int? = (this[key] as? JsonPrimitive)?.intOrNull
         val sb = StringBuilder()
-        obj.getAsJsonArray("ws")?.forEach { wsEl ->
-            wsEl.asJsonObject.getAsJsonArray("cw")?.forEach { cwEl ->
-                sb.append(cwEl.asJsonObject.get("w")?.asString.orEmpty())
+        (obj["ws"] as? JsonArray)?.forEach { wsEl ->
+            ((wsEl as? JsonObject)?.get("cw") as? JsonArray)?.forEach { cwEl ->
+                sb.append((cwEl as? JsonObject)?.str("w").orEmpty())
             }
         }
         val text = sb.toString()
         if (text.isNotEmpty()) {
-            when (obj.get("pgs")?.asString) {
+            when (obj.str("pgs")) {
                 "rpl" -> {
                     // rg = [起始 sn, 结束 sn](1 起始,闭区间),用本片文本替换该区间
-                    val rg = obj.getAsJsonArray("rg")
-                    val from = (rg[0].asInt - 1).coerceAtLeast(0)
-                    val to = rg[1].asInt - 1
+                    val rg = obj["rg"] as? JsonArray ?: return
+                    val from = (((rg[0] as? JsonPrimitive)?.intOrNull ?: return) - 1).coerceAtLeast(0)
+                    val to = ((rg[1] as? JsonPrimitive)?.intOrNull ?: return) - 1
                     synchronized(segments) {
                         while (segments.size < from) segments.add("")
                         var idx = minOf(to, segments.size - 1)
@@ -235,7 +244,7 @@ class IFlytekAsrClient(
             }
         }
         val full = synchronized(segments) { segments.joinToString("") }
-        if (obj.get("ls")?.asBoolean == true) {
+        if ((obj["ls"] as? JsonPrimitive)?.booleanOrNull == true) {
             state.value = AsrState.Finished(full)
         } else if (state.value !is AsrState.Finished) {
             state.value = AsrState.Listening(full)

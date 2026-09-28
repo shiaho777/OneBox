@@ -1,6 +1,5 @@
 package com.shifenmiao.ai.agent.tool.builtin.network
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
@@ -10,8 +9,11 @@ import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.network.service.HttpRequestService
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * Agent 工具：发送 HTTP 请求
@@ -20,8 +22,7 @@ import javax.inject.Inject
  */
 class SendHttpRequestTool @Inject constructor(
     private val textProvider: AgentToolTextProvider,
-    private val httpRequestService: HttpRequestService,
-    private val gson: Gson
+    private val httpRequestService: HttpRequestService
 ) : AgentTool {
 
     override val name: String = "send_http_request"
@@ -83,7 +84,7 @@ class SendHttpRequestTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
-            val params = gson.fromJson(arguments, HttpRequestParams::class.java)
+            val params = AppJson.decodeFromString<HttpRequestParams>(arguments)
 
             val method = try {
                 HttpRequestService.HttpMethod.valueOf(params.method.uppercase())
@@ -94,8 +95,7 @@ class SendHttpRequestTool @Inject constructor(
             // 解析 headers
             val headers = if (params.headers != null) {
                 try {
-                    @Suppress("UNCHECKED_CAST")
-                    gson.fromJson(params.headers, Map::class.java) as? Map<String, String> ?: emptyMap()
+                    AppJson.decodeFromString<Map<String, String>>(params.headers)
                 } catch (e: Exception) {
                     emptyMap()
                 }
@@ -168,11 +168,12 @@ class SendHttpRequestTool @Inject constructor(
         }
     }
 
+    @Serializable
     private data class HttpRequestParams(
-        val url: String,
-        val method: String,
-        val headers: String?,
-        val body: String?,
-        val content_type: String?
+        val url: String = "",
+        val method: String = "",
+        val headers: String? = null,
+        val body: String? = null,
+        val content_type: String? = null
     )
 }

@@ -1,7 +1,7 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolLoginChecker
@@ -15,12 +15,16 @@ import com.shifenmiao.common.utils.BaseUtils
 import com.shifenmiao.imagegeneration.loader.ImageGenerationLoader
 import com.shifenmiao.imagegeneration.model.ImageGenerationRequest
 import com.shifenmiao.imagegeneration.service.ImageGenerationManager
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.shifenmiao.storage.TokenStorage
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 /**
  * 文生图工具:调用 core/image-generation 的生成管线,
@@ -33,7 +37,6 @@ class GenerateImageTool @Inject constructor(
     private val imageGenerationManager: ImageGenerationManager,
     private val imageGenerationLoader: ImageGenerationLoader,
     private val loginChecker: AgentToolLoginChecker,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -96,7 +99,7 @@ class GenerateImageTool @Inject constructor(
             val params = if (arguments.isBlank()) {
                 GenerateImageParams()
             } else {
-                gson.fromJson(arguments, GenerateImageParams::class.java)
+                AppJson.decodeFromString<GenerateImageParams>(arguments)
             }
             val prompt = params.prompt?.trim().orEmpty()
             if (prompt.isEmpty()) {
@@ -149,7 +152,7 @@ class GenerateImageTool @Inject constructor(
                         )
                     }
                     AgentToolResult(
-                        content = gson.toJson(
+                        content = AppJson.encodeToString(
                             GenerateImageResult(
                                 filePath = image.file.absolutePath,
                                 fileName = image.file.name,
@@ -177,22 +180,25 @@ class GenerateImageTool @Inject constructor(
     }
 
     /**
-     * Gson 反射解析的 DTO 必须:① 嵌套在 Tool 内且以 Params 结尾,
+     * LLM 参数 DTO(已迁移 kotlinx.serialization):① 嵌套在 Tool 内且以 Params 结尾,
      * 命中 app/proguard-rules.pro 的 `builtin.**$*Params` keep 规则;
-     * ② 字段加 @SerializedName,防止 R8 混淆字段名导致 release 下解析不出参数。
+     * ② 字段加 @SerializedName/@SerialName 双标注(灰度期共存),
+     * 防止 R8 混淆字段名导致 release 下解析不出参数。
      */
+    @Serializable
     private data class GenerateImageParams(
-        @SerializedName("prompt") val prompt: String? = null,
-        @SerializedName("size") val size: String? = null,
-        @SerializedName("negative_prompt") val negative_prompt: String? = null,
-        @SerializedName("force_refresh") val force_refresh: Boolean? = null,
+        @SerializedName("prompt") @SerialName("prompt") val prompt: String? = null,
+        @SerializedName("size") @SerialName("size") val size: String? = null,
+        @SerializedName("negative_prompt") @SerialName("negative_prompt") val negative_prompt: String? = null,
+        @SerializedName("force_refresh") @SerialName("force_refresh") val force_refresh: Boolean? = null,
     )
 
+    @Serializable
     private data class GenerateImageResult(
-        @SerializedName("filePath") val filePath: String,
-        @SerializedName("fileName") val fileName: String,
-        @SerializedName("fromCache") val fromCache: Boolean,
-        @SerializedName("cacheKey") val cacheKey: String,
+        @SerializedName("filePath") @SerialName("filePath") val filePath: String,
+        @SerializedName("fileName") @SerialName("fileName") val fileName: String,
+        @SerializedName("fromCache") @SerialName("fromCache") val fromCache: Boolean,
+        @SerializedName("cacheKey") @SerialName("cacheKey") val cacheKey: String,
     )
 
     private companion object {

@@ -1,13 +1,12 @@
 package com.shifenmiao.ai.utils
 
-import com.google.gson.Gson
-import com.google.gson.JsonParser
 import com.shifenmiao.base.utils.StringUtils
 import com.shifenmiao.common.ai.AiLanguagePrompt
 import com.shifenmiao.common.utils.BaseUtils
 import com.shifenmiao.core.R
 import com.shifenmiao.database.ai.entity.MessageEntity
 import com.shifenmiao.database.image.dao.ImageDao
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.interfaces.singleton.AppContext
 import com.shifenmiao.ai.agent.AgentLoopExecutor
 import com.shifenmiao.model.ai.AIConversationEntryType
@@ -43,6 +42,12 @@ import com.shifenmiao.storage.RemoteConfigStorage
 import com.shifenmiao.storage.TokenStorage
 import com.t8rin.logger.makeLog
 import java.util.Date
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonObject
 
 object AiUtils {
 
@@ -260,12 +265,7 @@ object AiUtils {
     ): List<RequestMessage> {
         if (toolCallsJson.isBlank()) return emptyList()
         return try {
-            val records = gson.fromJson(
-                toolCallsJson,
-                com.google.gson.reflect.TypeToken.getParameterized(
-                    List::class.java, AgentToolCallRecord::class.java
-                ).type
-            ) as? List<AgentToolCallRecord> ?: return emptyList()
+            val records = AppJson.decodeFromString<List<AgentToolCallRecord>>(toolCallsJson)
             if (records.isEmpty()) return emptyList()
 
             val messages = mutableListOf<RequestMessage>()
@@ -302,6 +302,7 @@ object AiUtils {
      * 工具调用记录的反序列化模型，与 [com.shifenmiao.ai.agent.ToolCallRecord] 结构一致。
      * 独立定义避免 feature/ai → core/utils 的循环依赖。
      */
+    @Serializable
     private data class AgentToolCallRecord(
         val id: String = "",
         val name: String = "",
@@ -371,7 +372,6 @@ object AiUtils {
                 try {
                     val attachments = AttachmentPayloadUtils.deserialize(
                         json = attachmentsJson,
-                        gson = gson
                     )
                     attachments.forEach { attachment ->
                         // 判断是否为图片：mimeType 或 localContent(data:image) 或 url 判断
@@ -694,20 +694,22 @@ object AiUtils {
     private fun parseErrorBody(errorBody: String): String {
         if (errorBody.isBlank()) return ""
         return try {
-            val jsonObject = JsonParser.parseString(errorBody).asJsonObject
+            val jsonObject = AppJson.parseToJsonElement(errorBody).jsonObject
             // 优先取 error.message（OpenAI 风格）
-            val errorObj = jsonObject.getAsJsonObject("error")
+            val errorObj = jsonObject["error"] as? JsonObject
+            fun JsonObject.str(key: String): String? =
+                (this[key] as? JsonPrimitive)?.contentOrNull
             val message = when {
-                errorObj != null && errorObj.has("message") ->
-                    errorObj.get("message").asString
-                errorObj != null && errorObj.has("code") ->
-                    "${errorObj.get("code").asString}: ${errorObj.get("message")?.asString ?: "unknown"}"
-                jsonObject.has("message") ->
-                    jsonObject.get("message").asString
-                jsonObject.has("code") && jsonObject.has("message") ->
-                    "${jsonObject.get("code").asString}: ${jsonObject.get("message").asString}"
-                jsonObject.has("code") ->
-                    "code=${jsonObject.get("code").asString}"
+                errorObj?.str("message") != null ->
+                    errorObj.str("message")!!
+                errorObj?.str("code") != null ->
+                    "${errorObj.str("code")}: ${errorObj.str("message") ?: "unknown"}"
+                jsonObject.str("message") != null ->
+                    jsonObject.str("message")!!
+                jsonObject.str("code") != null && jsonObject.str("message") != null ->
+                    "${jsonObject.str("code")}: ${jsonObject.str("message")}"
+                jsonObject.str("code") != null ->
+                    "code=${jsonObject.str("code")}"
                 else -> errorBody.take(MAX_ERROR_BODY_LENGTH)
             }
             message.take(MAX_ERROR_BODY_LENGTH)
@@ -718,9 +720,6 @@ object AiUtils {
     }
 
     private const val MAX_ERROR_BODY_LENGTH = 500
-
-    // 提取Gson为单例对象
-    private val gson by lazy { Gson() }
 
     fun processStreamLine(line: String): ChatCompletionChunk? {
         // 先做基础清洗：去掉 BOM / 末尾 \r 等不可见字符。SSE 规范 (W3C EventSource) 允许
@@ -743,7 +742,7 @@ object AiUtils {
                 }
                 if (payload.isEmpty()) return null
                 try {
-                    val chunk = gson.fromJson(payload, ChatCompletionChunk::class.java)
+                    val chunk = AppJson.decodeFromString<ChatCompletionChunk>(payload)
                     val transformed = transformChatCompletion(chunk)
                     // 某些 provider 在最后一帧只发 usage 或仅带 finish_reason，不再单独
                     // 发 [DONE]。这里识别这两种"隐式结束"信号，主动置 isEnd=true，避免上层
@@ -769,7 +768,7 @@ object AiUtils {
 
             trimmed.startsWith("{") -> {
                 try {
-                    val chunk = gson.fromJson(trimmed, ChatCompletionChunk::class.java)
+                    val chunk = AppJson.decodeFromString<ChatCompletionChunk>(trimmed)
                     val transformed = transformChatCompletion(chunk)
                     val hasFinishReason = transformed.choices.any {
                         val fr = it.finishReason
@@ -872,7 +871,7 @@ object AiUtils {
                 if (payload.isEmpty()) return null
 
                 try {
-                    val event = gson.fromJson(payload, AnthropicStreamEvent::class.java)
+                    val event = AppJson.decodeFromString<AnthropicStreamEvent>(payload)
                     processAnthropicEvent(event, state)
                 } catch (e: Exception) {
                     "Drop malformed Anthropic SSE line: ${e.message}, raw=$payload".makeLog("AiUtils")

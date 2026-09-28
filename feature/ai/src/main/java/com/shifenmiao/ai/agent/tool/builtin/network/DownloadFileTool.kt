@@ -1,17 +1,19 @@
 package com.shifenmiao.ai.agent.tool.builtin.network
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.agent.tool.RetryPolicy
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.shifenmiao.network.service.FileDownloadService
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * Agent 工具：下载文件
@@ -21,7 +23,6 @@ import javax.inject.Inject
 class DownloadFileTool @Inject constructor(
     private val textProvider: AgentToolTextProvider,
     private val fileDownloadService: FileDownloadService,
-    private val gson: Gson
 ) : AgentTool {
 
     override val name: String = "download_file"
@@ -74,7 +75,7 @@ class DownloadFileTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
-            val params = gson.fromJson(arguments, DownloadFileParams::class.java)
+            val params = AppJson.decodeFromString<DownloadFileParams>(arguments)
 
             fileDownloadService.downloadSync(
                 url = params.url,
@@ -131,6 +132,7 @@ class DownloadFileTool @Inject constructor(
         }
     }
 
+    @Serializable
     private data class DownloadFileParams(
         val url: String,
         val filename: String?,

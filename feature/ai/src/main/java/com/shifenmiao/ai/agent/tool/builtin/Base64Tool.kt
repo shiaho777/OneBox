@@ -1,10 +1,10 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -12,10 +12,12 @@ import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.t8rin.imagetoolbox.feature.base64_tools.domain.Base64Converter
 import javax.inject.Inject
 import kotlin.math.min
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 class Base64Tool @Inject constructor(
     private val converter: Base64Converter,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider
 ) : AgentTool {
 
@@ -66,7 +68,7 @@ class Base64Tool @Inject constructor(
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
             val params = if (arguments.isBlank()) Base64Params() else {
-                gson.fromJson(arguments, Base64Params::class.java)
+                AppJson.decodeFromString<Base64Params>(arguments)
             }
             when (params.action?.trim()) {
                 "encode" -> executeEncode(params)
@@ -100,7 +102,7 @@ class Base64Tool @Inject constructor(
         val previewLength = min(params.preview_length ?: 256, 2048).coerceAtLeast(32)
         val preview = encoded.take(previewLength)
         return AgentToolResult(
-            content = gson.toJson(
+            content = AppJson.encodeToString(
                 Base64EncodeResult(
                     action = "encode",
                     sourceUri = uri,
@@ -125,7 +127,7 @@ class Base64Tool @Inject constructor(
                 isError = true
             )
         return AgentToolResult(
-            content = gson.toJson(
+            content = AppJson.encodeToString(
                 Base64DecodeResult(
                     action = "decode",
                     inputLength = base64.length,
@@ -136,6 +138,7 @@ class Base64Tool @Inject constructor(
     }
 }
 
+@Serializable
 private data class Base64Params(
     val action: String? = null,
     val uri: String? = null,
@@ -144,6 +147,7 @@ private data class Base64Params(
     val preview_length: Int? = null
 )
 
+@Serializable
 private data class Base64EncodeResult(
     val action: String,
     val sourceUri: String,
@@ -153,6 +157,7 @@ private data class Base64EncodeResult(
     val base64: String?
 )
 
+@Serializable
 private data class Base64DecodeResult(
     val action: String,
     val inputLength: Int,

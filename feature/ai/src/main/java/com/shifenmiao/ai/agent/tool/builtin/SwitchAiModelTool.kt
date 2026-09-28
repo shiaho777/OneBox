@@ -1,18 +1,21 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.ai.agent.tool.jsonStringOf
 import com.shifenmiao.common.manager.AIEngineCatalogManager
 import com.shifenmiao.common.manager.AIEngineManager
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * Agent 工具：切换当前对话使用的 AI 引擎/模型。
@@ -24,7 +27,6 @@ class SwitchAiModelTool @Inject constructor(
     private val aiEngineCatalogManager: AIEngineCatalogManager,
     private val aiEngineManager: AIEngineManager,
     private val textProvider: AgentToolTextProvider,
-    private val gson: Gson,
 ) : AgentTool {
 
     override val name: String = "switch_ai_model"
@@ -63,7 +65,7 @@ class SwitchAiModelTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
-            val params = gson.fromJson(arguments, SwitchAiModelParams::class.java)
+            val params = AppJson.decodeFromString<SwitchAiModelParams>(arguments)
             val engineName = params?.engine_name?.trim().orEmpty()
             if (engineName.isEmpty()) {
                 return errorResult(
@@ -116,7 +118,7 @@ class SwitchAiModelTool @Inject constructor(
             }
 
             AgentToolResult(
-                content = gson.toJson(
+                content = jsonStringOf(
                     mapOf(
                         "toolName" to name,
                         "executed" to true,
@@ -145,7 +147,7 @@ class SwitchAiModelTool @Inject constructor(
 
     private fun errorResult(reasonCode: String, message: String): AgentToolResult {
         return AgentToolResult(
-            content = gson.toJson(
+            content = jsonStringOf(
                 mapOf(
                     "toolName" to name,
                     "executed" to false,
@@ -158,6 +160,7 @@ class SwitchAiModelTool @Inject constructor(
         )
     }
 
+    @Serializable
     private data class SwitchAiModelParams(
         val engine_name: String? = null,
         val model_name: String? = null,

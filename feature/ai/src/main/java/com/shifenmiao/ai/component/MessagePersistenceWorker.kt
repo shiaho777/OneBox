@@ -474,6 +474,6 @@ class MessagePersistenceWorker(
 private fun MessageEntity.stripLocalContentFromAttachments(): MessageEntity {
     val json = this.attachmentsJson
     if (json.isBlank()) return this
-    val stripped = AttachmentPayloadUtils.stripLocalContent(json, com.google.gson.Gson())
+    val stripped = AttachmentPayloadUtils.stripLocalContent(json)
     return if (stripped == json) this else this.copy(attachmentsJson = stripped)
 }

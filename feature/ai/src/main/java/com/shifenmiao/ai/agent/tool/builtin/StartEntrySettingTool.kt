@@ -1,14 +1,15 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.agent.tool.ToolDeepLink
+import com.shifenmiao.ai.agent.tool.jsonStringOf
 import com.shifenmiao.base.utils.Navigation
 import com.shifenmiao.common.handle.navigation.AppNavigationRegistry
 import com.shifenmiao.common.handle.navigation.AppNavigationTargetType
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -16,6 +17,8 @@ import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.shifenmiao.storage.AppSharedStorage
 import com.t8rin.imagetoolbox.core.ui.utils.navigation.Screen
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * 启动入口设置工具:查看/设置 App 冷启动后直达的页面。
@@ -26,7 +29,6 @@ import javax.inject.Inject
  * (与 Navigation.resolveStartEntry 的未设置回退一致)。
  */
 class StartEntrySettingTool @Inject constructor(
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -191,7 +193,7 @@ class StartEntrySettingTool @Inject constructor(
 
     private fun parseArguments(arguments: String): StartEntrySettingParams {
         if (arguments.isBlank()) return StartEntrySettingParams()
-        return gson.fromJson(arguments, StartEntrySettingParams::class.java) ?: StartEntrySettingParams()
+        return runCatching { AppJson.decodeFromString<StartEntrySettingParams>(arguments) }.getOrNull() ?: StartEntrySettingParams()
     }
 
     private fun successResult(
@@ -206,7 +208,7 @@ class StartEntrySettingTool @Inject constructor(
             "effectiveHint" to textProvider.string(R.string.agent_tool_start_entry_setting_effective_hint),
         )
         payload.putAll(extra)
-        return AgentToolResult(content = gson.toJson(payload))
+        return AgentToolResult(content = jsonStringOf(payload))
     }
 
     private fun errorResult(
@@ -222,9 +224,10 @@ class StartEntrySettingTool @Inject constructor(
             "message" to message,
         )
         if (validOptions != null) payload["validOptions"] = validOptions
-        return AgentToolResult(content = gson.toJson(payload), isError = true)
+        return AgentToolResult(content = jsonStringOf(payload), isError = true)
     }
 
+    @Serializable
     private data class StartEntrySettingParams(
         val action: String? = null,
         val screen_id: String? = null,

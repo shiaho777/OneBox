@@ -1,11 +1,11 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
 import android.graphics.Bitmap
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -21,12 +21,14 @@ import com.t8rin.imagetoolbox.core.domain.saving.FileController
 import com.t8rin.imagetoolbox.core.domain.saving.model.ImageSaveTarget
 import com.t8rin.imagetoolbox.core.domain.saving.model.SaveResult
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 class EditExifTool @Inject constructor(
     private val imageGetter: ImageGetter<Bitmap>,
     private val fileController: FileController,
     private val agentFileService: AgentFileService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -73,7 +75,7 @@ class EditExifTool @Inject constructor(
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
             val params = if (arguments.isBlank()) EditExifParams() else {
-                gson.fromJson(arguments, EditExifParams::class.java)
+                AppJson.decodeFromString<EditExifParams>(arguments)
             }
             val imageUri = params.image_uri?.takeIf { it.isNotBlank() }
                 ?: return AgentToolResult(
@@ -115,7 +117,7 @@ class EditExifTool @Inject constructor(
             .mapKeys { it.key.key }
             .toSortedMap()
         return AgentToolResult(
-            content = gson.toJson(
+            content = AppJson.encodeToString(
                 ExifReadResult(
                     image_uri = imageUri,
                     tag_count = attributes.size,
@@ -175,7 +177,7 @@ class EditExifTool @Inject constructor(
         )
         return when (saveResult) {
             is SaveResult.Success -> AgentToolResult(
-                content = gson.toJson(
+                content = AppJson.encodeToString(
                     ExifWriteResult(
                         input_uri = imageUri,
                         output_uri = resolveOutputUri(saveResult.fileUri)
@@ -219,6 +221,7 @@ class EditExifTool @Inject constructor(
     }
 }
 
+@Serializable
 private data class EditExifParams(
     val action: String? = null,
     val image_uri: String? = null,
@@ -226,12 +229,14 @@ private data class EditExifParams(
     val value: String? = null
 )
 
+@Serializable
 private data class ExifReadResult(
     val image_uri: String,
     val tag_count: Int,
     val attributes: Map<String, String>
 )
 
+@Serializable
 private data class ExifWriteResult(
     val input_uri: String,
     val output_uri: String?

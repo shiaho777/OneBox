@@ -1,10 +1,10 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -14,10 +14,12 @@ import com.shifenmiao.model.file.AgentFileService
 import com.shifenmiao.model.file.AgentReadMultipleFilesItemParams
 import com.shifenmiao.model.file.AgentReadMultipleFilesParams
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 class ReadMultipleFilesTool @Inject constructor(
     private val agentFileService: AgentFileService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -47,7 +49,7 @@ class ReadMultipleFilesTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
-            val params = gson.fromJson(arguments, ReadMultipleFilesToolParams::class.java)
+            val params = AppJson.decodeFromString<ReadMultipleFilesToolParams>(arguments)
             if (params.files.isNullOrEmpty()) {
                 return AgentToolResult(
                     content = textProvider.string(R.string.agent_tool_read_multiple_files_missing_files),
@@ -72,7 +74,7 @@ class ReadMultipleFilesTool @Inject constructor(
                     )
                 )
             ) {
-                is AgentFileOperationResult.Success -> AgentToolResult(gson.toJson(result.data))
+                is AgentFileOperationResult.Success -> AgentToolResult(AppJson.encodeToString(result.data))
                 is AgentFileOperationResult.Error -> failure(result.message)
             }
         } catch (e: Exception) {
@@ -97,11 +99,13 @@ class ReadMultipleFilesTool @Inject constructor(
     }
 }
 
+@Serializable
 private data class ReadMultipleFilesToolParams(
     val files: List<ReadMultipleFilesItemPayload>? = null,
     val max_length_per_file: Int? = null,
 )
 
+@Serializable
 private data class ReadMultipleFilesItemPayload(
     val file_uri: String? = null,
     val start_line: Int? = null,

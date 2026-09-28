@@ -1,10 +1,10 @@
 package com.shifenmiao.ai.agent.tool.builtin.visual
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.ai.agent.tool.parseLooseJsonObject
 import com.shifenmiao.model.ai.AttachedMedia
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
@@ -30,7 +30,6 @@ import javax.inject.Singleton
 class ScreenshotUiTool @Inject constructor(
     private val service: VisualAutomationService,
     private val textProvider: AgentToolTextProvider,
-    private val gson: Gson,
 ) : AgentTool {
 
     override val name: String = "screenshot_ui"
@@ -121,10 +120,8 @@ class ScreenshotUiTool @Inject constructor(
         )
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun parseArgs(arguments: String): Map<String, Any?> {
         if (arguments.isBlank() || arguments == "{}") return emptyMap()
-        return runCatching { gson.fromJson(arguments, Map::class.java) as Map<String, Any?> }
-            .getOrElse { emptyMap() }
+        return parseLooseJsonObject(arguments)
     }
 }

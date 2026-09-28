@@ -1,10 +1,10 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -18,6 +18,9 @@ import com.shifenmiao.model.file.AgentFileService
 import com.shifenmiao.model.file.AgentRangePatchHunk
 import com.shifenmiao.model.file.AgentTextPatchHunk
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 /**
  * 文件编辑工具（合并原 edit_file / apply_text_patch / apply_range_patch 三者能力）。
@@ -28,7 +31,6 @@ import javax.inject.Inject
  */
 class EditFileTool @Inject constructor(
     private val agentFileService: AgentFileService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -105,7 +107,7 @@ class EditFileTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
-            val params = gson.fromJson(arguments, EditFileToolParams::class.java)
+            val params = AppJson.decodeFromString<EditFileToolParams>(arguments)
             val fileUri = params.file_uri?.takeIf { it.isNotBlank() }
                 ?: return AgentToolResult(
                     content = textProvider.string(R.string.agent_tool_edit_file_missing_file_uri),
@@ -182,7 +184,7 @@ class EditFileTool @Inject constructor(
                 )
             )
         ) {
-            is AgentFileOperationResult.Success -> AgentToolResult(gson.toJson(result.data))
+            is AgentFileOperationResult.Success -> AgentToolResult(AppJson.encodeToString(result.data))
             is AgentFileOperationResult.Error -> failure(result.message)
         }
     }
@@ -207,7 +209,7 @@ class EditFileTool @Inject constructor(
                 )
             )
         ) {
-            is AgentFileOperationResult.Success -> AgentToolResult(gson.toJson(result.data))
+            is AgentFileOperationResult.Success -> AgentToolResult(AppJson.encodeToString(result.data))
             is AgentFileOperationResult.Error -> failure(result.message)
         }
     }
@@ -279,7 +281,7 @@ class EditFileTool @Inject constructor(
 
     private fun success(data: AgentEditFileData): AgentToolResult {
         return AgentToolResult(
-            content = gson.toJson(
+            content = AppJson.encodeToString(
                 EditFileResult(
                     action = data.action,
                     success = true,
@@ -312,6 +314,7 @@ class EditFileTool @Inject constructor(
     }
 }
 
+@Serializable
 private data class EditFileToolParams(
     val file_uri: String? = null,
     val action: String? = null,
@@ -325,6 +328,7 @@ private data class EditFileToolParams(
 )
 
 /** 补丁段负载：apply_text_patch 用 old_text/new_text/replace_all，apply_range_patch 用 start_line/end_line/new_text/old_text */
+@Serializable
 private data class EditFileHunkPayload(
     val old_text: String? = null,
     val new_text: String? = null,
@@ -333,6 +337,7 @@ private data class EditFileHunkPayload(
     val end_line: Int? = null,
 )
 
+@Serializable
 private data class EditFileResult(
     val action: String,
     val success: Boolean,

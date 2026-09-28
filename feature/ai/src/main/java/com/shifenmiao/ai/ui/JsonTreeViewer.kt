@@ -29,8 +29,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.google.gson.JsonElement
-import com.google.gson.JsonParser
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
 import com.shifenmiao.core.R
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassSurface
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineExpandLess
@@ -51,7 +56,7 @@ fun JsonTreeViewer(
 ) {
     val element = remember(jsonString) {
         try {
-            JsonParser.parseString(jsonString)
+            AppJson.parseToJsonElement(jsonString)
         } catch (_: Exception) {
             null
         }
@@ -79,9 +84,9 @@ fun JsonTreeViewer(
         ) {
             // 根节点如果是对象或数组，直接渲染其内部（避免多一层外壳）
             when {
-                element.isJsonObject -> {
-                    val obj = element.asJsonObject
-                    obj.entrySet().forEach { (k, v) ->
+                element is JsonObject -> {
+                    val obj = element
+                    obj.entries.forEach { (k, v) ->
                         JsonNodeItem(
                             key = k,
                             element = v,
@@ -92,8 +97,8 @@ fun JsonTreeViewer(
                     }
                 }
 
-                element.isJsonArray -> {
-                    val arr = element.asJsonArray
+                element is JsonArray -> {
+                    val arr = element
                     arr.forEachIndexed { index, item ->
                         JsonNodeItem(
                             key = index.toString(),
@@ -130,10 +135,10 @@ private fun JsonNodeItem(
     val indentDp = (depth * 16).dp
 
     when {
-        element.isJsonObject -> {
+        element is JsonObject -> {
             var expanded by remember { mutableStateOf(depth < 2) }
-            val obj = element.asJsonObject
-            val size = obj.size()
+            val obj = element
+            val size = obj.size
 
             Row(
                 modifier = Modifier
@@ -162,7 +167,7 @@ private fun JsonNodeItem(
                 exit = shrinkVertically(),
             ) {
                 Column {
-                    obj.entrySet().forEach { (k, v) ->
+                    obj.entries.forEach { (k, v) ->
                         JsonNodeItem(
                             key = k,
                             element = v,
@@ -181,10 +186,10 @@ private fun JsonNodeItem(
             }
         }
 
-        element.isJsonArray -> {
+        element is JsonArray -> {
             var expanded by remember { mutableStateOf(depth < 2) }
-            val arr = element.asJsonArray
-            val size = arr.size()
+            val arr = element
+            val size = arr.size
 
             Row(
                 modifier = Modifier
@@ -253,37 +258,30 @@ private fun JsonLeafNode(
     onEditValue: (path: List<String>, value: String) -> Unit,
 ) {
     val (valueColor, displayValue, rawValue) = when {
-        element.isJsonNull -> Triple(
+        element is JsonNull -> Triple(
             Color(0xFF757575),
             "null",
             "null",
         )
 
-        element.isJsonPrimitive -> {
-            val primitive = element.asJsonPrimitive
+        element is JsonPrimitive -> {
             when {
-                primitive.isString -> Triple(
+                element.isString -> Triple(
                     Color(0xFF4CAF50),
-                    "\"${primitive.asString}\"",
-                    primitive.asString,
+                    "\"${element.content}\"",
+                    element.content,
                 )
 
-                primitive.isNumber -> Triple(
-                    Color(0xFF2196F3),
-                    primitive.asNumber.toString(),
-                    primitive.asNumber.toString(),
-                )
-
-                primitive.isBoolean -> Triple(
+                element.booleanOrNull != null -> Triple(
                     Color(0xFF9C27B0),
-                    primitive.asBoolean.toString(),
-                    primitive.asBoolean.toString(),
+                    element.content,
+                    element.content,
                 )
 
                 else -> Triple(
-                    MaterialTheme.colorScheme.onSurface,
-                    primitive.asString,
-                    primitive.asString,
+                    Color(0xFF2196F3),
+                    element.content,
+                    element.content,
                 )
             }
         }
@@ -301,7 +299,7 @@ private fun JsonLeafNode(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = (depth * 16).dp)
-            .clickable(enabled = !element.isJsonNull) { showEditDialog = true },
+            .clickable(enabled = element !is JsonNull) { showEditDialog = true },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         JsonKeyText(key = key)

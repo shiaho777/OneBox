@@ -1,10 +1,10 @@
 package com.shifenmiao.ai.agent.tool.builtin.cloud
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.CloudAgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -16,6 +16,9 @@ import com.wanbaohe.cloud.storage.model.S3Vendor
 import com.wanbaohe.cloud.storage.service.CloudFileService
 import java.util.UUID
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 /**
  * 管理（写）远程存储连接 —— 创建 / 测试 / 删除。
@@ -31,7 +34,6 @@ class ManageCloudConnectionsTool @Inject constructor(
     private val cloudFileService: CloudFileService,
     private val repository: CloudStorageRepository,
     private val connectionHolder: CloudAgentToolConnectionHolder,
-    private val gson: Gson,
 ) : AgentTool {
 
     override val name: String = "manage_cloud_connections"
@@ -142,7 +144,7 @@ class ManageCloudConnectionsTool @Inject constructor(
     )
 
     override suspend fun execute(arguments: String): AgentToolResult {
-        val params = if (arguments.isBlank()) ManageParams() else gson.fromJson(arguments, ManageParams::class.java)
+        val params = if (arguments.isBlank()) ManageParams() else AppJson.decodeFromString<ManageParams>(arguments)
         return when (params.action?.trim()) {
             "test" -> executeTest(params)
             "create" -> executeCreate(params)
@@ -162,7 +164,7 @@ class ManageCloudConnectionsTool @Inject constructor(
         return cloudFileService.testConnection(conn).fold(
             onSuccess = {
                 AgentToolResult(
-                    content = gson.toJson(
+                    content = AppJson.encodeToString(
                         TestResult(
                             ok = true,
                             protocol = conn.protocol.name,
@@ -177,7 +179,7 @@ class ManageCloudConnectionsTool @Inject constructor(
             },
             onFailure = { error ->
                 AgentToolResult(
-                    content = gson.toJson(
+                    content = AppJson.encodeToString(
                         TestResult(
                             ok = false,
                             protocol = conn.protocol.name,
@@ -197,7 +199,7 @@ class ManageCloudConnectionsTool @Inject constructor(
                 repository.saveConnection(conn)
                 pushHolderUpdate()
                 AgentToolResult(
-                    content = gson.toJson(
+                    content = AppJson.encodeToString(
                         CreateResult(
                             connectionId = conn.id,
                             displayName = conn.displayName,
@@ -241,7 +243,7 @@ class ManageCloudConnectionsTool @Inject constructor(
         repository.deleteConnection(id)
         pushHolderUpdate()
         return AgentToolResult(
-            content = gson.toJson(
+            content = AppJson.encodeToString(
                 DeleteResult(
                     connectionId = id,
                     displayName = existing.displayName,
@@ -326,6 +328,7 @@ class ManageCloudConnectionsTool @Inject constructor(
         connectionHolder.update(repository.getConnections())
     }
 
+    @Serializable
     private data class ManageParams(
         val action: String? = null,
         val protocol: String? = null,
@@ -350,6 +353,7 @@ class ManageCloudConnectionsTool @Inject constructor(
         val smb_password: String? = null,
     )
 
+    @Serializable
     private data class TestResult(
         val ok: Boolean,
         val protocol: String,
@@ -357,6 +361,7 @@ class ManageCloudConnectionsTool @Inject constructor(
         val message: String,
     )
 
+    @Serializable
     private data class CreateResult(
         val connectionId: String,
         val displayName: String,
@@ -365,6 +370,7 @@ class ManageCloudConnectionsTool @Inject constructor(
         val message: String,
     )
 
+    @Serializable
     private data class DeleteResult(
         val connectionId: String,
         val displayName: String,

@@ -1,10 +1,11 @@
 package com.shifenmiao.ai.service
 
 import android.content.Context
-import com.google.gson.Gson
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonSyntaxException
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonObject
 import com.shifenmiao.ai.agent.tool.AgentToolRegistry
 import com.shifenmiao.ai.agent.tool.ToolBindingRepository
 import com.shifenmiao.common.ai.AIPromptExecutor
@@ -59,7 +60,6 @@ class PromptCreationService @Inject constructor(
     private val toolBindingRepository: ToolBindingRepository,
     private val agentToolRegistry: AgentToolRegistry,
     private val aiPromptExecutor: AIPromptExecutor,
-    private val gson: Gson
 ) {
 
     suspend fun buildSystemPrompt(): String {
@@ -155,7 +155,7 @@ class PromptCreationService @Inject constructor(
             draftType = ListItemType.PROMPT.id,
             title = title,
             description = description,
-            url = gson.toJson(selectedToolNames.toList()),
+            url = AppJson.encodeToString(selectedToolNames.toList()),
             data = rawJson,
             selectedCategoryIds = selectedCategoryIds,
             status = if (isSuccess) {
@@ -251,7 +251,7 @@ class PromptCreationService @Inject constructor(
         draftId?.let {
             dataDraftHelper.updateDraft(
                 draftId = it,
-                url = gson.toJson(selectedToolNames.toList()),
+                url = AppJson.encodeToString(selectedToolNames.toList()),
                 selectedCategoryIds = selectedCategoryIds,
                 itemId = itemId.takeIf { savedItemId -> savedItemId > 0 },
                 relatedEntityId = promptResourceId.takeIf { it > 0 }
@@ -319,13 +319,13 @@ class PromptCreationService @Inject constructor(
         suggestedCategoryNames: List<String> = emptyList(),
         suggestedToolNames: List<String> = emptyList()
     ): String {
-        return gson.toJson(
+        return JsonObject(
             mapOf(
-                "prompt_template" to prompt,
-                "suggested_categories" to suggestedCategoryNames,
-                "suggested_tools" to suggestedToolNames
+                "prompt_template" to AppJson.encodeToJsonElement(ChatPrompt.serializer(), prompt),
+                "suggested_categories" to AppJson.encodeToJsonElement(suggestedCategoryNames),
+                "suggested_tools" to AppJson.encodeToJsonElement(suggestedToolNames)
             )
-        )
+        ).toString()
     }
 
     suspend fun createAndSaveFromRequirement(
@@ -383,15 +383,15 @@ class PromptCreationService @Inject constructor(
     private fun parsePayload(json: String): PromptGenerationPayload {
         if (json.isBlank()) return PromptGenerationPayload()
         return try {
-            val root = gson.fromJson(json, JsonObject::class.java) ?: return PromptGenerationPayload()
-            val promptRoot = root.getAsJsonObject("prompt_template") ?: root
-            val chatPrompt = gson.fromJson(promptRoot, ChatPrompt::class.java)
+            val root = AppJson.parseToJsonElement(json).jsonObject
+            val promptRoot = root["prompt_template"] as? JsonObject ?: root
+            val chatPrompt = AppJson.decodeFromJsonElement(ChatPrompt.serializer(), promptRoot)
             PromptGenerationPayload(
-                prompt = chatPrompt?.takeIf { !it.prompt.isNullOrBlank() },
+                prompt = chatPrompt.takeIf { !it.prompt.isNullOrBlank() },
                 suggestedCategoryNames = extractStringList(root, "suggested_categories"),
                 suggestedToolNames = extractStringList(root, "suggested_tools")
             )
-        } catch (_: JsonSyntaxException) {
+        } catch (_: kotlinx.serialization.SerializationException) {
             PromptGenerationPayload()
         } catch (_: Exception) {
             PromptGenerationPayload()
@@ -401,13 +401,10 @@ class PromptCreationService @Inject constructor(
     private fun buildErrorMessage(json: String): String {
         if (json.isBlank()) return context.getString(R.string.create_ai_chat_prompt_error_no_response)
         return try {
-            val jsonElement = gson.fromJson(json, JsonElement::class.java)
-            if (jsonElement == null) {
-                context.getString(R.string.create_ai_chat_prompt_error_unrecognized)
-            } else if (jsonElement.isJsonObject) {
-                val obj = jsonElement.asJsonObject
-                val contentObj = obj.getAsJsonObject("prompt_template") ?: obj
-                if (!contentObj.has("prompt")) {
+            val jsonElement = AppJson.parseToJsonElement(json)
+            if (jsonElement is JsonObject) {
+                val contentObj = jsonElement["prompt_template"] as? JsonObject ?: jsonElement
+                if (!contentObj.containsKey("prompt")) {
                     context.getString(R.string.create_ai_chat_prompt_error_incomplete)
                 } else {
                     context.getString(R.string.create_ai_chat_prompt_error_content)

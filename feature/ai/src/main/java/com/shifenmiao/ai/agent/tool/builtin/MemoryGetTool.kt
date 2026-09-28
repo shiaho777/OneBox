@@ -1,12 +1,12 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.memory.MemoryRepository
 import com.shifenmiao.database.ai.MemoryLimits
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -14,6 +14,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * 内置工具：检索长期记忆条目。
@@ -25,7 +27,6 @@ import javax.inject.Inject
 class MemoryGetTool @Inject constructor(
     private val textProvider: AgentToolTextProvider,
     private val memoryRepository: MemoryRepository,
-    private val gson: Gson,
 ) : AgentTool {
 
     companion object {
@@ -62,7 +63,7 @@ class MemoryGetTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         val params = runCatching {
-            gson.fromJson(arguments, MemoryGetParams::class.java)
+            AppJson.decodeFromString<MemoryGetParams>(arguments)
         }.getOrNull() ?: MemoryGetParams()
         val keywords = params.keywords
             ?.split(Regex("[,，\\s]+"))
@@ -124,6 +125,7 @@ class MemoryGetTool @Inject constructor(
         return AgentToolResult(content = content.trim())
     }
 
+    @Serializable
     private data class MemoryGetParams(
         val keywords: String? = null,
         val scope: String? = null

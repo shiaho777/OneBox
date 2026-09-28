@@ -1,7 +1,11 @@
 package com.shifenmiao.ai.voice
 
-import com.google.gson.Gson
-import com.google.gson.JsonParser
+import com.shifenmiao.ai.agent.tool.jsonStringOf
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.contentOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -27,7 +31,6 @@ class FunAsrClient(
     private val publish: (AsrState) -> Unit,
 ) : AsrStreamClient {
 
-    private val gson = Gson()
     private val httpClient = OkHttpClient.Builder()
         .readTimeout(0, TimeUnit.MILLISECONDS)
         .pingInterval(20, TimeUnit.SECONDS)
@@ -129,7 +132,7 @@ class FunAsrClient(
     }
 
     /** 首帧参数: 与 FunASR 2pass 协议一致; chunk_size [5,10,5] = 600ms 出一次中间结果 */
-    private fun buildStartFrame(): String = gson.toJson(
+    private fun buildStartFrame(): String = jsonStringOf(
         mapOf(
             "mode" to "2pass",
             "wav_name" to "onebox",
@@ -163,11 +166,13 @@ class FunAsrClient(
         if (cancelled) return
         // 解析不了的帧直接忽略, 不 crash
         try {
-            val root = JsonParser.parseString(text).asJsonObject
-            val mode = root.get("mode")?.asString.orEmpty()
-            val recognized = root.get("text")?.asString.orEmpty()
-            val isFinal = root.get("is_final")?.asBoolean ?: false
-            val segmentFinal = root.get("segment_final")?.asBoolean ?: false
+            val root = AppJson.parseToJsonElement(text) as? JsonObject ?: return
+            fun str(key: String): String? = (root[key] as? JsonPrimitive)?.contentOrNull
+            fun bool(key: String): Boolean = (root[key] as? JsonPrimitive)?.booleanOrNull ?: false
+            val mode = str("mode").orEmpty()
+            val recognized = str("text").orEmpty()
+            val isFinal = bool("is_final")
+            val segmentFinal = bool("segment_final")
 
             if (!mode.contains("offline")) {
                 partialText = recognized

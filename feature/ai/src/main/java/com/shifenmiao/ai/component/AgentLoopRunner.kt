@@ -1,7 +1,8 @@
 package com.shifenmiao.ai.component
 
 import android.content.Context
-import com.google.gson.Gson
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.encodeToString
 import com.shifenmiao.ai.BuildConfig
 import com.shifenmiao.ai.agent.AgentLoopExecutor
 import com.shifenmiao.ai.agent.AgentLoopSessionState
@@ -55,7 +56,6 @@ class AgentLoopRunner(
     private val agentToolRegistry: AgentToolRegistry,
     private val promptAssemblyService: PromptAssemblyService,
     private val contextCompactor: ContextCompactor,
-    private val gson: Gson,
     private val contentReader: suspend (String) -> String?,
     private val imageDao: ImageDao,
     private val streamCollector: StreamCollector,
@@ -709,7 +709,7 @@ class AgentLoopRunner(
             incoming = currentRecords,
         )
         if (mergedRecords.isEmpty()) return ""
-        return gson.toJson(enrichToolCallRecords(mergedRecords))
+        return AppJson.encodeToString(enrichToolCallRecords(mergedRecords))
     }
 
     private fun buildToolCallRecords(results: List<Pair<ToolCall, AgentToolResult>>): List<ToolCallRecord> {

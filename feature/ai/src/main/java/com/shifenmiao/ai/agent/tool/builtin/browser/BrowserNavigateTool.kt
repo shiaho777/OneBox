@@ -1,20 +1,22 @@
 package com.shifenmiao.ai.agent.tool.builtin.browser
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.ai.agent.tool.jsonStringOf
 import com.shifenmiao.interfaces.browser.BrowserAutomationService
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 class BrowserNavigateTool @Inject constructor(
     private val automationService: BrowserAutomationService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider
 ) : AgentTool {
 
@@ -71,7 +73,7 @@ class BrowserNavigateTool @Inject constructor(
         }
         return try {
             val params = if (arguments.isBlank()) BrowserNavigateParams() else {
-                gson.fromJson(arguments, BrowserNavigateParams::class.java)
+                AppJson.decodeFromString<BrowserNavigateParams>(arguments)
             }
             when (params.action?.trim()) {
                 "open_url" -> {
@@ -133,7 +135,7 @@ class BrowserNavigateTool @Inject constructor(
 
     private fun formatResult(result: com.shifenmiao.interfaces.browser.BrowserActionResult): AgentToolResult {
         return AgentToolResult(
-            content = gson.toJson(
+            content = jsonStringOf(
                 mapOf(
                     "tool" to name,
                     "success" to result.success,
@@ -144,6 +146,7 @@ class BrowserNavigateTool @Inject constructor(
         )
     }
 
+    @Serializable
     private data class BrowserNavigateParams(
         val action: String? = null,
         val url: String? = null,

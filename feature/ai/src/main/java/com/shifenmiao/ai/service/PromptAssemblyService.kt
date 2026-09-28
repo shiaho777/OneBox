@@ -1,6 +1,10 @@
 package com.shifenmiao.ai.service
 
-import com.google.gson.JsonParser
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
 import com.shifenmiao.ai.agent.AgentLoopExecutor
 import com.shifenmiao.ai.agent.tool.ToolFilterContext
 import com.shifenmiao.ai.agent.tool.ToolPredicate
@@ -253,22 +257,23 @@ class PromptAssemblyService(
     private fun extractRecommendedToolNames(content: String): List<String> {
         if (content.isBlank()) return emptyList()
         return runCatching {
-            val root = JsonParser.parseString(content)
+            val root = AppJson.parseToJsonElement(content)
             // 新格式：JSON 数组 ["name1", "name2"]
-            if (root.isJsonArray) {
-                root.asJsonArray.mapNotNull { elem ->
-                    elem.asString?.takeIf { it.isNotBlank() }
+            if (root is JsonArray) {
+                root.mapNotNull { elem ->
+                    (elem as? JsonPrimitive)?.contentOrNull?.takeIf { it.isNotBlank() }
                 }
             } else {
                 // 兼容旧格式：{"matchedTools": [{"name": "xxx", ...}]}
-                val matchedTools = root.asJsonObject.getAsJsonArray("matchedTools")
+                val matchedTools = (root as? JsonObject)?.get("matchedTools") as? JsonArray
                     ?: run {
                         "discover_tools result has no 'matchedTools' array"
                             .makeLog("PromptAssembly")
                         return@runCatching emptyList()
                     }
                 matchedTools.mapNotNull { element ->
-                    element.asJsonObject?.get("name")?.asString?.takeIf { it.isNotBlank() }
+                    ((element as? JsonObject)?.get("name") as? JsonPrimitive)
+                        ?.contentOrNull?.takeIf { it.isNotBlank() }
                 }
             }
         }.onFailure { e ->

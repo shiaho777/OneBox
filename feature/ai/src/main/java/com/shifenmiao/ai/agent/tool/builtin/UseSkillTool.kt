@@ -1,15 +1,17 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.skill.SkillRepository
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * 内置工具：按 name/slug 加载技能的完整 SKILL.md 正文。
@@ -20,7 +22,6 @@ import javax.inject.Inject
 class UseSkillTool @Inject constructor(
     private val textProvider: AgentToolTextProvider,
     private val skillRepository: SkillRepository,
-    private val gson: Gson,
 ) : AgentTool {
 
     companion object {
@@ -52,7 +53,7 @@ class UseSkillTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         val params = runCatching {
-            gson.fromJson(arguments, UseSkillParams::class.java)
+            AppJson.decodeFromString<UseSkillParams>(arguments)
         }.getOrNull()
         val key = params?.name?.trim().orEmpty()
         if (key.isEmpty()) {
@@ -76,5 +77,6 @@ class UseSkillTool @Inject constructor(
         )
     }
 
+    @Serializable
     private data class UseSkillParams(val name: String? = null)
 }

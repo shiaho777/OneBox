@@ -1,7 +1,9 @@
 package com.shifenmiao.ai.component
 
 import com.arkivanov.decompose.ComponentContext
-import com.google.gson.Gson
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import com.shifenmiao.ai.agent.tool.AgentToolRegistry
 import com.shifenmiao.ai.mediator.MessageRemoteMediator
 import com.shifenmiao.ai.service.CreationMetaService
@@ -78,7 +80,6 @@ class CreateAIPromptComponent @AssistedInject internal constructor(
     private val promptCreationService: PromptCreationService,
     private val sensitiveWordChecker: SensitiveWordChecker,
     private val messageRemoteMediator: MessageRemoteMediator,
-    private val gson: Gson
 ) : BaseComponent(dispatchersHolder, componentContext), ResourceManager by resourceManager {
 
     @AssistedFactory
@@ -111,8 +112,6 @@ class CreateAIPromptComponent @AssistedInject internal constructor(
     private val chatPromptDao = appDatabase.chatPromptDao()
 
     private var generateJob: Job? = null
-
-    // Gson 由 Hilt 注入，无需每次创建实例
 
     /** 对话历史记录，用于多轮对话（assistant回复 + 用户追加修改） */
     private val conversationHistory = mutableListOf<MessageEntity>()
@@ -886,7 +885,7 @@ class CreateAIPromptComponent @AssistedInject internal constructor(
         componentScope.launch(Dispatchers.IO) {
             dataDraftHelper.updateDraft(
                 draftId = currentDraftId,
-                url = gson.toJson(currentState.selectedToolNames.toList()),
+                url = AppJson.encodeToString(currentState.selectedToolNames.toList()),
                 selectedCategoryIds = currentState.selectedCategoryIds,
             )
         }
@@ -917,7 +916,7 @@ class CreateAIPromptComponent @AssistedInject internal constructor(
     }
 
     private fun decodeDraftToolNames(raw: String): Set<String> = try {
-        gson.fromJson(raw, Array<String>::class.java)?.toSet().orEmpty()
+        runCatching { AppJson.decodeFromString<List<String>>(raw) }.getOrNull()?.toSet().orEmpty()
     } catch (_: Exception) {
         emptySet()
     }

@@ -1,9 +1,9 @@
 package com.shifenmiao.ai.agent.tool.builtin.cloud
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.CloudAgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -13,6 +13,9 @@ import com.wanbaohe.cloud.storage.model.CloudStorageConnection
 import com.wanbaohe.cloud.storage.agent.CloudAgentToolConnectionHolder
 import com.wanbaohe.cloud.storage.service.CloudFileService
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 /**
  * 管理（写）远端文件 / 目录 —— 删 / 改名 / 移动 / 建目录。
@@ -23,7 +26,6 @@ class ManageCloudFilesTool @Inject constructor(
     private val textProvider: CloudAgentToolTextProvider,
     private val cloudFileService: CloudFileService,
     private val connectionHolder: CloudAgentToolConnectionHolder,
-    private val gson: Gson,
 ) : AgentTool {
 
     override val name: String = "manage_cloud_files"
@@ -72,7 +74,7 @@ class ManageCloudFilesTool @Inject constructor(
     )
 
     override suspend fun execute(arguments: String): AgentToolResult {
-        val params = if (arguments.isBlank()) ManageParams() else gson.fromJson(arguments, ManageParams::class.java)
+        val params = if (arguments.isBlank()) ManageParams() else AppJson.decodeFromString<ManageParams>(arguments)
         val connection = resolveConnection(params.connection_id)
             ?: return AgentToolResult(
                 content = textProvider.string(R.string.agent_tool_manage_cloud_files_connection_not_found, params.connection_id.orEmpty()),
@@ -93,7 +95,7 @@ class ManageCloudFilesTool @Inject constructor(
                         isError = true,
                     )
                 cloudFileService.createDirectory(connection, root, path).fold(
-                    onSuccess = { AgentToolResult(content = gson.toJson(ManageOkResult("create_directory", root, path))) },
+                    onSuccess = { AgentToolResult(content = AppJson.encodeToString(ManageOkResult("create_directory", root, path))) },
                     onFailure = { failure(it) },
                 )
             }
@@ -104,7 +106,7 @@ class ManageCloudFilesTool @Inject constructor(
                         isError = true,
                     )
                 cloudFileService.delete(connection, root, path, params.is_directory == true).fold(
-                    onSuccess = { AgentToolResult(content = gson.toJson(ManageOkResult("delete", root, path))) },
+                    onSuccess = { AgentToolResult(content = AppJson.encodeToString(ManageOkResult("delete", root, path))) },
                     onFailure = { failure(it) },
                 )
             }
@@ -120,7 +122,7 @@ class ManageCloudFilesTool @Inject constructor(
                         isError = true,
                     )
                 cloudFileService.rename(connection, root, from, to).fold(
-                    onSuccess = { AgentToolResult(content = gson.toJson(ManageRenameResult(root, from, to))) },
+                    onSuccess = { AgentToolResult(content = AppJson.encodeToString(ManageRenameResult(root, from, to))) },
                     onFailure = { failure(it) },
                 )
             }
@@ -141,6 +143,7 @@ class ManageCloudFilesTool @Inject constructor(
         return connectionHolder.current().firstOrNull { it.id == connectionId }
     }
 
+    @Serializable
     private data class ManageParams(
         val action: String? = null,
         val connection_id: String? = null,
@@ -150,6 +153,8 @@ class ManageCloudFilesTool @Inject constructor(
         val is_directory: Boolean? = null,
     )
 
+    @Serializable
     private data class ManageOkResult(val action: String, val root: String, val path: String)
+    @Serializable
     private data class ManageRenameResult(val root: String, val from: String, val to: String)
 }

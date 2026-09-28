@@ -3,9 +3,14 @@ package com.shifenmiao.ai.component
 import android.content.Context
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.doOnDestroy
-import com.google.gson.Gson
-import com.google.gson.JsonParser
 import com.google.gson.annotations.SerializedName
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonObject
 import com.shifenmiao.ai.history.withHistorySnapshot
 import com.halilibo.richtext.markwon.MarkdownAstNodeParser
 import com.shifenmiao.ai.export.DuelHtmlExporter
@@ -81,6 +86,7 @@ import java.util.Date
 import kotlin.coroutines.resume
 import kotlin.math.ceil
 
+@Serializable
 private data class DuelPromptTemplates(
     @SerializedName("roleNameInstruction") val roleNameInstruction: String = "",
     @SerializedName("responseRules") val responseRules: String = "",
@@ -272,7 +278,7 @@ class AIDuelChatComponent @AssistedInject internal constructor(
             chatPromptDao.getSystemPromptByKey(PromptEntity.SYSTEM_PROMPT_KEY_DUEL_TEMPLATES)
         }
         val templates = entity?.prompt?.takeIf { it.isNotBlank() }?.let { json ->
-            kotlin.runCatching { Gson().fromJson(json, DuelPromptTemplates::class.java) }
+            kotlin.runCatching { AppJson.decodeFromString<DuelPromptTemplates>(json) }
                 .onFailure { error -> makeLog { "Failed to parse duel prompt templates: ${error.message}" } }
                 .getOrNull()
         }
@@ -625,8 +631,8 @@ class AIDuelChatComponent @AssistedInject internal constructor(
     private fun parseDuelConfigTextField(prompt: String, key: String): String {
         if (prompt.isBlank()) return ""
         return kotlin.runCatching {
-            val obj = JsonParser.parseString(prompt).asJsonObject
-            obj.get(key)?.takeIf { it.isJsonPrimitive }?.asString.orEmpty().trim()
+            val obj = AppJson.parseToJsonElement(prompt).jsonObject
+            (obj[key] as? JsonPrimitive)?.contentOrNull.orEmpty().trim()
         }.getOrNull().orEmpty()
     }
 

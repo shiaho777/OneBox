@@ -1,5 +1,8 @@
 package com.shifenmiao.ai.agent.tool
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class InteractivePendingRequestSnapshot(
     val kind: String = "",
     val confirmationRequest: ToolConfirmationRequest? = null,

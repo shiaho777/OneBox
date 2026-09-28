@@ -1,10 +1,10 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -14,10 +14,12 @@ import com.shifenmiao.model.file.AgentFileService
 import com.shifenmiao.model.file.AgentManageFileData
 import com.shifenmiao.model.file.AgentManageFileParams
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 class ManageFilesTool @Inject constructor(
     private val agentFileService: AgentFileService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider
 ) : AgentTool {
 
@@ -87,7 +89,7 @@ class ManageFilesTool @Inject constructor(
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
             val params = if (arguments.isBlank()) ManageFilesParams() else {
-                gson.fromJson(arguments, ManageFilesParams::class.java)
+                AppJson.decodeFromString<ManageFilesParams>(arguments)
             }
 
             when (params.action?.trim()) {
@@ -208,7 +210,7 @@ class ManageFilesTool @Inject constructor(
 
     private fun successResult(data: AgentManageFileData): AgentToolResult {
         return AgentToolResult(
-            content = gson.toJson(
+            content = AppJson.encodeToString(
                 ManageFilesResult(
                     action = data.action,
                     success = true,
@@ -233,6 +235,7 @@ class ManageFilesTool @Inject constructor(
     }
 }
 
+@Serializable
 private data class ManageFilesParams(
     val action: String? = null,
     val source_uri: String? = null,
@@ -245,6 +248,7 @@ private data class ManageFilesParams(
     val write_mode: String? = null
 )
 
+@Serializable
 private data class ManageFilesResult(
     val action: String,
     val success: Boolean,

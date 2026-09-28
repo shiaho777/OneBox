@@ -10,7 +10,6 @@ import com.shifenmiao.database.image.dao.ImageDao
 import com.shifenmiao.database.image.entity.ImageEntity
 import com.shifenmiao.model.ai.AttachedMedia
 import com.shifenmiao.model.ai.AttachmentProcessingState
-import com.google.gson.Gson
 import com.t8rin.logger.makeLog
 import kotlinx.coroutines.withTimeoutOrNull
 
@@ -30,7 +29,6 @@ class AttachmentUploadCoordinator(
     private val fileUploadRouter: FileUploadRouter,
     private val attachmentContentResolver: AttachmentContentResolver,
     private val imageDao: ImageDao,
-    private val gson: Gson,
     private val sharedState: ChatSharedState,
     private val chatInputComponent: ChatInputComponent,
     private val onProgressStateChanged: (Uri, AttachmentProcessingState) -> Unit,
@@ -157,7 +155,6 @@ class AttachmentUploadCoordinator(
     ): String {
         return AttachmentPayloadUtils.serialize(
             attachments = attachments,
-            gson = gson,
             stripLocalContent = stripLocalContent
         )
     }
@@ -170,7 +167,7 @@ class AttachmentUploadCoordinator(
     suspend fun resolveAttachmentsFromJson(json: String): List<AttachedMedia> {
         if (json.isBlank()) return emptyList()
         val dtos = runCatching {
-            AttachmentPayloadUtils.deserialize(json, gson)
+            AttachmentPayloadUtils.deserialize(json)
         }.getOrNull() ?: return emptyList()
         return attachmentContentResolver.resolveAttachments(dtos)
     }

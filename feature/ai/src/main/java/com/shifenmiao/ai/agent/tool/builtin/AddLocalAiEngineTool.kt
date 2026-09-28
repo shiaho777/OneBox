@@ -1,13 +1,14 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.ai.agent.tool.jsonStringOf
 import com.shifenmiao.base.utils.LoginUtils
 import com.shifenmiao.common.manager.AddEngineResult
 import com.shifenmiao.common.manager.AIEngineCatalogManager
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.AiEngine
 import com.shifenmiao.model.ai.AiRequestProtocol
 import com.shifenmiao.model.ai.AuthType
@@ -17,6 +18,8 @@ import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import javax.inject.Inject
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * Agent 工具：添加本地 AI 引擎。
@@ -27,7 +30,6 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 class AddLocalAiEngineTool @Inject constructor(
     private val aiEngineCatalogManager: AIEngineCatalogManager,
     private val textProvider: AgentToolTextProvider,
-    private val gson: Gson,
 ) : AgentTool {
 
     override val name: String = "add_local_ai_engine"
@@ -90,7 +92,7 @@ class AddLocalAiEngineTool @Inject constructor(
     override suspend fun execute(arguments: String): AgentToolResult {
         if (!LoginUtils.isAdmin()) {
             return AgentToolResult(
-                content = gson.toJson(
+                content = jsonStringOf(
                     mapOf(
                         "toolName" to name,
                         "executed" to false,
@@ -103,7 +105,7 @@ class AddLocalAiEngineTool @Inject constructor(
         }
 
         return try {
-            val params = gson.fromJson(arguments, AddLocalAiEngineParams::class.java)
+            val params = runCatching { AppJson.decodeFromString<AddLocalAiEngineParams>(arguments) }.getOrNull()
                 ?: return AgentToolResult(
                     content = textProvider.string(R.string.agent_tool_add_local_ai_engine_invalid_params),
                     isError = true
@@ -141,7 +143,7 @@ class AddLocalAiEngineTool @Inject constructor(
 
             if (success) {
                 AgentToolResult(
-                    content = gson.toJson(
+                    content = jsonStringOf(
                         mapOf(
                             "toolName" to name,
                             "executed" to true,
@@ -159,7 +161,7 @@ class AddLocalAiEngineTool @Inject constructor(
                 )
             } else {
                 AgentToolResult(
-                    content = gson.toJson(
+                    content = jsonStringOf(
                         mapOf(
                             "toolName" to name,
                             "executed" to true,
@@ -173,7 +175,7 @@ class AddLocalAiEngineTool @Inject constructor(
             }
         } catch (e: Exception) {
             AgentToolResult(
-                content = gson.toJson(
+                content = jsonStringOf(
                     mapOf(
                         "toolName" to name,
                         "executed" to false,
@@ -207,6 +209,7 @@ class AddLocalAiEngineTool @Inject constructor(
         }
     }
 
+    @Serializable
     private data class AddLocalAiEngineParams(
         val name: String? = null,
         val title: String? = null,

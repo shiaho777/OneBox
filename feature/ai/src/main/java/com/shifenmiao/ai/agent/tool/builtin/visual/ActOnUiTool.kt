@@ -4,6 +4,7 @@ import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ChatWorkingMode
@@ -11,9 +12,10 @@ import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.shifenmiao.model.automation.AIAction
 import com.shifenmiao.model.automation.AutomationResult
 import com.wanbaohe.visual.automation.service.VisualAutomationService
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.google.gson.JsonParser
 
 /**
  * act_on_ui - 在当前 Activity 上执行单个触摸动作。
@@ -117,14 +119,14 @@ class ActOnUiTool @Inject constructor(
         val trimmed = arguments.trim()
         if (!trimmed.startsWith("{")) return trimmed
         return runCatching {
-            val root = JsonParser.parseString(trimmed)
-            if (!root.isJsonObject) return@runCatching trimmed
-            val actionElement = root.asJsonObject.get("action")
+            val root = AppJson.parseToJsonElement(trimmed)
+            if (root !is JsonObject) return@runCatching trimmed
+            val actionElement = root["action"]
             when {
                 actionElement == null -> trimmed
-                actionElement.isJsonObject -> actionElement.toString()
-                actionElement.isJsonPrimitive -> {
-                    val actionString = actionElement.asString.trim()
+                actionElement is JsonObject -> actionElement.toString()
+                actionElement is JsonPrimitive && actionElement.isString -> {
+                    val actionString = actionElement.content.trim()
                     if (actionString.startsWith("{")) actionString else trimmed
                 }
                 else -> trimmed

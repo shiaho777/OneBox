@@ -1,11 +1,11 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
 import android.graphics.Bitmap
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -20,13 +20,15 @@ import com.t8rin.imagetoolbox.core.domain.saving.FileController
 import com.t8rin.imagetoolbox.core.domain.saving.model.ImageSaveTarget
 import com.t8rin.imagetoolbox.core.domain.saving.model.SaveResult
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 class ConvertImageFormatTool @Inject constructor(
     private val imageGetter: ImageGetter<Bitmap>,
     private val imageCompressor: ImageCompressor<Bitmap>,
     private val fileController: FileController,
     private val agentFileService: AgentFileService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -78,7 +80,7 @@ class ConvertImageFormatTool @Inject constructor(
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
             val params = if (arguments.isBlank()) ConvertFormatParams() else {
-                gson.fromJson(arguments, ConvertFormatParams::class.java)
+                AppJson.decodeFromString<ConvertFormatParams>(arguments)
             }
             val imageUris = params.image_uris?.filter { it.isNotBlank() }
                 ?: return missingImageUrisResult()
@@ -112,7 +114,7 @@ class ConvertImageFormatTool @Inject constructor(
             }
 
             AgentToolResult(
-                content = gson.toJson(
+                content = AppJson.encodeToString(
                     ConvertFormatResult(
                         target_format = targetFormat.title,
                         success_count = converted.size,
@@ -208,6 +210,7 @@ class ConvertImageFormatTool @Inject constructor(
     }
 }
 
+@Serializable
 private data class ConvertFormatParams(
     val image_uris: List<String>? = null,
     val target_format: String? = null,
@@ -215,6 +218,7 @@ private data class ConvertFormatParams(
     val keep_exif: Boolean? = null
 )
 
+@Serializable
 private data class ConvertedImageEntry(
     val input_uri: String,
     val output_uri: String?,
@@ -223,11 +227,13 @@ private data class ConvertedImageEntry(
     val output_size_bytes: Int
 )
 
+@Serializable
 private data class FailedImageEntry(
     val input_uri: String,
     val error: String
 )
 
+@Serializable
 private data class ConvertFormatResult(
     val target_format: String,
     val success_count: Int,

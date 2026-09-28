@@ -1,6 +1,5 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolExecutionContext
@@ -8,12 +7,16 @@ import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.agent.tool.AppNavigationCatalogRepository
 import com.shifenmiao.ai.agent.tool.ContextAwareAgentTool
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ChatWorkingMode
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 /**
  * 页面发现：检索可跳转页面入口。
@@ -23,7 +26,6 @@ import javax.inject.Inject
  */
 class DiscoverAppsTool @Inject constructor(
     private val appNavigationCatalogRepository: AppNavigationCatalogRepository,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider
 ) : AgentTool, ContextAwareAgentTool {
 
@@ -99,7 +101,7 @@ class DiscoverAppsTool @Inject constructor(
             )
 
             AgentToolResult(
-                content = gson.toJson(response),
+                content = AppJson.encodeToString(response),
                 isError = false
             )
         }.getOrElse { error ->
@@ -138,18 +140,21 @@ class DiscoverAppsTool @Inject constructor(
 
     private fun parseArguments(arguments: String): DiscoverAppsParams {
         if (arguments.isBlank()) return DiscoverAppsParams()
-        return gson.fromJson(arguments, DiscoverAppsParams::class.java)
+        return AppJson.decodeFromString<DiscoverAppsParams>(arguments)
     }
 
+    @Serializable
     private data class DiscoverAppsParams(
         val keywords: List<String?>? = null,
         val limit: Int? = null
     )
 
+    @Serializable
     private data class DiscoverAppsResponse(
         val apps: List<MatchedApp>
     )
 
+    @Serializable
     private data class MatchedApp(
         val t: String,
         val u: String,

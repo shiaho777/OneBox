@@ -1,11 +1,11 @@
 package com.shifenmiao.ai.agent.tool.builtin.pdf
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.callback.ToolCallback
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.agent.tool.InteractiveAgentTool
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -13,10 +13,11 @@ import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.t8rin.imagetoolbox.core.ui.utils.navigation.Screen
 import com.t8rin.imagetoolbox.feature.pdf_tools.service.PdfToolsService
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 class OpenPdfPreviewTool @Inject constructor(
     private val pdfToolsService: PdfToolsService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : InteractiveAgentTool {
 
@@ -61,7 +62,7 @@ class OpenPdfPreviewTool @Inject constructor(
 
     override suspend fun execute(arguments: String, callback: ToolCallback): AgentToolResult {
         return runCatching {
-            val params = gson.fromJson(arguments, OpenPdfPreviewParams::class.java)
+            val params = AppJson.decodeFromString<OpenPdfPreviewParams>(arguments)
             val rawUri = params.uri?.trim()?.takeIf { it.isNotEmpty() }
                 ?: return AgentToolResult(
                     content = textProvider.string(R.string.agent_tool_open_pdf_preview_missing_uri),
@@ -101,6 +102,7 @@ class OpenPdfPreviewTool @Inject constructor(
         }
     }
 
+    @Serializable
     private data class OpenPdfPreviewParams(
         val uri: String? = null
     )

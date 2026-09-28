@@ -1,6 +1,9 @@
 package com.shifenmiao.ai.agent.tool
 
-import com.google.gson.Gson
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import com.shifenmiao.ai.agent.ToolCallTaskManager
 import com.shifenmiao.database.ai.entity.ToolCallTaskEntity
 import com.t8rin.logger.makeLog
@@ -23,7 +26,6 @@ import javax.inject.Singleton
 @Singleton
 class InteractiveToolRuntime @Inject constructor(
     private val taskManager: ToolCallTaskManager,
-    private val gson: Gson
 ) {
 
     private val _confirmationRequest = MutableStateFlow<ToolConfirmationRequest?>(null)
@@ -532,12 +534,12 @@ class InteractiveToolRuntime @Inject constructor(
     }
 
     private fun serializeSnapshot(snapshot: InteractivePendingRequestSnapshot): String {
-        return gson.toJson(snapshot)
+        return AppJson.encodeToString(snapshot)
     }
 
     private fun deserializeSnapshot(json: String): InteractivePendingRequestSnapshot? {
         return try {
-            gson.fromJson(json, InteractivePendingRequestSnapshot::class.java)
+            AppJson.decodeFromString<InteractivePendingRequestSnapshot>(json)
         } catch (e: Exception) {
             null
         }
@@ -545,7 +547,7 @@ class InteractiveToolRuntime @Inject constructor(
 
     private fun deserializeLegacyPendingRequest(json: String): LegacyPendingRequest? {
         return try {
-            gson.fromJson(json, LegacyPendingRequest::class.java)
+            AppJson.decodeFromString<LegacyPendingRequest>(json)
         } catch (e: Exception) {
             "Failed to deserialize legacy interactive request: ${e.message}"
                 .makeLog("InteractiveToolRuntime")
@@ -558,6 +560,7 @@ class InteractiveToolRuntime @Inject constructor(
     }
 }
 
+@Serializable
 private data class LegacyPendingRequest(
     val toolCallId: String = "",
     val toolName: String = "",

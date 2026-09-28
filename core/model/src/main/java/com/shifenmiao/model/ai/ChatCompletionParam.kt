@@ -3,6 +3,7 @@ package com.shifenmiao.model.ai
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 enum class RoleType(val value: String) {
@@ -28,16 +29,20 @@ enum class FinishReason(val value: String) : Parcelable {
 @Serializable
 data class ErrorResponse(
     @SerializedName("error_code")
+    @SerialName("error_code")
     val errorCode: Int,
     @SerializedName("error_msg")
+    @SerialName("error_msg")
     val errorMsg: String,
     @SerializedName("id")
+    @SerialName("id")
     val id: String,
     val code: Int,
     val error: String,
     val message: String,
     val method: String,
     @SerializedName("scode")
+    @SerialName("scode")
     val sCode: String,
     val status: Boolean,
     val ua: String,
@@ -49,41 +54,56 @@ data class ErrorResponse(
 @Serializable
 data class ChatCompletionRequest(
     @SerializedName("messages")
+    @SerialName("messages")
     val messages: List<RequestMessage> = emptyList(),
     @SerializedName("model")
+    @SerialName("model")
     val model: String = "",
     @SerializedName("frequency_penalty")
+    @SerialName("frequency_penalty")
     val frequencyPenalty: Int? = null,
     @SerializedName("max_tokens")
+    @SerialName("max_tokens")
     val maxTokens: Int? = null,
     @SerializedName("presence_penalty")
+    @SerialName("presence_penalty")
     val presencePenalty: Int? = null,
     @SerializedName("response_format")
+    @SerialName("response_format")
     val responseFormat: ResponseFormat? = null,
     @SerializedName("stop")
+    @SerialName("stop")
     val stop: List<String>? = null,
     @SerializedName("stream")
+    @SerialName("stream")
     val stream: Boolean = true,
     /**
      * 流式请求时要求上游在最后一帧返回 usage(OpenAI 标准字段)。
      * 缺省时上游不下发 usage, 客户端只能本地估算, 思考类模型的 reasoning token 会全部丢失。
      */
     @SerializedName("stream_options")
+    @SerialName("stream_options")
     val streamOptions: StreamOptions? = null,
     @SerializedName("temperature")
+    @SerialName("temperature")
     val temperature: Double? = null,
     @SerializedName("top_p")
+    @SerialName("top_p")
     val topP: Double? = null,
     @SerializedName("tools")
+    @SerialName("tools")
     val tools: List<ToolDefinition>? = null,
     @SerializedName("enable_web_search")
+    @SerialName("enable_web_search")
     val enableWebSearch: Boolean = false,
     @SerializedName("reasoning")
+    @SerialName("reasoning")
     val reasoning: ReasoningOptions? = null,
     /**
      * 百度AI搜索增强选项
      */
     @SerializedName("web_search")
+    @SerialName("web_search")
     val webSearch: BaiduWebSearch? = null
 ) : Parcelable
 
@@ -91,8 +111,10 @@ data class ChatCompletionRequest(
 @Serializable
 data class ReasoningOptions(
     @SerializedName("effort")
+    @SerialName("effort")
     val effort: String = "medium",
     @SerializedName("enabled")
+    @SerialName("enabled")
     val enabled: Boolean? = null,
 ) : Parcelable
 
@@ -100,6 +122,7 @@ data class ReasoningOptions(
 @Serializable
 data class StreamOptions(
     @SerializedName("include_usage")
+    @SerialName("include_usage")
     val includeUsage: Boolean = true,
 ) : Parcelable
 
@@ -117,18 +140,25 @@ data class StreamOptions(
 @Serializable
 data class BaiduWebSearch(
     @SerializedName("enable")
+    @SerialName("enable")
     val enable: Boolean = false,
     @SerializedName("enable_citation")
+    @SerialName("enable_citation")
     val enableCitation: Boolean = false,
     @SerializedName("enable_trace")
+    @SerialName("enable_trace")
     val enableTrace: Boolean = false,
     @SerializedName("enable_status")
+    @SerialName("enable_status")
     val enableStatus: Boolean = false,
     @SerializedName("search_mode")
+    @SerialName("search_mode")
     val searchMode: String = "auto",
     @SerializedName("search_number")
+    @SerialName("search_number")
     val searchNumber: Int? = null,
     @SerializedName("reference_number")
+    @SerialName("reference_number")
     val referenceNumber: Int? = null
 ) : Parcelable
 
@@ -148,18 +178,25 @@ sealed class ResponseFormat : Parcelable {
 @Serializable
 data class ChatCompletionChunk(
     @SerializedName("id")
+    @SerialName("id")
     var id: String? = "",
     @SerializedName("object")
+    @SerialName("object")
     var `object`: String = "chat.completion",
     @SerializedName("created")
+    @SerialName("created")
     var created: Long = 0L,
     @SerializedName("model")
+    @SerialName("model")
     var model: String = "",
     @SerializedName("choices")
+    @SerialName("choices")
     var choices: List<ChunkChoice> = emptyList(),
     @SerializedName("system_fingerprint")
+    @SerialName("system_fingerprint")
     var systemFingerprint: String? = "",
     @SerializedName("usage")
+    @SerialName("usage")
     var usage: Usage? = null,
     /**
      * 搜索结果 - 支持多种大模型 API 的搜索增强返回
@@ -168,17 +205,22 @@ data class ChatCompletionChunk(
      * 其他: web_search_results
      */
     @SerializedName("search_results")
+    @SerialName("search_results")
     var searchResults: List<SearchCitation>? = null,
     @SerializedName("search_info")
+    @SerialName("search_info")
     var searchInfo: SearchInfo? = null,
     @SerializedName("error_code")
+    @SerialName("error_code")
     /**
      * 以下是自定义新增字段
      */
     var errorCode: Int = 0,
     @SerializedName("error_msg")
+    @SerialName("error_msg")
     var errorMsg: String = "",
     @SerializedName("is_end")
+    @SerialName("is_end")
     var isEnd: Boolean = false,
 ) : Parcelable
 
@@ -189,6 +231,7 @@ data class ChatCompletionChunk(
 @Serializable
 data class SearchInfo(
     @SerializedName("search_results")
+    @SerialName("search_results")
     val searchResults: List<BaiduSearchResult>? = null
 ) : Parcelable
 
@@ -199,16 +242,22 @@ data class SearchInfo(
 @Serializable
 data class BaiduSearchResult(
     @SerializedName("index")
+    @SerialName("index")
     val index: Int = 0,
     @SerializedName("url")
+    @SerialName("url")
     val url: String = "",
     @SerializedName("title")
+    @SerialName("title")
     val title: String = "",
     @SerializedName("datasource_id")
+    @SerialName("datasource_id")
     val datasourceId: String = "",
     @SerializedName("site_name")
+    @SerialName("site_name")
     val siteName: String = "",
     @SerializedName("content")
+    @SerialName("content")
     val content: String = ""
 ) : Parcelable {
     /**
@@ -229,14 +278,19 @@ data class BaiduSearchResult(
 @Serializable
 data class ChunkChoice(
     @SerializedName("index")
+    @SerialName("index")
     var index: Int = 0,
     @SerializedName("delta")
+    @SerialName("delta")
     val delta: Delta? = null,
     @SerializedName("message")
+    @SerialName("message")
     var message: Message? = null,
     @SerializedName("finish_reason")
+    @SerialName("finish_reason")
     var finishReason: String? = null,
     @SerializedName("usage")
+    @SerialName("usage")
     var usage: Usage? = null,
 ) : Parcelable
 
@@ -244,12 +298,16 @@ data class ChunkChoice(
 @Serializable
 data class Delta(
     @SerializedName("role")
+    @SerialName("role")
     val role: String? = null,
     @SerializedName("content")
+    @SerialName("content")
     val content: String? = null,
     @SerializedName("reasoning_content")
+    @SerialName("reasoning_content")
     val reasoningContent: String? = null,
     @SerializedName("tool_calls")
+    @SerialName("tool_calls")
     val toolCalls: List<ToolCallDelta>? = null,
 ) : Parcelable
 
@@ -261,10 +319,13 @@ data class Delta(
 @Serializable
 data class SearchResult(
     @SerializedName("query")
+    @SerialName("query")
     val query: String = "",
     @SerializedName("citations")
+    @SerialName("citations")
     val citations: List<SearchCitation> = emptyList(),
     @SerializedName("search_time")
+    @SerialName("search_time")
     val searchTime: Long = 0L
 ) : Parcelable {
     companion object {
@@ -289,18 +350,25 @@ data class SearchResult(
 @Serializable
 data class SearchCitation(
     @SerializedName("index")
+    @SerialName("index")
     val index: Int = 0,
     @SerializedName("title")
+    @SerialName("title")
     val title: String = "",
     @SerializedName("url")
+    @SerialName("url")
     val url: String = "",
     @SerializedName("snippet")
+    @SerialName("snippet")
     val snippet: String = "",
     @SerializedName("favicon")
+    @SerialName("favicon")
     val favicon: String = "",
     @SerializedName("hostname")
+    @SerialName("hostname")
     val hostname: String = "",
     @SerializedName("published_date")
+    @SerialName("published_date")
     val publishedDate: String = ""
 ) : Parcelable
 
@@ -310,12 +378,16 @@ data class SearchCitation(
 @Serializable
 data class Message(
     @SerializedName("role")
-    val role: String,
+    @SerialName("role")
+    val role: String = "",
     @SerializedName("content")
+    @SerialName("content")
     val content: String? = null,
     @SerializedName("reasoning_content")
+    @SerialName("reasoning_content")
     val reasoningContent: String? = null,
     @SerializedName("tool_calls")
+    @SerialName("tool_calls")
     val toolCalls: List<ToolCall>? = null
 ) : Parcelable
 
@@ -323,26 +395,32 @@ data class Message(
 @Serializable
 data class ToolCall(
     @SerializedName("id")
-    val id: String,
+    @SerialName("id")
+    val id: String = "",
     @SerializedName("type")
-    val type: String,
+    @SerialName("type")
+    val type: String = "",
     @SerializedName("function")
-    val function: FunctionCall
+    @SerialName("function")
+    val function: FunctionCall = FunctionCall()
 ) : Parcelable
 
 @Parcelize
 @Serializable
 data class FunctionCall(
     @SerializedName("name")
-    val name: String,
+    @SerialName("name")
+    val name: String = "",
     @SerializedName("arguments")
-    val arguments: String
+    @SerialName("arguments")
+    val arguments: String = ""
 ) : Parcelable
 
 @Parcelize
 @Serializable
 data class LogProbs(
     @SerializedName("content")
+    @SerialName("content")
     val content: List<LogProbContent> = emptyList()
 ) : Parcelable
 
@@ -350,12 +428,16 @@ data class LogProbs(
 @Serializable
 data class LogProbContent(
     @SerializedName("token")
+    @SerialName("token")
     val token: String,
     @SerializedName("logprob")
+    @SerialName("logprob")
     val logprob: Double,
     @SerializedName("bytes")
+    @SerialName("bytes")
     val bytes: List<Int> = emptyList(),
     @SerializedName("top_logprobs")
+    @SerialName("top_logprobs")
     val topLogProbs: List<TopLogProb> = emptyList()
 ) : Parcelable
 
@@ -363,10 +445,13 @@ data class LogProbContent(
 @Serializable
 data class TopLogProb(
     @SerializedName("token")
+    @SerialName("token")
     val token: String,
     @SerializedName("logprob")
+    @SerialName("logprob")
     val logprob: Double,
     @SerializedName("bytes")
+    @SerialName("bytes")
     val bytes: List<Int> = emptyList()
 ) : Parcelable
 
@@ -374,16 +459,22 @@ data class TopLogProb(
 @Serializable
 data class Usage(
     @SerializedName("completion_tokens")
+    @SerialName("completion_tokens")
     val completionTokens: Int = 0,
     @SerializedName("prompt_tokens")
+    @SerialName("prompt_tokens")
     val promptTokens: Int = 0,
     @SerializedName("prompt_cache_hit_tokens")
+    @SerialName("prompt_cache_hit_tokens")
     val promptCacheHitTokens: Int = 0,
     @SerializedName("prompt_cache_miss_tokens")
+    @SerialName("prompt_cache_miss_tokens")
     val promptCacheMissTokens: Int = 0,
     @SerializedName("total_tokens")
+    @SerialName("total_tokens")
     val totalTokens: Int = 0,
     @SerializedName("completion_tokens_details")
+    @SerialName("completion_tokens_details")
     val completionTokensDetails: CompletionTokensDetails? = null
 ) : Parcelable
 
@@ -391,5 +482,6 @@ data class Usage(
 @Serializable
 data class CompletionTokensDetails(
     @SerializedName("reasoning_tokens")
+    @SerialName("reasoning_tokens")
     val reasoningTokens: Int = 0
 ) : Parcelable

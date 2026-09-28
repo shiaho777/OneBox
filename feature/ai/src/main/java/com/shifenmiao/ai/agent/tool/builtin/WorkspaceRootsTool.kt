@@ -1,20 +1,20 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.shifenmiao.model.file.AgentFileOperationResult
 import com.shifenmiao.model.file.AgentFileService
 import javax.inject.Inject
+import kotlinx.serialization.encodeToString
 
 class WorkspaceRootsTool @Inject constructor(
     private val agentFileService: AgentFileService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -31,7 +31,7 @@ class WorkspaceRootsTool @Inject constructor(
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
             when (val result = agentFileService.workspaceRoots()) {
-                is AgentFileOperationResult.Success -> AgentToolResult(gson.toJson(result.data))
+                is AgentFileOperationResult.Success -> AgentToolResult(AppJson.encodeToString(result.data))
                 is AgentFileOperationResult.Error -> failure(result.message)
             }
         } catch (e: Exception) {

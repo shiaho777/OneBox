@@ -2,8 +2,12 @@ package com.shifenmiao.ai.execution.presenter
 
 import android.content.Context
 import android.util.LruCache
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.contentOrNull
 import com.shifenmiao.ai.agent.ToolCallRecord
 import com.shifenmiao.ai.component.AgentToolCallUIState
 import com.shifenmiao.ai.execution.model.AiExecutionPhase
@@ -114,10 +118,9 @@ object AiExecutionPresenter {
 
     fun presentHistory(
         toolCallsJson: String,
-        context: Context,
-        gson: Gson = Gson()
+        context: Context
     ): AiExecutionUiModel {
-        val records = parseRecords(toolCallsJson, gson)
+        val records = parseRecords(toolCallsJson)
         if (records.isEmpty()) return AiExecutionUiModel()
 
         val hasFailure = records.any { it.isError }
@@ -134,7 +137,7 @@ object AiExecutionPresenter {
                         append(record.id)
                     }
                 }.takeIf { it.isNotBlank() }
-                val deepLinks = extractDeepLinks(record.result, gson, context)
+                val deepLinks = extractDeepLinks(record.result, context)
                 ExecutionStepUiModel(
                     id = record.id,
                     title = ToolExecutionTextResolver.resolveTitle(record.name, record.displayTitle),
@@ -187,20 +190,22 @@ object AiExecutionPresenter {
      */
     private fun extractDeepLinks(
         content: String?,
-        gson: Gson,
         context: Context,
     ): List<DeepLinkItemUiModel> {
         if (content.isNullOrBlank()) return emptyList()
         return runCatching {
-            val element = gson.fromJson(content, com.google.gson.JsonObject::class.java) ?: return@runCatching emptyList()
-            val arr = element.getAsJsonArray("deepLinks") ?: return@runCatching emptyList()
+            val element = AppJson.parseToJsonElement(content) as? JsonObject
+                ?: return@runCatching emptyList()
+            val arr = element["deepLinks"] as? JsonArray ?: return@runCatching emptyList()
             val defaultTemplate = context.getString(R.string.agent_tool_default_deeplink_guidance)
             arr.mapNotNull { entry ->
-                val obj = entry.asJsonObject
-                val uri = obj.get("uri")?.asString?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
-                val label = obj.get("label")?.asString?.takeIf { it.isNotBlank() } ?: uri
-                val rawGuidance = obj.get("guidance")?.asString?.takeIf { it.isNotBlank() }
-                val primary = obj.get("primary")?.asBoolean ?: false
+                val obj = entry as? JsonObject ?: return@mapNotNull null
+                fun JsonObject.str(key: String) =
+                    (this[key] as? JsonPrimitive)?.contentOrNull?.takeIf { it.isNotBlank() }
+                val uri = obj.str("uri") ?: return@mapNotNull null
+                val label = obj.str("label") ?: uri
+                val rawGuidance = obj.str("guidance")
+                val primary = (obj["primary"] as? JsonPrimitive)?.booleanOrNull ?: false
                 DeepLinkItemUiModel(
                     uri = uri,
                     label = label,
@@ -211,12 +216,8 @@ object AiExecutionPresenter {
         }.getOrElse { emptyList() }
     }
 
-    private fun parseRecords(toolCallsJson: String, gson: Gson): List<ToolCallRecord> {
-        if (toolCallsJson.isBlank()) return emptyList()
-        return runCatching {
-            val type = object : TypeToken<List<ToolCallRecord>>() {}.type
-            gson.fromJson<List<ToolCallRecord>>(toolCallsJson, type).orEmpty()
-        }.getOrElse { emptyList() }
+    private fun parseRecords(toolCallsJson: String): List<ToolCallRecord> {
+        return ToolCallRecord.parseFromJson(toolCallsJson)
     }
 
     private fun List<ExecutionStepUiModel>.progressText(context: Context): String? {

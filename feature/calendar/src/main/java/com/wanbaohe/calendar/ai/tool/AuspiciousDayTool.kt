@@ -1,8 +1,7 @@
 package com.wanbaohe.calendar.ai.tool
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.shifenmiao.ai.agent.tool.AgentTool
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.model.ai.ToolParameterProperty
@@ -13,6 +12,8 @@ import com.wanbaohe.calendar.R
 import com.wanbaohe.calendar.data.AuspiciousDayFinder
 import java.util.Calendar
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * AI Agent 工具：择日查询
@@ -65,7 +66,7 @@ class AuspiciousDayTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         val args = try {
-            Gson().fromJson(arguments, AuspiciousArgs::class.java)
+            AppJson.decodeFromString<AuspiciousArgs>(arguments)
         } catch (_: Exception) {
             return AgentToolResult(
                 content = textProvider.string(R.string.agent_tool_auspicious_day_error_param),
@@ -131,6 +132,7 @@ class AuspiciousDayTool @Inject constructor(
         }
     }
 
+    @Serializable
     private data class AuspiciousArgs(
         val items: List<String>? = null,
         val isAvoidMode: Boolean? = false,

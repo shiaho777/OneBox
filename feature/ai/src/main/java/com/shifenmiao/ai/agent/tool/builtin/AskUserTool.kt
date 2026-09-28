@@ -1,6 +1,5 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentToolExecutionContext
 import com.shifenmiao.ai.agent.tool.AgentToolResult
@@ -11,16 +10,17 @@ import com.shifenmiao.ai.agent.tool.ContextAwareAgentTool
 import com.shifenmiao.ai.agent.tool.InteractiveAgentTool
 import com.shifenmiao.ai.agent.tool.InteractiveToolResultFactory
 import com.shifenmiao.ai.agent.tool.InteractiveToolRuntime
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ChatWorkingMode
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import javax.inject.Inject
+import kotlinx.serialization.decodeFromString
 
 class AskUserTool @Inject constructor(
     private val bridge: InteractiveToolRuntime,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider
 ) : InteractiveAgentTool, ContextAwareAgentTool {
 
@@ -191,9 +191,9 @@ class AskUserTool @Inject constructor(
 
             val answersJson = bridge.requestUserQuestion(request)
             if (answersJson.isNullOrBlank()) {
-                InteractiveToolResultFactory.buildQuestionCancelledResult(gson)
+                InteractiveToolResultFactory.buildQuestionCancelledResult()
             } else {
-                InteractiveToolResultFactory.buildQuestionSubmittedResult(answersJson, gson)
+                InteractiveToolResultFactory.buildQuestionSubmittedResult(answersJson)
             }
         }.getOrElse { error ->
             AgentToolResult(
@@ -212,7 +212,7 @@ class AskUserTool @Inject constructor(
                 textProvider.string(R.string.agent_tool_ask_user_missing_questions)
             )
         }
-        return gson.fromJson(arguments, AgentUserQuestionRequest::class.java)
+        return AppJson.decodeFromString<AgentUserQuestionRequest>(arguments)
     }
 
     private fun validateRequest(request: AgentUserQuestionRequest) {

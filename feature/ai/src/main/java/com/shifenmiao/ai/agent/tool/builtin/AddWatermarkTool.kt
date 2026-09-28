@@ -2,11 +2,11 @@ package com.shifenmiao.ai.agent.tool.builtin
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -26,6 +26,9 @@ import com.t8rin.imagetoolbox.feature.watermarking.domain.WatermarkApplier
 import com.t8rin.imagetoolbox.feature.watermarking.domain.WatermarkParams
 import com.t8rin.imagetoolbox.feature.watermarking.domain.WatermarkingType
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 class AddWatermarkTool @Inject constructor(
     private val imageGetter: ImageGetter<Bitmap>,
@@ -33,7 +36,6 @@ class AddWatermarkTool @Inject constructor(
     private val imageCompressor: ImageCompressor<Bitmap>,
     private val fileController: FileController,
     private val agentFileService: AgentFileService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -99,7 +101,7 @@ class AddWatermarkTool @Inject constructor(
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
             val params = if (arguments.isBlank()) AddWatermarkParams() else {
-                gson.fromJson(arguments, AddWatermarkParams::class.java)
+                AppJson.decodeFromString<AddWatermarkParams>(arguments)
             }
             val imageUris = params.image_uris?.filter { it.isNotBlank() }
                 ?: return missingImageUrisResult()
@@ -156,7 +158,7 @@ class AddWatermarkTool @Inject constructor(
             }
 
             AgentToolResult(
-                content = gson.toJson(
+                content = AppJson.encodeToString(
                     AddWatermarkResult(
                         text = text,
                         success_count = watermarked.size,
@@ -264,6 +266,7 @@ class AddWatermarkTool @Inject constructor(
     }
 }
 
+@Serializable
 private data class AddWatermarkParams(
     val image_uris: List<String>? = null,
     val text: String? = null,
@@ -274,6 +277,7 @@ private data class AddWatermarkParams(
     val quality: Int? = null
 )
 
+@Serializable
 private data class WatermarkedImageEntry(
     val input_uri: String,
     val output_uri: String?,
@@ -282,11 +286,13 @@ private data class WatermarkedImageEntry(
     val output_size_bytes: Int
 )
 
+@Serializable
 private data class WatermarkFailedEntry(
     val input_uri: String,
     val error: String
 )
 
+@Serializable
 private data class AddWatermarkResult(
     val text: String,
     val success_count: Int,

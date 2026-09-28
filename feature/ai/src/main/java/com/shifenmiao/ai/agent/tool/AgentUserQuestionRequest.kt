@@ -1,5 +1,8 @@
 package com.shifenmiao.ai.agent.tool
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class AgentUserQuestionRequest(
     val toolCallId: String = "",
     val toolName: String = "",

@@ -1,9 +1,9 @@
 package com.shifenmiao.ai.agent.tool.builtin.cloud
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.CloudAgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -14,6 +14,9 @@ import com.wanbaohe.cloud.storage.model.CloudStorageConnection
 import com.wanbaohe.cloud.storage.agent.CloudAgentToolConnectionHolder
 import com.wanbaohe.cloud.storage.service.CloudFileService
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 /**
  * 远端文件搜索 —— 当前实现是 `list + name contains` 的轻量策略。
@@ -24,7 +27,6 @@ class SearchCloudFilesTool @Inject constructor(
     private val textProvider: CloudAgentToolTextProvider,
     private val cloudFileService: CloudFileService,
     private val connectionHolder: CloudAgentToolConnectionHolder,
-    private val gson: Gson,
 ) : AgentTool {
 
     override val name: String = "search_cloud_files"
@@ -61,7 +63,7 @@ class SearchCloudFilesTool @Inject constructor(
     )
 
     override suspend fun execute(arguments: String): AgentToolResult {
-        val params = if (arguments.isBlank()) SearchParams() else gson.fromJson(arguments, SearchParams::class.java)
+        val params = if (arguments.isBlank()) SearchParams() else AppJson.decodeFromString<SearchParams>(arguments)
         val connection = resolveConnection(params.connection_id)
             ?: return AgentToolResult(
                 content = textProvider.string(R.string.agent_tool_search_cloud_files_connection_not_found, params.connection_id.orEmpty()),
@@ -93,7 +95,7 @@ class SearchCloudFilesTool @Inject constructor(
                     .take(max)
                     .toList()
                 AgentToolResult(
-                    content = gson.toJson(
+                    content = AppJson.encodeToString(
                         SearchResult(
                             connectionId = connection.id,
                             root = root,
@@ -126,6 +128,7 @@ class SearchCloudFilesTool @Inject constructor(
         return connectionHolder.current().firstOrNull { it.id == connectionId }
     }
 
+    @Serializable
     private data class SearchParams(
         val connection_id: String? = null,
         val root: String? = null,
@@ -133,6 +136,7 @@ class SearchCloudFilesTool @Inject constructor(
         val max_results: Int? = null,
     )
 
+    @Serializable
     private data class SearchItemPayload(
         val key: String,
         val displayName: String,
@@ -140,6 +144,7 @@ class SearchCloudFilesTool @Inject constructor(
         val size: Long,
     )
 
+    @Serializable
     private data class SearchResult(
         val connectionId: String,
         val root: String,

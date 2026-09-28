@@ -1,7 +1,7 @@
 package com.wanbaohe.calendar.ai.tool
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.agent.tool.AgentTool
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.model.ai.ToolParameterProperty
@@ -11,6 +11,8 @@ import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.wanbaohe.calendar.R
 import com.wanbaohe.calendar.data.BaZiCalculator
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * AI Agent 工具：八字排盘
@@ -67,7 +69,7 @@ class BaZiTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         val args = try {
-            Gson().fromJson(arguments, BaZiArgs::class.java)
+            AppJson.decodeFromString<BaZiArgs>(arguments)
         } catch (_: Exception) {
             return AgentToolResult(
                 content = textProvider.string(R.string.agent_tool_bazi_error_date),
@@ -144,6 +146,7 @@ class BaZiTool @Inject constructor(
         }
     }
 
+    @Serializable
     private data class BaZiArgs(
         val year: Int = 0,
         val month: Int = 0,

@@ -1,17 +1,19 @@
 package com.shifenmiao.ai.agent.tool.builtin.network
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.agent.tool.RetryPolicy
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.shifenmiao.network.service.UrlCheckService
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * Agent 工具：检查 URL 状态
@@ -21,7 +23,6 @@ import javax.inject.Inject
 class CheckUrlTool @Inject constructor(
     private val textProvider: AgentToolTextProvider,
     private val urlCheckService: UrlCheckService,
-    private val gson: Gson
 ) : AgentTool {
 
     override val name: String = "check_url"
@@ -64,7 +65,7 @@ class CheckUrlTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
-            val params = gson.fromJson(arguments, CheckUrlParams::class.java)
+            val params = AppJson.decodeFromString<CheckUrlParams>(arguments)
 
             urlCheckService.check(
                 url = params.url,
@@ -135,6 +136,7 @@ class CheckUrlTool @Inject constructor(
         }
     }
 
+    @Serializable
     private data class CheckUrlParams(
         val url: String,
         val timeout: Int?

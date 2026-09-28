@@ -1,6 +1,6 @@
 package com.shifenmiao.ai.component
 
-import com.google.gson.Gson
+import com.shifenmiao.ai.agent.tool.jsonStringOf
 import com.shifenmiao.ai.agent.tool.AgentUserQuestionRequest
 import com.shifenmiao.ai.agent.tool.FilePickerRequest
 import com.shifenmiao.ai.agent.tool.FolderPickerRequest
@@ -27,7 +27,6 @@ import javax.inject.Singleton
 @Singleton
 class GlobalToolUiHost @Inject constructor(
     private val interactiveToolRuntime: InteractiveToolRuntime,
-    private val gson: Gson
 ) {
 
     val confirmationRequest: StateFlow<ToolConfirmationRequest?> =
@@ -83,7 +82,7 @@ class GlobalToolUiHost @Inject constructor(
     }
 
     fun submitUserQuestionAnswers(answers: Map<String, Any>) {
-        interactiveToolRuntime.submitUserQuestion(gson.toJson(answers))
+        interactiveToolRuntime.submitUserQuestion(jsonStringOf(answers))
     }
 
     fun cancelUserQuestion() {

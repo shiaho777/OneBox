@@ -1,10 +1,10 @@
 package com.shifenmiao.ai.agent.tool.builtin.cloud
 
 import android.util.Base64
-import com.google.gson.Gson
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.CloudAgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -14,6 +14,9 @@ import com.wanbaohe.cloud.storage.model.CloudStorageConnection
 import com.wanbaohe.cloud.storage.agent.CloudAgentToolConnectionHolder
 import com.wanbaohe.cloud.storage.service.CloudFileService
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 /**
  * 把 base64 内容上传到远端。
@@ -24,7 +27,6 @@ class UploadToCloudTool @Inject constructor(
     private val textProvider: CloudAgentToolTextProvider,
     private val cloudFileService: CloudFileService,
     private val connectionHolder: CloudAgentToolConnectionHolder,
-    private val gson: Gson,
 ) : AgentTool {
 
     override val name: String = "upload_to_cloud"
@@ -68,7 +70,7 @@ class UploadToCloudTool @Inject constructor(
     )
 
     override suspend fun execute(arguments: String): AgentToolResult {
-        val params = if (arguments.isBlank()) UploadParams() else gson.fromJson(arguments, UploadParams::class.java)
+        val params = if (arguments.isBlank()) UploadParams() else AppJson.decodeFromString<UploadParams>(arguments)
         val connection = resolveConnection(params.connection_id)
             ?: return AgentToolResult(
                 content = textProvider.string(R.string.agent_tool_upload_to_cloud_connection_not_found, params.connection_id.orEmpty()),
@@ -107,7 +109,7 @@ class UploadToCloudTool @Inject constructor(
         return cloudFileService.upload(connection, root, path, bytes, contentType).fold(
             onSuccess = {
                 AgentToolResult(
-                    content = gson.toJson(
+                    content = AppJson.encodeToString(
                         UploadOkResult(
                             connectionId = connection.id,
                             root = root,
@@ -132,6 +134,7 @@ class UploadToCloudTool @Inject constructor(
         return connectionHolder.current().firstOrNull { it.id == connectionId }
     }
 
+    @Serializable
     private data class UploadParams(
         val connection_id: String? = null,
         val root: String? = null,
@@ -140,6 +143,7 @@ class UploadToCloudTool @Inject constructor(
         val content_type: String? = null,
     )
 
+    @Serializable
     private data class UploadOkResult(
         val connectionId: String,
         val root: String,

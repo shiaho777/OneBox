@@ -1,10 +1,10 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
@@ -15,10 +15,12 @@ import com.shifenmiao.model.file.AgentReadFileParams
 import com.shifenmiao.model.file.AgentSearchContextParams
 import com.shifenmiao.model.file.AgentSearchFileParams
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 class ProcessFileTool @Inject constructor(
     private val agentFileService: AgentFileService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -84,7 +86,7 @@ class ProcessFileTool @Inject constructor(
 
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
-            val params = gson.fromJson(arguments, ProcessFileParams::class.java)
+            val params = AppJson.decodeFromString<ProcessFileParams>(arguments)
             val filePath = params.file_path?.takeIf { it.isNotBlank() }
                 ?: return AgentToolResult(
                     content = textProvider.string(R.string.agent_tool_process_file_missing_file_path),
@@ -125,7 +127,7 @@ class ProcessFileTool @Inject constructor(
                 )
             )
         ) {
-            is AgentFileOperationResult.Success -> AgentToolResult(content = gson.toJson(result.data))
+            is AgentFileOperationResult.Success -> AgentToolResult(content = AppJson.encodeToString(result.data))
             is AgentFileOperationResult.Error -> failure(result.message)
         }
     }
@@ -146,7 +148,7 @@ class ProcessFileTool @Inject constructor(
                 )
             )
         ) {
-            is AgentFileOperationResult.Success -> AgentToolResult(content = gson.toJson(result.data))
+            is AgentFileOperationResult.Success -> AgentToolResult(content = AppJson.encodeToString(result.data))
             is AgentFileOperationResult.Error -> failure(result.message)
         }
     }
@@ -168,7 +170,7 @@ class ProcessFileTool @Inject constructor(
                 )
             )
         ) {
-            is AgentFileOperationResult.Success -> AgentToolResult(content = gson.toJson(result.data))
+            is AgentFileOperationResult.Success -> AgentToolResult(content = AppJson.encodeToString(result.data))
             is AgentFileOperationResult.Error -> failure(result.message)
         }
     }
@@ -184,6 +186,7 @@ class ProcessFileTool @Inject constructor(
     }
 }
 
+@Serializable
 private data class ProcessFileParams(
     val file_path: String? = null,
     val action: String? = null,

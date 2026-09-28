@@ -1,19 +1,22 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.agent.tool.ToolDeepLink
+import com.shifenmiao.ai.agent.tool.jsonStringOf
 import com.shifenmiao.common.handle.navigation.AppNavigationRegistry
 import com.shifenmiao.common.handle.navigation.AppNavigationTargetType
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import com.t8rin.imagetoolbox.core.settings.domain.SettingsManager
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * 字体大小(字体缩放)设置工具。
@@ -24,7 +27,6 @@ import javax.inject.Inject
  */
 class FontScaleSettingTool @Inject constructor(
     private val settingsManager: SettingsManager,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider,
 ) : AgentTool {
 
@@ -160,7 +162,7 @@ class FontScaleSettingTool @Inject constructor(
 
     private fun parseArguments(arguments: String): FontScaleSettingParams {
         if (arguments.isBlank()) return FontScaleSettingParams()
-        return gson.fromJson(arguments, FontScaleSettingParams::class.java) ?: FontScaleSettingParams()
+        return runCatching { AppJson.decodeFromString<FontScaleSettingParams>(arguments) }.getOrNull() ?: FontScaleSettingParams()
     }
 
     private fun successResult(
@@ -176,7 +178,7 @@ class FontScaleSettingTool @Inject constructor(
             "followSystem" to (fontScale == null),
             "effectiveHint" to textProvider.string(R.string.agent_tool_font_scale_setting_effective_hint),
         )
-        return AgentToolResult(content = gson.toJson(payload))
+        return AgentToolResult(content = jsonStringOf(payload))
     }
 
     private fun errorResult(
@@ -192,9 +194,10 @@ class FontScaleSettingTool @Inject constructor(
             "message" to message,
         )
         if (validOptions != null) payload["validOptions"] = validOptions
-        return AgentToolResult(content = gson.toJson(payload), isError = true)
+        return AgentToolResult(content = jsonStringOf(payload), isError = true)
     }
 
+    @Serializable
     private data class FontScaleSettingParams(
         val action: String? = null,
         val scale: String? = null,

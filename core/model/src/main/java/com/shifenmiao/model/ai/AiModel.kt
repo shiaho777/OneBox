@@ -29,6 +29,7 @@ data class AiModel(
     val temperature: Double = 0.95,
     val topP: Double = 0.8,
     val free: Boolean = false,
+    @Serializable(AiProviderKSerializer::class)
     val provider: AiProvider = Default,
     val basePoints: Float = 1f,
     val maxTokens: Int = 2048,

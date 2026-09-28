@@ -2,9 +2,12 @@ package com.shifenmiao.ai.model
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
-import com.google.gson.JsonParser
-import com.google.gson.reflect.TypeToken
+import com.shifenmiao.model.ModelProvider.AppJson
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonObject
 import com.halilibo.richtext.markwon.MarkdownAstNodeParser
 import com.shifenmiao.core.R
 import com.shifenmiao.database.ai.entity.MessageEntity
@@ -47,7 +50,7 @@ sealed class MessageUiModel(
 
     /**
      * 用户消息附件展示（图片缩略图 + 文件 chip）。
-     * 持有预解析的 DTO 列表，避免 UI 层重复 Gson 反序列化。
+     * 持有预解析的 DTO 列表，避免 UI 层重复反序列化。
      */
     data class UserAttachments(
         override val id: String,
@@ -460,12 +463,7 @@ sealed class MessageUiModel(
                 var attachments: List<AttachmentPayloadDto>? = null
                 if (message.attachmentsJson.isNotBlank()) {
                     attachments = runCatching {
-                        Gson().fromJson<List<AttachmentPayloadDto>>(
-                            message.attachmentsJson,
-                            TypeToken.getParameterized(
-                                List::class.java, AttachmentPayloadDto::class.java
-                            ).type
-                        )
+                        AppJson.decodeFromString<List<AttachmentPayloadDto>>(message.attachmentsJson)
                     }.getOrNull()
                 }
                 result.add(
@@ -782,18 +780,18 @@ sealed class MessageUiModel(
         private fun parseDuelConfigTextField(prompt: String, key: String): String {
             if (prompt.isBlank()) return ""
             return kotlin.runCatching {
-                val obj = JsonParser.parseString(prompt).asJsonObject
-                obj.get(key)?.takeIf { it.isJsonPrimitive }?.asString.orEmpty().trim()
+                val obj = AppJson.parseToJsonElement(prompt).jsonObject
+                (obj[key] as? JsonPrimitive)?.contentOrNull.orEmpty().trim()
             }.getOrNull().orEmpty()
         }
 
         private fun parseDuelConfigModelTitle(prompt: String, engineKey: String): String {
             if (prompt.isBlank()) return ""
             return kotlin.runCatching {
-                val obj = JsonParser.parseString(prompt).asJsonObject
-                val engineObj = obj.get(engineKey)?.asJsonObject ?: return ""
-                val modelObj = engineObj.get("model")?.asJsonObject ?: return ""
-                modelObj.get("title")?.takeIf { it.isJsonPrimitive }?.asString.orEmpty().trim()
+                val obj = AppJson.parseToJsonElement(prompt).jsonObject
+                val engineObj = obj[engineKey] as? JsonObject ?: return ""
+                val modelObj = engineObj["model"] as? JsonObject ?: return ""
+                (modelObj["title"] as? JsonPrimitive)?.contentOrNull.orEmpty().trim()
             }.getOrNull().orEmpty()
         }
 

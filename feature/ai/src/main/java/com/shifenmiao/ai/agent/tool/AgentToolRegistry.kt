@@ -1,11 +1,11 @@
 package com.shifenmiao.ai.agent.tool
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.builtin.MemoryGetTool
 import com.shifenmiao.ai.agent.tool.builtin.MemoryWriteTool
 import com.shifenmiao.ai.agent.tool.builtin.UseSkillTool
 import com.shifenmiao.ai.memory.ConversationMemoryPolicyRepository
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.AiEngine
 import com.shifenmiao.model.ai.ToolDefinition
 import com.shifenmiao.model.ai.ToolFunctionDef
@@ -15,6 +15,11 @@ import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.ai.agent.callback.ToolCallback
 import com.shifenmiao.ai.agent.tool.expression.AgentToolExpressionValidationResult
 import com.shifenmiao.ai.agent.tool.expression.AgentToolExpressionValidator
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonObject
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -39,7 +44,6 @@ import javax.inject.Singleton
 class AgentToolRegistry @Inject constructor(
     private val toolProviders: Map<String, @JvmSuppressWildcards Provider<AgentTool>>,
     private val expressionValidator: AgentToolExpressionValidator,
-    private val gson: Gson,
     private val conversationMemoryPolicyRepository: ConversationMemoryPolicyRepository,
     private val textProvider: AgentToolTextProvider,
 ) {
@@ -461,20 +465,21 @@ class AgentToolRegistry @Inject constructor(
         staticLinks: List<ToolDeepLink>,
     ): AgentToolResult {
         return runCatching {
-            val element = gson.fromJson(content, com.google.gson.JsonObject::class.java) ?: return@runCatching null
+            val element = AppJson.parseToJsonElement(content).jsonObject
             val existing = parseDeepLinks(element)
             if (existing.isEmpty() && staticLinks.isEmpty()) return@runCatching null
             val merged = staticLinks + existing
-            element.add("deepLinks", gson.toJsonTree(merged))
-            AgentToolResult(content = gson.toJson(element), isError = false)
+            val updated = JsonObject(
+                element + ("deepLinks" to AppJson.encodeToJsonElement(merged))
+            )
+            AgentToolResult(content = updated.toString(), isError = false)
         }.getOrNull() ?: AgentToolResult(content = content, isError = false)
     }
 
-    private fun parseDeepLinks(element: com.google.gson.JsonObject): List<ToolDeepLink> {
-        if (!element.has("deepLinks")) return emptyList()
+    private fun parseDeepLinks(element: JsonObject): List<ToolDeepLink> {
+        val arr = element["deepLinks"] as? JsonArray ?: return emptyList()
         return runCatching {
-            val arr = element.getAsJsonArray("deepLinks")
-            gson.fromJson(arr, Array<ToolDeepLink>::class.java)?.toList().orEmpty()
+            AppJson.decodeFromJsonElement<List<ToolDeepLink>>(arr)
         }.getOrElse { emptyList() }
     }
 

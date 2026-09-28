@@ -1,15 +1,17 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.service.PromptCreationService
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import org.json.JSONObject
 import javax.inject.Inject
 
@@ -23,7 +25,6 @@ import javax.inject.Inject
 class CreatePromptTool @Inject constructor(
     private val promptCreationService: PromptCreationService,
     private val textProvider: AgentToolTextProvider,
-    private val gson: Gson
 ) : AgentTool {
     override val name = "create_prompt"
     override val description = textProvider.string(R.string.agent_tool_create_prompt_description)
@@ -69,7 +70,7 @@ class CreatePromptTool @Inject constructor(
             )
 
             AgentToolResult(
-                content = gson.toJson(
+                content = AppJson.encodeToString(
                     CreatePromptResponse(
                         tool = name,
                         success = true,
@@ -97,6 +98,7 @@ class CreatePromptTool @Inject constructor(
         }
     }
 
+    @Serializable
     private data class CreatePromptResponse(
         val tool: String,
         val success: Boolean,

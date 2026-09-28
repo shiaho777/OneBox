@@ -1,5 +1,7 @@
 package com.shifenmiao.ai.agent.tool
 
+import kotlinx.serialization.Serializable
+
 enum class AgentUserQuestionPresentation {
     dialog,
     bottom_sheet
@@ -32,6 +34,7 @@ enum class AgentQuestionType {
     folder
 }
 
+@Serializable
 data class AgentUserQuestionItem(
     val name: String = "",
     val header: String = "",
@@ -50,6 +53,7 @@ data class AgentUserQuestionItem(
         get() = type != AgentQuestionType.text
 }
 
+@Serializable
 data class AgentUserQuestionOption(
     val label: String = "",
     val value: String = ""

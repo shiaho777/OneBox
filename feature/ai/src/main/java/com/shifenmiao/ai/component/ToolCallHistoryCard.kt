@@ -5,7 +5,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.google.gson.Gson
 import com.shifenmiao.ai.execution.component.AiExecutionTimelineCard
 import com.shifenmiao.ai.execution.presenter.AiExecutionPresenter
 import com.shifenmiao.storage.AppSharedStorage
@@ -25,8 +24,7 @@ fun ToolCallHistoryCard(
     } else {
         AiExecutionPresenter.presentHistory(
             toolCallsJson = toolCallsJson.orEmpty(),
-            context = context,
-            gson = Gson()
+            context = context
         )
     }
     AiExecutionTimelineCard(

@@ -1,32 +1,39 @@
 package com.shifenmiao.model.file
 
+import kotlinx.serialization.Serializable
+
 sealed class AgentFileOperationResult<out T> {
     data class Success<T>(val data: T) : AgentFileOperationResult<T>()
     data class Error(val message: String) : AgentFileOperationResult<Nothing>()
 }
 
+@Serializable
 data class AgentFileLine(
     val lineNumber: Int,
     val content: String,
 )
 
+@Serializable
 data class AgentFileContextLine(
     val lineNumber: Int,
     val content: String,
     val isMatch: Boolean,
 )
 
+@Serializable
 data class AgentFileSearchMatch(
     val lineNumber: Int,
     val line: String,
 )
 
+@Serializable
 data class AgentFileContextRange(
     val startLine: Int,
     val endLine: Int,
     val lines: List<AgentFileContextLine>,
 )
 
+@Serializable
 data class AgentFileItem(
     val uri: String,
     val name: String,
@@ -38,6 +45,7 @@ data class AgentFileItem(
     val lastModified: String,
 )
 
+@Serializable
 data class AgentBrowseFilesParams(
     val directoryUri: String? = null,
     val limit: Int = 20,
@@ -45,6 +53,7 @@ data class AgentBrowseFilesParams(
     val includeFiles: Boolean = true,
 )
 
+@Serializable
 data class AgentBrowseFilesData(
     val directoryUri: String,
     val displayPath: String,
@@ -53,6 +62,7 @@ data class AgentBrowseFilesData(
     val items: List<AgentFileItem>,
 )
 
+@Serializable
 data class AgentLocateFileData(
     val targetUri: String,
     val fileName: String,
@@ -61,6 +71,7 @@ data class AgentLocateFileData(
     val parentDirectoryUri: String?,
 )
 
+@Serializable
 data class AgentReadFileParams(
     val fileUri: String,
     val startLine: Int? = null,
@@ -68,6 +79,7 @@ data class AgentReadFileParams(
     val maxLength: Int = 4096,
 )
 
+@Serializable
 data class AgentReadFileData(
     val fileUri: String,
     val displayPath: String,
@@ -81,17 +93,20 @@ data class AgentReadFileData(
     val lines: List<AgentFileLine>,
 )
 
+@Serializable
 data class AgentReadMultipleFilesItemParams(
     val fileUri: String,
     val startLine: Int? = null,
     val endLine: Int? = null,
 )
 
+@Serializable
 data class AgentReadMultipleFilesParams(
     val files: List<AgentReadMultipleFilesItemParams>,
     val maxLengthPerFile: Int = 4096,
 )
 
+@Serializable
 data class AgentReadMultipleFilesItemData(
     val fileUri: String,
     val displayPath: String,
@@ -105,11 +120,13 @@ data class AgentReadMultipleFilesItemData(
     val lines: List<AgentFileLine>,
 )
 
+@Serializable
 data class AgentReadMultipleFilesData(
     val returnedCount: Int,
     val items: List<AgentReadMultipleFilesItemData>,
 )
 
+@Serializable
 data class AgentStatFileData(
     val fileUri: String,
     val displayPath: String,
@@ -123,6 +140,7 @@ data class AgentStatFileData(
     val lastModified: String,
 )
 
+@Serializable
 data class AgentWorkspaceRootItem(
     val name: String,
     val uri: String,
@@ -132,11 +150,13 @@ data class AgentWorkspaceRootItem(
     val description: String,
 )
 
+@Serializable
 data class AgentWorkspaceRootsData(
     val returnedCount: Int,
     val items: List<AgentWorkspaceRootItem>,
 )
 
+@Serializable
 data class AgentSearchFileParams(
     val fileUri: String,
     val keyword: String,
@@ -144,6 +164,7 @@ data class AgentSearchFileParams(
     val caseSensitive: Boolean = false,
 )
 
+@Serializable
 data class AgentSearchFileData(
     val fileUri: String,
     val displayPath: String,
@@ -155,6 +176,7 @@ data class AgentSearchFileData(
     val matches: List<AgentFileSearchMatch>,
 )
 
+@Serializable
 data class AgentSearchContextParams(
     val fileUri: String,
     val keyword: String,
@@ -163,6 +185,7 @@ data class AgentSearchContextParams(
     val caseSensitive: Boolean = false,
 )
 
+@Serializable
 data class AgentSearchContextData(
     val fileUri: String,
     val displayPath: String,
@@ -174,6 +197,7 @@ data class AgentSearchContextData(
     val ranges: List<AgentFileContextRange>,
 )
 
+@Serializable
 data class AgentEditFileParams(
     val fileUri: String,
     val action: String,
@@ -185,6 +209,7 @@ data class AgentEditFileParams(
     val replaceAll: Boolean = false,
 )
 
+@Serializable
 data class AgentEditFileData(
     val action: String,
     val fileUri: String,
@@ -197,6 +222,7 @@ data class AgentEditFileData(
     val preview: String,
 )
 
+@Serializable
 data class AgentManageFileParams(
     val action: String,
     val sourceUri: String? = null,
@@ -209,6 +235,7 @@ data class AgentManageFileParams(
     val append: Boolean = false,
 )
 
+@Serializable
 data class AgentManageFileData(
     val action: String,
     val affectedUri: String?,
@@ -218,6 +245,7 @@ data class AgentManageFileData(
     val parentDirectoryUri: String?,
 )
 
+@Serializable
 data class AgentGlobFilesParams(
     val directoryUri: String? = null,
     val globPattern: String,
@@ -226,6 +254,7 @@ data class AgentGlobFilesParams(
     val maxResults: Int = 200,
 )
 
+@Serializable
 data class AgentGlobFileMatch(
     val uri: String,
     val path: String,
@@ -233,6 +262,7 @@ data class AgentGlobFileMatch(
     val isDirectory: Boolean,
 )
 
+@Serializable
 data class AgentGlobFilesData(
     val directoryUri: String,
     val displayPath: String,
@@ -242,6 +272,7 @@ data class AgentGlobFilesData(
     val matches: List<AgentGlobFileMatch>,
 )
 
+@Serializable
 data class AgentGrepFilesParams(
     val directoryUri: String? = null,
     val globPattern: String? = null,
@@ -251,6 +282,7 @@ data class AgentGrepFilesParams(
     val maxMatches: Int = 200,
 )
 
+@Serializable
 data class AgentGrepFileMatch(
     val fileUri: String,
     val displayPath: String,
@@ -259,6 +291,7 @@ data class AgentGrepFileMatch(
     val line: String,
 )
 
+@Serializable
 data class AgentGrepFilesData(
     val directoryUri: String,
     val displayPath: String,
@@ -272,17 +305,20 @@ data class AgentGrepFilesData(
     val matches: List<AgentGrepFileMatch>,
 )
 
+@Serializable
 data class AgentTextPatchHunk(
     val oldText: String,
     val newText: String,
     val replaceAll: Boolean = false,
 )
 
+@Serializable
 data class AgentApplyTextPatchParams(
     val fileUri: String,
     val hunks: List<AgentTextPatchHunk>,
 )
 
+@Serializable
 data class AgentApplyTextPatchData(
     val fileUri: String,
     val displayPath: String,
@@ -292,6 +328,7 @@ data class AgentApplyTextPatchData(
     val preview: String,
 )
 
+@Serializable
 data class AgentRangePatchHunk(
     val startLine: Int,
     val endLine: Int,
@@ -299,11 +336,13 @@ data class AgentRangePatchHunk(
     val oldText: String? = null,
 )
 
+@Serializable
 data class AgentApplyRangePatchParams(
     val fileUri: String,
     val hunks: List<AgentRangePatchHunk>,
 )
 
+@Serializable
 data class AgentApplyRangePatchData(
     val fileUri: String,
     val displayPath: String,

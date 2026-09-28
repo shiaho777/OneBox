@@ -1,10 +1,10 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.file.AgentFileService
 import com.shifenmiao.model.ai.ToolParameters
@@ -16,11 +16,13 @@ import com.t8rin.imagetoolbox.core.domain.model.IntegerSize
 import com.t8rin.imagetoolbox.feature.webp_tools.domain.WebpParams
 import com.t8rin.imagetoolbox.feature.webp_tools.service.WebpService
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 class WebpTool @Inject constructor(
     private val webpService: WebpService,
     private val agentFileService: AgentFileService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider
 ) : AgentTool {
 
@@ -88,7 +90,7 @@ class WebpTool @Inject constructor(
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
             val params = if (arguments.isBlank()) WebpParamsDto() else {
-                gson.fromJson(arguments, WebpParamsDto::class.java)
+                AppJson.decodeFromString<WebpParamsDto>(arguments)
             }
             when (params.action?.trim()) {
                 "extract_frames" -> executeExtractFrames(params)
@@ -129,7 +131,7 @@ class WebpTool @Inject constructor(
         ).fold(
             onSuccess = { result ->
                 AgentToolResult(
-                    content = gson.toJson(
+                    content = AppJson.encodeToString(
                         WebpExtractResult(
                             action = "extract_frames",
                             webpUri = webpUri,
@@ -181,7 +183,7 @@ class WebpTool @Inject constructor(
         ).fold(
             onSuccess = { result ->
                 AgentToolResult(
-                    content = gson.toJson(
+                    content = AppJson.encodeToString(
                         WebpCreateResult(
                             action = "create_webp",
                             imageCount = imageUris.size,
@@ -219,6 +221,7 @@ class WebpTool @Inject constructor(
     }
 }
 
+@Serializable
 private data class WebpParamsDto(
     val action: String? = null,
     val webp_uri: String? = null,
@@ -231,6 +234,7 @@ private data class WebpParamsDto(
     val height: Int? = null
 )
 
+@Serializable
 private data class WebpExtractResult(
     val action: String,
     val webpUri: String,
@@ -238,6 +242,7 @@ private data class WebpExtractResult(
     val frameUris: List<String>
 )
 
+@Serializable
 private data class WebpCreateResult(
     val action: String,
     val imageCount: Int,

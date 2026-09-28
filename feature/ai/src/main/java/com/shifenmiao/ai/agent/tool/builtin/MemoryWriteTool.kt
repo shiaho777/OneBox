@@ -1,6 +1,5 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolExecutionContext
@@ -9,11 +8,14 @@ import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
 import com.shifenmiao.ai.agent.tool.ContextAwareAgentTool
 import com.shifenmiao.ai.memory.MemoryRepository
 import com.shifenmiao.database.ai.MemoryLimits
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.ai.ToolParameters
 import com.shifenmiao.model.ai.tool.ToolCategory
 import com.shifenmiao.model.ai.tool.ToolRiskLevel
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 
 /**
  * 内置工具：写入一条长期记忆（log 条目）。
@@ -25,7 +27,6 @@ import javax.inject.Inject
 class MemoryWriteTool @Inject constructor(
     private val textProvider: AgentToolTextProvider,
     private val memoryRepository: MemoryRepository,
-    private val gson: Gson,
 ) : AgentTool, ContextAwareAgentTool {
 
     companion object {
@@ -66,7 +67,7 @@ class MemoryWriteTool @Inject constructor(
         context: AgentToolExecutionContext
     ): AgentToolResult {
         val params = runCatching {
-            gson.fromJson(arguments, MemoryWriteParams::class.java)
+            AppJson.decodeFromString<MemoryWriteParams>(arguments)
         }.getOrNull()
         val content = params?.content?.trim().orEmpty()
         if (content.isEmpty()) {
@@ -94,5 +95,6 @@ class MemoryWriteTool @Inject constructor(
         )
     }
 
+    @Serializable
     private data class MemoryWriteParams(val content: String? = null)
 }

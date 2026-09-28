@@ -1,10 +1,11 @@
 package com.shifenmiao.ai.agent.tool.builtin
 
-import com.google.gson.Gson
 import com.shifenmiao.ai.R
 import com.shifenmiao.ai.agent.tool.AgentTool
 import com.shifenmiao.ai.agent.tool.AgentToolResult
 import com.shifenmiao.ai.agent.tool.AgentToolTextProvider
+import com.shifenmiao.ai.agent.tool.toJsonElement
+import com.shifenmiao.model.ModelProvider.AppJson
 import com.shifenmiao.model.ai.ToolParameterProperty
 import com.shifenmiao.model.file.AgentFileService
 import com.shifenmiao.model.ai.ToolParameters
@@ -16,11 +17,14 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.JsonElement
 
 class ReadBarcodeFromImageTool @Inject constructor(
     private val imageBarcodeReader: ImageBarcodeReader,
     private val agentFileService: AgentFileService,
-    private val gson: Gson,
     private val textProvider: AgentToolTextProvider
 ) : AgentTool {
 
@@ -54,7 +58,7 @@ class ReadBarcodeFromImageTool @Inject constructor(
     override suspend fun execute(arguments: String): AgentToolResult {
         return try {
             val params = if (arguments.isBlank()) ReadBarcodeFromImageParams() else {
-                gson.fromJson(arguments, ReadBarcodeFromImageParams::class.java)
+                AppJson.decodeFromString<ReadBarcodeFromImageParams>(arguments)
             }
             val imageUri = params.image_uri?.takeIf { it.isNotBlank() }
                 ?: return AgentToolResult(
@@ -66,11 +70,11 @@ class ReadBarcodeFromImageTool @Inject constructor(
             imageBarcodeReader.readBarcode(resolvedUri).fold(
                 onSuccess = { qrType ->
                     AgentToolResult(
-                        content = gson.toJson(
+                        content = AppJson.encodeToString(
                             BarcodeReadResult(
                                 type = toTypeName(qrType),
                                 raw = qrType.raw,
-                                structured = qrType.toStructuredData()
+                                structured = qrType.toStructuredData().toJsonElement()
                             )
                         )
                     )
@@ -169,12 +173,14 @@ class ReadBarcodeFromImageTool @Inject constructor(
     }
 }
 
+@Serializable
 private data class ReadBarcodeFromImageParams(
     val image_uri: String? = null
 )
 
+@Serializable
 private data class BarcodeReadResult(
     val type: String,
     val raw: String,
-    val structured: Map<String, Any?>
+    val structured: JsonElement
 )
