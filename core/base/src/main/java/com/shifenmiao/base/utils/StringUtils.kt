@@ -60,12 +60,85 @@ object StringUtils {
     }
 
     fun isValidUrl(url: String): Boolean {
-        if (url.trim().isEmpty()) {
+        val trimmed = url.trim()
+        if (trimmed.isEmpty()) {
             return false
         }
-        val urlRegex =
-            "^(http://|https://)[a-z0-9]+([-.]{1}[a-z0-9]+)*.[a-z]{2,5}(:[0-9]{1,5})?(/.*)?/$".toRegex()
-        return urlRegex.matches(url)
+        if (!trimmed.startsWith("http://", ignoreCase = true) &&
+            !trimmed.startsWith("https://", ignoreCase = true)
+        ) {
+            return false
+        }
+        return try {
+            !java.net.URI(trimmed).host.isNullOrBlank()
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    /**
+     * 规范化 API base URL：去空白、补全 http(s)://、统一 scheme 小写、保证以 '/' 结尾。
+     * 用户常漏写 scheme 或结尾斜杠，在失焦/保存时静默修好，避免校验报错打断填写。
+     */
+    fun normalizeApiBaseUrl(url: String): String {
+        var result = url.trim()
+        if (result.isEmpty()) {
+            return result
+        }
+        if (!result.startsWith("http://", ignoreCase = true) &&
+            !result.startsWith("https://", ignoreCase = true)
+        ) {
+            result = "https://$result"
+        }
+        result = when {
+            result.startsWith("http://", ignoreCase = true) ->
+                "http://" + result.substring(7)
+            result.startsWith("https://", ignoreCase = true) ->
+                "https://" + result.substring(8)
+            else -> result
+        }
+        if (!result.endsWith("/")) {
+            result = "$result/"
+        }
+        return result
+    }
+
+    /**
+     * 规范化 API 路径：去空白，非空时补全前导 '/'。
+     */
+    fun normalizeApiPath(path: String): String {
+        val trimmed = path.trim()
+        if (trimmed.isEmpty()) {
+            return trimmed
+        }
+        return if (trimmed.startsWith("/")) trimmed else "/$trimmed"
+    }
+
+    /**
+     * 清洗授权码粘贴内容：去掉 Bearer / x-api-key: 等前缀和引号。
+     * 用户常从文档/curl 整段复制，直接落库会带上请求头导致鉴权失败。
+     */
+    fun sanitizeApiToken(raw: String): String {
+        if (raw.isBlank()) return raw
+        val trimmed = raw.trim()
+
+        // curl / 多行 header 粘贴：优先抽出 x-api-key / Authorization 里的 token
+        val headerToken = Regex(
+            pattern = """(?i)(?:x-api-key|api-key|authorization)\s*[:=]\s*(?:bearer\s+|basic\s+|token\s+)?["']?([^\s"'\\,]+)["']?"""
+        ).find(trimmed)?.groupValues?.get(1)
+        if (headerToken != null && (trimmed.contains('\n') || trimmed.contains("curl", ignoreCase = true) || trimmed.contains(':'))) {
+            return headerToken.trim().trim('"', '\'')
+        }
+
+        var s = trimmed
+        // 行首常见鉴权前缀（可重复，如 Authorization: Bearer xxx）
+        repeat(3) {
+            s = s.replace(
+                Regex("""^(?i)(?:authorization\s*[:=]\s*)?(?:bearer|basic|token|x-api-key|api-key)\s*[:=]?\s*"""),
+                "",
+            )
+        }
+        return s.trim().trim('"', '\'', '`')
     }
 
     fun formatPriceWithUnit(price: Float): String {

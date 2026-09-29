@@ -25,6 +25,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -43,6 +44,7 @@ import com.t8rin.imagetoolbox.core.ui.widget.system.OneBoxOutlinedTextField
 import com.t8rin.imagetoolbox.core.ui.widget.system.OneBoxSectionCard
 import com.t8rin.imagetoolbox.core.utils.getString
 import com.wanbaohe.setting.ai.component.AIAddEngineComponent
+import com.wanbaohe.setting.ai.component.AIEngineSettingsDetailComponent
 import com.wanbaohe.settings.R
 import kotlinx.coroutines.launch
 import com.shifenmiao.core.R as CoreR
@@ -331,7 +333,20 @@ fun AIAddEngineScreen(
                     }
 
                     OneBoxOutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onFocusChanged { focusState ->
+                                if (!focusState.isFocused) {
+                                    component.updateDraft { e ->
+                                        val normalized = StringUtils.normalizeApiBaseUrl(e.requestUrl)
+                                        if (normalized != e.requestUrl) {
+                                            e.copy(requestUrl = normalized, isUrlError = false)
+                                        } else {
+                                            e
+                                        }
+                                    }
+                                }
+                            },
                         value = draft.requestUrl,
                         onValueChange = { component.updateDraft { e -> e.copy(requestUrl = it, isUrlError = false) } },
                         label = { Text(stringResource(R.string.ai_engine_api_url)) },
@@ -350,11 +365,26 @@ fun AIAddEngineScreen(
                                 } else {
                                     Text(stringResource(CoreR.string.url_error_tips))
                                 }
+                            } else {
+                                Text(stringResource(R.string.ai_engine_api_url_hint))
                             }
                         },
                     )
                     OneBoxOutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onFocusChanged { focusState ->
+                                if (!focusState.isFocused) {
+                                    component.updateDraft { e ->
+                                        val normalized = StringUtils.normalizeApiPath(e.requestPath)
+                                        if (normalized != e.requestPath) {
+                                            e.copy(requestPath = normalized)
+                                        } else {
+                                            e
+                                        }
+                                    }
+                                }
+                            },
                         value = draft.requestPath,
                         onValueChange = { component.updateDraft { e -> e.copy(requestPath = it) } },
                         label = { Text(stringResource(R.string.ai_engine_api_path)) },
@@ -375,7 +405,10 @@ fun AIAddEngineScreen(
                     PasswordTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = draft.authorizationCode,
-                        onValueChange = { component.updateDraft { e -> e.copy(authorizationCode = it) } },
+                        onValueChange = { raw ->
+                            val cleaned = StringUtils.sanitizeApiToken(raw)
+                            component.updateDraft { e -> e.copy(authorizationCode = cleaned) }
+                        },
                         label = stringResource(R.string.ai_engine_auth_token),
                         onClearValue = { component.updateDraft { it.copy(authorizationCode = "") } },
                         imeAction = ImeAction.Done,
@@ -389,7 +422,15 @@ fun AIAddEngineScreen(
                             value = draft.model.name,
                             onValueChange = { value ->
                                 component.updateDraft { engine ->
-                                    engine.copy(model = engine.model.copy(name = value, title = value))
+                                    val autoTitle = AIEngineSettingsDetailComponent.prettifyModelTitle(value)
+                                    val titleWasAuto = engine.model.title.isBlank() ||
+                                        engine.model.title == AIEngineSettingsDetailComponent.prettifyModelTitle(engine.model.name)
+                                    engine.copy(
+                                        model = engine.model.copy(
+                                            name = value,
+                                            title = if (titleWasAuto) autoTitle else engine.model.title,
+                                        )
+                                    )
                                 }
                             },
                             label = { Text(stringResource(R.string.ai_engine_model_name)) },
@@ -415,8 +456,23 @@ fun AIAddEngineScreen(
                 else component.onGoBack()
             },
             onSave = {
+                // 保存前再规范化一次, 防止用户没移开焦点就点保存;
+                // 校验用规范化后的值本地判断, 不依赖组合里尚未重组的 draft
+                val normalizedUrl = StringUtils.normalizeApiBaseUrl(draft.requestUrl)
+                val normalizedPath = StringUtils.normalizeApiPath(draft.requestPath)
+                component.updateDraft { e ->
+                    e.copy(requestUrl = normalizedUrl, requestPath = normalizedPath)
+                }
                 showValidationErrors = true
-                if (hasValidationErrors) {
+                val saveTitle = draft.title.trim()
+                val skipCloud = isLocalProtocol || isJevProtocol || isPikafishProtocol
+                val invalid = saveTitle.isBlank() ||
+                    (!skipCloud && (
+                        normalizedUrl.isBlank() ||
+                            !StringUtils.isValidUrl(normalizedUrl) ||
+                            normalizedPath.isBlank()
+                        ))
+                if (invalid) {
                     coroutineScope.launch {
                         AppToastHost.showFailureToast(
                             getString(R.string.ai_engine_dialog_validation_failed)
@@ -426,7 +482,7 @@ fun AIAddEngineScreen(
                 }
                 // 服务标识留空时自动派生; 纯中文标题派生不出可用的 slug, 退化为时间戳后缀兜底
                 val resolvedName = draft.name.trim().ifBlank {
-                    deriveAutoServiceKey(trimmedTitle).ifBlank {
+                    deriveAutoServiceKey(saveTitle).ifBlank {
                         "engine-${System.currentTimeMillis() % 1_000_000}"
                     }
                 }

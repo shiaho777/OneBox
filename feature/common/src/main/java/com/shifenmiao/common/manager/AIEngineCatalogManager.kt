@@ -146,6 +146,60 @@ class AIEngineCatalogManager @Inject constructor(
     }
 
     /**
+     * 保存编辑中的本地引擎；[originalName] 非空且与 [engine].name 不同时表示重命名服务标识。
+     * 重命名时按旧名查找落库行并同步改模型归属，避免「改了名字变成新增一条、旧的还在」。
+     */
+    fun saveEditedLocalEngine(
+        engine: AiEngine,
+        originalName: String?,
+        onComplete: (Boolean) -> Unit = {},
+    ) {
+        managerScope.launch {
+            try {
+                val previousName = originalName?.trim().orEmpty()
+                val newName = engine.name.trim()
+                if (previousName.isEmpty() || previousName == newName) {
+                    persistEngineConfig(engine = engine, isNewEngine = false) { result ->
+                        onComplete(result is AddEngineResult.Success)
+                    }
+                    return@launch
+                }
+
+                val existing = aiEngineRepository.getEngineByNameAndProtocol(
+                    name = previousName,
+                    requestProtocol = engine.requestProtocol.name,
+                )
+                if (existing == null || !existing.isLocalOwned()) {
+                    onComplete(false)
+                    return@launch
+                }
+                val collision = aiEngineRepository.getEngineByNameAndProtocol(
+                    name = newName,
+                    requestProtocol = engine.requestProtocol.name,
+                )
+                if (collision != null && collision.id != existing.id) {
+                    onComplete(false)
+                    return@launch
+                }
+
+                aiEngineRepository.getModelsByEngineName(previousName).forEach { model ->
+                    aiEngineRepository.updateModel(model.copy(engineName = newName))
+                }
+
+                val entity = mergeConfigToEntity(
+                    engine = engine.copy(name = newName),
+                    existing = existing.copy(name = newName),
+                ).copy(id = existing.id, name = newName)
+                aiEngineRepository.updateEngine(entity)
+                onComplete(true)
+            } catch (e: Exception) {
+                makeLog { "AIEngineCatalogManager: Save edited engine failed: $e" }
+                onComplete(false)
+            }
+        }
+    }
+
+    /**
      * 新增一个用户自建引擎。
      *
      * 与 [saveEngineConfigOnly] 的差别是多了两道"别假装成功"的防线:

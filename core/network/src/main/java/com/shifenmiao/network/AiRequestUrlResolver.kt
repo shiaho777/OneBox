@@ -94,7 +94,7 @@ object AiRequestUrlResolver {
                         baseUrl = engine.requestUrl,
                         fallbackBaseUrl = NetworkBuilder.ensureValidBaseUrl(engine)
                     )
-                    joinUrl(baseUrl, "/v1/messages")
+                    joinUrl(baseUrl, engine.requestPath.ifBlank { "/v1/messages" })
                 } else {
                     joinUrl(
                         baseUrl = resolveProxyBaseUrl(engine),

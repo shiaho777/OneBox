@@ -302,7 +302,7 @@
     <string name="kim_chat_ai">مونشوت (كيم تشات)</string>
     <string name="json_exception">خطأ في تحليل البيانات:\n %s ···</string>
     <string name="load_failure">فشل التحميل من الشبكة:\n %s ···</string>
-    <string name="url_error_tips">يجب أن يبدأ URL بـ \'http\' أو \'https\' وينتهي بـ \'/\'.</string>
+    <string name="url_error_tips">أدخل عنوان URL صالحًا يبدأ بـ http أو https.</string>
     <string name="temperature">درجة حرارة</string>
     <string name="ai_temperature">درجة الحرارة</string>
     <string name="ai_temperature_desc">القيم الأعلى (مثل 0.7) تجعل المخرجات أكثر عشوائية، والقيم الأقل (مثل 0.2) تجعلها أكثر تركيزًا وحتمية.</string>

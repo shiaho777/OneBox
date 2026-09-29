@@ -138,6 +138,10 @@
     <string name="ai_engine_name_auto_hint">Unique key for this service, auto-filled from the display name; usually no need to change.</string>
     <string name="ai_engine_more_options">More options</string>
     <string name="ai_engine_title_label">Display Name</string>
+    <string name="ai_engine_title_hint">Name shown in lists and chat; can be changed anytime</string>
+    <string name="ai_engine_name_edit_hint">Unique service key; models follow when renamed — usually leave as-is</string>
+    <string name="ai_engine_model_dialog_primary_hint">Enter the model ID required by the service. Display name is generated automatically.</string>
+    <string name="ai_engine_model_display_name_hint">Leave blank to generate from the model key</string>
     <string name="ai_engine_description_label">Description</string>
     <string name="ai_engine_protocol_label">Request Protocol</string>
     <string name="ai_engine_protocol_openai">OpenAI-Compatible (Chat Completions)</string>
@@ -213,6 +217,7 @@
     <string name="ai_working_model_status_unavailable">Current route: unavailable — go to settings first</string>
     <string name="ai_engine_api_url">API URL</string>
     <string name="ai_engine_api_path">API Path</string>
+    <string name="ai_engine_api_url_hint">Auto-fills https:// and a trailing / when you leave the field</string>
     <string name="ai_engine_jev_proxy_hint">Enter your Jev API key and pass the connection test to connect directly; you can also use it right away without a key.</string>
     <string name="ai_engine_auth_token">Auth Token</string>
     <string name="ai_engine_auth_type_label">Authentication Type</string>

@@ -293,7 +293,7 @@
     <string name="kim_chat_ai">Moonshot (KimChat)</string>
     <string name="json_exception">Veri ayrıştırma hatası:\n %s ···</string>
     <string name="load_failure">Ağ yükleme hatası:\n %s ···</string>
-    <string name="url_error_tips">URL \'http\' veya \'https\' ile başlamalı ve \'/\' ile bitmelidir.</string>
+    <string name="url_error_tips">Geçerli bir http veya https URL girin.</string>
     <string name="temperature">Sıcaklık</string>
     <string name="ai_temperature">Sıcaklık</string>
     <string name="ai_temperature_desc">Daha yüksek değerler (örn. 0.7) çıktıyı daha rastgele yapar, daha düşük değerler (örn. 0.2) daha odaklı ve deterministik yapar.</string>

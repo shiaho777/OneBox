@@ -293,7 +293,7 @@
     <string name="kim_chat_ai">문샷 (KimChat)</string>
     <string name="json_exception">데이터 파싱 오류:\n %s ···</string>
     <string name="load_failure">네트워크 로드 실패:\n %s ···</string>
-    <string name="url_error_tips">URL은 \'http\' 또는 \'https\'로 시작하고 \'/\'로 끝나야 합니다.</string>
+    <string name="url_error_tips">URL은 http 또는 https 형식의 유효한 주소여야 합니다.</string>
     <string name="temperature">색온도</string>
     <string name="ai_temperature">온도</string>
     <string name="ai_temperature_desc">높은 값(예: 0.7)은 출력을 더 무작위로 만들고, 낮은 값(예: 0.2)은 더 집중적이고 결정적으로 만듭니다.</string>

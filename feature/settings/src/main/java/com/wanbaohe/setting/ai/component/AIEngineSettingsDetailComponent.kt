@@ -106,6 +106,14 @@ class AIEngineSettingsDetailComponent @AssistedInject internal constructor(
         return draft != original
     }
 
+    fun updateTitle(value: String) {
+        _draftEngine.value = _draftEngine.value?.copy(title = value)
+    }
+
+    fun updateName(value: String) {
+        _draftEngine.value = _draftEngine.value?.copy(name = value)
+    }
+
     fun updateRequestUrl(value: String) {
         _draftEngine.value = _draftEngine.value?.copy(requestUrl = value, isUrlError = false)
     }
@@ -171,7 +179,8 @@ class AIEngineSettingsDetailComponent @AssistedInject internal constructor(
     }
 
     fun updateAuthorizationCode(value: String) {
-        _draftEngine.value = _draftEngine.value?.copy(authorizationCode = value, isDetestPassed = false)
+        val cleaned = com.shifenmiao.base.utils.StringUtils.sanitizeApiToken(value)
+        _draftEngine.value = _draftEngine.value?.copy(authorizationCode = cleaned, isDetestPassed = false)
     }
 
     fun updateStream(enabled: Boolean) {
@@ -196,8 +205,11 @@ class AIEngineSettingsDetailComponent @AssistedInject internal constructor(
 
     fun beginEditModel(model: AiModel) {
         val engine = _draftEngine.value ?: return
-        _editingModelDraft.value = model.copy(engineName = engine.name)
-        _editingModelOriginal.value = model.copy(engineName = engine.name)
+        _editingModelDraft.value = model.copy(
+            engineName = engine.name,
+            title = model.title.ifBlank { prettifyModelTitle(model.name) },
+        )
+        _editingModelOriginal.value = _editingModelDraft.value
     }
 
     fun dismissModelEditor() {
@@ -207,6 +219,32 @@ class AIEngineSettingsDetailComponent @AssistedInject internal constructor(
 
     fun updateEditingModel(transform: (AiModel) -> AiModel) {
         _editingModelDraft.value = _editingModelDraft.value?.let(transform)
+    }
+
+    /**
+     * 改模型标识时同步维护显示名：用户还没手改过显示名就自动跟一版「首字母大写」驼峰，
+     * 避免新增弹窗里三个字段都要填、还得自己想展示名。
+     */
+    fun updateEditingModelName(value: String) {
+        _editingModelDraft.value = _editingModelDraft.value?.let { model ->
+            val autoTitle = prettifyModelTitle(value)
+            val titleWasAuto = model.title.isBlank() || model.title == prettifyModelTitle(model.name)
+            model.copy(
+                name = value,
+                title = if (titleWasAuto) autoTitle else model.title,
+            )
+        }
+    }
+
+    companion object {
+        /** deepseek-flash → Deepseek-Flash；每个 -/_/空格 后的首字母大写 */
+        internal fun prettifyModelTitle(raw: String): String {
+            if (raw.isBlank()) return raw
+            return raw.mapIndexed { index, c ->
+                val isSegmentStart = index == 0 || !raw[index - 1].isLetterOrDigit()
+                if (isSegmentStart && c.isLetter()) c.uppercaseChar() else c
+            }.joinToString("")
+        }
     }
 
     fun updateTemperature(value: Float) {
@@ -300,7 +338,11 @@ class AIEngineSettingsDetailComponent @AssistedInject internal constructor(
     fun persistDraft(onComplete: (Boolean) -> Unit) {
         val draft = _draftEngine.value ?: return onComplete(false)
         _isSaving.value = true
-        aiEngineCatalogManager.saveEngineConfigOnly(draft) { success ->
+        val originalName = originalEngine?.name
+        aiEngineCatalogManager.saveEditedLocalEngine(
+            engine = draft,
+            originalName = originalName,
+        ) { success ->
             _isSaving.value = false
             if (success) {
                 originalEngine = draft

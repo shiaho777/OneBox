@@ -40,6 +40,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -139,10 +140,9 @@ fun AIEngineSettingsDetailScreen(
     if (editingModelDraft != null) {
         val editing = editingModelDraft!!
         val trimmedName = editing.name.trim()
-        val trimmedTitle = editing.title.trim()
         val isNameError = showModelValidationErrors && trimmedName.isBlank()
-        val isTitleError = showModelValidationErrors && trimmedTitle.isBlank()
-        val hasValidationErrors = trimmedName.isBlank() || trimmedTitle.isBlank()
+        val hasValidationErrors = trimmedName.isBlank()
+        var showModelMoreOptions by rememberSaveable { mutableStateOf(false) }
         EnhancedAlertDialog(
             visible = true,
             onDismissRequest = {
@@ -169,68 +169,76 @@ fun AIEngineSettingsDetailScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.ai_engine_dialog_required_hint),
+                        text = stringResource(R.string.ai_engine_model_dialog_primary_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.outline,
                     )
+                    // 主输入: 模型 ID。显示名自动派生, 细节收进「更多选项」
                     OneBoxOutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = editing.name,
-                        onValueChange = { value -> component.updateEditingModel { it.copy(name = value) } },
+                        onValueChange = { value -> component.updateEditingModelName(value) },
                         label = { Text(stringResource(R.string.ai_engine_model_name)) },
                         trailingIcon = {
                             ClearTextFieldTrailingIcon(
                                 value = editing.name,
-                                onClear = { component.updateEditingModel { it.copy(name = "") } },
+                                onClear = { component.updateEditingModelName("") },
                             )
                         },
                         isError = isNameError,
                         supportingText = {
                             if (isNameError) {
                                 Text(stringResource(CoreR.string.required_field))
+                            } else {
+                                Text(stringResource(R.string.ai_engine_model_name_hint))
                             }
                         },
                     )
-                    OneBoxOutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = editing.title,
-                        onValueChange = { value -> component.updateEditingModel { it.copy(title = value) } },
-                        label = { Text(stringResource(R.string.ai_engine_model_display_name)) },
-                        trailingIcon = {
-                            ClearTextFieldTrailingIcon(
+                    CollapsibleSectionHeader(
+                        title = stringResource(R.string.ai_engine_more_options),
+                        expanded = showModelMoreOptions,
+                        onToggle = { showModelMoreOptions = !showModelMoreOptions },
+                        summary = editing.title.ifBlank { AIEngineSettingsDetailComponent.prettifyModelTitle(editing.name) },
+                    )
+                    AnimatedVisibility(visible = showModelMoreOptions) {
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            OneBoxOutlinedTextField(
+                                modifier = Modifier.fillMaxWidth(),
                                 value = editing.title,
-                                onClear = { component.updateEditingModel { it.copy(title = "") } },
-                            )
-                        },
-                        isError = isTitleError,
-                        supportingText = {
-                            if (isTitleError) {
-                                Text(stringResource(CoreR.string.required_field))
-                            }
-                        },
-                    )
-                    OneBoxOutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = editing.description,
-                        onValueChange = { value ->
-                            component.updateEditingModel {
-                                it.copy(
-                                    description = value
-                                )
-                            }
-                        },
-                        label = { Text(stringResource(R.string.ai_engine_model_description)) },
-                        trailingIcon = {
-                            ClearTextFieldTrailingIcon(
-                                value = editing.description,
-                                onClear = {
-                                    component.updateEditingModel {
-                                        it.copy(description = "")
-                                    }
+                                onValueChange = { value ->
+                                    component.updateEditingModel { it.copy(title = value) }
+                                },
+                                label = { Text(stringResource(R.string.ai_engine_model_display_name)) },
+                                trailingIcon = {
+                                    ClearTextFieldTrailingIcon(
+                                        value = editing.title,
+                                        onClear = {
+                                            component.updateEditingModel { it.copy(title = "") }
+                                        },
+                                    )
+                                },
+                                supportingText = {
+                                    Text(stringResource(R.string.ai_engine_model_display_name_hint))
                                 },
                             )
-                        },
-                    )
+                            OneBoxOutlinedTextField(
+                                modifier = Modifier.fillMaxWidth(),
+                                value = editing.description,
+                                onValueChange = { value ->
+                                    component.updateEditingModel { it.copy(description = value) }
+                                },
+                                label = { Text(stringResource(R.string.ai_engine_model_description)) },
+                                trailingIcon = {
+                                    ClearTextFieldTrailingIcon(
+                                        value = editing.description,
+                                        onClear = {
+                                            component.updateEditingModel { it.copy(description = "") }
+                                        },
+                                    )
+                                },
+                            )
+                        }
+                    }
                 }
             },
             confirmButton = {
@@ -245,6 +253,9 @@ fun AIEngineSettingsDetailScreen(
                                 )
                             }
                             return@OnePrimaryButton
+                        }
+                        component.updateEditingModel {
+                            it.copy(title = it.title.ifBlank { AIEngineSettingsDetailComponent.prettifyModelTitle(it.name) })
                         }
                         component.persistModelDraft { success ->
                             coroutineScope.launch {
@@ -328,6 +339,17 @@ fun AIEngineSettingsDetailScreen(
             ) {
                 Spacer(modifier = Modifier.height(OneBoxDesignSystem.microSpacing))
 
+                // 服务商基本信息: 显示名/服务标识可改, 修掉「标题被填成 API Key 却改不了」
+                EngineBasicInfoCard(
+                    engine = engine,
+                    canEditName = localOwnedEngineKeys.any { key ->
+                        key == engine.identityKey() ||
+                            key.startsWith("${engine.name.trim().lowercase()}#")
+                    },
+                    onTitleChange = component::updateTitle,
+                    onNameChange = component::updateName,
+                )
+
                 // 渠道能力(如 Google 全量放开)或远程开关开放时, 展示服务器/Token 设置
                 val capabilities = remember { AiEngineConfig.getCapabilities() }
                 if (capabilities.canEditToken || RemoteConfigStorage.getRemoteConfig().canSetAiToken == true) {
@@ -341,6 +363,17 @@ fun AIEngineSettingsDetailScreen(
                         onPathChange = component::updateRequestPath,
                         onTokenChange = component::updateAuthorizationCode,
                         onTestClick = {
+                            // 测试前规范化地址, 与保存/聊天链路保持一致
+                            draftEngine?.let { current ->
+                                val normalizedUrl = StringUtils.normalizeApiBaseUrl(current.requestUrl)
+                                val normalizedPath = StringUtils.normalizeApiPath(current.requestPath)
+                                if (normalizedUrl != current.requestUrl) {
+                                    component.updateRequestUrl(normalizedUrl)
+                                }
+                                if (normalizedPath != current.requestPath) {
+                                    component.updateRequestPath(normalizedPath)
+                                }
+                            }
                             val canTestDirectly = draftEngine?.let {
                                 it.authType == AuthType.NONE ||
                                         it.requestProtocol == AiRequestProtocol.OWN_PROXY ||
@@ -422,7 +455,13 @@ fun AIEngineSettingsDetailScreen(
                     )
                 }
 
-                if (localOwnedEngineKeys.contains(engine.identityKey())) {
+                // 删除入口看「是否本地自有」。identityKey 含协议, 仅用草稿判断会在切换协议时
+                // 对不上导致按钮消失; 同名任意本地协议记录都认。
+                val canDeleteEngine = localOwnedEngineKeys.any { key ->
+                    key == engine.identityKey() ||
+                        key.startsWith("${engine.name.trim().lowercase()}#")
+                }
+                if (canDeleteEngine) {
                     Spacer(modifier = Modifier.height(24.dp))
                     OneBoxDangerButton(
                         text = stringResource(R.string.ai_engine_delete_action),
@@ -445,11 +484,18 @@ fun AIEngineSettingsDetailScreen(
             onSave = {
                 val engine = draftEngine ?: return@BottomSaveCancelBar
                 val isJev = engine.requestProtocol.isNonChat
-                val updatedEngine = engine.copy(
-                    isUrlError = !isJev && !StringUtils.isValidUrl(engine.requestUrl)
-                )
-                if (!isJev && (!StringUtils.isValidUrl(updatedEngine.requestUrl) || updatedEngine.requestPath.isBlank())) {
-                    component.updateUrlValidation(!StringUtils.isValidUrl(updatedEngine.requestUrl))
+                // 保存前再规范化一次, 防止用户没移开焦点就点保存
+                val normalizedUrl = StringUtils.normalizeApiBaseUrl(engine.requestUrl)
+                val normalizedPath = StringUtils.normalizeApiPath(engine.requestPath)
+                if (normalizedUrl != engine.requestUrl) {
+                    component.updateRequestUrl(normalizedUrl)
+                }
+                if (normalizedPath != engine.requestPath) {
+                    component.updateRequestPath(normalizedPath)
+                }
+                val isUrlInvalid = !isJev && !StringUtils.isValidUrl(normalizedUrl)
+                if (isUrlInvalid || (!isJev && normalizedPath.isBlank())) {
+                    component.updateUrlValidation(isUrlInvalid)
                     coroutineScope.launch {
                         AppToastHost.showFailureToast(
                             getString(R.string.ai_engine_invalid_server)
@@ -765,6 +811,65 @@ private fun RemoteModelPickerDialog(
 }
 
 @Composable
+private fun EngineBasicInfoCard(
+    engine: AiEngine,
+    canEditName: Boolean,
+    onTitleChange: (String) -> Unit,
+    onNameChange: (String) -> Unit,
+) {
+    SettingCard {
+        var showMore by rememberSaveable { mutableStateOf(false) }
+        OneBoxOutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = engine.title,
+            onValueChange = onTitleChange,
+            label = { Text(stringResource(R.string.ai_engine_title_label)) },
+            trailingIcon = {
+                ClearTextFieldTrailingIcon(
+                    value = engine.title,
+                    onClear = { onTitleChange("") },
+                )
+            },
+            singleLine = true,
+            supportingText = {
+                Text(stringResource(R.string.ai_engine_title_hint))
+            },
+        )
+        CollapsibleSectionHeader(
+            title = stringResource(R.string.ai_engine_more_options),
+            expanded = showMore,
+            onToggle = { showMore = !showMore },
+            summary = engine.name,
+        )
+        AnimatedVisibility(visible = showMore) {
+            Column(verticalArrangement = Arrangement.spacedBy(OneBoxDesignSystem.itemSpacing)) {
+                OneBoxOutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = engine.name,
+                    onValueChange = if (canEditName) onNameChange else {
+                        {}
+                    },
+                    label = { Text(stringResource(R.string.ai_engine_name_label)) },
+                    trailingIcon = {
+                        if (canEditName) {
+                            ClearTextFieldTrailingIcon(
+                                value = engine.name,
+                                onClear = { onNameChange("") },
+                            )
+                        }
+                    },
+                    singleLine = true,
+                    readOnly = !canEditName,
+                    supportingText = {
+                        Text(stringResource(R.string.ai_engine_name_edit_hint))
+                    },
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun ServerConnectivityCard(
     engine: AiEngine,
     canEditApiSettings: Boolean,
@@ -851,7 +956,16 @@ private fun ServerConnectivityCard(
         }
 
         OneBoxOutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .onFocusChanged { focusState ->
+                    if (!focusState.isFocused && canEditApiSettings) {
+                        val normalized = StringUtils.normalizeApiBaseUrl(engine.requestUrl)
+                        if (normalized != engine.requestUrl) {
+                            onUrlChange(normalized)
+                        }
+                    }
+                },
             value = engine.requestUrl,
             onValueChange = if (canEditApiSettings) onUrlChange else {
                 {}
@@ -871,12 +985,23 @@ private fun ServerConnectivityCard(
             supportingText = {
                 if (engine.isUrlError) {
                     Text(text = stringResource(CoreR.string.url_error_tips))
+                } else {
+                    Text(text = stringResource(R.string.ai_engine_api_url_hint))
                 }
             },
         )
 
         OneBoxOutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .onFocusChanged { focusState ->
+                    if (!focusState.isFocused && canEditApiSettings) {
+                        val normalized = StringUtils.normalizeApiPath(engine.requestPath)
+                        if (normalized != engine.requestPath) {
+                            onPathChange(normalized)
+                        }
+                    }
+                },
             value = engine.requestPath,
             onValueChange = if (canEditApiSettings) onPathChange else {
                 {}
@@ -987,7 +1112,9 @@ private fun ModelSelectionCard(
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -998,31 +1125,41 @@ private fun ModelSelectionCard(
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 2,
                     modifier = Modifier.weight(1f),
                 )
-                if (selectedModel.canEdit) {
-                    IconButton(
-                        onClick = { onModelEdit(selectedModel) },
-                        modifier = Modifier.size(36.dp),
-                    ) {
-                        Icon(
-                            imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.Edit,
-                            contentDescription = stringResource(R.string.ai_engine_edit_action),
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(20.dp),
-                        )
-                    }
-                    IconButton(
-                        onClick = { onModelDelete(selectedModel) },
-                        modifier = Modifier.size(36.dp),
-                    ) {
-                        Icon(
-                            imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.Delete,
-                            contentDescription = stringResource(R.string.ai_engine_delete_action),
-                            tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(20.dp),
-                        )
-                    }
+                // 固定占位, 本地/远程切换时行高不跳; 远程模型不可编辑时按钮禁用而不是消失
+                IconButton(
+                    onClick = { if (selectedModel.canEdit) onModelEdit(selectedModel) },
+                    enabled = selectedModel.canEdit,
+                    modifier = Modifier.size(36.dp),
+                ) {
+                    Icon(
+                        imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.Edit,
+                        contentDescription = stringResource(R.string.ai_engine_edit_action),
+                        tint = if (selectedModel.canEdit) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f)
+                        },
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+                IconButton(
+                    onClick = { if (selectedModel.canEdit) onModelDelete(selectedModel) },
+                    enabled = selectedModel.canEdit,
+                    modifier = Modifier.size(36.dp),
+                ) {
+                    Icon(
+                        imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.Delete,
+                        contentDescription = stringResource(R.string.ai_engine_delete_action),
+                        tint = if (selectedModel.canEdit) {
+                            MaterialTheme.colorScheme.error
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f)
+                        },
+                        modifier = Modifier.size(20.dp),
+                    )
                 }
             }
 

@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.shifenmiao.base.utils.ActionUtils
+import com.shifenmiao.base.utils.StringUtils
 import com.shifenmiao.core.R
 import com.shifenmiao.core.constants.UrlConstants
 import com.shifenmiao.model.ai.AiEngine
@@ -242,14 +243,27 @@ private fun testAiEngine(aiEngine: AiEngine): TestResult {
             .build()
 
         val isJev = aiEngine.requestProtocol == AiRequestProtocol.JEV
+        val isAnthropic = aiEngine.requestProtocol == AiRequestProtocol.ANTHROPIC_COMPATIBLE
+
+        // 与 AiRequestUrlResolver 保持同一套默认路径, 避免"聊天能通、测试 404"
+        val requestPath = when {
+            isJev -> StringUtils.normalizeApiPath(aiEngine.requestPath)
+                .ifBlank { UrlConstants.JEV_SYSTEMONE_ENDPOINT }
+            isAnthropic -> StringUtils.normalizeApiPath(aiEngine.requestPath)
+                .ifBlank { "/v1/messages" }
+            aiEngine.requestProtocol == AiRequestProtocol.RESPONSES_COMPATIBLE ->
+                StringUtils.normalizeApiPath(aiEngine.requestPath)
+                    .ifBlank { "/v1/responses" }
+            else -> StringUtils.normalizeApiPath(aiEngine.requestPath)
+                .ifBlank { "/v1/chat/completions" }
+        }
 
         val url = AiRequestUrlResolver.joinUrl(
             baseUrl = normalizeBaseUrl(
-                baseUrl = aiEngine.requestUrl,
+                baseUrl = StringUtils.normalizeApiBaseUrl(aiEngine.requestUrl),
                 fallbackBaseUrl = NetworkBuilder.ensureValidBaseUrl(aiEngine)
             ),
-            path = aiEngine.requestPath.ifBlank { UrlConstants.JEV_SYSTEMONE_ENDPOINT }
-                .takeIf { isJev } ?: aiEngine.requestPath
+            path = requestPath
         )
 
         val jsonBody = if (isJev) {
@@ -283,6 +297,10 @@ private fun testAiEngine(aiEngine: AiEngine): TestResult {
         } else {
             JSONObject().apply {
                 put("model", aiEngine.model.name)
+                // Anthropic Messages 必填 max_tokens; OpenAI 兼容端点多会忽略多余字段
+                if (isAnthropic) {
+                    put("max_tokens", aiEngine.model.maxTokens.coerceIn(1, 8192))
+                }
                 put("messages", JSONArray().apply {
                     put(JSONObject().apply {
                         put("role", "user")

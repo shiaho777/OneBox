@@ -293,7 +293,7 @@
     <string name="kim_chat_ai">Moonshot (KimChat)</string>
     <string name="json_exception">डेटा पार्सिंग त्रुटि:\n %s ···</string>
     <string name="load_failure">नेटवर्क लोड विफलता:\n %s ···</string>
-    <string name="url_error_tips">URL \'http\' या \'https\' से शुरू होना चाहिए और \'/\' पर समाप्त होना चाहिए।</string>
+    <string name="url_error_tips">एक मान्य http या https URL दर्ज करें।</string>
     <string name="temperature">तापमान</string>
     <string name="ai_temperature">तापमान</string>
     <string name="ai_temperature_desc">उच्च मान (जैसे 0.7) आउटपुट को अधिक यादृच्छिक बनाते हैं, निम्न मान (जैसे 0.2) इसे अधिक केंद्रित और निर्धारित करते हैं।</string>

@@ -107,6 +107,10 @@
     <string name="ai_engine_dialog_validation_failed">請先完善必填項目並修正錯誤欄位。</string>
     <string name="ai_engine_name_label">服務識別碼</string>
     <string name="ai_engine_title_label">顯示名稱</string>
+    <string name="ai_engine_title_hint">列表和對話裡展示的名字，可隨時修改</string>
+    <string name="ai_engine_name_edit_hint">服務唯一識別碼；修改後模型會跟著遷移，一般無需改動</string>
+    <string name="ai_engine_model_dialog_primary_hint">填服務端要求的模型 ID，顯示名會自動產生。</string>
+    <string name="ai_engine_model_display_name_hint">留空則按模型識別碼自動產生</string>
     <string name="ai_engine_description_label">描述</string>
     <string name="ai_engine_protocol_label">請求協定</string>
     <string name="ai_engine_protocol_openai">OpenAI Chat/completions API</string>
@@ -178,6 +182,7 @@
     <string name="ai_working_model_status_unavailable">當前鏈路：不可用，請先去設定</string>
     <string name="ai_engine_api_url">API位址</string>
     <string name="ai_engine_api_path">API路徑</string>
+    <string name="ai_engine_api_url_hint">失焦時自動補全 https:// 和結尾 /</string>
     <string name="ai_engine_auth_token">授權碼</string>
     <string name="ai_engine_auth_type_label">驗證方式</string>
     <string name="ai_engine_auth_type_bearer">Bearer</string>

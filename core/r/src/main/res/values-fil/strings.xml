@@ -293,7 +293,7 @@
     <string name="kim_chat_ai">Moonshot (KimChat)</string>
     <string name="json_exception">Error sa pag-parse ng data:\n %s ···</string>
     <string name="load_failure">Pagkabigo sa pag-load ng network:\n %s ···</string>
-    <string name="url_error_tips">Ang URL ay dapat magsimula sa \'http\' o \'https\' at magtapos sa \'/\'.</string>
+    <string name="url_error_tips">Maglagay ng wastong http o https na URL.</string>
     <string name="temperature">Temperatura</string>
     <string name="ai_temperature">Temperatura</string>
     <string name="ai_temperature_desc">Ang mas mataas na halaga (hal. 0.7) ay nagpapagulo sa output, ang mas mababang halaga (hal. 0.2) ay nagpapatuon at deterministiko.</string>

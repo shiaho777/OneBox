@@ -338,6 +338,8 @@ private fun EngineListCard(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    // 协议徽章:同名不同协议的引擎一眼能分开
+                    EngineBadge(text = protocolBadgeLabel(engine.requestProtocol))
                     // 链路状态:可用 / 不可用(不可用红色警示)
                     val routeAvailable = engine.hasAvailableChatRoute()
                     EngineBadge(
@@ -405,6 +407,19 @@ private fun EngineListCard(
                 },
             )
         }
+    }
+}
+
+private fun protocolBadgeLabel(protocol: AiRequestProtocol): String {
+    // 列表徽章用短名，完整名在详情页协议选择器里
+    return when (protocol) {
+        AiRequestProtocol.OPENAI_COMPATIBLE -> "OpenAI"
+        AiRequestProtocol.RESPONSES_COMPATIBLE -> "Responses"
+        AiRequestProtocol.ANTHROPIC_COMPATIBLE -> "Anthropic"
+        AiRequestProtocol.OWN_PROXY -> "Proxy"
+        AiRequestProtocol.LOCAL_ON_DEVICE -> "Local"
+        AiRequestProtocol.JEV -> "Jev"
+        AiRequestProtocol.PIKAFISH -> "Pikafish"
     }
 }
 

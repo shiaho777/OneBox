@@ -293,7 +293,7 @@
     <string name="kim_chat_ai">Moonshot (KimChat)</string>
     <string name="json_exception">データ解析エラー:\n %s ···</string>
     <string name="load_failure">ネットワーク読み込み失敗:\n %s ···</string>
-    <string name="url_error_tips">URLは\'http\'または\'https\'で始まり、\'/\'で終わる必要があります。</string>
+    <string name="url_error_tips">有効な http または https の URL を入力してください。</string>
     <string name="temperature">色温度</string>
     <string name="ai_temperature">温度</string>
     <string name="ai_temperature_desc">高い値（例：0.7）は出力をよりランダムにし、低い値（例：0.2）はより焦点を絞り決定的にします。</string>

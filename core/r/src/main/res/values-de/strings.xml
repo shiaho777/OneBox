@@ -293,7 +293,7 @@
     <string name="kim_chat_ai">Moonshot (KimChat)</string>
     <string name="json_exception">Datenanalysefehler:\n %s ···</string>
     <string name="load_failure">Netzwerkfehler:\n %s ···</string>
-    <string name="url_error_tips">Die URL muss mit \'http\' oder \'https\' beginnen und mit \'/\' enden.</string>
+    <string name="url_error_tips">Geben Sie eine gültige http- oder https-URL ein.</string>
     <string name="temperature">Temperatur</string>
     <string name="ai_temperature">Temperatur</string>
     <string name="ai_temperature_desc">Höhere Werte (z. B. 0.7) machen die Ausgabe zufälliger, niedrigere Werte (z. B. 0.2) fokussierter und deterministischer.</string>

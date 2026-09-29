@@ -328,7 +328,7 @@
     <string name="kim_chat_ai">月之暗面(KimChat)</string>
     <string name="json_exception">資料解析錯誤：\n %s ···</string>
     <string name="load_failure">網路載入資料失敗：\n %s ···</string>
-    <string name="url_error_tips">網址必須是「http」或「https」開頭，反斜線「/」結束</string>
+    <string name="url_error_tips">請輸入有效的 http 或 https 網址</string>
     <string name="temperature">色溫</string>
     <string name="ai_temperature">取樣溫度設定</string>
     <string name="ai_temperature_desc">較高的值（如 0.7）會使輸出更加隨機，而較低的值（如 0.2）會使其更加集中和確定</string>
