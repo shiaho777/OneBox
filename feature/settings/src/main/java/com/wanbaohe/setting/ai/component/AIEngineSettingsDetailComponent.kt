@@ -2,6 +2,7 @@ package com.wanbaohe.setting.ai.component
 
 import com.arkivanov.decompose.ComponentContext
 import com.shifenmiao.common.manager.AIEngineCatalogManager
+import com.shifenmiao.common.manager.AIEngineManager
 import com.shifenmiao.core.constants.UrlConstants
 import com.shifenmiao.model.ai.AiEngine
 import com.shifenmiao.model.ai.AiModel
@@ -34,6 +35,7 @@ class AIEngineSettingsDetailComponent @AssistedInject internal constructor(
     @Assisted val onGoBack: () -> Unit,
     @Assisted val onNavigate: (Screen) -> Unit,
     private val aiEngineCatalogManager: AIEngineCatalogManager,
+    private val aiEngineManager: AIEngineManager,
     private val openAICompatibleService: OpenAICompatibleService,
     private val openAIWithApiKeyService: OpenAIWithApiKeyService,
     private val apiService: ApiService,
@@ -337,14 +339,18 @@ class AIEngineSettingsDetailComponent @AssistedInject internal constructor(
 
     fun persistDraft(onComplete: (Boolean) -> Unit) {
         val draft = _draftEngine.value ?: return onComplete(false)
+        // 保存时 originalEngine 仍是被编辑的原行快照(草稿有改动时 init 收集器不会覆盖它),
+        // 其 name/requestProtocol 就是定位原行所需的 (previousName, originalProtocol)。
+        val original = originalEngine
         _isSaving.value = true
-        val originalName = originalEngine?.name
         aiEngineCatalogManager.saveEditedLocalEngine(
             engine = draft,
-            originalName = originalName,
+            originalName = original?.name,
+            originalProtocol = original?.requestProtocol?.name,
         ) { success ->
             _isSaving.value = false
             if (success) {
+                original?.let { aiEngineManager.onLocalEngineEdited(oldEngine = it, newEngine = draft) }
                 originalEngine = draft
             }
             onComplete(success)

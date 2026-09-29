@@ -138,7 +138,13 @@ class AIEngineCatalogManager @Inject constructor(
         )
     }
 
-    /** 保存已有引擎的配置改动(详情页编辑, 可能改的是内置预置行) */
+    /**
+     * 保存已有引擎的配置改动(引擎列表页/本地模型管理页调用, 可能改的是内置预置行)。
+     *
+     * 编辑语义与 [saveEditedLocalEngine] 一致: 按 (name, protocol) 查不到时会收敛到
+     * 同名首行原位更新(保留行 id, 允许协议漂移), 不会 insert 出同名重复行。
+     * 需要显式传"原始协议/原名"做改名冲突拒绝的详情页编辑, 走 [saveEditedLocalEngine]。
+     */
     fun saveEngineConfigOnly(engine: AiEngine, onComplete: (Boolean) -> Unit = {}) {
         persistEngineConfig(engine = engine, isNewEngine = false) { result ->
             onComplete(result is AddEngineResult.Success)
@@ -146,26 +152,39 @@ class AIEngineCatalogManager @Inject constructor(
     }
 
     /**
-     * 保存编辑中的本地引擎；[originalName] 非空且与 [engine].name 不同时表示重命名服务标识。
-     * 重命名时按旧名查找落库行并同步改模型归属，避免「改了名字变成新增一条、旧的还在」。
+     * 保存编辑中的本地引擎。
+     *
+     * 编辑 = 原位更新原来那一行(保留行 id), 允许改协议; 用 ([originalName], [originalProtocol])
+     * 定位被编辑的原行, 绝不允许因为换了协议导致按 (新名, 新协议) 查不到就 insert 新行 ——
+     * 旧行残留会让详情页/聊天按名字加载到旧协议行, 表现为「保存了又变回去」。
+     * [originalName] 非空且与 [engine].name 不同时表示重命名服务标识, 同步迁移模型归属。
      */
     fun saveEditedLocalEngine(
         engine: AiEngine,
         originalName: String?,
+        originalProtocol: String?,
         onComplete: (Boolean) -> Unit = {},
     ) {
         managerScope.launch {
             try {
                 val previousName = originalName?.trim().orEmpty()
                 val newName = engine.name.trim()
-                if (previousName.isEmpty() || previousName == newName) {
+                if (previousName.isEmpty()) {
+                    // 拿不到原行标识时退回按 (name, protocol) 查重更新的旧路径
                     persistEngineConfig(engine = engine, isNewEngine = false) { result ->
                         onComplete(result is AddEngineResult.Success)
                     }
                     return@launch
                 }
 
+                // 优先用 (旧名 + 原协议) 定位原行; originalProtocol 缺失时退回用草稿协议兜底
+                val originalProtocolName = originalProtocol
+                    ?.let { AiRequestProtocol.fromValue(it).name }
+                    ?: engine.requestProtocol.name
                 val existing = aiEngineRepository.getEngineByNameAndProtocol(
+                    name = previousName,
+                    requestProtocol = originalProtocolName,
+                ) ?: aiEngineRepository.getEngineByNameAndProtocol(
                     name = previousName,
                     requestProtocol = engine.requestProtocol.name,
                 )
@@ -173,17 +192,33 @@ class AIEngineCatalogManager @Inject constructor(
                     onComplete(false)
                     return@launch
                 }
+
+                // 唯一键冲突处理: 目标 (newName, 新协议) 已被另一行占用时,
+                // 要么是该 bug 留下的同名重复行(名字没变、只换了协议, 正是历史脏数据的形状),
+                // 删之; 要么是改名撞上了另一条真实存在的引擎, 拒绝保存, 不悄悄删别人的引擎。
                 val collision = aiEngineRepository.getEngineByNameAndProtocol(
                     name = newName,
                     requestProtocol = engine.requestProtocol.name,
                 )
                 if (collision != null && collision.id != existing.id) {
-                    onComplete(false)
-                    return@launch
+                    if (newName == previousName) {
+                        // 只删引擎行: ai_models 按 engineName(仅名字)归属, 对同名多协议行共享,
+                        // 连模型一起删会让原位更新后留下的那行也失去模型。
+                        aiEngineRepository.deleteEngineByNameAndProtocol(
+                            name = newName,
+                            requestProtocol = engine.requestProtocol.name,
+                        )
+                    } else {
+                        onComplete(false)
+                        return@launch
+                    }
                 }
 
-                aiEngineRepository.getModelsByEngineName(previousName).forEach { model ->
-                    aiEngineRepository.updateModel(model.copy(engineName = newName))
+                // 改名时同步迁移模型归属, 避免「改了名字变成新增一条、旧的还在」
+                if (previousName != newName) {
+                    aiEngineRepository.getModelsByEngineName(previousName).forEach { model ->
+                        aiEngineRepository.updateModel(model.copy(engineName = newName))
+                    }
                 }
 
                 val entity = mergeConfigToEntity(
@@ -191,6 +226,13 @@ class AIEngineCatalogManager @Inject constructor(
                     existing = existing.copy(name = newName),
                 ).copy(id = existing.id, name = newName)
                 aiEngineRepository.updateEngine(entity)
+
+                // 同步模型配置(canUploadFile、canImage 等字段存储在模型表中), 与 persistEngineConfig 同一套逻辑
+                persistEngineModelConfig(
+                    engine = engine.copy(name = newName),
+                    isLocalOwnedEngine = true,
+                )
+
                 onComplete(true)
             } catch (e: Exception) {
                 makeLog { "AIEngineCatalogManager: Save edited engine failed: $e" }
@@ -225,6 +267,17 @@ class AIEngineCatalogManager @Inject constructor(
                     requestProtocol = engine.requestProtocol.name,
                 )
 
+                // 编辑路径的协议漂移防护: 按 (name, 新协议) 查不到、但库内已有同名行时,
+                // 说明调用方改了协议(或库里留有历史重复行)。编辑语义是原位更新原行,
+                // 与 saveEditedLocalEngine 一致: 收敛到同名首行(详情页按名字加载、
+                // 聊天 identityKey 匹配命中的就是它), 而不是 insert 出一行同名引擎 ——
+                // 那正是"保存了又变回去"bug 的根。新增路径不受影响(target 恒等于 existing)。
+                val target = if (isNewEngine) {
+                    existing
+                } else {
+                    existing ?: aiEngineRepository.getEngineByName(name = engine.name)
+                }
+
                 // 撞名保护: 新增时只要名称已被任何一行占用就拒绝 ——
                 // 无论那一行是内置预设还是用户之前建的另一条自定义引擎。
                 // 否则会走 update 分支: 用户既看不到新条目, 已有的引擎还会被悄悄改掉。
@@ -242,10 +295,10 @@ class AIEngineCatalogManager @Inject constructor(
                     return@launch
                 }
 
-                val isLocalOwnedEngine = existing?.isLocalOwned() ?: true
-                val entity = mergeConfigToEntity(engine = engine, existing = existing)
+                val isLocalOwnedEngine = target?.isLocalOwned() ?: true
+                val entity = mergeConfigToEntity(engine = engine, existing = target)
 
-                if (existing == null) {
+                if (target == null) {
                     aiEngineRepository.saveEngine(entity)
                 } else {
                     aiEngineRepository.updateEngine(entity)
@@ -260,10 +313,12 @@ class AIEngineCatalogManager @Inject constructor(
                 if (persisted == null || (isNewEngine && !persisted.isLocalOwned())) {
                     makeLog {
                         "AIEngineCatalogManager: Engine '${engine.name}' not persisted as expected " +
-                            "(existing=${existing != null}, persisted=${persisted?.source}/${persisted?.canEdit})"
+                            "(existing=${target != null}, persisted=${persisted?.source}/${persisted?.canEdit})"
                     }
-                    if (existing == null && persisted != null) {
-                        // 本次是新增: 回滚掉这条用户永远看不到的行, 不给库里留脏数据
+                    if (target == null && persisted != null) {
+                        // 本次是真新增: 回滚掉这条用户永远看不到的行, 不给库里留脏数据。
+                        // 注意用 target 判断: 编辑路径收敛到同名原行时也是 update,
+                        // 这里不能把刚更新的行删掉。
                         aiEngineRepository.deleteEngineByNameAndProtocol(
                             name = persisted.name,
                             requestProtocol = persisted.requestProtocol,
@@ -279,65 +334,7 @@ class AIEngineCatalogManager @Inject constructor(
                 }
 
                 // 同步更新模型配置（canUploadFile、canImage 等字段存储在模型表中）
-                val model = engine.model
-                val engineName = engine.name.ifBlank { model.engineName.ifBlank { model.provider.value } }
-                if (model.name.isNotBlank()) {
-                    val existingModel = aiEngineRepository.getModelById(model.id)
-                        ?.takeIf { it.engineName.equals(engineName, ignoreCase = true) }
-                        ?: aiEngineRepository.getModelByNameAndEngineName(model.name, engineName)
-
-                    if (isLocalOwnedEngine || existingModel?.isLocalOwned() == true) {
-                        // 用户自建引擎的模型也必须是"本地自有": 落成 REMOTE 会被远程引擎白名单
-                        // 连带过滤, 表现为引擎能选、模型选择器里却没有它。
-                        val localModelEntity = AiModelEntity.fromAiModel(
-                            model = model.copy(
-                                engineName = engineName,
-                                canEdit = true,
-                            ),
-                            existingEntity = existingModel,
-                            source = AiConfigSource.LOCAL,
-                        ).copy(
-                            id = existingModel?.id ?: 0,
-                            engineName = engineName,
-                            source = AiConfigSource.LOCAL.name,
-                            canEdit = true,
-                            enabled = existingModel?.enabled ?: true,
-                            sortOrder = existingModel?.sortOrder
-                                ?: (aiEngineRepository.getMaxModelSortOrderForEngine(engineName) + 1),
-                        )
-                        if (existingModel == null) {
-                            aiEngineRepository.saveModel(localModelEntity)
-                        } else {
-                            aiEngineRepository.updateModel(localModelEntity)
-                        }
-                    } else {
-                        val baseRemoteEntity = existingModel ?: AiModelEntity.fromAiModel(
-                            model = model.copy(
-                                engineName = engineName,
-                                canEdit = false,
-                            ),
-                            source = AiConfigSource.REMOTE,
-                        ).copy(
-                            id = 0,
-                            engineName = engineName,
-                            source = AiConfigSource.REMOTE.name,
-                            canEdit = false,
-                            enabled = true,
-                            sortOrder = aiEngineRepository.getMaxModelSortOrderForEngine(engineName) + 1,
-                        )
-
-                        val updatedRemoteModelEntity = baseRemoteEntity.applyPartialOverrides(
-                            model = model.copy(engineName = engineName),
-                            forceStoreValues = existingModel == null,
-                        )
-
-                        if (existingModel == null) {
-                            aiEngineRepository.saveModel(updatedRemoteModelEntity.copy(id = 0))
-                        } else {
-                            aiEngineRepository.updateModel(updatedRemoteModelEntity)
-                        }
-                    }
-                }
+                persistEngineModelConfig(engine = engine, isLocalOwnedEngine = isLocalOwnedEngine)
 
                 onComplete(AddEngineResult.Success)
             } catch (e: Exception) {
@@ -349,6 +346,77 @@ class AIEngineCatalogManager @Inject constructor(
                     throwable = e,
                 )
                 onComplete(AddEngineResult.Failed)
+            }
+        }
+    }
+
+    /**
+     * 同步引擎当前模型的配置（canUploadFile、canImage 等字段存储在模型表中）。
+     *
+     * persistEngineConfig(新增/旧编辑路径)与 saveEditedLocalEngine(详情页原位编辑)共用,
+     * 保证两条保存路径落出来的模型行行为一致。
+     */
+    private suspend fun persistEngineModelConfig(
+        engine: AiEngine,
+        isLocalOwnedEngine: Boolean,
+    ) {
+        val model = engine.model
+        val engineName = engine.name.ifBlank { model.engineName.ifBlank { model.provider.value } }
+        if (model.name.isBlank()) return
+
+        val existingModel = aiEngineRepository.getModelById(model.id)
+            ?.takeIf { it.engineName.equals(engineName, ignoreCase = true) }
+            ?: aiEngineRepository.getModelByNameAndEngineName(model.name, engineName)
+
+        if (isLocalOwnedEngine || existingModel?.isLocalOwned() == true) {
+            // 用户自建引擎的模型也必须是"本地自有": 落成 REMOTE 会被远程引擎白名单
+            // 连带过滤, 表现为引擎能选、模型选择器里却没有它。
+            val localModelEntity = AiModelEntity.fromAiModel(
+                model = model.copy(
+                    engineName = engineName,
+                    canEdit = true,
+                ),
+                existingEntity = existingModel,
+                source = AiConfigSource.LOCAL,
+            ).copy(
+                id = existingModel?.id ?: 0,
+                engineName = engineName,
+                source = AiConfigSource.LOCAL.name,
+                canEdit = true,
+                enabled = existingModel?.enabled ?: true,
+                sortOrder = existingModel?.sortOrder
+                    ?: (aiEngineRepository.getMaxModelSortOrderForEngine(engineName) + 1),
+            )
+            if (existingModel == null) {
+                aiEngineRepository.saveModel(localModelEntity)
+            } else {
+                aiEngineRepository.updateModel(localModelEntity)
+            }
+        } else {
+            val baseRemoteEntity = existingModel ?: AiModelEntity.fromAiModel(
+                model = model.copy(
+                    engineName = engineName,
+                    canEdit = false,
+                ),
+                source = AiConfigSource.REMOTE,
+            ).copy(
+                id = 0,
+                engineName = engineName,
+                source = AiConfigSource.REMOTE.name,
+                canEdit = false,
+                enabled = true,
+                sortOrder = aiEngineRepository.getMaxModelSortOrderForEngine(engineName) + 1,
+            )
+
+            val updatedRemoteModelEntity = baseRemoteEntity.applyPartialOverrides(
+                model = model.copy(engineName = engineName),
+                forceStoreValues = existingModel == null,
+            )
+
+            if (existingModel == null) {
+                aiEngineRepository.saveModel(updatedRemoteModelEntity.copy(id = 0))
+            } else {
+                aiEngineRepository.updateModel(updatedRemoteModelEntity)
             }
         }
     }

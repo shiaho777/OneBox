@@ -292,8 +292,11 @@ class AIEngineManager @Inject constructor(
             preferredFallback = fallbackDefaultEngine,
             hasUserSelection = AiConfigVersionStorage.hasUserSetDefault(),
         )
-        if (_currentAIEngine.value != resolvedDefault) {
-            applyDefaultEngine(engine = resolvedDefault, markUserSelection = false)
+        if (_currentAIEngine.value != resolvedDefault.engine) {
+            applyDefaultEngine(engine = resolvedDefault.engine, markUserSelection = false)
+            clearUserSelectionOnSilentFallback(kind = resolvedDefault.kind) {
+                AiConfigVersionStorage.setHasUserSetDefault(false)
+            }
         }
 
         val resolvedFast = resolveSelection(
@@ -302,8 +305,11 @@ class AIEngineManager @Inject constructor(
             preferredFallback = fallbackFastEngine,
             hasUserSelection = AiConfigVersionStorage.hasUserSetFast(),
         )
-        if (_fastAIEngine.value != resolvedFast) {
-            applyFastEngine(engine = resolvedFast, markUserSelection = false)
+        if (_fastAIEngine.value != resolvedFast.engine) {
+            applyFastEngine(engine = resolvedFast.engine, markUserSelection = false)
+            clearUserSelectionOnSilentFallback(kind = resolvedFast.kind) {
+                AiConfigVersionStorage.setHasUserSetFast(false)
+            }
         }
 
         val resolvedDuelA = resolveSelection(
@@ -312,8 +318,11 @@ class AIEngineManager @Inject constructor(
             preferredFallback = fallbackDuelEngineA,
             hasUserSelection = AiConfigVersionStorage.hasUserSetDuelA(),
         )
-        if (_duelEngineA.value != resolvedDuelA) {
-            applyDuelEngineA(engine = resolvedDuelA, markUserSelection = false)
+        if (_duelEngineA.value != resolvedDuelA.engine) {
+            applyDuelEngineA(engine = resolvedDuelA.engine, markUserSelection = false)
+            clearUserSelectionOnSilentFallback(kind = resolvedDuelA.kind) {
+                AiConfigVersionStorage.setHasUserSetDuelA(false)
+            }
         }
 
         val resolvedDuelB = resolveSelection(
@@ -322,8 +331,54 @@ class AIEngineManager @Inject constructor(
             preferredFallback = fallbackDuelEngineB,
             hasUserSelection = AiConfigVersionStorage.hasUserSetDuelB(),
         )
-        if (_duelEngineB.value != resolvedDuelB) {
-            applyDuelEngineB(engine = resolvedDuelB, markUserSelection = false)
+        if (_duelEngineB.value != resolvedDuelB.engine) {
+            applyDuelEngineB(engine = resolvedDuelB.engine, markUserSelection = false)
+            clearUserSelectionOnSilentFallback(kind = resolvedDuelB.kind) {
+                AiConfigVersionStorage.setHasUserSetDuelB(false)
+            }
+        }
+    }
+
+    /**
+     * 静默跨引擎兜底(用户引擎已从目录消失, 落到 MiMo 等兜底引擎)时清掉用户选择标记。
+     *
+     * 兜底不是用户主动选择: 若保留标记, 快照会永远自锁在兜底引擎上,
+     * 后续 remoteConfig 默认值/reconcile 都无法再修正。同名重绑(SAME_NAME)不清 ——
+     * 用户选的引擎还在(只是协议变了), 用户意图仍然成立。
+     */
+    private fun clearUserSelectionOnSilentFallback(
+        kind: SelectionMatchKind,
+        clear: () -> Unit,
+    ) {
+        if (kind == SelectionMatchKind.FALLBACK) {
+            clear()
+        }
+    }
+
+    /**
+     * 本地引擎编辑保存成功后同步各槽位快照。
+     *
+     * 默认/快速/互聊A/B 槽位持久化的当前引擎若仍指向被编辑引擎的旧 identityKey(或同名),
+     * 就地替换为编辑后的新引擎, 避免用户还要手动重选模型聊天才生效。
+     * 不标记为用户主动选择: 这里只是跟随编辑刷新快照, 后续 reconcile 仍会按 identityKey 收敛。
+     */
+    fun onLocalEngineEdited(oldEngine: AiEngine, newEngine: AiEngine) {
+        fun AiEngine.isEditedEngine(): Boolean {
+            return identityKey() == oldEngine.identityKey() ||
+                name.equals(oldEngine.name, ignoreCase = true)
+        }
+
+        if (_currentAIEngine.value.isEditedEngine()) {
+            applyDefaultEngine(engine = newEngine, markUserSelection = false)
+        }
+        if (_fastAIEngine.value.isEditedEngine()) {
+            applyFastEngine(engine = newEngine, markUserSelection = false)
+        }
+        if (_duelEngineA.value.isEditedEngine()) {
+            applyDuelEngineA(engine = newEngine, markUserSelection = false)
+        }
+        if (_duelEngineB.value.isEditedEngine()) {
+            applyDuelEngineB(engine = newEngine, markUserSelection = false)
         }
     }
 
@@ -388,27 +443,89 @@ class AIEngineManager @Inject constructor(
         return storedEngine?.takeIf { engine -> isValidProviderName(engine.name) } ?: fallbackEngine
     }
 
+    /** resolveSelection 的匹配方式: 用于区分用户主动选择 vs 静默兜底 */
+    private enum class SelectionMatchKind {
+        /** identityKey 精确命中: 同一引擎 */
+        EXACT,
+
+        /** 同名命中: 协议漂移/行重建, 用户意图仍成立 */
+        SAME_NAME,
+
+        /** 落到 preferredFallback: 用户引擎已消失, 纯兜底 */
+        FALLBACK,
+
+        /** 目录解析不出结果, 原样保留 current/兜底值 */
+        NONE,
+    }
+
+    private data class SelectionResolution(
+        val engine: AiEngine,
+        val kind: SelectionMatchKind,
+    )
+
+    /**
+     * 回落链: ① 精确 identityKey → ② 同名引擎(协议漂移/行重建, 如 cesh#OPENAI →
+     * cesh#ANTHROPIC, 重新绑回这行而不是跳去兜底引擎) → ③ preferredFallback。
+     * ②③ 都是静默兜底, 不算用户主动选择。
+     *
+     * 跨引擎兜底不携带外来模型: 仅当 current.model 确实属于目标引擎
+     * (同一引擎, 或模型归属 engineName 匹配) 时才保留; 否则用目标引擎自己的模型 ——
+     * 把外来模型名(如 deepseek-flash)贴到 MiMo 上会让聊天按 MiMo 代理 URL +
+     * 外来模型名发请求直接 400, 且快照自锁。
+     */
     private fun resolveSelection(
         current: AiEngine,
         availableEngines: List<AiEngine>,
         preferredFallback: AiEngine,
         hasUserSelection: Boolean,
-    ): AiEngine {
+    ): SelectionResolution {
         if (availableEngines.isEmpty()) {
-            return if (hasUserSelection) current else preferredFallback
+            return SelectionResolution(
+                engine = if (hasUserSelection) current else preferredFallback,
+                kind = SelectionMatchKind.NONE,
+            )
         }
 
-        val fromCatalog = availableEngines.firstOrNull { it.identityKey() == current.identityKey() }
-            ?: availableEngines.firstOrNull { it.identityKey() == preferredFallback.identityKey() }
-            ?: return if (hasUserSelection) current else preferredFallback
+        val exact = availableEngines.firstOrNull { it.identityKey() == current.identityKey() }
+        val sameName = if (exact == null) {
+            availableEngines.firstOrNull { it.name.equals(current.name, ignoreCase = true) }
+        } else {
+            null
+        }
+        val fallback = if (exact == null && sameName == null) {
+            availableEngines.firstOrNull { it.identityKey() == preferredFallback.identityKey() }
+        } else {
+            null
+        }
 
-        // 用户已手动选择模型：保留内存中的 model（用户偏好），仅用 DB 同步引擎元数据
-        // （URL、proxy、auth 等）。如果未选择，则直接采用 DB 中的默认 model。
-        return if (hasUserSelection && current.model.name.isNotBlank()) {
+        val fromCatalog = exact ?: sameName ?: fallback
+        if (fromCatalog == null) {
+            return SelectionResolution(
+                engine = if (hasUserSelection) current else preferredFallback,
+                kind = SelectionMatchKind.NONE,
+            )
+        }
+        val kind = when {
+            exact != null -> SelectionMatchKind.EXACT
+            sameName != null -> SelectionMatchKind.SAME_NAME
+            else -> SelectionMatchKind.FALLBACK
+        }
+
+        val isSameEngine = fromCatalog.identityKey() == current.identityKey()
+        val keepCurrentModel = hasUserSelection &&
+            current.model.name.isNotBlank() &&
+            (
+                isSameEngine ||
+                    // 同名引擎内用户选过的模型(模型行按 engineName 归属, 协议变了归属不变)
+                    current.model.engineName.equals(fromCatalog.name, ignoreCase = true)
+                )
+
+        val engine = if (keepCurrentModel) {
             fromCatalog.copy(model = current.model)
         } else {
             fromCatalog
         }
+        return SelectionResolution(engine = engine, kind = kind)
     }
 
 
