@@ -318,6 +318,10 @@ fun ThemeSettingsScreen(
                     isLiquidGlassEnabled = draft.isLiquidGlassEnabled,
                     glassBaseAlpha = draft.glassBaseAlpha,
                     glassBorderAlpha = draft.glassBorderAlpha,
+                    // 描边只在页面真的铺了背景层时才画(见 effectiveGlassBorderAlpha),
+                    // 所以没有背景层时这一行直接不出现, 不留一个"拉了没反应"的滑杆。
+                    hasBackdropLayer = draft.isMeshGradientBgEnabled ||
+                        draft.customBackgroundImageUri != null,
                     onGlassmorphismChange = { component.updateDraftGlassmorphism(it) },
                     onLiquidGlassChange = { component.updateDraftLiquidGlass(it) },
                     onGlassAlphaChange = { component.updateDraftGlassBaseAlpha(it) },
@@ -748,6 +752,7 @@ private fun GlassEffectCard(
     isLiquidGlassEnabled: Boolean,
     glassBaseAlpha: Float,
     glassBorderAlpha: Float,
+    hasBackdropLayer: Boolean,
     onGlassmorphismChange: (Boolean) -> Unit,
     onLiquidGlassChange: (Boolean) -> Unit,
     onGlassAlphaChange: (Float) -> Unit,
@@ -843,38 +848,48 @@ private fun GlassEffectCard(
                         valueRange = 0f..1f,
                     )
 
-                    Spacer(modifier = Modifier.height(OneBoxDesignSystem.compactSpacing))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
+                    // 描边只对"有背景层"的页面有意义: 纯色底上卡片靠填充色明度差就分得清,
+                    // 描边不起作用, 所以没有背景层时整行(标题/说明/滑杆)一并收起。
+                    AnimatedVisibility(
+                        visible = hasBackdropLayer,
+                        enter = expandVertically(),
+                        exit = shrinkVertically(),
                     ) {
-                        Text(
-                            text = stringResource(R.string.theme_preset_glass_border_alpha),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontWeight = FontWeight.Medium,
-                        )
-                        Text(
-                            text = "${(glassBorderAlpha * 100).toInt()}%",
-                            style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            fontWeight = FontWeight.SemiBold,
-                        )
+                        Column {
+                            Spacer(modifier = Modifier.height(OneBoxDesignSystem.compactSpacing))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.theme_preset_glass_border_alpha),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    fontWeight = FontWeight.Medium,
+                                )
+                                Text(
+                                    text = "${(glassBorderAlpha * 100).toInt()}%",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    fontWeight = FontWeight.SemiBold,
+                                )
+                            }
+                            Text(
+                                text = stringResource(R.string.theme_preset_glass_border_alpha_hint),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            CustomSlider(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = OneBoxDesignSystem.microSpacing),
+                                value = glassBorderAlpha,
+                                onValueChange = onGlassBorderAlphaChange,
+                                valueRange = 0f..1f,
+                            )
+                        }
                     }
-                    Text(
-                        text = stringResource(R.string.theme_preset_glass_border_alpha_hint),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    CustomSlider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = OneBoxDesignSystem.microSpacing),
-                        value = glassBorderAlpha,
-                        onValueChange = onGlassBorderAlphaChange,
-                        valueRange = 0f..1f,
-                    )
                 }
             }
         }
