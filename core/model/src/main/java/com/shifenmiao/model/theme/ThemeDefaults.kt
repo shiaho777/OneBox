@@ -12,8 +12,14 @@ object ThemeDefaults {
     /**
      * 玻璃描边可见度默认值 (0f..1f)，0 隐藏描边，1 为完整强度。
      *
-     * 注意: ThemePresetEntity 的 @ColumnInfo(defaultValue = "0.17") 是注解实参，
-     * 必须是字面量，无法引用本常量，修改时请一并同步。
+     * 提到 20% 是"看得见边界、又不喧宾夺主"的下限: 17% 时描边基本糊进底色,
+     * 半透明玻璃层读不出边界, 整页就发闷。
+     *
+     * 这是**唯一**的默认值来源: SettingsState / AppThemePreset / DataStore 兜底 /
+     * MMKV 冷启动快照 / 主题设置页草稿都读它。
+     * 注意: ThemePresetEntity 的 @ColumnInfo(defaultValue = "0.17") 是建表语句里的
+     * 字面量, 有意保持不动 —— 改建表语句会改 Room schema/identityHash 从而整库重建,
+     * 而它运行时根本不会被读到, 所以两处不需要同步。
      */
-    const val DEFAULT_GLASS_BORDER_ALPHA = 0.17f
+    const val DEFAULT_GLASS_BORDER_ALPHA = 0.20f
 }

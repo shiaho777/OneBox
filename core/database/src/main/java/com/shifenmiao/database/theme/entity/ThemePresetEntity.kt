@@ -26,7 +26,11 @@ data class ThemePresetEntity(
     @ColumnInfo(name = "custom_bg_image_uri") val customBackgroundImageUri: String? = null,
     @ColumnInfo(name = "created_at") val createdAt: Long = System.currentTimeMillis(),
     @ColumnInfo(name = "updated_at") val updatedAt: Long = System.currentTimeMillis(),
-    // 注解实参必须是字面量，无法引用 ThemeDefaults.DEFAULT_GLASS_BORDER_ALPHA，改默认值请一并同步
+    // 这里的 DDL 默认值刻意停在 "0.17"、不跟随 ThemeDefaults 一起改:
+    // 它只写进建表语句, 而改建表语句会改 Room 的 schema / identityHash, 老库升级时
+    // 会走 fallbackToDestructiveMigration 把整个库重建(丢数据)。Room 生成的 INSERT
+    // 是全字段显式写入, 运行时永远读不到这个 DDL 默认值; 真正的默认值只有
+    // ThemeDefaults.DEFAULT_GLASS_BORDER_ALPHA 一处。
     @ColumnInfo(name = "glass_border_alpha", defaultValue = "0.17")
     val glassBorderAlpha: Float = ThemeDefaults.DEFAULT_GLASS_BORDER_ALPHA,
 )

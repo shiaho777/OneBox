@@ -39,6 +39,17 @@ import kotlin.math.roundToInt
 
 private const val MIN_VISIBLE_GLASS_DECORATION_ALPHA = 0.04f
 
+/**
+ * 日间模式玻璃填充/染色往白里带的强度。
+ *
+ * 卡片(彩色容器)与普通玻璃面分开取值: 彩色容器本身已经比底色深一档, 需要多带一点白
+ * 才能反超页面; 普通玻璃面底色更暗(surfaceContainerHighest), 多带一点才够亮。
+ */
+private const val LIGHT_GLASS_FILL_WHITEN = 0.72f
+private const val LIGHT_GLASS_FILL_WHITEN_PLAIN = 0.78f
+private const val LIGHT_GLASS_TINT_WHITEN = 0.80f
+private const val LIGHT_GLASS_TINT_WHITEN_PLAIN = 0.84f
+
 internal fun Color.withGlassBaseAlpha(glassBaseAlpha: Float): Color {
     if (this == Color.Unspecified || this == Color.Transparent) return this
     return copy(alpha = (alpha * glassBaseAlpha).coerceIn(0f, 1f))
@@ -221,19 +232,30 @@ private fun createGlassDecorationColors(
     isTintedSurface: Boolean,
     isLiquidGlass: Boolean,
 ): GlassDecorationColors {
+    // 日间玻璃是"磨砂增亮"层: 填充与染色统一往白里带, 卡片因此比页面底色更亮 —— 这才是
+    // "浮起来的白玻璃"。此前底色取自 surfaceContainer(比 surface 暗), 卡片落在页面上是
+    // 一块更暗的灰, 读起来像凹进去, 页面稍微带点彩就更糊。
+    // 夜间不改: 深色底上玻璃靠"压暗 + 提亮边缘"表现, 往白里带会直接糊成灰。
     val flattenedBase = if (isTintedSurface) {
-        if (isLight) baseColor.blend(colorSchemeSurface, 0.08f)
+        if (isLight) baseColor.blend(Color.White, LIGHT_GLASS_FILL_WHITEN)
         else baseColor.blend(colorSchemeSurface, 0.06f)
     } else {
-        if (isLight) baseColor.blend(colorSchemeSurface, 0.26f)
+        if (isLight) baseColor.blend(Color.White, LIGHT_GLASS_FILL_WHITEN_PLAIN)
         else baseColor.blend(colorSchemeSurface, 0.20f)
     }
     val accent = if (isTintedSurface) {
-        baseColor.blend(colorSchemeSurfaceTint, if (isLight) 0.08f else 0.06f)
+        if (isLight) baseColor.blend(Color.White, LIGHT_GLASS_TINT_WHITEN)
+        else baseColor.blend(colorSchemeSurfaceTint, 0.06f)
     } else {
-        baseColor
-            .blend(colorSchemeSurfaceTint, if (isLight) 0.14f else 0.12f)
-            .blend(colorSchemePrimary, if (isLight) 0.06f else 0.08f)
+        if (isLight) {
+            baseColor
+                .blend(Color.White, LIGHT_GLASS_TINT_WHITEN_PLAIN)
+                .blend(colorSchemePrimary, 0.04f)
+        } else {
+            baseColor
+                .blend(colorSchemeSurfaceTint, 0.12f)
+                .blend(colorSchemePrimary, 0.08f)
+        }
     }
     val fillColor = flattenedBase.copy(
         alpha = if (isTintedSurface) {
