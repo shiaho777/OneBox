@@ -35,9 +35,11 @@ GitCode 的仓库镜像只同步**分支 / 标签 / 提交**,不同步 GitHub Re
 from __future__ import annotations
 
 import argparse
+import http.client
 import json
 import os
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -46,6 +48,9 @@ API_BASE = "https://api.gitcode.com/api/v5"
 REPO = "wangzhishou/OneBox"
 RELEASES_PAGE = f"https://gitcode.com/{REPO}/releases"
 DOMESTIC_CHANNELS = ["xiaomi", "yyb", "oppo", "vivo", "huawei", "onebox"]
+# 单文件 PUT 的重试次数(含首次)与退避基数:GitCode 前置网关偶发 502 / broken pipe
+PUT_ATTEMPTS = 3
+PUT_RETRY_DELAY_SECONDS = 5
 
 
 def request(method: str, url: str, token: str, body=None, headers=None, raw=False):
@@ -154,19 +159,31 @@ def upload(tag: str, path: str, token: str, overwrite: bool, existing, dry_run: 
     put_headers.setdefault("Content-Type", "application/octet-stream")
     with open(path, "rb") as fh:
         data = fh.read()
-    # 预签名 PUT 要发二进制 + 自定义 header,直接用 Request(不要带 access_token,签名里已经含权限)
-    req = urllib.request.Request(resp["url"], data=data, headers=put_headers, method="PUT")
-    try:
-        with urllib.request.urlopen(req, timeout=600) as r:
-            code = r.status
-    except urllib.error.HTTPError as exc:
-        code = exc.code
-        print(redact(f"[fail] {name}: PUT 失败 {code} {exc.read().decode('utf-8', 'replace')[:200]}", token))
-        return False
-    if 200 <= code < 300:
-        print(f"[ok] 已上传 {name}({size / 1048576:.1f}MB)")
-        return True
-    print(f"[fail] {name}: PUT 返回 {code}")
+    # 网关(GitCode 前置 → OBS)偶发 502 / 连接重置(broken pipe),这里按文件重试几次;
+    # 网络层异常一律收敛成"该文件失败",不让异常冒泡中断整批上传 —— 重跑脚本会跳过已成功的附件。
+    last_error = ""
+    code = 0
+    for attempt in range(1, PUT_ATTEMPTS + 1):
+        # 预签名 PUT 要发二进制 + 自定义 header,直接用 Request(不要带 access_token,签名里已经含权限)
+        req = urllib.request.Request(resp["url"], data=data, headers=put_headers, method="PUT")
+        try:
+            with urllib.request.urlopen(req, timeout=600) as r:
+                code = r.status
+            last_error = ""
+        except urllib.error.HTTPError as exc:
+            code = exc.code
+            last_error = f"PUT 失败 HTTP {code} {exc.read().decode('utf-8', 'replace')[:120]}"
+        except (urllib.error.URLError, OSError, http.client.HTTPException) as exc:
+            code = 0
+            last_error = f"{type(exc).__name__}: {getattr(exc, 'reason', exc)}"
+        if 200 <= code < 300:
+            print(f"[ok] 已上传 {name}({size / 1048576:.1f}MB)")
+            return True
+        if attempt < PUT_ATTEMPTS:
+            delay = PUT_RETRY_DELAY_SECONDS * attempt
+            print(redact(f"[retry {attempt}/{PUT_ATTEMPTS - 1}] {name}: {last_error}; {delay}s 后重试", token))
+            time.sleep(delay)
+    print(redact(f"[fail] {name}: {last_error or f'PUT 返回 {code}'}", token))
     return False
 
 
