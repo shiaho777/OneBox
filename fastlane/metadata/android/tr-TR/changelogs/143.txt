@@ -1,0 +1,6 @@
+• Düzeltildi: Başlangıç ekranı Asistan seçiliyken açılışta çökme
+• Tema: cam kenarlıklar arka plan katmanı anahtarını izliyor
+• Yeni: kamera arka planlı açı ölçer ve iki noktalı cetvel ölçümü
+• Satranç, Çin Satrancı ve Gomoku çevrimdışı için cihaz üstü motor
+• Yapay zekâ: Anthropic araç çağrıları ve özel motor yönetimi düzeltildi
+• Hata düzeltmeleri ve performans iyileştirmeleri

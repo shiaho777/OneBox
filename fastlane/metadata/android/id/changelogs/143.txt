@@ -1,0 +1,6 @@
+• Diperbaiki: aplikasi tertutup saat Asisten dijadikan layar awal
+• Tema: garis kaca mengikuti sakelar lapisan latar
+• Baru: busur derajat dengan latar kamera dan penggaris ukur dua titik
+• Mesin di perangkat untuk Catur, Catur Tiongkok, dan Gomoku offline
+• AI: perbaikan tool calling Anthropic dan kelola mesin kustom
+• Perbaikan bug dan peningkatan performa

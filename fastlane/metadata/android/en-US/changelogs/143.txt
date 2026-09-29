@@ -1,0 +1,6 @@
+• Fixed: crash on launch when Assistant is set as the start screen
+• Theme: glass borders now follow the background layer switch
+• New: protractor with camera background and two-point ruler measuring
+• Offline on-device engine for Chess, Chinese Chess and Gomoku
+• AI: fixed Anthropic tool calling and custom engine management
+• Bug fixes and performance improvements

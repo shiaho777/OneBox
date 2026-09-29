@@ -1,0 +1,6 @@
+• Corregido: cierre inesperado al iniciar con Asistente como pantalla inicial
+• Tema: los bordes de cristal siguen el interruptor de capa de fondo
+• Nuevo: transportador con fondo de cámara y regla de medición de dos puntos
+• Motor en el dispositivo para Ajedrez, Ajedrez Chino y Gomoku sin conexión
+• IA: corregidas las herramientas de Anthropic y la gestión de motores propios
+• Corrección de errores y mejoras de rendimiento

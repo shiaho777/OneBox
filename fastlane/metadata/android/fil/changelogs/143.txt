@@ -1,0 +1,6 @@
+• Naayos: pag-crash sa pagbukas kapag Assistant ang start screen
+• Tema: sumusunod na ang glass border sa background layer switch
+• Bago: protractor na may camera background at two-point na ruler
+• On-device engine para sa offline na Chess, Chinese Chess at Gomoku
+• AI: naayos ang Anthropic tool calling at custom engine management
+• Mga pag-aayos ng bug at pagpapabuti ng performance

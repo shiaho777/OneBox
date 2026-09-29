@@ -1,0 +1,6 @@
+• Corrigido: fechamento ao iniciar com o Assistente como tela inicial
+• Tema: bordas de vidro seguem a chave da camada de fundo
+• Novo: transferidor com fundo da câmera e régua de medição em dois pontos
+• Motor no aparelho para Xadrez, Xadrez Chinês e Gomoku offline
+• IA: corrigidas ferramentas da Anthropic e gestão de motores próprios
+• Correções de bugs e melhorias de desempenho
