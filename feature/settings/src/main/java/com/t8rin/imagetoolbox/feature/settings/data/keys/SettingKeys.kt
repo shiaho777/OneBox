@@ -21,6 +21,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 
@@ -54,6 +55,9 @@ internal val ALLOW_BETAS = booleanPreferencesKey("allow_betas")
 internal val DRAW_CONTAINER_SHADOWS = booleanPreferencesKey("ALLOW_SHADOWS_INSTEAD_OF_BORDERS")
 internal val APP_OPEN_COUNT = intPreferencesKey("APP_OPEN_COUNT")
 internal val IN_APP_REVIEW_AUTO_PROMPTED = booleanPreferencesKey("IN_APP_REVIEW_AUTO_PROMPTED")
+internal val IN_APP_REVIEW_SAVE_COUNT = intPreferencesKey("IN_APP_REVIEW_SAVE_COUNT")
+internal val IN_APP_REVIEW_PROMPT_COUNT = intPreferencesKey("IN_APP_REVIEW_PROMPT_COUNT")
+internal val IN_APP_REVIEW_LAST_PROMPT_AT = longPreferencesKey("IN_APP_REVIEW_LAST_PROMPT_AT")
 internal val LOCK_DRAW_ORIENTATION = booleanPreferencesKey("LOCK_DRAW_ORIENTATION")
 internal val THEME_CONTRAST_LEVEL = doublePreferencesKey("THEME_CONTRAST_LEVEL")
 internal val THEME_STYLE = intPreferencesKey("THEME_STYLE")

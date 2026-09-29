@@ -20,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.t8rin.imagetoolbox.core.resources.R
 import com.t8rin.imagetoolbox.core.domain.performance.StartupTrace
 import com.t8rin.imagetoolbox.core.ui.utils.ComposeActivity
+import com.t8rin.imagetoolbox.core.ui.utils.helper.AppToastHost
 import com.t8rin.imagetoolbox.core.ui.utils.helper.ContextUtils
 import com.t8rin.imagetoolbox.feature.root.presentation.screenLogic.RootComponent
 import javax.inject.Inject
@@ -72,6 +73,13 @@ class AppActivity : ComposeActivity() {
         )
     }
 
+    // google 渠道:文件保存成功 Toast 消失后,按累计次数+冷却节奏弹应用内评分层(国内渠道为空实现)。
+    // 持有 lambda 引用是为了 onDestroy 注销时做身份校验:极端时序下(新实例 onCreate 早于
+    // 旧实例 onDestroy)无条件置空会误清新实例刚注册的 handler
+    private val successSaveHandler = {
+        InAppReviewPrompt.maybePromptOnSuccess(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         StartupTrace.mark("AppActivity.onCreate.enter")
         super.onCreate(savedInstanceState)
@@ -83,11 +91,7 @@ class AppActivity : ComposeActivity() {
         // 避免首帧渲染时才触发构造，阻塞 Compose 的关键路径。
         val prewarmedComponent = component
 
-        // google 渠道:全局 APP_OPEN_COUNT 达标后自动弹一次应用内评分层(国内渠道为空实现);
-        // savedInstanceState == null 避免旋转等配置变更重建时重复调度弹出逻辑(计数本身在 SettingsManager 全局维护)
-        if (savedInstanceState == null) {
-            InAppReviewPrompt.maybeAutoPrompt(this)
-        }
+        AppToastHost.successSaveHandler = successSaveHandler
 
         initActivityResultLauncher()
         StartupTrace.mark("AppActivity.onCreate.ready")
@@ -163,6 +167,9 @@ class AppActivity : ComposeActivity() {
         super.onDestroy()
         ContextUtils.clearCurrentActivity(this)
         currentActivityProvider.setCurrentActivity(null)
+        if (AppToastHost.successSaveHandler === successSaveHandler) {
+            AppToastHost.successSaveHandler = null
+        }
     }
 
     public override fun onStart() {

@@ -1,7 +1,5 @@
 package com.wanbaohe.core.ui.review
 
-import android.app.Activity
-import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -9,93 +7,95 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import com.t8rin.imagetoolbox.core.di.entryPoint
 import com.t8rin.imagetoolbox.core.settings.di.SettingsStateEntryPoint
 import com.t8rin.imagetoolbox.core.settings.domain.SettingsManager
+import com.t8rin.imagetoolbox.core.utils.makeLog
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.coroutines.resume
 
 /**
- * Google Play 应用内评分(In-App Review)入口,google 渠道专用实现。
+ * Google Play 应用内评分(In-App Review),google 渠道专用实现。
  *
  * 弹出的是 Play 托管的半屏评分层,不离开 App。注意:
- * 只有从 Play 商店安装的包才能真正弹出;侧载/调试包 requestReviewFlow 会失败。
- * Play 对该弹层有频率配额,是否真正展示由 Play 决定,API 不会告知结果。
+ * Play 对该弹层有频率配额(约每月一次),配额耗尽时 launchReviewFlow 静默不弹、
+ * API 不回调结果,所以这里记的是"发起过尝试",不代表用户真的看到了弹层;
+ * 冷却时间因此与 Play 配额量级对齐,偶尔烧掉的尝试不算浪费。
  *
- * 启动次数与"是否已自动弹过"标记统一维护在全局设置 DataStore:
- * APP_OPEN_COUNT(每次启动自增)与 IN_APP_REVIEW_AUTO_PROMPTED。
+ * 触发时机:文件保存成功 Toast 消失之后(AppToastHost.showFileSuccessToast →
+ * AppActivity 注册的 successSaveHandler)。计数与冷却状态统一维护在全局设置 DataStore。
  */
 object InAppReviewPrompt {
 
-    /** APP_OPEN_COUNT 达到该次数后,自动弹一次评分层(每个安装只弹一次) */
-    private const val AUTO_PROMPT_MIN_LAUNCHES = 5
+    /** 累计文件保存成功达到该次数后才考虑弹评分层 */
+    private const val PROMPT_AFTER_SAVES = 3
 
-    /** 自动弹出前的延时,避免在启动瞬间打扰用户 */
-    private const val AUTO_PROMPT_DELAY_MS = 8000L
+    /** 每个安装最多发起弹出的次数 */
+    private const val MAX_PROMPTS = 3
 
-    /**
-     * 是否从 Play 商店安装。侧载/调试包调用 In-App Review 经常"成功但什么都不弹"
-     * (API 不回调失败),表现为点击无反应,所以非 Play 安装直接走回退逻辑。
-     */
-    private fun isInstalledFromPlayStore(activity: Activity): Boolean {
-        val installer = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            runCatching {
-                activity.packageManager
-                    .getInstallSourceInfo(activity.packageName)
-                    .installingPackageName
-            }.getOrNull()
-        } else {
-            @Suppress("DEPRECATION")
-            activity.packageManager.getInstallerPackageName(activity.packageName)
-        }
-        return installer == "com.android.vending"
-    }
+    /** 两次弹出之间的最短间隔,与 Play 配额量级对齐 */
+    private val PROMPT_COOLDOWN_MS = TimeUnit.DAYS.toMillis(30)
+
+    /** Toast 消失后稍作停顿,避免评分弹层紧跟 Toast 出现显得突兀 */
+    private const val PROMPT_DELAY_MS = 1200L
+
+    /** 防止排队的多个成功 Toast 并发触发重复弹层 */
+    private val promptInFlight = AtomicBoolean(false)
 
     /**
-     * 尝试弹出应用内评分层;流程不可用时(如非 Play 安装)回调 [onUnavailable],
-     * 由调用方回退到跳转应用商店。
+     * 保存成功后的评分弹层入口:先累计保存次数,
+     * 弹出次数与冷却时间都满足才向 Play 发起弹层。
+     * 整体 runCatching 保护:评分弹层失败绝不能影响保存主流程。
      */
-    fun launch(activity: Activity, onUnavailable: () -> Unit) {
-        if (!isInstalledFromPlayStore(activity)) {
-            onUnavailable()
-            return
-        }
-        val manager = ReviewManagerFactory.create(activity)
-        manager.requestReviewFlow().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                manager.launchReviewFlow(activity, task.result)
-            } else {
-                onUnavailable()
-            }
-        }
-    }
-
-    /**
-     * 自动弹出:全局 APP_OPEN_COUNT 达到 [AUTO_PROMPT_MIN_LAUNCHES] 后,
-     * 延时弹一次评分层,之后不再自动打扰。
-     */
-    fun maybeAutoPrompt(activity: ComponentActivity) {
-        if (!isInstalledFromPlayStore(activity)) return
-
+    fun maybePromptOnSuccess(activity: ComponentActivity) {
         activity.lifecycleScope.launch {
-            var settingsManager: SettingsManager? = null
-            activity.entryPoint<SettingsStateEntryPoint> {
-                settingsManager = this.settingsManager
-            }
-            val settings = settingsManager ?: return@launch
-
-            if (settings.isInAppReviewAutoPrompted()) return@launch
-            if (settings.getSettingsState().appOpenCount < AUTO_PROMPT_MIN_LAUNCHES) return@launch
-
-            delay(AUTO_PROMPT_DELAY_MS)
-            if (!activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) return@launch
-
-            val manager = ReviewManagerFactory.create(activity)
-            manager.requestReviewFlow().addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // 无论用户评分还是跳过,每个安装只自动弹这一次
-                    activity.lifecycleScope.launch {
-                        settings.setInAppReviewAutoPrompted()
-                    }
-                    manager.launchReviewFlow(activity, task.result)
+            runCatching {
+                var settingsManager: SettingsManager? = null
+                activity.entryPoint<SettingsStateEntryPoint> {
+                    settingsManager = this.settingsManager
                 }
+                val settings = settingsManager ?: return@runCatching
+
+                settings.registerSuccessfulSave()
+
+                if (!promptInFlight.compareAndSet(false, true)) return@runCatching
+                try {
+                    if (settings.getSuccessfulSaveCount() < PROMPT_AFTER_SAVES) return@runCatching
+                    if (settings.getInAppReviewPromptCount() >= MAX_PROMPTS) return@runCatching
+
+                    val lastPromptAt = settings.getInAppReviewLastPromptAt()
+                    if (lastPromptAt > 0 &&
+                        System.currentTimeMillis() - lastPromptAt < PROMPT_COOLDOWN_MS
+                    ) return@runCatching
+
+                    delay(PROMPT_DELAY_MS)
+                    if (!activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                        return@runCatching
+                    }
+
+                    val manager = ReviewManagerFactory.create(activity)
+                    val task = suspendCancellableCoroutine { continuation ->
+                        manager.requestReviewFlow().addOnCompleteListener {
+                            continuation.resume(it)
+                        }
+                    }
+                    if (task.isSuccessful) {
+                        // request 成功即记为一次尝试:配额耗尽时 launch 静默不弹且无回调,无法区分
+                        settings.registerInAppReviewPrompted()
+                        manager.launchReviewFlow(activity, task.result)
+                    } else {
+                        // 失败(无 Play Store/侧载/Play 服务异常)也进入冷却并重攒保存次数,
+                        // 否则每次保存都会重试一次注定失败的 Play IPC
+                        settings.registerInAppReviewFailedAttempt()
+                    }
+                } finally {
+                    promptInFlight.set(false)
+                }
+            }.onFailure {
+                if (it is CancellationException) throw it
+                it.makeLog("InAppReviewPrompt")
             }
         }
     }

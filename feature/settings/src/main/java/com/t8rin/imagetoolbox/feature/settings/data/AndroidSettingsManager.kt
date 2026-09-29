@@ -72,6 +72,9 @@ import com.t8rin.imagetoolbox.feature.settings.data.keys.AMOLED_MODE
 import com.t8rin.imagetoolbox.feature.settings.data.keys.APP_COLOR_TUPLE
 import com.t8rin.imagetoolbox.feature.settings.data.keys.APP_OPEN_COUNT
 import com.t8rin.imagetoolbox.feature.settings.data.keys.IN_APP_REVIEW_AUTO_PROMPTED
+import com.t8rin.imagetoolbox.feature.settings.data.keys.IN_APP_REVIEW_LAST_PROMPT_AT
+import com.t8rin.imagetoolbox.feature.settings.data.keys.IN_APP_REVIEW_PROMPT_COUNT
+import com.t8rin.imagetoolbox.feature.settings.data.keys.IN_APP_REVIEW_SAVE_COUNT
 import com.t8rin.imagetoolbox.feature.settings.data.keys.ASCII_CUSTOM_GRADIENTS
 import com.t8rin.imagetoolbox.feature.settings.data.keys.AUTO_CACHE_CLEAR
 import com.t8rin.imagetoolbox.feature.settings.data.keys.BACKGROUND_COLOR_FOR_NA_FORMATS
@@ -727,11 +730,34 @@ internal class AndroidSettingsManager @Inject constructor(
         it[DONATE_DIALOG_OPEN_COUNT] = -1
     }
 
-    override suspend fun isInAppReviewAutoPrompted(): Boolean =
-        dataStore.data.first()[IN_APP_REVIEW_AUTO_PROMPTED] ?: false
+    override suspend fun registerSuccessfulSave() = edit {
+        it[IN_APP_REVIEW_SAVE_COUNT] = (it[IN_APP_REVIEW_SAVE_COUNT] ?: 0) + 1
+    }
 
-    override suspend fun setInAppReviewAutoPrompted() = edit {
-        it[IN_APP_REVIEW_AUTO_PROMPTED] = true
+    override suspend fun getSuccessfulSaveCount(): Int =
+        dataStore.data.first()[IN_APP_REVIEW_SAVE_COUNT] ?: 0
+
+    override suspend fun getInAppReviewPromptCount(): Int {
+        val prefs = dataStore.data.first()
+        val count = prefs[IN_APP_REVIEW_PROMPT_COUNT] ?: 0
+        val legacy = if (prefs[IN_APP_REVIEW_AUTO_PROMPTED] == true) 1 else 0
+        return maxOf(count, legacy)
+    }
+
+    override suspend fun getInAppReviewLastPromptAt(): Long =
+        dataStore.data.first()[IN_APP_REVIEW_LAST_PROMPT_AT] ?: 0L
+
+    override suspend fun registerInAppReviewPrompted() = edit {
+        val count = it[IN_APP_REVIEW_PROMPT_COUNT] ?: 0
+        val legacy = if (it[IN_APP_REVIEW_AUTO_PROMPTED] == true) 1 else 0
+        it[IN_APP_REVIEW_PROMPT_COUNT] = maxOf(count, legacy) + 1
+        it[IN_APP_REVIEW_LAST_PROMPT_AT] = System.currentTimeMillis()
+        it[IN_APP_REVIEW_SAVE_COUNT] = 0
+    }
+
+    override suspend fun registerInAppReviewFailedAttempt() = edit {
+        it[IN_APP_REVIEW_LAST_PROMPT_AT] = System.currentTimeMillis()
+        it[IN_APP_REVIEW_SAVE_COUNT] = 0
     }
 
     override suspend fun setColorBlindType(value: Int?) = edit {

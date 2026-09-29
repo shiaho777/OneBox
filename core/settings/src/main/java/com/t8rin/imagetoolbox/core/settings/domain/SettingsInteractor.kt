@@ -177,11 +177,22 @@ interface SettingsInteractor : SimpleSettingsInteractor {
 
     suspend fun setNotShowDonateDialogAgain()
 
-    /** 是否已自动弹过应用内评分层(google 渠道,每个安装只自动弹一次) */
-    suspend fun isInAppReviewAutoPrompted(): Boolean
+    /** 累计一次「文件保存成功」,应用内评分弹层的触发依据(google 渠道;只统计单文件保存,批量保存不计入) */
+    suspend fun registerSuccessfulSave()
 
-    /** 标记应用内评分层已自动弹过 */
-    suspend fun setInAppReviewAutoPrompted()
+    suspend fun getSuccessfulSaveCount(): Int
+
+    /** 评分层已发起弹出的次数(旧版一次性标记 IN_APP_REVIEW_AUTO_PROMPTED 折算为已弹 1 次) */
+    suspend fun getInAppReviewPromptCount(): Int
+
+    /** 上次发起评分弹层的时间戳,无记录返回 0 */
+    suspend fun getInAppReviewLastPromptAt(): Long
+
+    /** 记录一次评分弹层成功发起:次数 +1、记下时间、保存成功计数清零重新累计 */
+    suspend fun registerInAppReviewPrompted()
+
+    /** 记录一次评分弹层发起失败:不消耗次数,但同样进入冷却并重攒保存次数,避免每次保存都重试 */
+    suspend fun registerInAppReviewFailedAttempt()
 
     suspend fun setColorBlindType(value: Int?)
 

@@ -34,6 +34,7 @@ import com.t8rin.imagetoolbox.core.ui.widget.other.ToastHostState
 import com.t8rin.imagetoolbox.core.ui.widget.other.showFailureToast
 import com.t8rin.imagetoolbox.core.utils.appContext
 import com.t8rin.imagetoolbox.core.utils.getString
+import com.t8rin.imagetoolbox.core.utils.makeLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -115,6 +116,15 @@ data object AppToastHost {
     @Volatile
     var fileOpenHandler: ((Uri) -> Unit)? = null
 
+    /**
+     * 文件保存成功回调,由 AppActivity 注册:在保存成功 Toast 消失后触发,
+     * 用于 google 渠道的应用内评分弹层(InAppReviewPrompt)。
+     * 约束:必须是轻量回调、不得同步碰 Compose state——它会同步跑在
+     * ToastHost 的 LaunchedEffect 里,同步 UI 操作会直接炸在 effect 里。
+     */
+    @Volatile
+    var successSaveHandler: (() -> Unit)? = null
+
     fun showActionToast(
         message: String,
         actionLabel: String,
@@ -138,6 +148,7 @@ data object AppToastHost {
     /**
      * 文件保存成功提示:带「打开」按钮的快捷条,点击直接打开刚保存的文件。
      * Uri 为空或打开处理器未注册时退化为普通成功提示。
+     * Toast 消失后回调 [successSaveHandler](评分弹层等场景,避免与 Toast 互相遮挡)。
      */
     fun showFileSuccessToast(
         uri: Uri?,
@@ -145,20 +156,29 @@ data object AppToastHost {
         icon: ImageVector = Icons.Outlined.LineSave
     ) {
         val handler = fileOpenHandler
-        if (uri == null || handler == null) {
-            showToast(
-                message = message,
-                icon = icon,
-                duration = ToastDuration.Long
-            )
-            return
+        scope.launch {
+            if (uri == null || handler == null) {
+                state.showToast(
+                    message = message,
+                    icon = icon,
+                    duration = ToastDuration.Long
+                )
+            } else {
+                state.showToast(
+                    ActionToastVisualsImpl(
+                        message = message,
+                        icon = icon,
+                        duration = ToastDuration.Long,
+                        actionLabel = getString(R.string.open),
+                        onAction = { handler(uri) }
+                    )
+                )
+            }
+            // Toast 消失后再回调,避免评分弹层与 Toast 互相遮挡;
+            // runCatching 保护:回调异常绝不能影响保存主流程
+            runCatching { successSaveHandler?.invoke() }
+                .onFailure { it.makeLog("AppToastHost") }
         }
-        showActionToast(
-            message = message,
-            actionLabel = getString(R.string.open),
-            onAction = { handler(uri) },
-            icon = icon
-        )
     }
 
     private class ActionToastVisualsImpl(
