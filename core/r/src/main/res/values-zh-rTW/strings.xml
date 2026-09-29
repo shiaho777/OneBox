@@ -843,6 +843,7 @@
     <string name="file_explorer">檔案管理</string>
     <string name="file_explorer_escription">檔案管理說明</string>
     <string name="ai_reasoning_time">已深度思考（用時 %d 秒）</string>
+    <string name="ai_reasoning_collapse">收合</string>
     <string name="ai_reasoning_collapsed_hint">可上下捲動查看摘要，展開後顯示完整內容</string>
     <string name="ai_reasoning_expanded_hint">已展開完整思考過程</string>
     <string name="already_new_chat">已經是在新對話中</string>

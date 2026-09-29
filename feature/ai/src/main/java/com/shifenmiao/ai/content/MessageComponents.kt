@@ -693,6 +693,39 @@ fun RobotReasoningHeader(
     }
 }
 
+/**
+ * 长 reasoning 展开时内容底部的“收起”条：点击等效于点击顶部 header 收起，
+ * 避免思考内容很长时用户必须滚回顶部才能折叠。
+ */
+@Composable
+private fun ReasoningCollapseFooter(
+    contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                AppSharedStorage.saveIsExpandedReasoningChat(false)
+            }
+            .padding(vertical = 10.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            modifier = Modifier.size(12.dp),
+            imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineExpandLess,
+            contentDescription = null,
+            tint = contentColor
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = stringResource(R.string.ai_reasoning_collapse),
+            style = MaterialTheme.typography.labelMedium,
+            color = contentColor,
+        )
+    }
+}
+
 @Composable
 fun RobotReasoningContent(
     reasoningContent: MessageUiModel.RobotReasoningContent,
@@ -790,7 +823,12 @@ fun RobotReasoningBlock(
         else -> RoundedCornerShape(0.dp)
     }
     val contentTopPadding = if (reasoningBlock.isFirst) 6.dp else 2.dp
-    val contentBottomPadding = if (reasoningBlock.isLast) 14.dp else 2.dp
+    val showCollapseFooter = reasoningBlock.isLast && reasoningBlock.showCollapseFooter
+    val contentBottomPadding = when {
+        showCollapseFooter -> 2.dp
+        reasoningBlock.isLast -> 14.dp
+        else -> 2.dp
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -809,47 +847,52 @@ fun RobotReasoningBlock(
                 ),
         ) {
             val lineWidth = 2.dp
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 22.dp, end = 14.dp)
-                    .drawBehind {
-                        val widthPx = lineWidth.toPx()
-                        drawRoundRect(
-                            color = leftLine,
-                            topLeft = Offset.Zero,
-                            size = Size(widthPx, size.height),
-                            cornerRadius = CornerRadius(
-                                x = widthPx / 2,
-                                y = widthPx / 2
-                            )
-                        )
-                    }
-            ) {
-                RichText(
-                    textStyle = MaterialTheme.typography.bodyMedium.copy(
-                        fontSize = 13.sp,
-                        lineHeight = 20.sp
-                    ),
-                    style = RichTextStyle(paragraphSpacing = 0.sp),
-                    contentColor = contentColor,
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            start = 12.dp,
-                            top = contentTopPadding,
-                            bottom = contentBottomPadding
-                        )
+                        .padding(start = 22.dp, end = 14.dp)
+                        .drawBehind {
+                            val widthPx = lineWidth.toPx()
+                            drawRoundRect(
+                                color = leftLine,
+                                topLeft = Offset.Zero,
+                                size = Size(widthPx, size.height),
+                                cornerRadius = CornerRadius(
+                                    x = widthPx / 2,
+                                    y = widthPx / 2
+                                )
+                            )
+                        }
                 ) {
-                    CompositionLocalProvider(
-                        LocalIsMessageStreaming provides reasoningBlock.isStreaming
+                    RichText(
+                        textStyle = MaterialTheme.typography.bodyMedium.copy(
+                            fontSize = 13.sp,
+                            lineHeight = 20.sp
+                        ),
+                        style = RichTextStyle(paragraphSpacing = 0.sp),
+                        contentColor = contentColor,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = 12.dp,
+                                top = contentTopPadding,
+                                bottom = contentBottomPadding
+                            )
                     ) {
-                        BasicMarkdown(
-                            reasoningBlock.node,
-                            codeBlockClickListener = codeBlockClickListener,
-                            compactBlocks = true
-                        )
+                        CompositionLocalProvider(
+                            LocalIsMessageStreaming provides reasoningBlock.isStreaming
+                        ) {
+                            BasicMarkdown(
+                                reasoningBlock.node,
+                                codeBlockClickListener = codeBlockClickListener,
+                                compactBlocks = true
+                            )
+                        }
                     }
+                }
+                if (showCollapseFooter) {
+                    ReasoningCollapseFooter(contentColor = contentColor)
                 }
             }
         }

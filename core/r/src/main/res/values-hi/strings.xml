@@ -758,6 +758,7 @@
     <string name="file_explorer">फ़ाइल प्रबंधक</string>
     <string name="file_explorer_escription">फ़ाइलें ब्राउज़ करें और प्रबंधित करें</string>
     <string name="ai_reasoning_time">गहन विचार (%d सेकंड)</string>
+    <string name="ai_reasoning_collapse">संक्षिप्त करें</string>
     <string name="ai_reasoning_collapsed_hint">पूर्वावलोकन के लिए स्क्रॉल करें। पूर्ण तर्क देखने के लिए विस्तार करें</string>
     <string name="ai_reasoning_expanded_hint">पूर्ण तर्क दिखाया जा रहा है</string>
     <string name="already_new_chat">पहले से ही एक नई बातचीत में हैं।</string>

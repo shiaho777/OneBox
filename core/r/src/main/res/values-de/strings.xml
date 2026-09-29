@@ -758,6 +758,7 @@
     <string name="file_explorer">Dateimanager</string>
     <string name="file_explorer_escription">Dateien durchsuchen und verwalten</string>
     <string name="ai_reasoning_time">Tiefes Denken (%d Sekunden)</string>
+    <string name="ai_reasoning_collapse">Einklappen</string>
     <string name="ai_reasoning_collapsed_hint">Zum Vorschauen scrollen. Erweitern, um die vollständige Überlegung zu sehen</string>
     <string name="ai_reasoning_expanded_hint">Vollständige Überlegung wird angezeigt</string>
     <string name="already_new_chat">Bereits in einer neuen Konversation.</string>

@@ -758,6 +758,7 @@
     <string name="file_explorer">File Manager</string>
     <string name="file_explorer_escription">Mag-browse at pamahalaan ang mga file</string>
     <string name="ai_reasoning_time">Malalim na pag-iisip (%d segundo)</string>
+    <string name="ai_reasoning_collapse">I-collapse</string>
     <string name="ai_reasoning_collapsed_hint">Mag-scroll upang i-preview. Palawakin upang makita ang buong pangangatwiran</string>
     <string name="ai_reasoning_expanded_hint">Ipinapakita ang buong pangangatwiran</string>
     <string name="already_new_chat">Nasa bagong pag-uusap na.</string>

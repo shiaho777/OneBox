@@ -816,6 +816,7 @@
     <string name="file_explorer">مدير الملفات</string>
     <string name="file_explorer_escription">تصفّح الملفات وأدرها</string>
     <string name="ai_reasoning_time">تفكير عميق (%d ثانية)</string>
+    <string name="ai_reasoning_collapse">طيّ</string>
     <string name="ai_reasoning_collapsed_hint">مرّر للمعاينة. وسّع لعرض الاستدلال الكامل</string>
     <string name="ai_reasoning_expanded_hint">يتم عرض الاستدلال الكامل</string>
     <string name="already_new_chat">أنت بالفعل في محادثة جديدة.</string>

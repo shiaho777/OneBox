@@ -758,6 +758,7 @@
     <string name="file_explorer">Manajer File</string>
     <string name="file_explorer_escription">Jelajahi dan kelola file</string>
     <string name="ai_reasoning_time">Pemikiran mendalam (%d detik)</string>
+    <string name="ai_reasoning_collapse">Ciutkan</string>
     <string name="ai_reasoning_collapsed_hint">Gulir untuk pratinjau. Perluas untuk melihat penalaran lengkap</string>
     <string name="ai_reasoning_expanded_hint">Menampilkan penalaran lengkap</string>
     <string name="already_new_chat">Sudah dalam percakapan baru.</string>

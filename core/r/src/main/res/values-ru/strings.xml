@@ -758,6 +758,7 @@
     <string name="file_explorer">Файловый менеджер</string>
     <string name="file_explorer_escription">Просмотр и управление файлами</string>
     <string name="ai_reasoning_time">Глубокое размышление (%d секунд)</string>
+    <string name="ai_reasoning_collapse">Свернуть</string>
     <string name="ai_reasoning_collapsed_hint">Прокрутите для предпросмотра. Разверните, чтобы увидеть полное рассуждение</string>
     <string name="ai_reasoning_expanded_hint">Показано полное рассуждение</string>
     <string name="already_new_chat">Уже в новом разговоре.</string>

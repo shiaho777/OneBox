@@ -866,6 +866,7 @@
     <string name="file_explorer">File Manager</string>
     <string name="file_explorer_escription">Browse and manage files</string>
     <string name="ai_reasoning_time">Deep thought (%d seconds)</string>
+    <string name="ai_reasoning_collapse">Collapse</string>
     <string name="ai_reasoning_collapsed_hint">Scroll to preview. Expand to see the full reasoning</string>
     <string name="ai_reasoning_expanded_hint">Showing the full reasoning</string>
     <string name="already_new_chat">Already in a new conversation.</string>

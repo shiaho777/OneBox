@@ -758,6 +758,7 @@
     <string name="file_explorer">Administrador de archivos</string>
     <string name="file_explorer_escription">Explorar y gestionar archivos</string>
     <string name="ai_reasoning_time">Pensamiento profundo (%d segundos)</string>
+    <string name="ai_reasoning_collapse">Contraer</string>
     <string name="ai_reasoning_collapsed_hint">Desplácese para previsualizar. Expanda para ver el razonamiento completo</string>
     <string name="ai_reasoning_expanded_hint">Mostrando el razonamiento completo</string>
     <string name="already_new_chat">Ya está en una nueva conversación.</string>

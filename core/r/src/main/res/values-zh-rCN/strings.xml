@@ -913,6 +913,7 @@
     <string name="file_explorer">文件管理</string>
     <string name="file_explorer_escription">文件管理描述</string>
     <string name="ai_reasoning_time">已深度思考(用时 %d 秒)</string>
+    <string name="ai_reasoning_collapse">收起</string>
     <string name="ai_reasoning_collapsed_hint">可上下滚动查看摘要，展开后显示完整内容</string>
     <string name="ai_reasoning_expanded_hint">已展开完整思考过程</string>
     <string name="already_new_chat">已经是在新对话中</string>

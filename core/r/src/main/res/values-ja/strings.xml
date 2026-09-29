@@ -758,6 +758,7 @@
     <string name="file_explorer">ファイルマネージャー</string>
     <string name="file_explorer_escription">ファイルを閲覧・管理</string>
     <string name="ai_reasoning_time">深く考え中（%d秒）</string>
+    <string name="ai_reasoning_collapse">折りたたむ</string>
     <string name="ai_reasoning_collapsed_hint">スクロールしてプレビュー。展開して全推論を表示</string>
     <string name="ai_reasoning_expanded_hint">全推論を表示中</string>
     <string name="already_new_chat">すでに新しい会話にいます。</string>

@@ -221,6 +221,8 @@ sealed class MessageUiModel(
         val isFirst: Boolean = true,
         /** 视觉上的底部 block（只有最后一个 block 负责收底部圆角） */
         val isLast: Boolean = true,
+        /** 仅 isLast 的 block 可能为 true：reasoning 足够长时在底部渲染“收起”条 */
+        val showCollapseFooter: Boolean = false,
     ) : MessageUiModel(id)
 
     data class MarkdownBlock(
@@ -320,6 +322,12 @@ sealed class MessageUiModel(
     }
 
     companion object {
+        /**
+         * reasoning 超过该长度时，在展开内容底部额外渲染“收起”条（约一屏以上的思考内容）。
+         * 阈值高于单段/多 block 拆分线（500），因此 footer 只会出现在多 block 路径的底部 block 上。
+         */
+        private const val REASONING_COLLAPSE_FOOTER_MIN_CHARS = 1200
+
         /**
          * 将消息实体转换为UI模型列表。
          *
@@ -976,6 +984,8 @@ sealed class MessageUiModel(
                         height = 8.dp
                     )
                 )
+                val showCollapseFooter =
+                    message.reasoningContent.length >= REASONING_COLLAPSE_FOOTER_MIN_CHARS
                 val shouldSplitReasoning = message.reasoningContent.length > 500 || containsComplexBlocks(parsedReasoningNode)
                 if (shouldSplitReasoning) {
                     val blocks = MarkdownBlock.splitIntoBlocks(
@@ -1007,6 +1017,7 @@ sealed class MessageUiModel(
                                 blockType = block.blockType,
                                 isFirst = isTop,
                                 isLast = isBottom,
+                                showCollapseFooter = isBottom && showCollapseFooter,
                             )
                         }
                     )

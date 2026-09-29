@@ -758,6 +758,7 @@
     <string name="file_explorer">Dosya Yöneticisi</string>
     <string name="file_explorer_escription">Dosyalara göz atın ve yönetin</string>
     <string name="ai_reasoning_time">Derin düşünce (%d saniye)</string>
+    <string name="ai_reasoning_collapse">Daralt</string>
     <string name="ai_reasoning_collapsed_hint">Önizlemek için kaydırın. Tam gerekçeyi görmek için genişletin</string>
     <string name="ai_reasoning_expanded_hint">Tam gerekçe gösteriliyor</string>
     <string name="already_new_chat">Zaten yeni bir sohbettesiniz.</string>
