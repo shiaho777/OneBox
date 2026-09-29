@@ -40,18 +40,22 @@ import kotlin.math.roundToInt
 private const val MIN_VISIBLE_GLASS_DECORATION_ALPHA = 0.04f
 
 /**
- * 日间模式把**中性**玻璃往白里带的强度(卡片 / 普通玻璃面分开取值)。
+ * 日间"中性玻璃"(底色几乎无色, 如 surfaceContainer 卡片)的加深量与染色层倍数。
  *
- * 只有底色几乎无色的玻璃才走这条路径: 它本身和页面底色一样白, 不提亮就分不出层次。
+ * 此前这里是把底色往白里带, 想让卡片"比页面更白"。方向错了: 页面本身已经接近纯白,
+ * 白色叠加最多只能再亮 2~3/255 —— 实测中性卡片只比页面亮 0.6~3, 用户反馈"很淡, 根本
+ * 看不清楚"。**近白页面上没有"更白"的空间**, 所以改成 Material 填充式卡片的做法:
+ * 拿容器色往 scrim 压一点, 让卡片**略深于页面**, 边界因此看得见, 又不会像彩色卡片那样抢色。
+ * 目标是把中性卡片压到**和彩色卡片差不多的亮度差**(彩色卡片实测比页面暗约 9~10/255,
+ * 用户认可"分得清"), 既看得见又不会变成灰板子。
+ *
  * 彩色玻璃(primaryContainer / secondaryContainer / tertiaryContainer 那类分类色卡片)
  * **必须保留自己的颜色** —— 一起往白里洗会把卡片洗成和页面完全同色, 卡片直接"消失"
  * (实测: 彩色卡片 #F7ECFB / 通道差 15 被洗成 #FBF8FF / 通道差 7, 而页面是 #FAF8FF,
  * 三者一模一样)。
  */
-private const val LIGHT_GLASS_FILL_WHITEN = 0.72f
-private const val LIGHT_GLASS_FILL_WHITEN_PLAIN = 0.78f
-private const val LIGHT_GLASS_TINT_WHITEN = 0.80f
-private const val LIGHT_GLASS_TINT_WHITEN_PLAIN = 0.84f
+private const val NEUTRAL_GLASS_DEEPEN = 0.045f
+private const val NEUTRAL_GLASS_TINT_BOOST = 1.30f
 
 /** RGB 通道极差不超过它就算"中性玻璃"(surfaceContainer 一类)。 */
 private const val NEUTRAL_GLASS_MAX_CHANNEL_SPREAD = 12f
@@ -251,32 +255,29 @@ private fun createGlassDecorationColors(
     isTintedSurface: Boolean,
     isLiquidGlass: Boolean,
 ): GlassDecorationColors {
-    // 日间的中性玻璃(底色几乎无色, 如 surfaceContainer 卡片)往白里带: 它和页面底色一样白,
-    // 不往白里提就分不出层次, 卡片会像凹进页面的一块灰。
+    // 日间的中性玻璃(底色几乎无色, 如 surfaceContainer 卡片)走"填充式": 拿容器色往 scrim
+    // 压一档, 让卡片略深于页面 —— 近白页面上往白里提是没有空间的(见 NEUTRAL_GLASS_DEEPEN)。
     // 彩色玻璃保持原样(按 surfaceTint / primary 轻微染一下), 保留各自的分类色 ——
     // 一起洗白会让卡片和页面完全同色。
     // 夜间整段不改: 深色底上玻璃靠"压暗 + 提亮边缘"表现。
-    val lightenNeutralGlass = isLight && baseColor.isNearNeutralGlass()
-    val flattenedBase = if (isTintedSurface) {
-        if (lightenNeutralGlass) baseColor.blend(Color.White, LIGHT_GLASS_FILL_WHITEN)
-        else baseColor.blend(colorSchemeSurface, if (isLight) 0.08f else 0.06f)
+    val neutralGlassFill = if (isLight && baseColor.isNearNeutralGlass()) {
+        baseColor.blend(colorSchemeScrim, NEUTRAL_GLASS_DEEPEN)
     } else {
-        if (lightenNeutralGlass) baseColor.blend(Color.White, LIGHT_GLASS_FILL_WHITEN_PLAIN)
-        else baseColor.blend(colorSchemeSurface, if (isLight) 0.26f else 0.20f)
+        null
+    }
+    val flattenedBase = if (isTintedSurface) {
+        neutralGlassFill ?: baseColor.blend(colorSchemeSurface, if (isLight) 0.08f else 0.06f)
+    } else {
+        neutralGlassFill ?: baseColor.blend(colorSchemeSurface, if (isLight) 0.26f else 0.20f)
     }
     val accent = if (isTintedSurface) {
-        if (lightenNeutralGlass) baseColor.blend(Color.White, LIGHT_GLASS_TINT_WHITEN)
-        else baseColor.blend(colorSchemeSurfaceTint, if (isLight) 0.08f else 0.06f)
+        neutralGlassFill?.blend(colorSchemeSurfaceTint, 0.04f)
+            ?: baseColor.blend(colorSchemeSurfaceTint, if (isLight) 0.08f else 0.06f)
     } else {
-        if (lightenNeutralGlass) {
-            baseColor
-                .blend(Color.White, LIGHT_GLASS_TINT_WHITEN_PLAIN)
-                .blend(colorSchemePrimary, 0.04f)
-        } else {
-            baseColor
+        neutralGlassFill?.blend(colorSchemeSurfaceTint, 0.06f)
+            ?: baseColor
                 .blend(colorSchemeSurfaceTint, if (isLight) 0.14f else 0.12f)
                 .blend(colorSchemePrimary, if (isLight) 0.06f else 0.08f)
-        }
     }
     val fillColor = flattenedBase.copy(
         alpha = if (isTintedSurface) {
@@ -291,7 +292,7 @@ private fun createGlassDecorationColors(
             isTintedSurface -> (style.tintAlpha * if (isLiquidGlass) 2.08f else 1.54f).coerceAtMost(if (isLiquidGlass) 0.60f else 0.46f)
             isLight -> (style.tintAlpha * if (isLiquidGlass) 1.14f else 0.82f).coerceAtMost(if (isLiquidGlass) 0.24f else 0.16f)
             else -> (style.tintAlpha * if (isLiquidGlass) 1.30f else 0.96f).coerceAtMost(if (isLiquidGlass) 0.28f else 0.20f)
-        } * glassBaseAlpha).coerceIn(0f, 1f)
+        } * glassBaseAlpha * if (neutralGlassFill != null) NEUTRAL_GLASS_TINT_BOOST else 1f).coerceIn(0f, 1f)
     )
     val sheenColor = Color.White.copy(
         alpha = ((style.surfaceOverlayAlpha * if (isLiquidGlass) {
