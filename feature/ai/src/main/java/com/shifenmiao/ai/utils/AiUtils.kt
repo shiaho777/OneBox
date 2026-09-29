@@ -1040,7 +1040,7 @@ object AiUtils {
     /**
      * 将 Anthropic stop_reason 映射为 OpenAI finish_reason
      */
-    private fun mapAnthropicStopReason(stopReason: String?): String? {
+    fun mapAnthropicStopReason(stopReason: String?): String? {
         return when (stopReason) {
             "end_turn" -> FinishReason.STOP.value
             "max_tokens" -> FinishReason.LENGTH.value

@@ -7,6 +7,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonNull
@@ -15,12 +16,13 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.encodeToJsonElement
 
 /**
- * Anthropic 请求模型里 `@RawValue Any` 字段的编码器(替代 Gson 的运行时反射序列化)。
+ * Anthropic 模型里 `@RawValue Any` 字段的双向 serializer(替代 Gson 的运行时反射序列化)。
  *
- * 按运行时类型写出:String/Number/Boolean → 裸字面量;List<ContentBlock> → 数组
+ * 编码:按运行时类型写出,String/Number/Boolean → 裸字面量;List<ContentBlock> → 数组
  * (元素必须走 ContentBlock 自己的 serializer,不能走 JsonMaps.toJsonElement —
  *  它不认 @Serializable data class);Map → 对象。
- * 只需实现编码:Anthropic 请求是单向下行,响应侧由 SSE 帧模型承担。
+ * 解码:统一解成 JsonElement。响应侧 SSE 帧(AnthropicStreamEvent → ContentBlock.input)
+ * 也会命中本 serializer,不能只实现编码。
  */
 object AnthropicAnySerializer : KSerializer<Any> {
 
@@ -32,8 +34,15 @@ object AnthropicAnySerializer : KSerializer<Any> {
         jsonEncoder.encodeJsonElement(value.toAnthropicJson(jsonEncoder))
     }
 
-    override fun deserialize(decoder: Decoder): Any =
-        throw UnsupportedOperationException("Anthropic 请求模型仅用于编码")
+    override fun deserialize(decoder: Decoder): Any {
+        // SSE 响应侧也会命中本 serializer:content_block_start 的 tool_use block
+        // 固定携带 "input":{}。此处若抛异常,整行事件会被当作畸形行丢弃,
+        // tool_use 起点丢失 → content_block_stop 不再发射 tool_call chunk →
+        // Agent 工具链静默中断。解码为 JsonElement 即可,流解析只读 id/name/type。
+        val jsonDecoder = decoder as? JsonDecoder
+            ?: throw SerializationException("AnthropicAnySerializer 仅支持 JSON 解码")
+        return jsonDecoder.decodeJsonElement()
+    }
 
     private fun Any?.toAnthropicJson(encoder: JsonEncoder): JsonElement = when (this) {
         null -> JsonNull

@@ -4,6 +4,7 @@ import com.shifenmiao.model.parseLooseJsonObject
 import com.shifenmiao.model.ModelProvider.AppJson
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -18,8 +19,10 @@ import com.shifenmiao.ai.upload.AttachmentContentResolver
 import com.shifenmiao.ai.utils.AiUtils
 import com.shifenmiao.database.ai.entity.MessageEntity
 import com.shifenmiao.database.image.dao.ImageDao
+import com.shifenmiao.model.ai.AnthropicAnySerializer
 import com.shifenmiao.model.ai.AnthropicMessage
 import com.shifenmiao.model.ai.AnthropicMessagesRequest
+import com.shifenmiao.model.ai.AnthropicMessagesResponse
 import com.shifenmiao.model.ai.AnthropicTool
 import com.shifenmiao.model.ai.AiEngine
 import com.shifenmiao.model.ai.AiProvider
@@ -27,19 +30,24 @@ import com.shifenmiao.model.ai.AiRequestProtocol
 import com.shifenmiao.model.ai.AuthType
 import com.shifenmiao.model.ai.ChatCompletionChunk
 import com.shifenmiao.model.ai.ChatCompletionRequest
+import com.shifenmiao.model.ai.ChunkChoice
 import com.shifenmiao.model.ai.ContentBlock
 import com.shifenmiao.model.ai.ContentItem
 import com.shifenmiao.model.ai.Conversation
+import com.shifenmiao.model.ai.FunctionCall
 import com.shifenmiao.model.ai.FunctionCallDelta
 import com.shifenmiao.model.ai.ImageSource
 import com.shifenmiao.model.ai.ListOrStringContent
+import com.shifenmiao.model.ai.Message
 import com.shifenmiao.model.ai.RequestMessage
 import com.shifenmiao.model.ai.ReasoningOptions
 import com.shifenmiao.model.ai.StreamOptions
+import com.shifenmiao.model.ai.ToolCall
 import com.shifenmiao.model.ai.RoleType
 import com.shifenmiao.model.ai.ToolCallDelta
 import com.shifenmiao.model.ai.ToolDefinition
 import com.shifenmiao.model.ai.ToolParameters
+import com.shifenmiao.model.ai.Usage
 import com.shifenmiao.model.ai.openai.responses.ResponsesApiContentItem
 import com.shifenmiao.model.ai.openai.responses.ResponsesApiInputItem
 import com.shifenmiao.model.ai.openai.responses.ResponsesApiRequest
@@ -275,6 +283,7 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
         conversation: Conversation,
         chatCompletionRequest: ChatCompletionRequest
     ): Flow<LlmStreamEvent> = flow {
+        val engine = conversation.engine
         val chunk = withContext(Dispatchers.IO) {
             val call = createChatCall(
                 conversation = conversation,
@@ -285,7 +294,14 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
             if (response.isSuccessful) {
                 try {
                     val json = response.body()?.string()
-                    json?.let { AppJson.decodeFromString<ChatCompletionChunk>(it) }
+                    json?.let {
+                        if (engine.requestProtocol == AiRequestProtocol.ANTHROPIC_COMPATIBLE) {
+                            AppJson.decodeFromString<AnthropicMessagesResponse>(it)
+                                .toChatCompletionChunk()
+                        } else {
+                            AppJson.decodeFromString<ChatCompletionChunk>(it)
+                        }
+                    }
                 } catch (_: Exception) {
                     AiUtils.extractDetailedErrorInfo(response)
                 }
@@ -1061,9 +1077,11 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
             )
         }?.takeIf { it.isNotEmpty() }
 
-        val otherMessages = request.messages
-            .filter { it.role != RoleType.SYSTEM.value }
-            .flatMap { msg -> convertAnthropicMessage(msg) }
+        val otherMessages = mergeAnthropicSameRoleMessages(
+            request.messages
+                .filter { it.role != RoleType.SYSTEM.value }
+                .flatMap { msg -> convertAnthropicMessage(msg) }
+        )
 
         return AnthropicMessagesRequest(
             model = request.model,
@@ -1149,6 +1167,100 @@ class ProtocolRoutingAIRequestHandler @Inject constructor(
         }
 
         return result
+    }
+
+    /**
+     * 合并相邻同 role 的消息。
+     *
+     * Anthropic 要求 messages 严格 user/assistant 交替,且 assistant 消息里的每个
+     * tool_use 必须在"紧随其后的一条 user 消息"内找到对应 tool_result。一轮并行
+     * 多个工具调用会产生多条连续 tool 消息,不合并时服务端 400:
+     * "tool_use ids were found without tool_result blocks immediately after"。
+     */
+    private fun mergeAnthropicSameRoleMessages(messages: List<AnthropicMessage>): List<AnthropicMessage> {
+        val merged = mutableListOf<AnthropicMessage>()
+        for (msg in messages) {
+            val last = merged.lastOrNull()
+            if (last == null || last.role != msg.role) {
+                merged.add(msg)
+                continue
+            }
+            val blocks = anthropicContentToBlocks(last.content) + anthropicContentToBlocks(msg.content)
+            merged[merged.lastIndex] = AnthropicMessage(
+                role = msg.role,
+                content = if (blocks.isEmpty()) "" else blocks
+            )
+        }
+        return merged
+    }
+
+    private fun anthropicContentToBlocks(content: Any): List<ContentBlock> {
+        return when (content) {
+            is String -> {
+                if (content.isBlank()) emptyList()
+                else listOf(ContentBlock(type = "text", text = content))
+            }
+            is List<*> -> content.filterIsInstance<ContentBlock>()
+            else -> emptyList()
+        }
+    }
+
+    /**
+     * Anthropic 非流式响应 → 统一 ChatCompletionChunk。
+     *
+     * tool_use block 映射为 message.tool_calls(finish_reason = tool_calls),
+     * 让 Agent Loop 的非流式路径与流式路径走同一套 tool_call 判定。
+     */
+    private fun AnthropicMessagesResponse.toChatCompletionChunk(): ChatCompletionChunk {
+        val text = content
+            .filter { it.type == "text" }
+            .mapNotNull { it.text }
+            .joinToString("")
+        val toolCalls = content
+            .filter { it.type == "tool_use" }
+            .map { block ->
+                ToolCall(
+                    id = block.id.orEmpty(),
+                    type = "function",
+                    function = FunctionCall(
+                        name = block.name.orEmpty(),
+                        arguments = anthropicInputToArguments(block.input)
+                    )
+                )
+            }
+        return ChatCompletionChunk(
+            id = id,
+            model = model,
+            choices = listOf(
+                ChunkChoice(
+                    index = 0,
+                    message = Message(
+                        role = role,
+                        content = text.ifEmpty { null },
+                        toolCalls = toolCalls.takeIf { it.isNotEmpty() }
+                    ),
+                    finishReason = AiUtils.mapAnthropicStopReason(stopReason)
+                )
+            ),
+            usage = usage?.let {
+                Usage(
+                    promptTokens = it.inputTokens,
+                    completionTokens = it.outputTokens,
+                    totalTokens = it.inputTokens + it.outputTokens
+                )
+            }
+        )
+    }
+
+    private fun anthropicInputToArguments(input: Any?): String {
+        return when (input) {
+            null -> "{}"
+            is String -> input
+            is JsonElement -> input.toString()
+            else -> runCatching {
+                AppJson.encodeToJsonElement(AnthropicAnySerializer, input).toString()
+            }.getOrDefault("{}")
+        }
     }
 
     private fun extractTextContent(content: ListOrStringContent?): String {
