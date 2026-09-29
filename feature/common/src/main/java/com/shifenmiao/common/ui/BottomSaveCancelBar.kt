@@ -16,6 +16,9 @@ fun BottomSaveCancelBar(
     cancelEnabled: Boolean = true,
     saveEnabled: Boolean = true,
     extraActions: (@Composable RowScope.() -> Unit)? = null,
+    dangerText: String? = null,
+    onDangerClick: (() -> Unit)? = null,
+    dangerEnabled: Boolean = true,
 ) {
     val resolvedSaveText = saveText ?: stringResource(R.string.settings_confirm)
 
@@ -28,5 +31,8 @@ fun BottomSaveCancelBar(
         onSecondaryClick = onCancel,
         secondaryEnabled = cancelEnabled,
         extraActions = extraActions,
+        dangerText = dangerText,
+        onDangerClick = onDangerClick,
+        dangerEnabled = dangerEnabled,
     )
 }

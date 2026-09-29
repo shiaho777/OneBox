@@ -105,6 +105,15 @@ fun AIEngineSettingsDetailScreen(
     val isSaving by component.isSaving.collectAsState()
     val isDeleting by component.isDeleting.collectAsState()
 
+    // 删除入口看「是否本地自有」。identityKey 含协议, 仅用草稿判断会在切换协议时
+    // 对不上导致按钮消失; 同名任意本地协议记录都认。
+    val canDeleteEngine = draftEngine?.let { engine ->
+        localOwnedEngineKeys.any { key ->
+            key == engine.identityKey() ||
+                key.startsWith("${engine.name.trim().lowercase()}#")
+        }
+    } == true
+
     val coroutineScope = rememberCoroutineScope()
 
     var showExitConfirmDialog by remember { mutableStateOf(false) }
@@ -454,21 +463,6 @@ fun AIEngineSettingsDetailScreen(
                         },
                     )
                 }
-
-                // 删除入口看「是否本地自有」。identityKey 含协议, 仅用草稿判断会在切换协议时
-                // 对不上导致按钮消失; 同名任意本地协议记录都认。
-                val canDeleteEngine = localOwnedEngineKeys.any { key ->
-                    key == engine.identityKey() ||
-                        key.startsWith("${engine.name.trim().lowercase()}#")
-                }
-                if (canDeleteEngine) {
-                    Spacer(modifier = Modifier.height(24.dp))
-                    OneBoxDangerButton(
-                        text = stringResource(R.string.ai_engine_delete_action),
-                        onClick = { pendingDeleteEngine = true },
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
             }
         }
 
@@ -477,6 +471,17 @@ fun AIEngineSettingsDetailScreen(
             cancelEnabled = true,
             saveEnabled = draftEngine != null && !isSaving,
             saveText = stringResource(R.string.ai_engine_save_action),
+            dangerText = if (canDeleteEngine) {
+                stringResource(R.string.ai_engine_delete_action)
+            } else {
+                null
+            },
+            onDangerClick = if (canDeleteEngine) {
+                { pendingDeleteEngine = true }
+            } else {
+                null
+            },
+            dangerEnabled = !isDeleting,
             onCancel = {
                 if (hasUnsavedChanges) showExitConfirmDialog = true
                 else component.onGoBack()

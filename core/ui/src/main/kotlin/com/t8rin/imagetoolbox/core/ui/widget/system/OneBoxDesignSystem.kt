@@ -451,6 +451,9 @@ fun OneBoxBottomActionBar(
     primaryEnabled: Boolean = true,
     secondaryEnabled: Boolean = true,
     extraActions: (@Composable RowScope.() -> Unit)? = null,
+    dangerText: String? = null,
+    onDangerClick: (() -> Unit)? = null,
+    dangerEnabled: Boolean = true,
 ) {
     GlassSurface(
         modifier = modifier
@@ -484,6 +487,14 @@ fun OneBoxBottomActionBar(
                 horizontalArrangement = Arrangement.spacedBy(OneBoxDesignSystem.compactSpacing),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                // 危险操作放「取消」左侧, 与保存/取消同排, 比正文里全宽按钮更醒目
+                if (!dangerText.isNullOrBlank() && onDangerClick != null) {
+                    OneBoxDangerButton(
+                        text = dangerText,
+                        onClick = onDangerClick,
+                        enabled = dangerEnabled,
+                    )
+                }
                 if (!secondaryText.isNullOrBlank() && onSecondaryClick != null) {
                     OneSecondaryButton(
                         text = secondaryText,
