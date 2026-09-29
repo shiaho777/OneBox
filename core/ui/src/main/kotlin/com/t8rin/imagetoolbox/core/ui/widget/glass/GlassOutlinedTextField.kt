@@ -48,6 +48,25 @@ import com.t8rin.imagetoolbox.core.ui.theme.blend
 //  GlassOutlinedTextField — 毛玻璃风格 OutlinedTextField
 // ──────────────────────────────────────────────────────────────
 
+/**
+ * 输入框描边可见度的下限系数。
+ *
+ * 输入框的描边是"这里可以输入"的**功能性提示**, 和卡片/按钮的装饰描边不是一回事,
+ * 所以不能直接乘全局"玻璃边界透明度"(默认 20%):
+ * 未聚焦时描边基础 alpha 只有 0.35, 再乘 0.20 只剩 0.06 可见度 —— 实测边框只比背景暗
+ * 7.8/255, 看上去就是一块没有边界的高亮文字, 认不出是输入框。
+ *
+ * 这里把设置值映射到 [0.62, 1] 区间: 只要设置不是 0, 输入框就保留可辨认的边界, 且仍随
+ * 设置线性变化; 设置拉到 0 依旧按"隐藏描边"处理(保留这个明确的手动出口)。
+ * 卡片/按钮等装饰描边不受影响, 仍然直接乘设置值。
+ */
+private const val TEXT_FIELD_MIN_STROKE_VISIBILITY = 0.62f
+
+/** 把全局玻璃描边可见度映射成输入框描边的可见度(带下限, 保证输入框边界始终可辨认)。 */
+private fun textFieldStrokeVisibility(glassBorderAlpha: Float): Float =
+    TEXT_FIELD_MIN_STROKE_VISIBILITY +
+        (1f - TEXT_FIELD_MIN_STROKE_VISIBILITY) * glassBorderAlpha.coerceIn(0f, 1f)
+
 @Immutable
 enum class GlassTextFieldVisualPreset(
     val fillMultiplier: Float,
@@ -781,9 +800,11 @@ private fun Modifier.modernGlassTextFieldContainer(
     val colorScheme = MaterialTheme.colorScheme
     val isLight = colorScheme.surface.luminance() > 0.5f
     val glassBaseAlpha = LocalSettingsState.current.glassBaseAlpha.coerceIn(0f, 1f)
-    // 描边可见度与 GlassCard/GlassButton 等共用同一主题设置，0 = 隐藏描边（只影响描边）
+    // 描边可见度与 GlassCard/GlassButton 等共用同一主题设置, 但输入框走带下限的映射
+    // (见 textFieldStrokeVisibility): 直接乘设置值会让输入框边界糊到认不出来。
     val glassBorderAlpha = LocalSettingsState.current.glassBorderAlpha.takeIf { it.isFinite() }
         ?.coerceIn(0f, 1f) ?: ThemeDefaults.DEFAULT_GLASS_BORDER_ALPHA
+    val strokeVisibility = textFieldStrokeVisibility(glassBorderAlpha)
     val scaledBackgroundAlpha = backgroundAlpha * glassBaseAlpha
     val baseColor = if (color != Color.Unspecified) color else colorScheme.surfaceContainerHighest
     val visualFocused = isFocused && !readOnly
@@ -940,9 +961,9 @@ private fun Modifier.modernGlassTextFieldContainer(
             drawOutline(outline = outline, brush = depthBrush)
 
             if (glassBorderAlpha > 0f) {
-                drawOutline(outline = outline, color = strokeColor, style = mainStroke, alpha = glassBorderAlpha)
-                drawOutline(outline = outline, brush = accentStrokeBrush, style = accentStroke, alpha = glassBorderAlpha)
-                drawOutline(outline = outline, color = innerStrokeColor, style = innerStroke, alpha = glassBorderAlpha)
+                drawOutline(outline = outline, color = strokeColor, style = mainStroke, alpha = strokeVisibility)
+                drawOutline(outline = outline, brush = accentStrokeBrush, style = accentStroke, alpha = strokeVisibility)
+                drawOutline(outline = outline, color = innerStrokeColor, style = innerStroke, alpha = strokeVisibility)
             }
         }
     }
