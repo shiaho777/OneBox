@@ -251,16 +251,21 @@ fun XiangqiGameScreen(
     if (pickingSideValue != null) {
         val currentSource = component.currentSourceForSide(pickingSideValue)
         val workingModel by component.currentAIEngine.collectAsState()
+        val localEngineState by component.localEngineInstallState.collectAsState()
         XiangqiAiPickerBottomSheet(
             visible = true,
             selected = currentSource,
             workingModelTitle = workingModel.title.ifBlank { workingModel.name },
             title = stringResource(R.string.xiangqi_settings_ai_picker_title),
+            localEnginePackaged = component.isLocalEnginePackaged,
+            localEngineState = localEngineState,
             onSelected = { source ->
                 component.switchAiSourceForSide(pickingSideValue, source)
                 pickingSide = null
             },
             onDismiss = { pickingSide = null },
+            onDownloadLocalEngine = component::downloadLocalEngine,
+            onCancelLocalEngineDownload = component::cancelLocalEngineDownload,
         )
     }
 }
@@ -296,11 +301,21 @@ private fun XiangqiGameContent(
     // AI 兜底 ("AI_FALLBACK") 已经合法落子完成,不必再多一张提示卡;
     // 只对真错 (AI_ERROR / 自定义错误文案) 显示并提供重试入口。
     val showErrorCard = state.errorMessage.isNotBlank() && state.errorMessage != "AI_FALLBACK"
-    // 引擎不可用时会静默回退本地兜底,只表现为"AI 突然变笨"。
-    // 这里把它显式说出来,并带上兜底原因(如 "pikafish: http 503"),否则无从排查。
+    // 云端失败后本地引擎接手:棋力正常,每局只软提示一次,不要红色「引擎不可用」。
+    // 浅层启发式才是真兜底,单独一张警示卡并引导下载本地引擎。
     val fallbackPly = state.history.lastOrNull {
         MoveDecision.isLocalFallback(it.aiReason)
     }?.takeIf { it.ply == state.currentPly }
+    // 云端失败后本地引擎接手：整局最多软提示一次，避免每手都弹
+    val swapCandidatePly = state.history.lastOrNull {
+        MoveDecision.isLocalEngineSwap(it.aiReason)
+    }?.takeIf { it.ply == state.currentPly }
+    androidx.compose.runtime.LaunchedEffect(swapCandidatePly?.ply) {
+        if (swapCandidatePly != null && !component.localSwapNoticeShownOnce) {
+            component.markLocalSwapNoticeShown()
+        }
+    }
+    val localSwapPly = swapCandidatePly?.takeIf { component.localSwapNoticeVisible }
     val showDebugPanel = BuildConfig.DEBUG && state.mode == GameMode.ONLINE_PVP
 
     BoxWithConstraints(modifier = modifier) {
@@ -308,7 +323,8 @@ private fun XiangqiGameContent(
         val chromeHeight = 32.dp + 52.dp + 16.dp + 60.dp + 16.dp +
             (if (showErrorCard) StatusCardHeight + 16.dp else 0.dp) +
             (if (showDebugPanel) 156.dp else 0.dp) +
-            (if (fallbackPly != null) FallbackCardHeight + 16.dp else 0.dp)
+            (if (localSwapPly != null) StatusCardHeight + 16.dp else 0.dp) +
+            (if (fallbackPly != null && localSwapPly == null) FallbackCardHeight + 16.dp else 0.dp)
         val boardAvailable = maxHeight - chromeHeight
         val adaptive = boardAvailable != Dp.Infinity && boardAvailable >= MinAdaptiveBoardHeight
 
@@ -363,7 +379,15 @@ private fun XiangqiGameContent(
                 if (showDebugPanel) {
                     OnlineDebugPanel(state = state)
                 }
-                if (fallbackPly != null) {
+                if (localSwapPly != null) {
+                    LocalEngineSwapCard(
+                        state = state,
+                        swapPly = localSwapPly,
+                        onDismiss = component::dismissLocalSwapNotice,
+                        onRetry = component::retryAiMove,
+                        onPickAiFor = onPickAiFor,
+                    )
+                } else if (fallbackPly != null) {
                     FallbackStatusCard(state, fallbackPly, onPickAiFor)
                 }
             }
@@ -415,7 +439,15 @@ private fun XiangqiGameContent(
                 if (showDebugPanel) {
                     OnlineDebugPanel(state = state)
                 }
-                if (fallbackPly != null) {
+                if (localSwapPly != null) {
+                    LocalEngineSwapCard(
+                        state = state,
+                        swapPly = localSwapPly,
+                        onDismiss = component::dismissLocalSwapNotice,
+                        onRetry = component::retryAiMove,
+                        onPickAiFor = onPickAiFor,
+                    )
+                } else if (fallbackPly != null) {
                     FallbackStatusCard(state, fallbackPly, onPickAiFor)
                 }
                 Spacer(modifier = Modifier.height(24.dp))
@@ -460,7 +492,7 @@ private fun GameBoardArea(
                 state.status == GameStatus.BLACK_WINS ||
                 state.status == GameStatus.DRAW ||
                 state.status == GameStatus.RESIGNED
-            if (isGameOver) {
+            if (isGameOver && component.showGameOverOverlay) {
                 BoardGameOverOverlay(
                     resultTitle = when (state.status) {
                         GameStatus.RED_WINS -> stringResource(R.string.xiangqi_game_over_red)
@@ -474,8 +506,29 @@ private fun GameBoardArea(
                     onRestart = component::restart,
                     onReview = component::openAnalysis,
                     onBack = component.onGoBack,
+                    dismissLabel = stringResource(R.string.xiangqi_game_over_dismiss),
+                    onDismiss = component::dismissGameOverOverlay,
                     emphasizeResult = state.status != GameStatus.DRAW,
                 )
+            } else if (isGameOver) {
+                // 浮层关掉后仍可就地看结果，不影响复盘操作
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .padding(12.dp),
+                    contentAlignment = Alignment.TopEnd,
+                ) {
+                    GlassTonalButton(
+                        onClick = component::reopenGameOverOverlay,
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                    ) {
+                        Text(
+                            text = localizedGameResultText(state.status),
+                            style = MaterialTheme.typography.labelMedium,
+                            maxLines = 1,
+                        )
+                    }
+                }
             }
         }
     }
@@ -555,14 +608,10 @@ private fun FallbackStatusCard(
     onPickAiFor: (Side) -> Unit,
 ) {
     // 用落库的 moverSide 判定行棋方最可靠(不依赖当前轮到谁)
+    val reason = MoveDecision.stripMarkers(fallbackPly.aiReason).ifBlank { "unknown" }
     StatusCard(
         title = stringResource(R.string.xiangqi_ai_local_fallback_title),
-        subtitle = stringResource(
-            R.string.xiangqi_ai_local_fallback_message,
-            fallbackPly.aiReason
-                .removePrefix(MoveDecision.LOCAL_FALLBACK_MARKER)
-                .ifBlank { "unknown" },
-        ),
+        subtitle = stringResource(R.string.xiangqi_ai_local_fallback_message, reason),
         height = FallbackCardHeight,
         // AI 对战下两个座位都是引擎,只给一个"切换模型"入口会让人误解是哪个
         titleTrailing = if (state.mode != GameMode.LLM_VS_LLM) {
@@ -581,6 +630,62 @@ private fun FallbackStatusCard(
             }
         } else {
             null
+        },
+    )
+}
+
+/**
+ * 云端引擎失败后本地引擎接手的软提示:棋力正常,不要红色恐吓。
+ * 每局最多展示一次([XiangqiGameComponent.dismissLocalSwapNotice] 关掉后不再回来)。
+ */
+@Composable
+private fun LocalEngineSwapCard(
+    state: XiangqiGameUiState,
+    swapPly: XiangqiPlyRecord,
+    onDismiss: () -> Unit,
+    onRetry: () -> Unit,
+    onPickAiFor: (Side) -> Unit,
+) {
+    val reason = MoveDecision.stripMarkers(swapPly.aiReason).ifBlank { "unknown" }
+    StatusCard(
+        title = stringResource(R.string.xiangqi_ai_local_engine_swap_title),
+        subtitle = stringResource(R.string.xiangqi_ai_local_engine_swap_message, reason),
+        height = StatusCardHeight,
+        titleColor = MaterialTheme.colorScheme.primary,
+        titleTrailing = if (state.mode != GameMode.LLM_VS_LLM) {
+            {
+                GlassTonalButton(
+                    onClick = { onPickAiFor(swapPly.moverSide) },
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                ) {
+                    Text(
+                        stringResource(R.string.xiangqi_switch_ai_model),
+                        style = MaterialTheme.typography.labelSmall,
+                        maxLines = 1,
+                    )
+                }
+            }
+        } else {
+            null
+        },
+        actions = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                GlassTonalButton(
+                    onClick = onRetry,
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text(stringResource(R.string.xiangqi_retry_ai), maxLines = 1)
+                }
+                GlassTonalButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text(stringResource(R.string.xiangqi_close), maxLines = 1)
+                }
+            }
         },
     )
 }
@@ -960,6 +1065,7 @@ private fun StatusCard(
     title: String,
     subtitle: String,
     height: Dp = StatusCardHeight,
+    titleColor: Color = MaterialTheme.colorScheme.error,
     titleTrailing: (@Composable () -> Unit)? = null,
     actions: (@Composable () -> Unit)? = null,
 ) {
@@ -978,7 +1084,7 @@ private fun StatusCard(
                 Text(
                     title,
                     style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.error,
+                    color = titleColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f),

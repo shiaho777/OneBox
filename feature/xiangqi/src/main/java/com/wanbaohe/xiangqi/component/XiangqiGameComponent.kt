@@ -27,6 +27,8 @@ import com.wanbaohe.xiangqi.application.usecase.PlayMoveUseCase
 import com.wanbaohe.xiangqi.application.usecase.SettingsUseCase
 import com.wanbaohe.xiangqi.R
 import com.wanbaohe.xiangqi.data.XiangqiPlyRecord
+import com.wanbaohe.xiangqi.data.local.LocalXiangqiEngine
+import com.wanbaohe.xiangqi.data.local.XiangqiEngineWeights
 import com.wanbaohe.xiangqi.domain.FenCodec
 import com.wanbaohe.xiangqi.domain.GameArbiter
 import com.wanbaohe.xiangqi.domain.GameReducer
@@ -95,6 +97,8 @@ class XiangqiGameComponent @AssistedInject constructor(
     private val aiEngineManager: AIEngineManager,
     private val xiangqiAiStore: XiangqiAiStore,
     private val onlinePlay: OnlinePlayUseCase,
+    private val localEngine: LocalXiangqiEngine,
+    private val engineWeights: XiangqiEngineWeights,
     aiEngineCatalogManager: AIEngineCatalogManager,
     dispatchersHolder: DispatchersHolder,
 ) : BaseComponent(dispatchersHolder, componentContext) {
@@ -105,6 +109,42 @@ class XiangqiGameComponent @AssistedInject constructor(
     var showResignConfirm by mutableStateOf(false)
     var showRestartConfirm by mutableStateOf(false)
     var showRenameDialog by mutableStateOf(false)
+
+    /** 终局结果浮层是否展示；可关闭以便就地复盘，再点结果区可重新打开 */
+    var showGameOverOverlay by mutableStateOf(true)
+
+    /** 云端失败后本地引擎接手的软提示：整局最多展示一次 */
+    var localSwapNoticeShownOnce by mutableStateOf(false)
+    var localSwapNoticeVisible by mutableStateOf(false)
+
+    fun markLocalSwapNoticeShown() {
+        localSwapNoticeShownOnce = true
+        localSwapNoticeVisible = true
+    }
+
+    fun dismissLocalSwapNotice() {
+        localSwapNoticeVisible = false
+    }
+
+    /** 本地引擎安装状态（供 AI 选择器展示下载进度 / 引导下载） */
+    val localEngineInstallState: StateFlow<XiangqiEngineWeights.InstallState> = engineWeights.state
+    val isLocalEnginePackaged: Boolean = localEngine.isPackaged()
+
+    fun downloadLocalEngine() {
+        engineWeights.startDownload()
+    }
+
+    fun cancelLocalEngineDownload() {
+        engineWeights.cancelDownload()
+    }
+
+    fun dismissGameOverOverlay() {
+        showGameOverOverlay = false
+    }
+
+    fun reopenGameOverOverlay() {
+        showGameOverOverlay = true
+    }
 
     val allAiEngines: StateFlow<List<AiEngine>> =
         aiEngineCatalogManager.observeAvailableEngines()
@@ -303,6 +343,19 @@ class XiangqiGameComponent @AssistedInject constructor(
                 val redInfo = resolveAiDisplay(detail.mode, detail.redPlayerType, Side.RED)
                 val blackInfo = resolveAiDisplay(detail.mode, detail.blackPlayerType, Side.BLACK)
 
+                val previousStatus = uiState.status
+                val becameTerminal = previousStatus.isPlayable() && detail.status.isTerminal()
+                val becamePlayable = detail.status.isPlayable()
+                if (becameTerminal) showGameOverOverlay = true
+                if (becamePlayable) {
+                    showGameOverOverlay = true
+                    // 新的一局/回到可下状态后允许再提示一次本地引擎接手
+                    if (!previousStatus.isPlayable()) {
+                        localSwapNoticeShownOnce = false
+                        localSwapNoticeVisible = false
+                    }
+                }
+
                 uiState = uiState.copy(
                     title = detail.title,
                     boardState = boardState,
@@ -463,6 +516,9 @@ class XiangqiGameComponent @AssistedInject constructor(
                 (engine.title.ifBlank { engine.name }) to (engine.model.title.ifBlank { engine.model.name })
             }
             XiangqiAiSource.Jev -> "Jev" to ""
+            XiangqiAiSource.LocalEngine ->
+                com.shifenmiao.interfaces.singleton.AppContext
+                    .getString(R.string.xiangqi_ai_source_local_engine) to ""
             is XiangqiAiSource.RemoteEngine -> source.engineId to ""
         }
     }
@@ -518,6 +574,11 @@ class XiangqiGameComponent @AssistedInject constructor(
     }
 
     private fun GameStatus.isPlayable(): Boolean = this == GameStatus.PLAYING || this == GameStatus.CHECK
+
+    private fun GameStatus.isTerminal(): Boolean = this == GameStatus.RED_WINS ||
+        this == GameStatus.BLACK_WINS ||
+        this == GameStatus.DRAW ||
+        this == GameStatus.RESIGNED
 
     private fun isLocalOnlineTurn(): Boolean =
         uiState.mode != GameMode.ONLINE_PVP || uiState.boardState.sideToMove == uiState.onlineMySide

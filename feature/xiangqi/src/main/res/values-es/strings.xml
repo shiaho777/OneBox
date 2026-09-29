@@ -165,7 +165,7 @@
     <string name="xiangqi_invalid_fen">Formato FEN inválido</string>
     <string name="xiangqi_invalid_json">Formato de notación JSON inválido</string>
     <string name="xiangqi_ai_failed">La IA no devolvió un movimiento legal; se aplicó una alternativa local</string>
-    <string name="xiangqi_ai_local_fallback_title">Motor no disponible: se jugó una jugada local de respaldo</string>
+    <string name="xiangqi_ai_local_fallback_title">Se jugó una jugada local sencilla</string>
     <string name="xiangqi_ai_local_fallback_message">Motivo: %1$s</string>
     <string name="xiangqi_ai_picker_desc">Los motores de jugadas de Xiangqi se configuran aparte de los modelos de chat.</string>
     <string name="xiangqi_ai_source_working_model">Modelo de trabajo rápido</string>

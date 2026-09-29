@@ -30,8 +30,8 @@ import javax.inject.Singleton
  * 而本模块与标准 UCCI 是 **0-based(a0-i9,红方底线为 0)**,因此换算关系是
  * `我们的 UCCI 纵线 = 引擎纵线 - 1`(横线 a-i 一致,无镜像)。
  *
- * 当前定位:服务端引擎不可达时的**优先兜底**(排在自研浅层搜索之前)。
- * 尚未接入的:引擎选择项 UI、下载入口与进度展示、空闲进程回收。
+ * 当前定位：用户可主动选择的「本地引擎」；云端 Pikafish 失败时也会自动接手。
+ * 浅层启发式搜索仍作最后保命兜底。
  */
 @Singleton
 class LocalXiangqiEngine @Inject constructor(

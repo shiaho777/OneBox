@@ -52,6 +52,7 @@ fun StatusCard(
     subtitle: String,
     height: Dp = StatusCardHeight,
     modifier: Modifier = Modifier,
+    titleColor: Color = MaterialTheme.colorScheme.error,
     titleTrailing: (@Composable () -> Unit)? = null,
     actions: (@Composable () -> Unit)? = null,
 ) {
@@ -70,7 +71,7 @@ fun StatusCard(
                 Text(
                     title,
                     style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.error,
+                    color = titleColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f),

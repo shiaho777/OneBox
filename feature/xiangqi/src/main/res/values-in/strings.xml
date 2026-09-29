@@ -165,7 +165,7 @@
     <string name="xiangqi_invalid_fen">Format FEN tidak valid</string>
     <string name="xiangqi_invalid_json">Format notasi JSON tidak valid</string>
     <string name="xiangqi_ai_failed">AI tidak mengembalikan langkah yang sah; fallback lokal diterapkan</string>
-    <string name="xiangqi_ai_local_fallback_title">Mesin tidak tersedia — langkah cadangan lokal dimainkan</string>
+    <string name="xiangqi_ai_local_fallback_title">Langkah AI lokal sederhana dimainkan</string>
     <string name="xiangqi_ai_local_fallback_message">Alasan: %1$s</string>
     <string name="xiangqi_ai_picker_desc">Mesin langkah Xiangqi dikonfigurasi terpisah dari model chat.</string>
     <string name="xiangqi_ai_source_working_model">Model kerja cepat</string>

@@ -82,6 +82,8 @@ fun XiangqiSettingsScreen(
             selected = selectedSource,
             workingModelTitle = sourceSubtitle(XiangqiAiSource.WorkingModel, fastEngine),
             title = stringResource(slotTitleRes),
+            localEnginePackaged = component.isLocalEnginePackaged,
+            localEngineState = localEngineState,
             onSelected = { source ->
                 val slot = when (pickingSlotValue) {
                     AiSlot.FAST -> EngineSlot.FAST
@@ -92,6 +94,8 @@ fun XiangqiSettingsScreen(
                 pickingSlot = null
             },
             onDismiss = { pickingSlot = null },
+            onDownloadLocalEngine = component::downloadLocalEngine,
+            onCancelLocalEngineDownload = component::cancelLocalEngineDownload,
         )
     }
 
@@ -705,6 +709,7 @@ private enum class AiSlot { FAST, DUEL_A, DUEL_B }
 private fun sourceLabel(source: XiangqiAiSource): String = when (source) {
     XiangqiAiSource.WorkingModel -> stringResource(R.string.xiangqi_ai_source_working_model)
     XiangqiAiSource.Jev -> stringResource(R.string.xiangqi_ai_source_jev)
+    XiangqiAiSource.LocalEngine -> stringResource(R.string.xiangqi_ai_source_local_engine)
     is XiangqiAiSource.RemoteEngine -> when (source.engineId) {
         XiangqiAiSource.RemoteEngine.PIKAFISH -> stringResource(R.string.xiangqi_ai_source_pikafish)
         else -> source.engineId
@@ -720,6 +725,7 @@ private fun sourceSubtitle(
         (workingModel.title.ifBlank { workingModel.name }) +
             " · " + (workingModel.model.title.ifBlank { workingModel.model.name })
     XiangqiAiSource.Jev -> stringResource(R.string.xiangqi_ai_source_jev_desc)
+    XiangqiAiSource.LocalEngine -> stringResource(R.string.xiangqi_ai_source_local_engine_desc)
     is XiangqiAiSource.RemoteEngine -> stringResource(R.string.xiangqi_ai_source_engine_desc)
 }
 

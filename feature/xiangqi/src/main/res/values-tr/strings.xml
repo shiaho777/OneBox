@@ -165,7 +165,7 @@
     <string name="xiangqi_invalid_fen">Geçersiz FEN formatı</string>
     <string name="xiangqi_invalid_json">Geçersiz JSON notasyon formatı</string>
     <string name="xiangqi_ai_failed">AI geçerli bir hamle döndürmedi; yerel yedek uygulandı</string>
-    <string name="xiangqi_ai_local_fallback_title">Motor kullanılamıyor — yerel yedek hamle oynandı</string>
+    <string name="xiangqi_ai_local_fallback_title">Basit yerel AI hamlesi oynandı</string>
     <string name="xiangqi_ai_local_fallback_message">Neden: %1$s</string>
     <string name="xiangqi_ai_picker_desc">Xiangqi hamle motorları sohbet modellerinden ayrı yapılandırılır.</string>
     <string name="xiangqi_ai_source_working_model">Hızlı çalışma modeli</string>

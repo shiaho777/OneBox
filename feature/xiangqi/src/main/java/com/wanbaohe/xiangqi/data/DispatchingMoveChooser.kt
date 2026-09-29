@@ -16,6 +16,7 @@ import javax.inject.Singleton
  * - [XiangqiAiSource.WorkingModel] → 聊天 LLM（全局快速工作模型）
  * - [XiangqiAiSource.Jev] → 判断模型
  * - [XiangqiAiSource.RemoteEngine] → 服务端 UCI 引擎（当前内置 Pikafish）
+ * - [XiangqiAiSource.LocalEngine] → 端侧 Fairy-Stockfish（需已下载权重）
  *
  * 新增开源象棋驱动时，若仍是 UCI 协议可复用 [PikafishMoveChooser]（传不同 engineId）；
  * 若协议不同再加一路 MoveChooser 并在此 when 分支。
@@ -26,6 +27,7 @@ class DispatchingMoveChooser @Inject constructor(
     private val llmMoveChooser: LlmMoveChooser,
     private val jevMoveChooser: JevMoveChooser,
     private val pikafishMoveChooser: PikafishMoveChooser,
+    private val localEngineMoveChooser: LocalEngineMoveChooser,
 ) : MoveChooser {
 
     override suspend fun choose(
@@ -50,6 +52,11 @@ class DispatchingMoveChooser @Inject constructor(
                 history = history,
                 legalMoves = legalMoves,
                 slot = slot,
+            )
+            XiangqiAiSource.LocalEngine -> localEngineMoveChooser.choose(
+                boardState = boardState,
+                fen = fen,
+                legalMoves = legalMoves,
             )
             is XiangqiAiSource.RemoteEngine -> pikafishMoveChooser.choose(
                 boardState = boardState,

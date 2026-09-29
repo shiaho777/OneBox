@@ -90,6 +90,9 @@ class PikafishMoveChooser @Inject constructor(
     /**
      * 远程引擎失败后的回退：先端侧 Fairy-Stockfish(象棋 NNUE)，再自研浅层搜索。
      * 未打包/未装权重/引擎异常都直接落到浅层搜索，绝不阻塞对局。
+     *
+     * 本地引擎接手标记为 [MoveDecision.localEngineSwap]（棋力正常，软提示）；
+     * 只有浅层启发式才是 [MoveDecision.fallbackUsed]（需警示 + 引导下载）。
      */
     private suspend fun fallbackMove(
         boardState: BoardState,
@@ -106,7 +109,8 @@ class PikafishMoveChooser @Inject constructor(
                     move = matched,
                     reason = "local-engine $score depth=${local.depth ?: 0} | $failureReason",
                     rawResponse = "local-engine bestmove=${local.ucci}",
-                    fallbackUsed = true,
+                    fallbackUsed = false,
+                    localEngineSwap = true,
                 )
             }
         }

@@ -77,6 +77,7 @@ fun BoxScope.BoardStartOverlay(
  *
  * @param emphasizeResult 胜负类结果用主题强调色;和棋等中性结果传 false
  * @param backLabel/onBack 可选第三按钮(text 样式),不传则不显示
+ * @param dismissLabel/onDismiss 可选「先看看棋盘」入口;传了 [onDismiss] 即可关闭浮层就地复盘
  */
 @Composable
 fun BoxScope.BoardGameOverOverlay(
@@ -90,17 +91,19 @@ fun BoxScope.BoardGameOverOverlay(
     emphasizeResult: Boolean = true,
     backLabel: String = "",
     onBack: (() -> Unit)? = null,
+    dismissLabel: String = "",
+    onDismiss: (() -> Unit)? = null,
 ) {
     Box(
         modifier = modifier
             .matchParentSize()
             .clip(MaterialTheme.shapes.large)
             .background(Color.Black.copy(alpha = 0.42f))
-            // 吃掉落在卡片外的点击,避免终局后还能点到棋子
+            // 吃掉落在卡片外的点击;若允许关闭浮层,点遮罩也关掉以便看棋盘
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
-                onClick = {},
+                onClick = { onDismiss?.invoke() },
             ),
         contentAlignment = Alignment.Center,
     ) {
@@ -169,6 +172,14 @@ fun BoxScope.BoardGameOverOverlay(
                             modifier = Modifier.fillMaxWidth(),
                         ) {
                             Text(backLabel)
+                        }
+                    }
+                    if (onDismiss != null) {
+                        TextButton(
+                            onClick = onDismiss,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text(dismissLabel)
                         }
                     }
                 }

@@ -165,7 +165,7 @@
     <string name="xiangqi_invalid_fen">Hindi wastong format ng FEN</string>
     <string name="xiangqi_invalid_json">Hindi wastong format ng JSON notation</string>
     <string name="xiangqi_ai_failed">Hindi nagbigay ng legal na galaw ang AI; ginamit ang lokal na kapalit</string>
-    <string name="xiangqi_ai_local_fallback_title">Hindi available ang engine — lokal na fallback na galaw ang ginamit</string>
+    <string name="xiangqi_ai_local_fallback_title">Simple lokal na AI ang gumalaw</string>
     <string name="xiangqi_ai_local_fallback_message">Dahilan: %1$s</string>
     <string name="xiangqi_ai_picker_desc">Ang mga Xiangqi move engine ay hiwalay na isinaayos sa mga chat model.</string>
     <string name="xiangqi_ai_source_working_model">Mabilis na working model</string>

@@ -165,7 +165,7 @@
     <string name="xiangqi_invalid_fen">अमान्य FEN प्रारूप</string>
     <string name="xiangqi_invalid_json">अमान्य JSON नोटेशन प्रारूप</string>
     <string name="xiangqi_ai_failed">AI ने वैध चाल नहीं लौटाई; स्थानीय विकल्प लागू किया गया</string>
-    <string name="xiangqi_ai_local_fallback_title">इंजन उपलब्ध नहीं — स्थानीय फ़ॉलबैक चाल चली गई</string>
+    <string name="xiangqi_ai_local_fallback_title">सरल स्थानीय AI चाल चली गई</string>
     <string name="xiangqi_ai_local_fallback_message">कारण: %1$s</string>
     <string name="xiangqi_ai_picker_desc">शतरंज चाल इंजन चैट मॉडल से अलग कॉन्फ़िगर होते हैं।</string>
     <string name="xiangqi_ai_source_working_model">तेज़ वर्किंग मॉडल</string>

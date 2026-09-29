@@ -12,10 +12,10 @@ sealed interface XiangqiAiSource {
 
     /**
      * 是否需要登录才能使用。
-     * 服务端开源引擎(Pikafish 等)免登录；聊天 LLM / Jev 需要账号。
+     * 服务端开源引擎(Pikafish 等)与本地引擎免登录；聊天 LLM / Jev 需要账号。
      */
     val requiresLogin: Boolean
-        get() = this !is RemoteEngine
+        get() = this !is RemoteEngine && this !is LocalEngine
 
     /** 是否消耗积分（走我方代理的 LLM/Jev；开源引擎免费） */
     val requiresPoints: Boolean
@@ -47,6 +47,12 @@ sealed interface XiangqiAiSource {
         }
     }
 
+    /**
+     * 端侧 Fairy-Stockfish（需先下载 NNUE 权重）。
+     * 作为一等公民出现在 AI 选择器里，与云端引擎平级切换；浅层搜索仍只作最后兜底。
+     */
+    data object LocalEngine : XiangqiAiSource
+
     companion object {
         /** 付费模型开局最低积分 */
         const val START_POINTS = 20
@@ -65,6 +71,7 @@ sealed interface XiangqiAiSource {
                     add(WorkingModel)
                     if (overseas) add(Jev)
                     addAll(RemoteEngine.presets)
+                    add(LocalEngine)
                 }
             }
 
@@ -76,6 +83,7 @@ sealed interface XiangqiAiSource {
                     if (com.shifenmiao.model.channel.FlavorType.fromName().isOverseas) Jev
                     else default
                 }
+                "local_engine", "localengine", "offline", "local" -> LocalEngine
                 else -> {
                     val id = key.trim().lowercase()
                     RemoteEngine.presets.firstOrNull { it.engineId == id }
@@ -89,5 +97,6 @@ sealed interface XiangqiAiSource {
 fun XiangqiAiSource.storageKey(): String = when (this) {
     XiangqiAiSource.WorkingModel -> "working_model"
     XiangqiAiSource.Jev -> "jev"
+    XiangqiAiSource.LocalEngine -> "local_engine"
     is XiangqiAiSource.RemoteEngine -> engineId
 }

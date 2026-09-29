@@ -177,7 +177,7 @@
     <string name="xiangqi_invalid_fen">تنسيق FEN غير صالح</string>
     <string name="xiangqi_invalid_json">تنسيق تدوين JSON غير صالح</string>
     <string name="xiangqi_ai_failed">لم يُرجع الذكاء الاصطناعي نقلة صالحة؛ تم اللعب بنقلة محلية احتياطية</string>
-    <string name="xiangqi_ai_local_fallback_title">المحرّك غير متاح — تم اللعب بنقلة محلية احتياطية</string>
+    <string name="xiangqi_ai_local_fallback_title">تم لعب نقلة محلية بسيطة</string>
     <string name="xiangqi_ai_local_fallback_message">السبب: %1$s</string>
     <string name="xiangqi_history_title">سجل النقلات</string>
     <string name="xiangqi_initial_position">الوضعية الأولية</string>

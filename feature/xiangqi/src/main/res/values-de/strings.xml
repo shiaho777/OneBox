@@ -165,7 +165,7 @@
     <string name="xiangqi_invalid_fen">Ungültiges FEN-Format</string>
     <string name="xiangqi_invalid_json">Ungültiges JSON-Notationsformat</string>
     <string name="xiangqi_ai_failed">KI hat keinen legalen Zug zurückgegeben; lokaler Ersatz angewendet</string>
-    <string name="xiangqi_ai_local_fallback_title">Engine nicht verfügbar – lokaler Ersatzzug gespielt</string>
+    <string name="xiangqi_ai_local_fallback_title">Einfacher lokaler Zug gespielt</string>
     <string name="xiangqi_ai_local_fallback_message">Grund: %1$s</string>
     <string name="xiangqi_ai_picker_desc">Xiangqi-Zug-Engines werden getrennt von Chat-Modellen konfiguriert.</string>
     <string name="xiangqi_ai_source_working_model">Schnelles Arbeitsmodell</string>
