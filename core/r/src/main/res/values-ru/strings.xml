@@ -1497,6 +1497,7 @@
     <string name="ai_chat_cancel_confirm_message_bg">Сгенерированный контент будет сохранен в историю чата. Вы можете просмотреть его в любое время.\n\nВы также можете покинуть эту страницу — ИИ продолжит отвечать в фоновом режиме.</string>
     <string name="ai_chat_cancel_confirm_background">Продолжить в фоне</string>
     <string name="ai_chat_interrupted">[Прервано]</string>
+    <string name="ai_chat_message_content_missing">Содержимое сообщения недоступно</string>
     <string name="ai_execution_paused_friendly_summary">ИИ выполнил несколько раундов вызовов инструментов, и для завершения может потребоваться больше шагов. Сгенерированный контент сохранен — вы можете продолжить или остановиться.</string>
     <string name="ai_execution_action_continue_execution">Продолжить выполнение</string>
     <string name="home_tab_web_title">Веб-сайты</string>

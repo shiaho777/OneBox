@@ -1598,6 +1598,7 @@
     <string name="ai_chat_cancel_confirm_message_bg">سيُحفظ المحتوى المُنشأ حتى الآن في سجل محادثاتك، ويمكنك الاطّلاع عليه في أي وقت.\n\nيمكنك أيضًا مغادرة هذه الصفحة — سيواصل الذكاء الاصطناعي الإجابة في الخلفية.</string>
     <string name="ai_chat_cancel_confirm_background">المتابعة في الخلفية</string>
     <string name="ai_chat_interrupted">[مقاطعة]</string>
+    <string name="ai_chat_message_content_missing">محتوى الرسالة مفقود</string>
     <string name="ai_execution_paused_friendly_summary">نفّذ الذكاء الاصطناعي عدة جولات من استدعاءات الأدوات وقد يحتاج إلى خطوات إضافية لإكمال المهمة. تم حفظ المحتوى المُنشأ — يمكنك المتابعة أو الإيقاف.</string>
     <string name="ai_execution_action_continue_execution">متابعة التنفيذ</string>
     <string name="home_tab_web_title">المواقع</string>

@@ -1497,6 +1497,7 @@
     <string name="ai_chat_cancel_confirm_message_bg">El contenido generado hasta ahora se guardará en tu historial de chat. Puedes verlo en cualquier momento.\n\nTambién puedes salir de esta página: la IA seguirá respondiendo en segundo plano.</string>
     <string name="ai_chat_cancel_confirm_background">Continuar en segundo plano</string>
     <string name="ai_chat_interrupted">[Interrumpido]</string>
+    <string name="ai_chat_message_content_missing">Contenido del mensaje no disponible</string>
     <string name="ai_execution_paused_friendly_summary">La IA ha ejecutado múltiples rondas de llamadas a herramientas y puede necesitar más pasos para terminar. El contenido generado se ha guardado: puedes continuar o detenerte.</string>
     <string name="ai_execution_action_continue_execution">Continuar ejecución</string>
     <string name="home_tab_web_title">Sitios web</string>

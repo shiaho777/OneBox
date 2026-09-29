@@ -1497,6 +1497,7 @@
     <string name="ai_chat_cancel_confirm_message_bg">Konten yang dihasilkan sejauh ini akan disimpan ke riwayat obrolan Anda. Anda dapat melihatnya kapan saja.\n\nAnda juga dapat meninggalkan halaman ini — AI akan terus merespons di latar belakang.</string>
     <string name="ai_chat_cancel_confirm_background">Lanjutkan di latar belakang</string>
     <string name="ai_chat_interrupted">[Terputus]</string>
+    <string name="ai_chat_message_content_missing">Konten pesan tidak tersedia</string>
     <string name="ai_execution_paused_friendly_summary">AI telah menjalankan beberapa putaran panggilan alat dan mungkin memerlukan lebih banyak langkah untuk menyelesaikannya. Konten yang dihasilkan telah disimpan — Anda dapat melanjutkan atau berhenti.</string>
     <string name="ai_execution_action_continue_execution">Lanjutkan eksekusi</string>
     <string name="home_tab_web_title">Situs Web</string>

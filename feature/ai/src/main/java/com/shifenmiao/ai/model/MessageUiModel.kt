@@ -544,6 +544,19 @@ sealed class MessageUiModel(
                         idPrefix = idPrefix,
                         showExpandedReasoning = showExpandedReasoning
                     )
+                    if (result.size == 1) {
+                        // question/reasoning/search 全空(历史数据异常): 渲染占位文本,
+                        // 避免空容器让用户误以为消息还在加载, 也方便长按删除
+                        result.add(
+                            UserTextContent(
+                                id = "${idPrefix}_missing",
+                                text = AppContext.getString(R.string.ai_chat_message_content_missing),
+                                isHighlighted = message.uId > 0,
+                                isFirst = true,
+                                isLast = true
+                            )
+                        )
+                    }
                     result.add(
                         UserContainerHeader(
                             id = "${idPrefix}_header",

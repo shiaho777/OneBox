@@ -93,9 +93,10 @@ interface MessageDao {
     suspend fun deleteAll()
 
     @Transaction
-    suspend fun insertQuestionAndAnswer(question: MessageEntity, answer: MessageEntity) {
-        insertReplace(question)
-        insertReplace(answer)
+    suspend fun insertQuestionAndAnswer(question: MessageEntity, answer: MessageEntity): Pair<Long, Long> {
+        val questionId = insertReplace(question)
+        val answerId = insertReplace(answer)
+        return questionId to answerId
     }
 
     @Query("SELECT * FROM message WHERE conversation_id = :conversationId ORDER BY created_at DESC")

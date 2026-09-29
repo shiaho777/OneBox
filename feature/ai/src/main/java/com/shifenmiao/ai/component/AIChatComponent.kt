@@ -272,7 +272,10 @@ open class AIChatComponent @AssistedInject internal constructor(
             messagePersistenceWorker.calculateUsageIfNull(null, questionMessages)
             messagePersistenceWorker.onChatCompletionEnd(
                 toolCallsChainJson = toolCallsChainJson,
-                startQuestionTime = streamContentProcessor.startQuestionTime
+                startQuestionTime = streamContentProcessor.startQuestionTime,
+                fallbackQuestion = questionMessages
+                    .lastOrNull { it.role == RoleType.USER.value }
+                    ?.question.orEmpty()
             )
         },
     )
@@ -511,10 +514,12 @@ open class AIChatComponent @AssistedInject internal constructor(
                     }
                     if (_chatUIState.value.chatActive) return@collectLatest
 
+                    // messages 与 messageList 均为"最新在前", 指纹必须取最新一条(first):
+                    // 用 last()(最旧一条) 会在消息数达到 LIMIT 后永久相等, DB 更新被永久跳过
                     val oldFingerprint = synchronized(messages) {
-                        if (messages.isEmpty()) "" else "${messages.size}_${messages.last().completionId}"
+                        if (messages.isEmpty()) "" else "${messages.size}_${messages.first().completionId}"
                     }
-                    val newFingerprint = "${messageList.size}_${messageList.last().completionId}"
+                    val newFingerprint = "${messageList.size}_${messageList.first().completionId}"
                     if (oldFingerprint == newFingerprint) return@collectLatest
 
                     synchronized(messages) {
@@ -589,7 +594,8 @@ open class AIChatComponent @AssistedInject internal constructor(
                     questionMessageEntityList = questionMessageEntityList,
                     attachments = attachments,
                     enableReasoning = effectiveReasoningEnabled,
-                    systemPromptOverride = systemPromptOverride
+                    systemPromptOverride = systemPromptOverride,
+                    generation = myGeneration
                 )
             } finally {
                 // P1 #6: 只有当本协程仍是"最新一代"时, 才清 chatActive.
@@ -723,7 +729,8 @@ open class AIChatComponent @AssistedInject internal constructor(
         questionMessageEntityList: List<MessageEntity>,
         attachments: List<AttachedMedia> = emptyList(),
         enableReasoning: Boolean = false,
-        systemPromptOverride: String? = null
+        systemPromptOverride: String? = null,
+        generation: Int = chatGeneration.get()
     ) {
         // P0 #11: 进入新一轮请求时清空 watchdog flag, 避免上轮超时的残留.
         streamTimeoutByWatchdog = false
@@ -876,10 +883,22 @@ open class AIChatComponent @AssistedInject internal constructor(
                 messagePersistenceWorker.calculateUsageIfNull(null, questionMessageEntityList)
                 messagePersistenceWorker.onChatCompletionEnd(
                     toolCallsChainJson = agentLoopOrchestrator.toolCallsChainJson,
-                    startQuestionTime = streamContentProcessor.startQuestionTime
+                    startQuestionTime = streamContentProcessor.startQuestionTime,
+                    fallbackQuestion = questionMessageEntityList
+                        .lastOrNull { it.role == RoleType.USER.value }
+                        ?.question.orEmpty()
                 )
             }
         } catch (e: Exception) {
+            if (chatGeneration.get() != generation) {
+                // P1 #6: 旧 job 被新一轮发送取代, 共享状态(orchestrator/watchdog/任务表/Q&A 实体)
+                // 已归新一轮所有, 任何清理或持久化都会污染进行中的新轮次(中断后缀写进新回答、
+                // 双扣积分、误杀新任务等), 仅记录后退出; 旧轮次未完成任务由新一轮
+                // executeStreamingChat 开头的 deleteByConversation 统一清理.
+                "stale generation $generation (current=${chatGeneration.get()}) catch, " +
+                    "skip cleanup & persist: ${e.javaClass.name}".makeLog("AIChatComponent")
+                return
+            }
             streamContentProcessor.stopStreamWatchdog()
             agentLoopOrchestrator.showToolUiIdle()
             // P1 review M1: 兜底置 shutdown 标记 (覆盖 onDestroy 等未经 cancel 入口的取消来源),
@@ -1000,7 +1019,10 @@ open class AIChatComponent @AssistedInject internal constructor(
                 messagePersistenceWorker.calculateUsageIfNull(null, questionMessageEntityList)
                 messagePersistenceWorker.onChatCompletionEnd(
                     toolCallsChainJson = agentLoopOrchestrator.toolCallsChainJson,
-                    startQuestionTime = streamContentProcessor.startQuestionTime
+                    startQuestionTime = streamContentProcessor.startQuestionTime,
+                    fallbackQuestion = questionMessageEntityList
+                        .lastOrNull { it.role == RoleType.USER.value }
+                        ?.question.orEmpty()
                 )
             }
 
@@ -1130,14 +1152,22 @@ open class AIChatComponent @AssistedInject internal constructor(
         val insertCompletionId = _questionMessageEntity.value.completionId
         _questionMessageEntity.value = _questionMessageEntity.value.copy(
             completionId = insertCompletionId,
+            question = resolveQuestionTextForPersist(),
             createdAt = currentTime,
             entryType = _conversation.value.entryType,
             entryRefId = _conversation.value.entryRefId,
             title = _conversation.value.title,
             reasoningTime = streamContentProcessor.reasoningTime,
         ).also { it.uId = MessageUIState.NORMAL.value }
-        // 在已生成内容末尾追加中断标记（而非取消标记）
+        // 在已生成内容末尾追加中断标记（而非取消标记）;
+        // 幂等处理, 避免同一回答被重复追加标记
         val interruptedSuffix = applicationContext.getString(R.string.ai_chat_interrupted)
+        val currentAnswer = _answerMessageEntity.value.answer
+        val answerWithSuffix = when {
+            currentAnswer.endsWith(interruptedSuffix) -> currentAnswer
+            currentAnswer.isBlank() -> interruptedSuffix
+            else -> currentAnswer + "\n\n$interruptedSuffix"
+        }
         _answerMessageEntity.value = _answerMessageEntity.value.copy(
             completionId = insertCompletionId,
             createdAt = Date(currentTime.time + 1),
@@ -1145,7 +1175,7 @@ open class AIChatComponent @AssistedInject internal constructor(
             entryRefId = _conversation.value.entryRefId,
             title = _conversation.value.title,
             reasoningTime = streamContentProcessor.reasoningTime,
-            answer = _answerMessageEntity.value.answer + "\n\n$interruptedSuffix"
+            answer = answerWithSuffix
         ).also { it.uId = MessageUIState.NORMAL.value }
         // 正常入库（expired = false），用户可在聊天列表中看到这条消息
         val questionEntityForDb = _questionMessageEntity.value.let { entity ->
@@ -1167,6 +1197,27 @@ open class AIChatComponent @AssistedInject internal constructor(
             timestamp = currentTime.time
         )
         consumePoints(_answerMessageEntity.value)
+    }
+
+    /**
+     * 落库前解析 question 文本: 实体在流式期间被竞态重置为空时,
+     * 从发送时固化的 [questionMessageEntityList] 兜底恢复原文;
+     * 仍为空则记日志, 便于定位实体被清空的源头.
+     */
+    private fun resolveQuestionTextForPersist(): String {
+        val current = _questionMessageEntity.value.question
+        if (current.isNotBlank()) return current
+        val fallback = questionMessageEntityList
+            .lastOrNull { it.role == RoleType.USER.value }
+            ?.question?.trim().orEmpty()
+        val completionId = _questionMessageEntity.value.completionId
+        if (fallback.isNotBlank()) {
+            "question blank at persist, recovered from send-time list (completionId=$completionId)"
+                .makeLog("AIChatComponent")
+            return fallback
+        }
+        "persisting BLANK question (completionId=$completionId)".makeLog("AIChatComponent")
+        return current
     }
 
     fun retryChat() {

@@ -1497,6 +1497,7 @@
     <string name="ai_chat_cancel_confirm_message_bg">अब तक उत्पन्न सामग्री आपके चैट इतिहास में सहेजी जाएगी। आप इसे कभी भी देख सकते हैं।\n\nआप इस पृष्ठ से भी जा सकते हैं — AI पृष्ठभूमि में जवाब देना जारी रखेगा।</string>
     <string name="ai_chat_cancel_confirm_background">पृष्ठभूमि में जारी रखें</string>
     <string name="ai_chat_interrupted">[बाधित]</string>
+    <string name="ai_chat_message_content_missing">संदेश की सामग्री उपलब्ध नहीं है</string>
     <string name="ai_execution_paused_friendly_summary">AI ने टूल कॉल के कई दौर चलाए हैं और समाप्त करने के लिए और अधिक चरणों की आवश्यकता हो सकती है। उत्पन्न सामग्री सहेजी गई है — आप जारी रख सकते हैं या रोक सकते हैं।</string>
     <string name="ai_execution_action_continue_execution">निष्पादन जारी रखें</string>
     <string name="home_tab_web_title">वेबसाइटें</string>

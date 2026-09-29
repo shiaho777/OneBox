@@ -56,8 +56,9 @@ class MessageListUseCase @Inject constructor(
         answer: MessageEntity,
         conversation: Conversation?,
     ) {
-        val beforeId = messageDao.insertReplace(question)
-        val afterId = messageDao.insertReplace(answer)
+        // 走 DAO 的 @Transaction 版本, 保证两行原子落库,
+        // 避免进程在两条独立 insert 之间死亡形成半持久化(Q/A 只剩一行)
+        val (beforeId, afterId) = messageDao.insertQuestionAndAnswer(question, answer)
 
         // 写入新的 activity_log 表
         activityLogRecorder.recordAiChat(

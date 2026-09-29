@@ -1497,6 +1497,7 @@
     <string name="ai_chat_cancel_confirm_message_bg">지금까지 생성된 내용은 채팅 기록에 저장됩니다. 언제든지 볼 수 있습니다.\n\n이 페이지를 떠나도 AI는 백그라운드에서 계속 응답합니다.</string>
     <string name="ai_chat_cancel_confirm_background">백그라운드에서 계속</string>
     <string name="ai_chat_interrupted">[중단됨]</string>
+    <string name="ai_chat_message_content_missing">메시지 내용 없음</string>
     <string name="ai_execution_paused_friendly_summary">AI가 여러 차례 도구 호출을 실행했으며 완료하려면 추가 단계가 필요할 수 있습니다. 생성된 내용이 저장되었습니다 — 계속하거나 중지할 수 있습니다.</string>
     <string name="ai_execution_action_continue_execution">계속 실행</string>
     <string name="home_tab_web_title">웹사이트</string>

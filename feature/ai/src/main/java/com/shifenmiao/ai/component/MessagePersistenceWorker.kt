@@ -60,9 +60,16 @@ class MessagePersistenceWorker(
     suspend fun onChatCompletionEnd(
         toolCallsChainJson: String,
         startQuestionTime: Long,
+        fallbackQuestion: String = "",
     ) {
         val currentTime = Date()
         val insertCompletionId = sharedState.questionMessageEntity.value.completionId
+        // 实体在流式期间被竞态重置为空时, 用发送时固化的原文兜底, 避免写空 question 行
+        val questionText = resolvePersistQuestion(
+            current = sharedState.questionMessageEntity.value.question,
+            fallback = fallbackQuestion,
+            completionId = insertCompletionId
+        )
 
         // 如果流返回了 id，优先使用
         // (completionId 由 processCompletionData 更新，此处已可见)
@@ -70,7 +77,7 @@ class MessagePersistenceWorker(
         val persistedAnswerText = sharedState.answerMessageEntity.value.answer
         val updatedConversation = sharedState.conversation.value.withHistorySnapshot(
             defaultTitle = sharedState.applicationContext.getString(R.string.ai_chat_title),
-            userMessage = sharedState.questionMessageEntity.value.question,
+            userMessage = questionText,
             assistantMessage = persistedAnswerText,
             messageIncrement = 2,
             timestamp = currentTime.time
@@ -81,6 +88,7 @@ class MessagePersistenceWorker(
 
         sharedState.setQuestionMessage(sharedState.questionMessageEntity.value.copy(
             completionId = insertCompletionId,
+            question = questionText,
             createdAt = currentTime,
             entryType = sharedState.conversation.value.entryType,
             entryRefId = sharedState.conversation.value.entryRefId,
@@ -177,6 +185,11 @@ class MessagePersistenceWorker(
             val insertCompletionId = sharedState.questionMessageEntity.value.completionId
             sharedState.setQuestionMessage(sharedState.questionMessageEntity.value.copy(
                 completionId = insertCompletionId,
+                question = resolvePersistQuestion(
+                    current = sharedState.questionMessageEntity.value.question,
+                    fallback = list.lastOrNull { it.role == RoleType.USER.value }?.question.orEmpty(),
+                    completionId = insertCompletionId
+                ),
                 createdAt = currentTime,
                 entryType = sharedState.conversation.value.entryType,
                 entryRefId = sharedState.conversation.value.entryRefId,
@@ -476,4 +489,19 @@ private fun MessageEntity.stripLocalContentFromAttachments(): MessageEntity {
     if (json.isBlank()) return this
     val stripped = AttachmentPayloadUtils.stripLocalContent(json)
     return if (stripped == json) this else this.copy(attachmentsJson = stripped)
+}
+
+/**
+ * 落库 question 文本兜底: 实体在流式期间被竞态重置为空时,
+ * 用发送时固化的原文恢复; 仍为空则记日志, 便于定位实体被清空的源头.
+ */
+internal fun resolvePersistQuestion(current: String, fallback: String, completionId: String): String {
+    if (current.isNotBlank()) return current
+    if (fallback.isNotBlank()) {
+        "question blank at persist, recovered from send-time list (completionId=$completionId)"
+            .makeLog("MessagePersistenceWorker")
+        return fallback
+    }
+    "persisting BLANK question (completionId=$completionId)".makeLog("MessagePersistenceWorker")
+    return current
 }

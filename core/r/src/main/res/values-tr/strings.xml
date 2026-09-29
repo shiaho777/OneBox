@@ -1497,6 +1497,7 @@
     <string name="ai_chat_cancel_confirm_message_bg">Şu ana kadar oluşturulan içerik sohbet geçmişinize kaydedilecektir. İstediğiniz zaman görüntüleyebilirsiniz.\n\nBu sayfadan da ayrılabilirsiniz — AI arka planda yanıtlamaya devam edecektir.</string>
     <string name="ai_chat_cancel_confirm_background">Arka planda devam et</string>
     <string name="ai_chat_interrupted">[Kesildi]</string>
+    <string name="ai_chat_message_content_missing">Mesaj içeriği kullanılamıyor</string>
     <string name="ai_execution_paused_friendly_summary">AI birden fazla araç çağrısı turu gerçekleştirdi ve bitirmek için daha fazla adıma ihtiyaç duyabilir. Oluşturulan içerik kaydedildi — devam edebilir veya durdurabilirsiniz.</string>
     <string name="ai_execution_action_continue_execution">Yürütmeye devam et</string>
     <string name="home_tab_web_title">Web Siteleri</string>

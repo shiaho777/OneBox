@@ -1497,6 +1497,7 @@
     <string name="ai_chat_cancel_confirm_message_bg">Der bisher generierte Inhalt wird in Ihrem Chatverlauf gespeichert. Sie können ihn jederzeit ansehen.\n\nSie können diese Seite auch verlassen – die KI antwortet im Hintergrund weiter.</string>
     <string name="ai_chat_cancel_confirm_background">Im Hintergrund fortsetzen</string>
     <string name="ai_chat_interrupted">[Unterbrochen]</string>
+    <string name="ai_chat_message_content_missing">Nachrichteninhalt nicht verfügbar</string>
     <string name="ai_execution_paused_friendly_summary">Die KI hat mehrere Runden von Tool-Aufrufen ausgeführt und benötigt möglicherweise weitere Schritte, um abzuschließen. Der generierte Inhalt wurde gespeichert – Sie können fortfahren oder stoppen.</string>
     <string name="ai_execution_action_continue_execution">Ausführung fortsetzen</string>
     <string name="home_tab_web_title">Websites</string>

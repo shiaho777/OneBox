@@ -1721,6 +1721,7 @@ Hint: If you choose "Hide Forever", you can bring me back later in Settings > Di
     <string name="ai_chat_cancel_confirm_message_bg">Content generated so far will be saved to your chat history. You can view it anytime.\n\nYou can also leave this page — AI will continue responding in the background.</string>
     <string name="ai_chat_cancel_confirm_background">Continue in background</string>
     <string name="ai_chat_interrupted">[Interrupted]</string>
+    <string name="ai_chat_message_content_missing">Message content unavailable</string>
 
     <!-- AI Agent Loop Max Iterations Improved -->
     <string name="ai_execution_paused_friendly_summary">AI has run multiple rounds of tool calls and may need more steps to finish. Generated content has been saved — you can continue or stop.</string>

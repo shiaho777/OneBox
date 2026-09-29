@@ -1497,6 +1497,7 @@
     <string name="ai_chat_cancel_confirm_message_bg">Ang nilalamang nabuo ay mai-save sa iyong kasaysayan ng chat. Maaari mo itong tingnan anumang oras.\n\nMaaari ka ring umalis sa pahinang ito — magpapatuloy ang AI sa pagtugon sa background.</string>
     <string name="ai_chat_cancel_confirm_background">Magpatuloy sa background</string>
     <string name="ai_chat_interrupted">[Naantala]</string>
+    <string name="ai_chat_message_content_missing">Hindi available ang nilalaman ng mensahe</string>
     <string name="ai_execution_paused_friendly_summary">Ang AI ay nagpatakbo ng maraming round ng tool calls at maaaring kailanganin ng karagdagang hakbang upang matapos. Ang nabuong nilalaman ay nai-save — maaari kang magpatuloy o huminto.</string>
     <string name="ai_execution_action_continue_execution">Ipagpatuloy ang pagpapatakbo</string>
     <string name="home_tab_web_title">Mga Website</string>

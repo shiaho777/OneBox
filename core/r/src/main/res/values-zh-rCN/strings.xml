@@ -1812,6 +1812,7 @@
     <string name="ai_chat_cancel_confirm_message_bg">中断后已生成的内容会保存到聊天记录中，你可以随时在历史消息中查看。\n\n你也可以退出页面，AI 会在后台继续完成回复。</string>
     <string name="ai_chat_cancel_confirm_background">后台继续</string>
     <string name="ai_chat_interrupted">[已中断]</string>
+    <string name="ai_chat_message_content_missing">消息内容缺失</string>
 
     <!-- AI Agent Loop Max Iterations Improved -->
     <string name="ai_execution_paused_friendly_summary">AI 已执行多轮工具调用，可能需要更多步骤来完成任务。已生成的内容已保存，你可以选择继续或结束。</string>
