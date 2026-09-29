@@ -40,6 +40,26 @@ import kotlin.math.roundToInt
 private const val MIN_VISIBLE_GLASS_DECORATION_ALPHA = 0.04f
 
 /**
+ * 玻璃描边的**实际**可见度(装饰性描边用, 输入框走 [textFieldStrokeVisibility])。
+ *
+ * 描边存在的意义是"在花哨背景上把卡片边缘拉回来": 页面铺了渐变背景 / 自定义背景图时,
+ * 卡片填充会和背景里的色块糊在一起, 需要一圈线定边界; 而页面只是纯色底时, 卡片靠填充色
+ * 的明度差就已经分得清(实测中性卡片比页面暗 10.5/255, 彩色卡片 9.5), 再描一圈线只是
+ * 把卡片"框起来", 显脏。
+ *
+ * 所以描边跟随背景层开关: 没有背景层就不画描边(此时滑杆值被忽略)。
+ */
+@Composable
+internal fun effectiveGlassBorderAlpha(): Float {
+    val settingsState = LocalSettingsState.current
+    val hasBackdrop = settingsState.isMeshGradientBackgroundEnabled ||
+        settingsState.customBackgroundImageUri != null
+    if (!hasBackdrop) return 0f
+    return settingsState.glassBorderAlpha.takeIf { it.isFinite() }
+        ?.coerceIn(0f, 1f) ?: ThemeDefaults.DEFAULT_GLASS_BORDER_ALPHA
+}
+
+/**
  * 日间"中性玻璃"(底色几乎无色, 如 surfaceContainer 卡片)的加深量与染色层倍数。
  *
  * 此前这里是把底色往白里带, 想让卡片"比页面更白"。方向错了: 页面本身已经接近纯白,
@@ -180,8 +200,7 @@ internal fun Modifier.glassSimpleStyle(
         style = style,
         shape = shape,
         borderWidth = borderWidth,
-        borderAlpha = settingsState.glassBorderAlpha.takeIf { it.isFinite() }
-            ?.coerceIn(0f, 1f) ?: ThemeDefaults.DEFAULT_GLASS_BORDER_ALPHA,
+        borderAlpha = effectiveGlassBorderAlpha(),
         blurRadius = blurRadius,
         colors = colors,
         isLight = isLight,
@@ -232,8 +251,7 @@ internal fun Modifier.glassControlStyle(
     return controlSurfaceDecoration(
         shape = shape,
         borderWidth = borderWidth,
-        borderAlpha = settingsState.glassBorderAlpha.takeIf { it.isFinite() }
-            ?.coerceIn(0f, 1f) ?: ThemeDefaults.DEFAULT_GLASS_BORDER_ALPHA,
+        borderAlpha = effectiveGlassBorderAlpha(),
         colors = colors,
         isLiquidGlass = isLiquidGlass,
         showTopEdge = showTopEdge,
