@@ -131,11 +131,11 @@ object StringUtils {
     }
 
     fun formatNumber(points: Int): String {
-        return points.toString()
+        return java.text.NumberFormat.getIntegerInstance().format(points)
     }
 
     fun formatNumber(points: Long): String {
-        return points.toString()
+        return java.text.NumberFormat.getIntegerInstance().format(points)
     }
 
     fun calculateTokens(input: String): Int {
