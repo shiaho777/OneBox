@@ -63,8 +63,10 @@ fun MeshGradientBackground(
         if (shouldRenderMeshGradient) {
             val style = settingsState.gradientBackgroundStyle
             val isDark = settingsState.isNightMode
-            // 日间模式整体压淡: alpha 乘数 0.78→0.60, 避免渐变背景抢占前景内容
-            val meshGradientAlphaMultiplier = if (isDark) 1f else 0.60f
+            // 日间模式: 底色铺一层"看得见但很淡"的品牌色雾面(0.60→0.82)。
+            // 压得太淡时页面会退化成主题灰底, 半透明玻璃层失去参照物, 反而显得脏;
+            // 留一点干净的彩度, 玻璃层比底色更亮, 才会读成"浮起来的白玻璃"。
+            val meshGradientAlphaMultiplier = if (isDark) 1f else 0.82f
             val meshGradientVeilMultiplier = if (isDark) 1f else 0.88f
 
             // 颜色计算全部进 remember — HSL 转换是 JNI 调用，避免每重组执行
@@ -78,7 +80,7 @@ fun MeshGradientBackground(
 
             // light 模式整体再淡一点:降饱和、提高向 surface 混合、alpha 打折,
             // 避免背景补色压过品牌主色
-            val classicLightFade = if (isDark) 1f else 0.62f
+            val classicLightFade = if (isDark) 1f else 0.88f
             val classicColors = remember(
                 surfaceColor, isDark, meshGradientAlphaMultiplier, classicLightFade,
                 primaryAlpha, tertiaryAlpha, secondaryAlpha, accentAlpha,
@@ -88,39 +90,39 @@ fun MeshGradientBackground(
                     primary = themePrimary.toMutedContrastingBackdropColor(
                         surfaceColor = surfaceColor,
                         hueShift = 180f,
-                        saturationMultiplier = if (isDark) 0.40f else 0.28f,
+                        saturationMultiplier = if (isDark) 0.40f else 0.38f,
                         lightnessDelta = if (isDark) 0.16f else 0.10f,
-                        surfaceBlend = if (isDark) 0.30f else 0.58f,
+                        surfaceBlend = if (isDark) 0.30f else 0.42f,
                         alpha = primaryAlpha * 0.82f * meshGradientAlphaMultiplier * classicLightFade,
                     ),
                     tertiary = themeTertiary.toMutedContrastingBackdropColor(
                         surfaceColor = surfaceColor,
                         hueShift = 180f,
-                        saturationMultiplier = if (isDark) 0.38f else 0.26f,
+                        saturationMultiplier = if (isDark) 0.38f else 0.35f,
                         lightnessDelta = if (isDark) 0.14f else 0.08f,
-                        surfaceBlend = if (isDark) 0.32f else 0.60f,
+                        surfaceBlend = if (isDark) 0.32f else 0.44f,
                         alpha = tertiaryAlpha * 0.80f * meshGradientAlphaMultiplier * classicLightFade,
                     ),
                     secondary = themeSecondary.toMutedContrastingBackdropColor(
                         surfaceColor = surfaceColor,
                         hueShift = 180f,
-                        saturationMultiplier = if (isDark) 0.36f else 0.24f,
+                        saturationMultiplier = if (isDark) 0.36f else 0.32f,
                         lightnessDelta = if (isDark) 0.12f else 0.07f,
-                        surfaceBlend = if (isDark) 0.34f else 0.62f,
+                        surfaceBlend = if (isDark) 0.34f else 0.46f,
                         alpha = secondaryAlpha * 0.76f * meshGradientAlphaMultiplier * classicLightFade,
                     ),
                     accent = themeSurfaceHighest.toMutedContrastingBackdropColor(
                         surfaceColor = surfaceColor,
                         hueShift = 160f,
-                        saturationMultiplier = if (isDark) 0.24f else 0.16f,
+                        saturationMultiplier = if (isDark) 0.24f else 0.24f,
                         lightnessDelta = if (isDark) 0.08f else 0.05f,
-                        surfaceBlend = if (isDark) 0.42f else 0.66f,
+                        surfaceBlend = if (isDark) 0.42f else 0.52f,
                         alpha = accentAlpha * 0.78f * meshGradientAlphaMultiplier * classicLightFade,
                     ),
                 )
             }
 
-            val etherealFade = 0.22f
+            val etherealFade = 0.32f
             val etherealColors = remember(
                 surfaceColor, isDark, meshGradientAlphaMultiplier,
                 primaryAlpha, tertiaryAlpha, secondaryAlpha, accentAlpha,
@@ -379,7 +381,7 @@ private fun meshStylePalette(
     isDark: Boolean,
 ): MeshStylePalette? = when (style) {
     GradientBackgroundStyle.Aurora -> MeshStylePalette(
-        base = if (isDark) 0.22f else 0.18f,
+        base = if (isDark) 0.22f else 0.15f,
         topLeft = MeshVertex(0xFF80CBC4),              // 薄荷
         topRight = MeshVertex(0xFF7C4DFF, 0.95f),      // 紫罗兰
         bottomLeft = MeshVertex(0xFF00BFA5, 0.85f),    // 青绿
@@ -387,7 +389,7 @@ private fun meshStylePalette(
     )
 
     GradientBackgroundStyle.Ocean -> MeshStylePalette(
-        base = if (isDark) 0.24f else 0.20f,
+        base = if (isDark) 0.24f else 0.17f,
         topLeft = MeshVertex(0xFF0D1B2A, 1.1f),        // 午夜蓝
         topRight = MeshVertex(0xFF00E5FF),             // 荧光青
         bottomLeft = MeshVertex(0xFF1A237E, 0.75f),    // 靛蓝
@@ -395,7 +397,7 @@ private fun meshStylePalette(
     )
 
     GradientBackgroundStyle.Sunset -> MeshStylePalette(
-        base = if (isDark) 0.24f else 0.21f,
+        base = if (isDark) 0.24f else 0.18f,
         topLeft = MeshVertex(0xFFD81B60, 0.85f),       // 玫瑰粉
         topRight = MeshVertex(0xFFFF6F00),             // 琥珀橙
         bottomLeft = MeshVertex(0xFF4A148C, 0.55f),    // 暗紫
@@ -403,7 +405,7 @@ private fun meshStylePalette(
     )
 
     GradientBackgroundStyle.SakuraMist -> MeshStylePalette(
-        base = if (isDark) 0.20f else 0.18f,
+        base = if (isDark) 0.20f else 0.15f,
         topLeft = MeshVertex(0xFFF8BBD0),              // 柔粉
         topRight = MeshVertex(0xFFFFAB91, 0.85f),      // 蜜桃
         bottomLeft = MeshVertex(0xFFE1BEE7, 0.70f),    // 淡紫
@@ -411,7 +413,7 @@ private fun meshStylePalette(
     )
 
     GradientBackgroundStyle.MintBreeze -> MeshStylePalette(
-        base = if (isDark) 0.20f else 0.18f,
+        base = if (isDark) 0.20f else 0.15f,
         topLeft = MeshVertex(0xFF40C4FF, 0.90f),       // 晴空蓝
         topRight = MeshVertex(0xFF81C784, 0.70f),      // 嫩芽绿
         bottomLeft = MeshVertex(0xFF69F0AE),           // 薄荷绿
@@ -419,7 +421,7 @@ private fun meshStylePalette(
     )
 
     GradientBackgroundStyle.Lavender -> MeshStylePalette(
-        base = if (isDark) 0.22f else 0.20f,
+        base = if (isDark) 0.22f else 0.17f,
         topLeft = MeshVertex(0xFF7E57C2),              // 紫罗兰
         topRight = MeshVertex(0xFFF8BBD0, 0.65f),      // 柔粉
         bottomLeft = MeshVertex(0xFF82B1FF, 0.50f),    // 淡蓝
@@ -427,7 +429,7 @@ private fun meshStylePalette(
     )
 
     GradientBackgroundStyle.WarmGlow -> MeshStylePalette(
-        base = if (isDark) 0.24f else 0.21f,
+        base = if (isDark) 0.24f else 0.18f,
         topLeft = MeshVertex(0xFFFFE0B2, 0.65f),       // 奶油
         topRight = MeshVertex(0xFFFF7043, 0.85f),      // 珊瑚
         bottomLeft = MeshVertex(0xFFFFD54F, 0.55f),    // 暖金
@@ -435,7 +437,7 @@ private fun meshStylePalette(
     )
 
     GradientBackgroundStyle.NeonCyber -> MeshStylePalette(
-        base = if (isDark) 0.28f else 0.22f,
+        base = if (isDark) 0.28f else 0.19f,
         topLeft = MeshVertex(0xFF00E5FF),              // 电青
         topRight = MeshVertex(0xFF7C4DFF, 0.65f),      // 紫罗兰
         bottomLeft = MeshVertex(0xFFFF00E5, 0.90f),    // 品红
@@ -488,7 +490,7 @@ private fun createPrismFlowPainter(
     surfaceColor: Color,
     isDark: Boolean,
 ): MeshGradientPainter {
-    val base = if (isDark) 0.30f else 0.24f
+    val base = if (isDark) 0.30f else 0.20f
 
     fun vertexColor(argb: Long, alphaScale: Float = 1f): Color =
         Color(argb)
@@ -508,10 +510,19 @@ private fun createPrismFlowPainter(
     }
 }
 
+/**
+ * 日间模式把渐变顶点色往页面底色方向提亮。
+ *
+ * 各风格的调色板里混有深色/高饱和顶点(深海的 #0D1B2A、日落的 #4A148C、
+ * 电子梦境的荧光色…)。这些颜色在白底上按 15%~20% alpha 叠加会直接抹成灰,
+ * 页面因此显脏、半透明玻璃层也失去参照。0.26 只够削掉一点饱和度,
+ * 所以日间要压到 0.45 一档: 色相保留、明度抬起来, 底色才是"淡彩"而不是"灰"。
+ * 夜间模式不做处理。
+ */
 private fun Color.softenIfLight(
     surfaceColor: Color,
     isDark: Boolean,
-    amount: Float = 0.26f,
+    amount: Float = 0.45f,
 ): Color {
     if (isDark || amount <= 0f) return this
     return lerp(this, surfaceColor, amount)
@@ -538,7 +549,7 @@ private fun precomputeStyleSpecs(
     GradientBackgroundStyle.PrismFlow -> emptyList()
 
     GradientBackgroundStyle.StarryNight -> {
-        val base = if (isDark) 0.30f else 0.22f
+        val base = if (isDark) 0.30f else 0.19f
         val midnight = Color(0xFF0D1B2A).softenIfLight(surfaceColor, isDark).copy(alpha = base)
         val indigo = Color(0xFF1B263B).softenIfLight(surfaceColor, isDark).copy(alpha = base * 0.85f)
         val silver = Color(0xFFB0BEC5).softenIfLight(surfaceColor, isDark).copy(alpha = base * 1.1f)
