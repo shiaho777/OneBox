@@ -288,18 +288,6 @@ fun ThemeSettingsScreen(
                 }
             }
 
-            // ── 全局色彩系统: 调色板风格 / 对比度 / 色彩规范 / Expressive 动效 ──
-            ColorSystemCard(
-                themeStyle = currentSettingsState.themeStyle,
-                contrastLevel = currentSettingsState.themeContrastLevel,
-                colorSpec = currentSettingsState.themeColorSpec,
-                isExpressiveTheme = currentSettingsState.isExpressiveTheme,
-                onThemeStyleChange = { scope.launch { settingsManager.setThemeStyle(it.ordinal) } },
-                onContrastChange = { scope.launch { settingsManager.setThemeContrast(it) } },
-                onColorSpecChange = { scope.launch { settingsManager.setThemeColorSpec(it.ordinal) } },
-                onExpressiveThemeChange = { scope.launch { settingsManager.setExpressiveTheme(it) } },
-            )
-
             val draft = editingDraft
             if (draft != null) {
                 val customThemeName = stringResource(R.string.theme_preset_custom)
@@ -359,6 +347,20 @@ fun ThemeSettingsScreen(
                     },
                 )
             }
+
+            // ── 全局色彩系统: 调色板风格 / 对比度 / 色彩规范 / Expressive 动效 ──
+            // 这几项是即时落盘的全局设置(不属于主题草稿), 放在整页最下面:
+            // 日常改主题只关心上面的配色 / 玻璃 / 背景, 色彩系统属于"高级"项。
+            ColorSystemCard(
+                themeStyle = currentSettingsState.themeStyle,
+                contrastLevel = currentSettingsState.themeContrastLevel,
+                colorSpec = currentSettingsState.themeColorSpec,
+                isExpressiveTheme = currentSettingsState.isExpressiveTheme,
+                onThemeStyleChange = { scope.launch { settingsManager.setThemeStyle(it.ordinal) } },
+                onContrastChange = { scope.launch { settingsManager.setThemeContrast(it) } },
+                onColorSpecChange = { scope.launch { settingsManager.setThemeColorSpec(it.ordinal) } },
+                onExpressiveThemeChange = { scope.launch { settingsManager.setExpressiveTheme(it) } },
+            )
         }
 
         // ── 底部操作栏：[取消] [重置] [保存/保存为新主题] ──
