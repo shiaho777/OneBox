@@ -6,6 +6,7 @@ import com.wanbaohe.xiangqi.R
 import com.wanbaohe.xiangqi.domain.GameResultCode
 import com.wanbaohe.xiangqi.domain.GameResultResolver
 import com.wanbaohe.xiangqi.domain.model.GameStatus
+import com.wanbaohe.xiangqi.domain.model.Side
 
 /**
  * 终局结果的本地化文案。
@@ -27,4 +28,31 @@ fun localizedGameResultText(resultCode: String): String = when (resultCode) {
     GameResultCode.DRAW -> stringResource(R.string.xiangqi_game_over_draw)
     GameResultCode.RESIGNED -> stringResource(R.string.xiangqi_resign_result)
     else -> ""
+}
+
+/**
+ * 认输终局的完整文案：「红方认输」/「黑方认输」。
+ *
+ * @param winnerSide 落库胜方（`Side.name`）。认输方是胜方的对面；
+ * 传空或非法值时退回通用「认输」。
+ */
+@Composable
+fun localizedResignResultText(winnerSide: String): String {
+    val resigningSideName = when (winnerSide.uppercase()) {
+        Side.RED.name -> stringResource(R.string.xiangqi_side_black)
+        Side.BLACK.name -> stringResource(R.string.xiangqi_side_red)
+        else -> ""
+    }
+    return if (resigningSideName.isEmpty()) {
+        stringResource(R.string.xiangqi_resign_result)
+    } else {
+        stringResource(R.string.xiangqi_resign_by_side, resigningSideName)
+    }
+}
+
+/** 认输方；无法判定时返回 null。 */
+fun resigningSideOf(winnerSide: String): Side? = when (winnerSide.uppercase()) {
+    Side.RED.name -> Side.BLACK
+    Side.BLACK.name -> Side.RED
+    else -> null
 }

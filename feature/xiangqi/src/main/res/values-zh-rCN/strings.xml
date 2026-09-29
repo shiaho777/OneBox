@@ -265,6 +265,7 @@
     <string name="xiangqi_game_over_back">返回</string>
     <string name="xiangqi_opponent_resigned">对手已认输</string>
     <string name="xiangqi_resign_result">认输</string>
+    <string name="xiangqi_resign_by_side">%1$s认输</string>
     <string name="xiangqi_rename_game">重命名</string>
     <string name="xiangqi_rename_hint">输入棋局名称</string>
     <string name="xiangqi_search_ai_model">AI 模型</string>

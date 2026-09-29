@@ -76,6 +76,11 @@ data class XiangqiGameUiState(
     val onlineOpponentAvatarUrl: String = "",
     val onlineConnectionState: ConnectionState = ConnectionState.IDLE,
     val onlineDebugEvents: List<String> = emptyList(),
+    /**
+     * 落库胜方（`Side.name`）。认输局必须靠它反推是谁认输：
+     * [GameResultResolver.resignWinnerCode] 存的是**胜方**，认输方是其对面。
+     */
+    val winnerSide: String = "",
 )
 
 /**
@@ -377,6 +382,7 @@ class XiangqiGameComponent @AssistedInject constructor(
                     onlineOpponentAvatarUrl = detail.onlineMetadata.opponentAvatarUrl,
                     onlineConnectionState = onlinePlay.connectionState.value,
                     onlineDebugEvents = onlinePlay.debugEvents.value,
+                    winnerSide = detail.winnerSide,
                 )
 
                 if (detail.mode == GameMode.ONLINE_PVP && !onlineMovesObserved) {

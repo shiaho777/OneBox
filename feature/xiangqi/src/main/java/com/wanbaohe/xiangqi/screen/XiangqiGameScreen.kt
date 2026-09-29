@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,6 +30,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -82,6 +84,8 @@ import com.wanbaohe.xiangqi.domain.model.GameStatus
 import com.wanbaohe.xiangqi.domain.model.PlayerType
 import com.wanbaohe.xiangqi.domain.model.Side
 import com.wanbaohe.xiangqi.presentation.localizedGameResultText
+import com.wanbaohe.xiangqi.presentation.localizedResignResultText
+import com.wanbaohe.xiangqi.presentation.resigningSideOf
 import com.wanbaohe.xiangqi.router.LocalXiangqiImmersiveModeState
 import com.wanbaohe.xiangqi.ui.board.XiangqiBoard
 import kotlinx.coroutines.launch
@@ -498,7 +502,7 @@ private fun GameBoardArea(
                         GameStatus.RED_WINS -> stringResource(R.string.xiangqi_game_over_red)
                         GameStatus.BLACK_WINS -> stringResource(R.string.xiangqi_game_over_black)
                         GameStatus.DRAW -> stringResource(R.string.xiangqi_game_over_draw)
-                        else -> stringResource(R.string.xiangqi_resign_result)
+                        else -> localizedResignResultText(state.winnerSide)
                     },
                     restartLabel = stringResource(R.string.xiangqi_game_over_restart),
                     reviewLabel = stringResource(R.string.xiangqi_game_over_review),
@@ -511,24 +515,84 @@ private fun GameBoardArea(
                     emphasizeResult = state.status != GameStatus.DRAW,
                 )
             } else if (isGameOver) {
-                // 浮层关掉后仍可就地看结果，不影响复盘操作
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .padding(12.dp),
-                    contentAlignment = Alignment.TopEnd,
-                ) {
-                    GlassTonalButton(
-                        onClick = component::reopenGameOverOverlay,
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                    ) {
-                        Text(
-                            text = localizedGameResultText(state.status),
-                            style = MaterialTheme.typography.labelMedium,
-                            maxLines = 1,
+                // 浮层关掉后：结果落在棋盘中线（与「将军」同位置），认输带旗标 + 方色
+                CenterResultNotice(
+                    status = state.status,
+                    winnerSide = state.winnerSide,
+                    onClick = component::reopenGameOverOverlay,
+                )
+            }
+        }
+    }
+}
+
+/**
+ * 终局结果徽章：与「将军」同位置的中线胶囊。
+ * 认输局带旗帜图标 + 认输方色点，点按可重新打开结果浮层。
+ */
+@Composable
+private fun BoxScope.CenterResultNotice(
+    status: GameStatus,
+    winnerSide: String,
+    onClick: () -> Unit,
+) {
+    val resigning = resigningSideOf(winnerSide)
+    val label = when (status) {
+        GameStatus.RESIGNED -> localizedResignResultText(winnerSide)
+        GameStatus.RED_WINS -> stringResource(R.string.xiangqi_game_over_red)
+        GameStatus.BLACK_WINS -> stringResource(R.string.xiangqi_game_over_black)
+        GameStatus.DRAW -> stringResource(R.string.xiangqi_game_over_draw)
+        else -> return
+    }
+    val isResign = status == GameStatus.RESIGNED
+    val accent = when {
+        resigning == Side.RED -> Color(0xFFC62828)
+        resigning == Side.BLACK -> Color(0xFF37474F)
+        status == GameStatus.RED_WINS -> Color(0xFFC62828)
+        status == GameStatus.BLACK_WINS -> Color(0xFF37474F)
+        else -> MaterialTheme.colorScheme.primary
+    }
+
+    Box(
+        modifier = Modifier
+            .matchParentSize()
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Surface(
+            shape = RoundedCornerShape(999.dp),
+            color = accent.copy(alpha = 0.16f),
+            contentColor = accent,
+            border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.35f)),
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                if (isResign) {
+                    Icon(
+                        imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineFlag,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = accent,
+                    )
+                    if (resigning != null) {
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (resigning == Side.RED) Color(0xFFC62828) else Color(0xFF37474F)
+                                ),
                         )
                     }
                 }
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = accent,
+                )
             }
         }
     }
