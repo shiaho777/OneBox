@@ -1,0 +1,7 @@
+• Fixed: crash on launch when Assistant is set as the start screen
+• New: protractor with camera background and two-point ruler measuring
+• Chess, Chinese Chess and Gomoku offline games now use the on-device engine
+• AI: fixed Anthropic tool calling plus custom engine add/edit/delete
+• AI: long reasoning blocks can be collapsed, chat history saves more reliably
+• Clearer glass cards, inputs and daytime backgrounds
+• Bug fixes and performance improvements

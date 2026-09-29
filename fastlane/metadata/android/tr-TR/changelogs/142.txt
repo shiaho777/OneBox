@@ -1,0 +1,7 @@
+• Düzeltildi: Başlangıç ekranı Asistan seçiliyken açılışta çökme
+• Yeni: kamera arka planlı açı ölçer ve iki noktalı cetvel ölçümü
+• Satranç, Çin Satrancı ve Gomoku çevrimdışı artık cihaz üstü motorda
+• Yapay zekâ: Anthropic araç çağrıları ve özel motor yönetimi düzeltildi
+• Yapay zekâ: uzun akıl yürütme blokları artık daraltılabilir
+• Cam kartlar, giriş alanları ve gündüz arka planları daha net
+• Hata düzeltmeleri ve performans iyileştirmeleri

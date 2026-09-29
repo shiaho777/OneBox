@@ -1,0 +1,7 @@
+• Diperbaiki: aplikasi tertutup saat Asisten dijadikan layar awal
+• Baru: busur derajat dengan latar kamera dan penggaris ukur dua titik
+• Catur, Catur Tiongkok, dan Gomoku offline kini memakai mesin di perangkat
+• AI: perbaikan tool calling Anthropic dan kelola mesin kustom
+• AI: blok penalaran panjang bisa diciutkan
+• Kartu kaca, kolom input, dan latar siang lebih jelas
+• Perbaikan bug dan peningkatan performa

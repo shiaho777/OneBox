@@ -1,0 +1,7 @@
+• Naayos: pag-crash sa pagbukas kapag Assistant ang start screen
+• Bago: protractor na may camera background at ruler na may two-point na pagsukat
+• Chess, Chinese Chess at Gomoku offline, nasa device engine na
+• AI: naayos ang Anthropic tool calling at pamamahala ng custom engine
+• AI: naaayos nang tiklop ang mahabang reasoning block
+• Mas malinaw ang glass card, input at daytime background
+• Mga pag-aayos ng bug at pagpapabuti ng performance

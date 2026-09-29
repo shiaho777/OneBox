@@ -1,0 +1,7 @@
+• Corrigido: fechamento ao iniciar com o Assistente como tela inicial
+• Novo: transferidor com fundo da câmera e régua de medição em dois pontos
+• Xadrez, Xadrez Chinês e Gomoku offline agora usam o motor do aparelho
+• IA: corrigidas ferramentas da Anthropic e gestão de motores próprios
+• IA: blocos longos de raciocínio agora podem ser recolhidos
+• Cartões de vidro, campos de texto e fundos diurnos mais nítidos
+• Correções de bugs e melhorias de desempenho

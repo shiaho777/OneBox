@@ -1,0 +1,7 @@
+• Behoben: Absturz beim Start, wenn „Assistent" als Startbildschirm gesetzt ist
+• Neu: Winkelmesser mit Kamerahintergrund und Lineal mit Zwei-Punkt-Messung
+• Schach, Chinesisches Schach und Gomoku offline jetzt mit Geräte-Engine
+• KI: Anthropic-Tool-Aufrufe und eigene Engines repariert
+• KI: lange Denkblöcke lassen sich einklappen
+• Glas-Karten, Eingabefelder und Tageshintergründe klarer
+• Fehlerbehebungen und Leistungsverbesserungen
