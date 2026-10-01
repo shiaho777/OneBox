@@ -152,12 +152,13 @@ class AIEngineCatalogManager @Inject constructor(
     }
 
     /**
-     * 保存编辑中的本地引擎。
+     * 保存编辑中的引擎(用户自建的与内置预置的都走这里)。
      *
      * 编辑 = 原位更新原来那一行(保留行 id), 允许改协议; 用 ([originalName], [originalProtocol])
      * 定位被编辑的原行, 绝不允许因为换了协议导致按 (新名, 新协议) 查不到就 insert 新行 ——
      * 旧行残留会让详情页/聊天按名字加载到旧协议行, 表现为「保存了又变回去」。
      * [originalName] 非空且与 [engine].name 不同时表示重命名服务标识, 同步迁移模型归属。
+     * 内置预置行(source=REMOTE)只原位更新配置, source/canEdit 保持不变。
      */
     fun saveEditedLocalEngine(
         engine: AiEngine,
@@ -188,10 +189,22 @@ class AIEngineCatalogManager @Inject constructor(
                     name = previousName,
                     requestProtocol = engine.requestProtocol.name,
                 )
-                if (existing == null || !existing.isLocalOwned()) {
+                if (existing == null) {
+                    makeLog {
+                        "AIEngineCatalogManager: Save edited engine failed: " +
+                            "row not found for '$previousName' ($originalProtocolName)"
+                    }
+                    reportEngineSaveFailure(
+                        engine = engine,
+                        reason = "row_not_found",
+                        detail = "原名 '$previousName' 协议 $originalProtocolName 定位不到原行",
+                    )
                     onComplete(false)
                     return@launch
                 }
+                // 内置/远程引擎(source=REMOTE, canEdit=false)也允许原位保存:
+                // 给 DeepSeek 这类预制服务商填自己的 token 是正常用法(UI 只锁改名和删除),
+                // mergeConfigToEntity 会保留原行的 source/canEdit, 不影响远程同步语义。
 
                 // 唯一键冲突处理: 目标 (newName, 新协议) 已被另一行占用时,
                 // 要么是该 bug 留下的同名重复行(名字没变、只换了协议, 正是历史脏数据的形状),
@@ -230,7 +243,7 @@ class AIEngineCatalogManager @Inject constructor(
                 // 同步模型配置(canUploadFile、canImage 等字段存储在模型表中), 与 persistEngineConfig 同一套逻辑
                 persistEngineModelConfig(
                     engine = engine.copy(name = newName),
-                    isLocalOwnedEngine = true,
+                    isLocalOwnedEngine = existing.isLocalOwned(),
                 )
 
                 onComplete(true)
