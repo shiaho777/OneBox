@@ -1,0 +1,3 @@
+• Corregido: fallaba guardar tu propio token de API para proveedores de IA integrados (DeepSeek, etc.)
+• Corregido: los enlaces del diálogo de privacidad no respondían en algunos dispositivos
+• Corrección de errores y mejoras de rendimiento

@@ -1,0 +1,3 @@
+• Naayos: nabibigo ang pag-save ng sariling API token para sa built-in AI providers (DeepSeek, atbp.)
+• Naayos: hindi tumutugon ang mga link sa privacy dialog sa ilang device
+• Mga pag-aayos ng bug at pagpapabuti ng performance

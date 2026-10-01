@@ -1,0 +1,3 @@
+• Behoben: Eigener API-Token für integrierte KI-Anbieter (DeepSeek usw.) ließ sich nicht speichern
+• Behoben: Links im Datenschutz-Dialog reagierten auf manchen Geräten nicht
+• Fehlerbehebungen und Leistungsverbesserungen

@@ -1,0 +1,3 @@
+• Corrigido: falha ao salvar seu próprio token de API para provedores de IA integrados (DeepSeek etc.) com "Falha ao salvar"
+• Corrigido: links do diálogo de política de privacidade sem resposta em alguns dispositivos
+• Correções de bugs e melhorias de desempenho

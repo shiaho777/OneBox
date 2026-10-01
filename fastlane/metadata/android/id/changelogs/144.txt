@@ -1,0 +1,3 @@
+• Diperbaiki: menyimpan token API milik sendiri untuk penyedia AI bawaan (DeepSeek, dll.) gagal dengan "Simpan gagal"
+• Diperbaiki: tautan di dialog kebijakan privasi tidak merespons di sebagian perangkat
+• Perbaikan bug dan peningkatan performa

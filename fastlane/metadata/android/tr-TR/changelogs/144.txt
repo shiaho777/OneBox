@@ -1,0 +1,3 @@
+• Düzeltildi: yerleşik yapay zeka sağlayıcıları (DeepSeek vb.) için kendi API anahtarını kaydetme "Kaydetme başarısız" hatası veriyordu
+• Düzeltildi: gizlilik politikası penceresindeki bağlantılar bazı cihazlarda yanıt vermiyordu
+• Hata düzeltmeleri ve performans iyileştirmeleri

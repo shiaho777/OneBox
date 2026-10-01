@@ -1,0 +1,3 @@
+• Fixed: saving your own API token for built-in AI providers (DeepSeek, etc.) failed with "Save failed"
+• Fixed: privacy policy dialog links unresponsive on some devices
+• Bug fixes and performance improvements
