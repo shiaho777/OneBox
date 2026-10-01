@@ -389,6 +389,7 @@
     <string name="privacy_item_4_description">Für Spracheingabe auf das Mikrofon zugreifen.</string>
     <string name="privacy_button_agree">Zustimmen und fortfahren</string>
     <string name="privacy_button_disagree">Nicht zustimmen</string>
+    <string name="privacy_dialog_agreements_hint"><![CDATA[Bitte lies und akzeptiere die <a href=\"https://www.shifenmiao.com/privacy/agreement.html\">Nutzungsvereinbarung</a> und die <a href=\"https://www.shifenmiao.com/privacy/example.html\">Datenschutzrichtlinie</a>, damit wir dir einen besseren Service bieten können.]]></string>
     <string name="contact_us">Kontakt</string>
     <string name="my_wechat">WeChat</string>
     <string name="my_wechat_account">shifenmiao666</string>

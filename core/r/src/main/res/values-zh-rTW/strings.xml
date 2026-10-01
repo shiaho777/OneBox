@@ -425,6 +425,7 @@
     <string name="privacy_item_4_description">授權存取錄音權限，在使用語音輸入的時候，識別錄音</string>
     <string name="privacy_button_agree">同意協議並繼續</string>
     <string name="privacy_button_disagree">不同意</string>
+    <string name="privacy_dialog_agreements_hint"><![CDATA[請你仔細閱讀並同意<a href=\"https://www.shifenmiao.com/privacy/agreement.html\">《使用者協議》</a>與<a href=\"https://www.shifenmiao.com/privacy/example.html\">《隱私政策》</a>，以便我們為你提供更好的服務。]]></string>
     <string name="contact_us">聯絡我們</string>
     <string name="my_wechat">微信號</string>
     <string name="my_wechat_account">shifenmiao666</string>

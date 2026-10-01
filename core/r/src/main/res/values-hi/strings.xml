@@ -389,6 +389,7 @@
     <string name="privacy_item_4_description">आवाज़ इनपुट के लिए माइक्रोफ़ोन तक पहुंचें।</string>
     <string name="privacy_button_agree">सहमत हूँ और जारी रखें</string>
     <string name="privacy_button_disagree">असहमत</string>
+    <string name="privacy_dialog_agreements_hint"><![CDATA[कृपया <a href=\"https://www.shifenmiao.com/privacy/agreement.html\">उपयोगकर्ता अनुबंध</a> और <a href=\"https://www.shifenmiao.com/privacy/example.html\">गोपनीयता नीति</a> पढ़ें और उनसे सहमत हों, ताकि हम आपको बेहतर सेवा दे सकें।]]></string>
     <string name="contact_us">संपर्क करें</string>
     <string name="my_wechat">वीचैट</string>
     <string name="my_wechat_account">shifenmiao666</string>

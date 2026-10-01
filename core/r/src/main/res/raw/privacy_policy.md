@@ -21,4 +21,4 @@
 **传感器权限**
 摇一摇自定义快捷打开功能，减少交互步骤。
 
-以上权限可随时在系统设置中取消或关闭，请你仔细阅读[《用户协议》](https://www.shifenmiao.com/privacy/agreement.html)与[《隐私政策》](https://www.shifenmiao.com/privacy/example.html)，进入提供更好的服务。
+以上权限可随时在系统设置中取消或关闭。

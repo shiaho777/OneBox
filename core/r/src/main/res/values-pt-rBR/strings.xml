@@ -389,6 +389,7 @@
     <string name="privacy_item_4_description">Acesse o microfone para entrada de voz.</string>
     <string name="privacy_button_agree">Concordo e Continuar</string>
     <string name="privacy_button_disagree">Discordo</string>
+    <string name="privacy_dialog_agreements_hint"><![CDATA[Leia e concorde com o <a href=\"https://www.shifenmiao.com/privacy/agreement.html\">Acordo do Usuário</a> e a <a href=\"https://www.shifenmiao.com/privacy/example.html\">Política de Privacidade</a> para que possamos oferecer um serviço melhor.]]></string>
     <string name="contact_us">Fale Conosco</string>
     <string name="my_wechat">WeChat</string>
     <string name="my_wechat_account">shifenmiao666</string>

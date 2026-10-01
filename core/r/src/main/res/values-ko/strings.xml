@@ -389,6 +389,7 @@
     <string name="privacy_item_4_description">음성 입력을 위해 마이크에 접근하세요.</string>
     <string name="privacy_button_agree">동의 및 계속</string>
     <string name="privacy_button_disagree">동의하지 않음</string>
+    <string name="privacy_dialog_agreements_hint"><![CDATA[더 나은 서비스를 제공할 수 있도록 <a href=\"https://www.shifenmiao.com/privacy/agreement.html\">사용자 약관</a>과 <a href=\"https://www.shifenmiao.com/privacy/example.html\">개인정보 처리방침</a>을 읽고 동의해 주세요.]]></string>
     <string name="contact_us">문의하기</string>
     <string name="my_wechat">위챗</string>
     <string name="my_wechat_account">shifenmiao666</string>

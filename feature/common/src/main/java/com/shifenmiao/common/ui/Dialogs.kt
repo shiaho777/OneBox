@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -33,6 +34,7 @@ import com.shifenmiao.model.wechat.Wechat
 import com.shifenmiao.storage.AppSharedStorage
 import com.t8rin.imagetoolbox.core.ui.utils.helper.Clipboard
 import com.t8rin.imagetoolbox.core.ui.utils.provider.LocalComponentActivity
+import com.t8rin.imagetoolbox.core.ui.widget.text.HtmlText
 
 @Composable
 fun PrivacyPolicyDialog(
@@ -75,19 +77,31 @@ fun PrivacyPolicyDialog(
                 dismissOnClickOutside = false,
             )
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(300.dp)
-            ) {
-                MarkdownLazyContent(
-                    message = markdown,
+            Column {
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .styleVerticalScrollbar(listState),
-                    lazyListState = listState,
-                    onLinkClick = onUrlClick,
-                    paddingValues = PaddingValues(horizontal = 0.dp, vertical = 8.dp)
+                        .fillMaxWidth()
+                        .height(300.dp)
+                ) {
+                    MarkdownLazyContent(
+                        message = markdown,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .styleVerticalScrollbar(listState),
+                        lazyListState = listState,
+                        paddingValues = PaddingValues(horizontal = 0.dp, vertical = 8.dp)
+                    )
+                }
+                HtmlText(
+                    html = stringResource(R.string.privacy_dialog_agreements_hint),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp),
+                    style = MaterialTheme.typography.labelMedium.copy(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    ),
+                    enableAutoLinkify = false,
+                    onHyperlinkClick = onUrlClick
                 )
             }
         }

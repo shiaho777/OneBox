@@ -389,6 +389,7 @@
     <string name="privacy_item_4_description">I-access ang mikropono para sa voice input.</string>
     <string name="privacy_button_agree">Sumang-ayon at Magpatuloy</string>
     <string name="privacy_button_disagree">Hindi Sumasang-ayon</string>
+    <string name="privacy_dialog_agreements_hint"><![CDATA[Pakibasa at tanggapin ang <a href=\"https://www.shifenmiao.com/privacy/agreement.html\">Kasunduan ng Gumagamit</a> at <a href=\"https://www.shifenmiao.com/privacy/example.html\">Patakaran sa Privacy</a> upang mabigyan ka namin ng mas mahusay na serbisyo.]]></string>
     <string name="contact_us">Makipag-ugnayan sa Amin</string>
     <string name="my_wechat">WeChat</string>
     <string name="my_wechat_account">shifenmiao666</string>

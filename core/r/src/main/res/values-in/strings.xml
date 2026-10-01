@@ -389,6 +389,7 @@
     <string name="privacy_item_4_description">Akses mikrofon untuk input suara.</string>
     <string name="privacy_button_agree">Setuju &amp; Lanjutkan</string>
     <string name="privacy_button_disagree">Tidak Setuju</string>
+    <string name="privacy_dialog_agreements_hint"><![CDATA[Silakan baca dan setujui <a href=\"https://www.shifenmiao.com/privacy/agreement.html\">Perjanjian Pengguna</a> serta <a href=\"https://www.shifenmiao.com/privacy/example.html\">Kebijakan Privasi</a> agar kami dapat memberikan layanan yang lebih baik untukmu.]]></string>
     <string name="contact_us">Hubungi Kami</string>
     <string name="my_wechat">WeChat</string>
     <string name="my_wechat_account">shifenmiao666</string>

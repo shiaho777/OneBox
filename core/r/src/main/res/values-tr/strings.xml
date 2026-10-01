@@ -389,6 +389,7 @@
     <string name="privacy_item_4_description">Sesli giriş için mikrofona erişin.</string>
     <string name="privacy_button_agree">Kabul Et ve Devam Et</string>
     <string name="privacy_button_disagree">Katılmıyorum</string>
+    <string name="privacy_dialog_agreements_hint"><![CDATA[Size daha iyi hizmet sunabilmemiz için lütfen <a href=\"https://www.shifenmiao.com/privacy/agreement.html\">Kullanıcı Sözleşmesi</a> ve <a href=\"https://www.shifenmiao.com/privacy/example.html\">Gizlilik Politikası</a> bağlantılarına dokunarak okuyup kabul edin.]]></string>
     <string name="contact_us">Bize Ulaşın</string>
     <string name="my_wechat">WeChat</string>
     <string name="my_wechat_account">shifenmiao666</string>

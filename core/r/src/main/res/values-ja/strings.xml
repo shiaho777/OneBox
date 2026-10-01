@@ -389,6 +389,7 @@
     <string name="privacy_item_4_description">音声入力のためにマイクへのアクセスが必要です。</string>
     <string name="privacy_button_agree">同意して続行</string>
     <string name="privacy_button_disagree">同意しない</string>
+    <string name="privacy_dialog_agreements_hint"><![CDATA[より良いサービスを提供するため、<a href=\"https://www.shifenmiao.com/privacy/agreement.html\">利用規約</a>と<a href=\"https://www.shifenmiao.com/privacy/example.html\">プライバシーポリシー</a>をお読みのうえ、同意してください。]]></string>
     <string name="contact_us">お問い合わせ</string>
     <string name="my_wechat">WeChat</string>
     <string name="my_wechat_account">shifenmiao666</string>
