@@ -611,6 +611,25 @@
     <string name="agent_tool_manage_xiangqi_imported_fen">FEN importado</string>
     <string name="agent_tool_manage_xiangqi_imported">Jogo importado: %1$s</string>
     <string name="agent_tool_manage_xiangqi_import_failed">Falha na importação: %1$s</string>
+
+    <!-- manage_decision_wheel -->
+    <string name="agent_tool_manage_decision_wheel_title">Gerenciador de roleta de decisões</string>
+    <string name="agent_tool_manage_decision_wheel_summary">Liste, crie, atualize opções e exclua roletas de decisão para escolhas aleatórias</string>
+    <string name="agent_tool_manage_decision_wheel_param_action">Tipo de ação: list (listar todas), create (criar roleta), update_options (substituir opções), delete (excluir roleta)</string>
+    <string name="agent_tool_manage_decision_wheel_param_title">Título da roleta, obrigatório em create, ex. 「O que comer no almoço」</string>
+    <string name="agent_tool_manage_decision_wheel_param_options">Array de nomes de opções (mínimo 2), obrigatório em create/update_options</string>
+    <string name="agent_tool_manage_decision_wheel_param_wheel_id">ID da roleta, obrigatório em update_options/delete; obtenha com list</string>
+    <string name="agent_tool_manage_decision_wheel_failed">Falha na operação da roleta: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_unknown_action">Ação desconhecida: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_missing_title">A ação create requer o parâmetro title</string>
+    <string name="agent_tool_manage_decision_wheel_missing_options">Esta ação requer o parâmetro options (pelo menos 2 nomes de opções)</string>
+    <string name="agent_tool_manage_decision_wheel_missing_wheel_id">Esta ação requer o parâmetro wheel_id</string>
+    <string name="agent_tool_manage_decision_wheel_not_found">Roleta não encontrada: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_created">Roleta criada: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_updated">Opções da roleta atualizadas: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deleted">Roleta excluída: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_label">Roleta de decisões</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_guidance">Abra a página da roleta e gire para decidir</string>
     <string name="agent_tool_browser_not_available">O navegador está indisponível no momento; abra primeiro a página do navegador integrado</string>
     <string name="agent_tool_browser_navigate_title">Navegação do navegador</string>
     <string name="agent_tool_browser_navigate_summary">Controle o navegador integrado: abrir URL, voltar, avançar, recarregar, gerenciar abas</string>

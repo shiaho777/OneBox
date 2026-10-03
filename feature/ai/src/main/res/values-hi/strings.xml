@@ -611,6 +611,25 @@
     <string name="agent_tool_manage_xiangqi_imported_fen">FEN आयात किया गया</string>
     <string name="agent_tool_manage_xiangqi_imported">खेल आयात किया गया: %1$s</string>
     <string name="agent_tool_manage_xiangqi_import_failed">आयात विफल: %1$s</string>
+
+    <!-- manage_decision_wheel -->
+    <string name="agent_tool_manage_decision_wheel_title">डिसीज़न व्हील मैनेजर</string>
+    <string name="agent_tool_manage_decision_wheel_summary">रैंडम चुनाव के लिए डिसीज़न व्हील सूचीबद्ध करें, बनाएं, विकल्प अपडेट करें और हटाएं</string>
+    <string name="agent_tool_manage_decision_wheel_param_action">क्रिया प्रकार: list (सभी व्हील सूचीबद्ध करें), create (व्हील बनाएं), update_options (व्हील के विकल्प बदलें), delete (व्हील हटाएं)</string>
+    <string name="agent_tool_manage_decision_wheel_param_title">व्हील का शीर्षक, create के लिए आवश्यक, जैसे 「दोपहर के भोजन में क्या खाएं」</string>
+    <string name="agent_tool_manage_decision_wheel_param_options">विकल्प नामों की सूची (कम से कम 2), create/update_options के लिए आवश्यक</string>
+    <string name="agent_tool_manage_decision_wheel_param_wheel_id">व्हील ID, update_options/delete के लिए आवश्यक; list क्रिया से प्राप्त करें</string>
+    <string name="agent_tool_manage_decision_wheel_failed">व्हील ऑपरेशन विफल: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_unknown_action">अज्ञात क्रिया: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_missing_title">create क्रिया के लिए title पैरामीटर आवश्यक है</string>
+    <string name="agent_tool_manage_decision_wheel_missing_options">इस क्रिया के लिए options पैरामीटर आवश्यक है (कम से कम 2 विकल्प नाम)</string>
+    <string name="agent_tool_manage_decision_wheel_missing_wheel_id">इस क्रिया के लिए wheel_id पैरामीटर आवश्यक है</string>
+    <string name="agent_tool_manage_decision_wheel_not_found">व्हील नहीं मिला: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_created">व्हील बनाया गया: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_updated">व्हील के विकल्प अपडेट किए गए: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deleted">व्हील हटाया गया: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_label">डिसीज़न व्हील</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_guidance">व्हील पेज खोलें और घुमाकर फैसला करें</string>
     <string name="agent_tool_browser_not_available">ब्राउज़र वर्तमान में अनुपलब्ध है; कृपया पहले अंतर्निहित ब्राउज़र पृष्ठ खोलें</string>
     <string name="agent_tool_browser_navigate_title">ब्राउज़र नेविगेशन</string>
     <string name="agent_tool_browser_navigate_summary">अंतर्निहित ब्राउज़र नियंत्रित करें: URL खोलें, पीछे, आगे, पुनः लोड, टैब प्रबंधित करें</string>

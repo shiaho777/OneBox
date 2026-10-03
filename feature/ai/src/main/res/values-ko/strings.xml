@@ -611,6 +611,25 @@
     <string name="agent_tool_manage_xiangqi_imported_fen">FEN 가져오기 완료</string>
     <string name="agent_tool_manage_xiangqi_imported">게임 가져오기: %1$s</string>
     <string name="agent_tool_manage_xiangqi_import_failed">가져오기 실패: %1$s</string>
+
+    <!-- manage_decision_wheel -->
+    <string name="agent_tool_manage_decision_wheel_title">결정 룰렛 관리</string>
+    <string name="agent_tool_manage_decision_wheel_summary">결정 룰렛 목록 보기, 생성, 옵션 업데이트, 삭제 — 무작위 결정을 도와줍니다</string>
+    <string name="agent_tool_manage_decision_wheel_param_action">작업 유형: list(모든 룰렛 나열), create(룰렛 생성), update_options(룰렛 옵션 교체), delete(룰렛 삭제)</string>
+    <string name="agent_tool_manage_decision_wheel_param_title">룰렛 제목. create에 필수. 예: 「점심 뭐 먹지」</string>
+    <string name="agent_tool_manage_decision_wheel_param_options">옵션 이름 배열(최소 2개). create/update_options에 필수</string>
+    <string name="agent_tool_manage_decision_wheel_param_wheel_id">룰렛 ID. update_options/delete에 필수. list 작업으로 확인 가능</string>
+    <string name="agent_tool_manage_decision_wheel_failed">룰렛 작업 실패: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_unknown_action">알 수 없는 작업: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_missing_title">create 작업에는 title 매개변수가 필요합니다</string>
+    <string name="agent_tool_manage_decision_wheel_missing_options">이 작업에는 options 매개변수(옵션 이름 최소 2개)가 필요합니다</string>
+    <string name="agent_tool_manage_decision_wheel_missing_wheel_id">이 작업에는 wheel_id 매개변수가 필요합니다</string>
+    <string name="agent_tool_manage_decision_wheel_not_found">룰렛을 찾을 수 없음: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_created">룰렛 생성됨: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_updated">룰렛 옵션 업데이트됨: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deleted">룰렛 삭제됨: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_label">결정 룰렛</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_guidance">룰렛 페이지를 열고 돌려서 결정하세요</string>
     <string name="agent_tool_browser_not_available">브라우저를 사용할 수 없습니다. 먼저 내장 브라우저 페이지를 여세요</string>
     <string name="agent_tool_browser_navigate_title">브라우저 탐색</string>
     <string name="agent_tool_browser_navigate_summary">내장 브라우저 제어: URL 열기, 뒤로, 앞으로, 새로고침, 탭 관리</string>

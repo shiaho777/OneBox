@@ -1,0 +1,13 @@
+Manage decision wheels: create "spin to decide" wheels with random options for the user. Supported actions:
+
+[List]
+- list: List all wheels with their options. No parameters required. The returned wheel ids are used by update_options / delete. Each wheel carries its own deeplink that opens its spin page directly.
+
+[Create]
+- create: Create a new wheel. Requires title (e.g. "What's for lunch") and options (array of option names, at least 2, e.g. ["Hotpot","BBQ","Salad"]). Segment colors are generated automatically. The deeplink in the result opens the new wheel's spin page directly, so the user can tap it and spin right away.
+
+[Update options]
+- update_options: Replace all options of a wheel and recolor them. Requires wheel_id and options (at least 2). Call list first to get the wheel_id. The deeplink in the result also opens that wheel's spin page.
+
+[Delete]
+- delete: Delete a wheel. Requires wheel_id.

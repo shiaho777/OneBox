@@ -611,6 +611,25 @@
     <string name="agent_tool_manage_xiangqi_imported_fen">FEN импортирован</string>
     <string name="agent_tool_manage_xiangqi_imported">Игра импортирована: %1$s</string>
     <string name="agent_tool_manage_xiangqi_import_failed">Импорт не удался: %1$s</string>
+
+    <!-- manage_decision_wheel -->
+    <string name="agent_tool_manage_decision_wheel_title">Управление колесом решений</string>
+    <string name="agent_tool_manage_decision_wheel_summary">Список, создание, обновление вариантов и удаление колёс решений для случайного выбора</string>
+    <string name="agent_tool_manage_decision_wheel_param_action">Тип действия: list (список всех колёс), create (создать колесо), update_options (заменить варианты), delete (удалить колесо)</string>
+    <string name="agent_tool_manage_decision_wheel_param_title">Название колеса, обязательно для create, например 「Что на обед」</string>
+    <string name="agent_tool_manage_decision_wheel_param_options">Массив названий вариантов (не менее 2), обязателен для create/update_options</string>
+    <string name="agent_tool_manage_decision_wheel_param_wheel_id">ID колеса, обязателен для update_options/delete; получите через list</string>
+    <string name="agent_tool_manage_decision_wheel_failed">Ошибка операции с колесом: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_unknown_action">Неизвестное действие: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_missing_title">Для действия create нужен параметр title</string>
+    <string name="agent_tool_manage_decision_wheel_missing_options">Для этого действия нужен параметр options (не менее 2 названий вариантов)</string>
+    <string name="agent_tool_manage_decision_wheel_missing_wheel_id">Для этого действия нужен параметр wheel_id</string>
+    <string name="agent_tool_manage_decision_wheel_not_found">Колесо не найдено: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_created">Колесо создано: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_updated">Варианты колеса обновлены: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deleted">Колесо удалено: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_label">Колесо решений</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_guidance">Откройте страницу колеса и крутите, чтобы решить</string>
     <string name="agent_tool_browser_not_available">Браузер сейчас недоступен; сначала откройте встроенную страницу браузера</string>
     <string name="agent_tool_browser_navigate_title">Навигация в браузере</string>
     <string name="agent_tool_browser_navigate_summary">Управление встроенным браузером: открыть URL, назад, вперед, перезагрузить, управлять вкладками</string>

@@ -1242,7 +1242,9 @@ sealed class Screen(
 
     @Serializable
     @SerialName("DecisionWheelScreen")
-    class DecisionWheelScreen : Screen(
+    data class DecisionWheelScreen(
+        val initialWheelId: String? = null
+    ) : Screen(
         id = 1029,
         title = com.shifenmiao.core.R.string.decision_wheel_title,
         subtitle = com.shifenmiao.core.R.string.decision_wheel_description,

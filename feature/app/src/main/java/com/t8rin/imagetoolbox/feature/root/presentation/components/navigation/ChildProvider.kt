@@ -953,7 +953,8 @@ class ChildProvider @Inject constructor(
             decisionWheelComponent = homeFactories.decisionWheelRouterComponentFactory(
                 componentContext = componentContext,
                 onGoBack = ::navigateBack,
-                onNavigate = ::navigateTo
+                onNavigate = ::navigateTo,
+                initialWheelId = config.initialWheelId
             )
         )
 

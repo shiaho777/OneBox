@@ -56,6 +56,7 @@ class DecisionWheelRouterComponent @AssistedInject internal constructor(
     @Assisted componentContext: ComponentContext,
     @Assisted private val onGoBack: () -> Unit,
     @Assisted private val onNavigate: (com.t8rin.imagetoolbox.core.ui.utils.navigation.Screen) -> Unit,
+    @Assisted private val initialWheelId: String?,
     private val repository: WheelRepository,
     private val presetsProvider: DecisionWheelPresetsProvider,
     private val settingsHolder: WheelSettingsHolder,
@@ -117,6 +118,21 @@ class DecisionWheelRouterComponent @AssistedInject internal constructor(
         .stateIn(componentScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     val settings: StateFlow<WheelSettings> = settingsHolder.settings
+
+    init {
+        // 深链直达(onebox://screen/decision_wheel?wheel_id=xxx):
+        // 确认转盘存在再切到它的转动页;不存在则静默走默认流程。
+        // Route.Spin 本来就是栈底常驻页,只需切换当前转盘,不用动路由栈。
+        if (!initialWheelId.isNullOrBlank()) {
+            componentScope.launch {
+                val wheel = repository.getWheelById(initialWheelId)
+                if (wheel != null) {
+                    spinComponent.switchWheel(wheel.id)
+                    _currentTab.value = WheelTab.SPIN
+                }
+            }
+        }
+    }
 
     // ─── 导航 ──────────────────────────────────────────────────────────────
 
@@ -252,7 +268,8 @@ class DecisionWheelRouterComponent @AssistedInject internal constructor(
         operator fun invoke(
             componentContext: ComponentContext,
             onGoBack: () -> Unit,
-            onNavigate: (com.t8rin.imagetoolbox.core.ui.utils.navigation.Screen) -> Unit
+            onNavigate: (com.t8rin.imagetoolbox.core.ui.utils.navigation.Screen) -> Unit,
+            initialWheelId: String?
         ): DecisionWheelRouterComponent
     }
 }

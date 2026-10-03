@@ -611,6 +611,25 @@
     <string name="agent_tool_manage_xiangqi_imported_fen">FEN importiert</string>
     <string name="agent_tool_manage_xiangqi_imported">Spiel importiert: %1$s</string>
     <string name="agent_tool_manage_xiangqi_import_failed">Import fehlgeschlagen: %1$s</string>
+
+    <!-- manage_decision_wheel -->
+    <string name="agent_tool_manage_decision_wheel_title">Entscheidungsrad-Verwaltung</string>
+    <string name="agent_tool_manage_decision_wheel_summary">Entscheidungsräder auflisten, erstellen, Optionen aktualisieren und löschen – für zufällige Entscheidungen</string>
+    <string name="agent_tool_manage_decision_wheel_param_action">Aktionstyp: list (alle Räder auflisten), create (Rad erstellen), update_options (Optionen eines Rads ersetzen), delete (Rad löschen)</string>
+    <string name="agent_tool_manage_decision_wheel_param_title">Titel des Rads, erforderlich für create, z. B. 「Was gibt es zum Mittagessen」</string>
+    <string name="agent_tool_manage_decision_wheel_param_options">Array mit Optionsnamen (mindestens 2), erforderlich für create/update_options</string>
+    <string name="agent_tool_manage_decision_wheel_param_wheel_id">Rad-ID, erforderlich für update_options/delete; per list-Aktion ermitteln</string>
+    <string name="agent_tool_manage_decision_wheel_failed">Rad-Aktion fehlgeschlagen: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_unknown_action">Unbekannte Aktion: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_missing_title">Die create-Aktion erfordert den Parameter title</string>
+    <string name="agent_tool_manage_decision_wheel_missing_options">Diese Aktion erfordert den Parameter options (mindestens 2 Optionsnamen)</string>
+    <string name="agent_tool_manage_decision_wheel_missing_wheel_id">Diese Aktion erfordert den Parameter wheel_id</string>
+    <string name="agent_tool_manage_decision_wheel_not_found">Rad nicht gefunden: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_created">Rad erstellt: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_updated">Rad-Optionen aktualisiert: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deleted">Rad gelöscht: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_label">Entscheidungsrad</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_guidance">Rad-Seite öffnen und drehen, um zu entscheiden</string>
     <string name="agent_tool_browser_not_available">Browser ist derzeit nicht verfügbar; bitte öffnen Sie zuerst die integrierte Browser-Seite</string>
     <string name="agent_tool_browser_navigate_title">Browser-Navigation</string>
     <string name="agent_tool_browser_navigate_summary">Steuern Sie den integrierten Browser: URL öffnen, zurück, vor, neu laden, Tabs verwalten</string>

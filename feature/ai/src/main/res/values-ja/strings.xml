@@ -611,6 +611,25 @@
     <string name="agent_tool_manage_xiangqi_imported_fen">FEN已導入</string>
     <string name="agent_tool_manage_xiangqi_imported">游戏已導入：%1$s</string>
     <string name="agent_tool_manage_xiangqi_import_failed">導入失败：%1$s</string>
+
+    <!-- manage_decision_wheel -->
+    <string name="agent_tool_manage_decision_wheel_title">決定ルーレット管理</string>
+    <string name="agent_tool_manage_decision_wheel_summary">ルーレットの一覧表示、作成、選択肢の更新、削除。ランダムな決定をお手伝い</string>
+    <string name="agent_tool_manage_decision_wheel_param_action">アクションタイプ: list(すべてのルーレットを一覧表示), create(ルーレット作成), update_options(選択肢を置き換え), delete(ルーレット削除)</string>
+    <string name="agent_tool_manage_decision_wheel_param_title">ルーレットのタイトル。createに必須。例:「昼食は何にする」</string>
+    <string name="agent_tool_manage_decision_wheel_param_options">選択肢名の配列(2つ以上)。create/update_optionsに必須</string>
+    <string name="agent_tool_manage_decision_wheel_param_wheel_id">ルーレットID。update_options/deleteに必須。listで取得できます</string>
+    <string name="agent_tool_manage_decision_wheel_failed">ルーレット操作に失敗しました: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_unknown_action">不明なアクション: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_missing_title">createアクションにはtitleパラメータが必要です</string>
+    <string name="agent_tool_manage_decision_wheel_missing_options">このアクションにはoptionsパラメータ(選択肢名を2つ以上)が必要です</string>
+    <string name="agent_tool_manage_decision_wheel_missing_wheel_id">このアクションにはwheel_idパラメータが必要です</string>
+    <string name="agent_tool_manage_decision_wheel_not_found">ルーレットが見つかりません: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_created">ルーレットを作成しました: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_updated">ルーレットの選択肢を更新しました: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deleted">ルーレットを削除しました: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_label">決定ルーレット</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_guidance">ルーレットページを開いて回して決めましょう</string>
     <string name="agent_tool_browser_not_available">ブラウザーは現在利用できません。先に内蔵ブラウザーのページを開いてください</string>
     <string name="agent_tool_browser_navigate_title">ブラウザー操作</string>
     <string name="agent_tool_browser_navigate_summary">内蔵ブラウザーを操作: URLを開く、戻る、進む、再読み込み、タブ管理</string>

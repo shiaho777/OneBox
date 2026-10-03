@@ -685,6 +685,25 @@
     <string name="agent_tool_manage_xiangqi_imported">Game imported: %1$s</string>
     <string name="agent_tool_manage_xiangqi_import_failed">Import failed: %1$s</string>
 
+    <!-- manage_decision_wheel -->
+    <string name="agent_tool_manage_decision_wheel_title">Decision Wheel Manager</string>
+    <string name="agent_tool_manage_decision_wheel_summary">List, create, update options and delete decision wheels for random choices</string>
+    <string name="agent_tool_manage_decision_wheel_param_action">Action type: list (list all wheels), create (create a wheel), update_options (replace a wheel\'s options), delete (delete a wheel)</string>
+    <string name="agent_tool_manage_decision_wheel_param_title">Wheel title, required for create, e.g. "What\'s for lunch"</string>
+    <string name="agent_tool_manage_decision_wheel_param_options">Array of option names (at least 2), required for create/update_options</string>
+    <string name="agent_tool_manage_decision_wheel_param_wheel_id">Wheel ID, required for update_options/delete; get it from the list action</string>
+    <string name="agent_tool_manage_decision_wheel_failed">Decision wheel operation failed: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_unknown_action">Unknown action: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_missing_title">The create action requires the title parameter</string>
+    <string name="agent_tool_manage_decision_wheel_missing_options">This action requires the options parameter (at least 2 option names)</string>
+    <string name="agent_tool_manage_decision_wheel_missing_wheel_id">This action requires the wheel_id parameter</string>
+    <string name="agent_tool_manage_decision_wheel_not_found">Wheel not found: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_created">Wheel created: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_updated">Wheel options updated: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deleted">Wheel deleted: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_label">Decision Wheel</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_guidance">Open the wheel page and spin to decide</string>
+
     <!-- ===== Browser Automation Tools ===== -->
     <string name="agent_tool_browser_not_available">Browser is currently unavailable; please open the built-in browser page first</string>
 

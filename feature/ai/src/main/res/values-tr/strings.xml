@@ -611,6 +611,25 @@
     <string name="agent_tool_manage_xiangqi_imported_fen">FEN İçe Aktarıldı</string>
     <string name="agent_tool_manage_xiangqi_imported">Oyun içe aktarıldı: %1$s</string>
     <string name="agent_tool_manage_xiangqi_import_failed">İçe aktarma başarısız: %1$s</string>
+
+    <!-- manage_decision_wheel -->
+    <string name="agent_tool_manage_decision_wheel_title">Karar Çarkı Yöneticisi</string>
+    <string name="agent_tool_manage_decision_wheel_summary">Rastgele seçim için karar çarklarını listele, oluştur, seçenekleri güncelle ve sil</string>
+    <string name="agent_tool_manage_decision_wheel_param_action">İşlem türü: list (tüm çarkları listele), create (çark oluştur), update_options (çark seçeneklerini değiştir), delete (çarkı sil)</string>
+    <string name="agent_tool_manage_decision_wheel_param_title">Çark başlığı, create için gerekli, örn. 「Öğle yemeğinde ne var」</string>
+    <string name="agent_tool_manage_decision_wheel_param_options">Seçenek adları dizisi (en az 2), create/update_options için gerekli</string>
+    <string name="agent_tool_manage_decision_wheel_param_wheel_id">Çark ID'si, update_options/delete için gerekli; list işlemiyle alınır</string>
+    <string name="agent_tool_manage_decision_wheel_failed">Çark işlemi başarısız: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_unknown_action">Bilinmeyen işlem: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_missing_title">create işlemi title parametresi gerektirir</string>
+    <string name="agent_tool_manage_decision_wheel_missing_options">Bu işlem options parametresi gerektirir (en az 2 seçenek adı)</string>
+    <string name="agent_tool_manage_decision_wheel_missing_wheel_id">Bu işlem wheel_id parametresi gerektirir</string>
+    <string name="agent_tool_manage_decision_wheel_not_found">Çark bulunamadı: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_created">Çark oluşturuldu: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_updated">Çark seçenekleri güncellendi: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deleted">Çark silindi: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_label">Karar Çarkı</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_guidance">Çark sayfasını aç ve karar vermek için çevir</string>
     <string name="agent_tool_browser_not_available">Tarayıcı şu anda kullanılamıyor; lütfen önce yerleşik tarayıcı sayfasını açın</string>
     <string name="agent_tool_browser_navigate_title">Tarayıcı Gezinme</string>
     <string name="agent_tool_browser_navigate_summary">Yerleşik tarayıcıyı kontrol edin: URL aç, geri, ileri, yenile, sekmeleri yönet</string>

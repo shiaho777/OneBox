@@ -612,6 +612,25 @@
     <string name="agent_tool_manage_xiangqi_imported_fen">تم استيراد FEN</string>
     <string name="agent_tool_manage_xiangqi_imported">تم استيراد المباراة: %1$s</string>
     <string name="agent_tool_manage_xiangqi_import_failed">فشل الاستيراد: %1$s</string>
+
+    <!-- manage_decision_wheel -->
+    <string name="agent_tool_manage_decision_wheel_title">إدارة عجلة القرار</string>
+    <string name="agent_tool_manage_decision_wheel_summary">عرض وإنشاء وتحديث خيارات وحذف عجلات القرار للاختيار العشوائي</string>
+    <string name="agent_tool_manage_decision_wheel_param_action">نوع الإجراء: list (عرض كل العجلات), create (إنشاء عجلة), update_options (استبدال خيارات عجلة), delete (حذف عجلة)</string>
+    <string name="agent_tool_manage_decision_wheel_param_title">عنوان العجلة, مطلوب لـ create, مثل 「ماذا نأكل على الغداء」</string>
+    <string name="agent_tool_manage_decision_wheel_param_options">مصفوفة أسماء الخيارات (خياران على الأقل), مطلوبة لـ create/update_options</string>
+    <string name="agent_tool_manage_decision_wheel_param_wheel_id">معرّف العجلة, مطلوب لـ update_options/delete, يمكن الحصول عليه من list</string>
+    <string name="agent_tool_manage_decision_wheel_failed">فشلت عملية العجلة: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_unknown_action">إجراء غير معروف: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_missing_title">يتطلب إجراء create المعامل title</string>
+    <string name="agent_tool_manage_decision_wheel_missing_options">يتطلب هذا الإجراء المعامل options (اسمان للخيارات على الأقل)</string>
+    <string name="agent_tool_manage_decision_wheel_missing_wheel_id">يتطلب هذا الإجراء المعامل wheel_id</string>
+    <string name="agent_tool_manage_decision_wheel_not_found">العجلة غير موجودة: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_created">تم إنشاء العجلة: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_updated">تم تحديث خيارات العجلة: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deleted">تم حذف العجلة: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_label">عجلة القرار</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_guidance">افتح صفحة العجلة وأدرها لتقرر</string>
     <string name="agent_tool_browser_not_available">المتصفح غير متاح حاليًا؛ يرجى فتح صفحة المتصفح المدمج أولًا</string>
     <string name="agent_tool_browser_navigate_title">تصفّح المتصفح</string>
     <string name="agent_tool_browser_navigate_summary">التحكم في المتصفح المدمج: فتح URL والرجوع والتقدم وإعادة التحميل وإدارة علامات التبويب</string>

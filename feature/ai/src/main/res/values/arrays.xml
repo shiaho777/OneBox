@@ -1093,5 +1093,30 @@
         <item>删除 xxx 对局</item>
         <item>查看 xxx 对局详情</item>
     </string-array>
+
+    <string-array name="agent_tool_manage_decision_wheel_keywords">
+        <item>转盘</item>
+        <item>决策</item>
+        <item>决定</item>
+        <item>抽奖</item>
+        <item>选择困难</item>
+        <item>随机选择</item>
+        <item>wheel</item>
+        <item>decision</item>
+        <item>random</item>
+        <item>spin</item>
+        <item>choice</item>
+    </string-array>
+
+    <string-array name="agent_tool_manage_decision_wheel_examples">
+        <item>帮我创建一个"午餐吃什么"的转盘</item>
+        <item>我有选择困难，做个转盘帮我决定</item>
+        <item>创建一个抽奖转盘</item>
+        <item>查看我的转盘</item>
+        <item>给 xxx 转盘换一批选项</item>
+        <item>删除 xxx 转盘</item>
+        <item>Create a decision wheel for weekend plans</item>
+        <item>Spin a wheel to pick a random restaurant</item>
+    </string-array>
 </resources>
 

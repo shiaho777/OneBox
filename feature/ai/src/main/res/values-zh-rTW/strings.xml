@@ -611,6 +611,25 @@
     <string name="agent_tool_manage_xiangqi_imported_fen">FEN 匯入</string>
     <string name="agent_tool_manage_xiangqi_imported">已匯入對局: %1$s</string>
     <string name="agent_tool_manage_xiangqi_import_failed">匯入失敗: %1$s</string>
+
+    <!-- manage_decision_wheel -->
+    <string name="agent_tool_manage_decision_wheel_title">決策轉盤管理</string>
+    <string name="agent_tool_manage_decision_wheel_summary">列出、建立、更新選項、刪除決策轉盤,隨機幫你做決定</string>
+    <string name="agent_tool_manage_decision_wheel_param_action">操作類型: list(列出全部轉盤), create(建立轉盤), update_options(取代轉盤選項), delete(刪除轉盤)</string>
+    <string name="agent_tool_manage_decision_wheel_param_title">轉盤標題,create 必填,例如「午餐吃什麼」</string>
+    <string name="agent_tool_manage_decision_wheel_param_options">選項名稱陣列(至少 2 個),create/update_options 必填</string>
+    <string name="agent_tool_manage_decision_wheel_param_wheel_id">轉盤 ID,update_options/delete 必填,可先透過 list 取得</string>
+    <string name="agent_tool_manage_decision_wheel_failed">轉盤操作失敗: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_unknown_action">未知操作: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_missing_title">create 操作需要 title 參數</string>
+    <string name="agent_tool_manage_decision_wheel_missing_options">此操作需要 options 參數(至少 2 個選項名稱)</string>
+    <string name="agent_tool_manage_decision_wheel_missing_wheel_id">此操作需要 wheel_id 參數</string>
+    <string name="agent_tool_manage_decision_wheel_not_found">找不到轉盤: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_created">已建立轉盤: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_updated">已更新轉盤選項: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deleted">已刪除轉盤: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_label">決策轉盤</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_guidance">打開轉盤頁面,轉一轉做決定</string>
     <string name="agent_tool_browser_not_available">瀏覽器目前無法使用，請先開啟內建瀏覽器頁面</string>
     <string name="agent_tool_browser_navigate_title">瀏覽器導覽</string>
     <string name="agent_tool_browser_navigate_summary">控制內建瀏覽器：開啟 URL、前進後退、重新整理、管理分頁</string>

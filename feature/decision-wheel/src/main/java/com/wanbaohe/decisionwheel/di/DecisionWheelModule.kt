@@ -2,8 +2,10 @@ package com.wanbaohe.decisionwheel.di
 
 import android.content.Context
 import com.shifenmiao.database.decision_wheel.dao.WheelDao
+import com.shifenmiao.model.decisionwheel.WheelServiceInterface
 import com.wanbaohe.decisionwheel.data.DecisionWheelPresetsProvider
 import com.wanbaohe.decisionwheel.data.WheelRepository
+import com.wanbaohe.decisionwheel.service.WheelServiceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,6 +22,10 @@ object DecisionWheelModule {
     fun provideWheelRepository(wheelDao: WheelDao): WheelRepository {
         return WheelRepository(wheelDao)
     }
+
+    @Provides
+    @Singleton
+    fun provideWheelService(impl: WheelServiceImpl): WheelServiceInterface = impl
 
     @Provides
     @Singleton

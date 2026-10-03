@@ -492,6 +492,26 @@ object AppNavigationRegistry {
             ),
             AppNavigationTarget(
                 targetType = AppNavigationTargetType.SCREEN,
+                routeKey = "decision_wheel",
+                canonicalName = "screen.decision_wheel",
+                title = "决策转盘",
+                description = "打开决策转盘模块，支持直达指定转盘的转动页",
+                aliases = listOf(
+                    "decision_wheel_screen", "decisionwheel", "wheel", "spin",
+                    "转盘", "决策转盘", "抽奖"
+                ),
+                deeplink = buildStructuredDeeplink(
+                    AppNavigationTargetType.SCREEN,
+                    "decision_wheel"
+                ),
+                screenBuilder = { params ->
+                    Screen.DecisionWheelScreen(
+                        initialWheelId = params["wheel_id"]?.takeIf { it.isNotBlank() }
+                    )
+                }
+            ),
+            AppNavigationTarget(
+                targetType = AppNavigationTargetType.SCREEN,
                 routeKey = "calendar",
                 canonicalName = "screen.calendar",
                 title = "万年历",

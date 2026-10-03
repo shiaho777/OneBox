@@ -611,6 +611,25 @@
     <string name="agent_tool_manage_xiangqi_imported_fen">FEN Diimpor</string>
     <string name="agent_tool_manage_xiangqi_imported">Permainan diimpor: %1$s</string>
     <string name="agent_tool_manage_xiangqi_import_failed">Impor gagal: %1$s</string>
+
+    <!-- manage_decision_wheel -->
+    <string name="agent_tool_manage_decision_wheel_title">Pengelola Roda Keputusan</string>
+    <string name="agent_tool_manage_decision_wheel_summary">Menampilkan, membuat, memperbarui opsi, dan menghapus roda keputusan untuk pilihan acak</string>
+    <string name="agent_tool_manage_decision_wheel_param_action">Jenis aksi: list (daftar semua roda), create (buat roda), update_options (ganti opsi roda), delete (hapus roda)</string>
+    <string name="agent_tool_manage_decision_wheel_param_title">Judul roda, wajib untuk create, mis. 「Makan siang apa」</string>
+    <string name="agent_tool_manage_decision_wheel_param_options">Array nama opsi (minimal 2), wajib untuk create/update_options</string>
+    <string name="agent_tool_manage_decision_wheel_param_wheel_id">ID roda, wajib untuk update_options/delete; dapatkan dari aksi list</string>
+    <string name="agent_tool_manage_decision_wheel_failed">Operasi roda gagal: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_unknown_action">Aksi tidak dikenal: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_missing_title">Aksi create memerlukan parameter title</string>
+    <string name="agent_tool_manage_decision_wheel_missing_options">Aksi ini memerlukan parameter options (minimal 2 nama opsi)</string>
+    <string name="agent_tool_manage_decision_wheel_missing_wheel_id">Aksi ini memerlukan parameter wheel_id</string>
+    <string name="agent_tool_manage_decision_wheel_not_found">Roda tidak ditemukan: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_created">Roda dibuat: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_updated">Opsi roda diperbarui: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deleted">Roda dihapus: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_label">Roda Keputusan</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_guidance">Buka halaman roda dan putar untuk memutuskan</string>
     <string name="agent_tool_browser_not_available">Browser saat ini tidak tersedia; silakan buka halaman browser bawaan terlebih dahulu</string>
     <string name="agent_tool_browser_navigate_title">Navigasi Browser</string>
     <string name="agent_tool_browser_navigate_summary">Kontrol browser bawaan: buka URL, mundur, maju, muat ulang, kelola tab</string>

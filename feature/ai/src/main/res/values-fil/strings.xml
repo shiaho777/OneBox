@@ -611,6 +611,25 @@
     <string name="agent_tool_manage_xiangqi_imported_fen">Na-import ang FEN</string>
     <string name="agent_tool_manage_xiangqi_imported">Na-import ang laro: %1$s</string>
     <string name="agent_tool_manage_xiangqi_import_failed">Nabigo ang pag-import: %1$s</string>
+
+    <!-- manage_decision_wheel -->
+    <string name="agent_tool_manage_decision_wheel_title">Tagapamahala ng Decision Wheel</string>
+    <string name="agent_tool_manage_decision_wheel_summary">Maglista, gumawa, mag-update ng mga opsyon, at mag-delete ng mga decision wheel para sa random na pagpili</string>
+    <string name="agent_tool_manage_decision_wheel_param_action">Uri ng aksyon: list (ilista lahat ng wheel), create (gumawa ng wheel), update_options (palitan ang mga opsyon), delete (i-delete ang wheel)</string>
+    <string name="agent_tool_manage_decision_wheel_param_title">Pamagat ng wheel, kailangan sa create, hal. 「Ano ang kakainin sa tanghalian」</string>
+    <string name="agent_tool_manage_decision_wheel_param_options">Array ng mga pangalan ng opsyon (hindi bababa sa 2), kailangan sa create/update_options</string>
+    <string name="agent_tool_manage_decision_wheel_param_wheel_id">ID ng wheel, kailangan sa update_options/delete; kunin mula sa list</string>
+    <string name="agent_tool_manage_decision_wheel_failed">Nabigo ang operasyon ng wheel: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_unknown_action">Hindi kilalang aksyon: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_missing_title">Kailangan ng create na aksyon ang title na parameter</string>
+    <string name="agent_tool_manage_decision_wheel_missing_options">Kailangan ng aksyong ito ang options na parameter (hindi bababa sa 2 pangalan ng opsyon)</string>
+    <string name="agent_tool_manage_decision_wheel_missing_wheel_id">Kailangan ng aksyong ito ang wheel_id na parameter</string>
+    <string name="agent_tool_manage_decision_wheel_not_found">Hindi natagpuan ang wheel: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_created">Nagawa ang wheel: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_updated">Na-update ang mga opsyon ng wheel: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deleted">Na-delete ang wheel: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_label">Decision Wheel</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_guidance">Buksan ang wheel page at ikutin para magpasya</string>
     <string name="agent_tool_browser_not_available">Kasalukuyang hindi available ang browser; pakibuksan muna ang built-in browser page</string>
     <string name="agent_tool_browser_navigate_title">Pag-navigate sa Browser</string>
     <string name="agent_tool_browser_navigate_summary">Kontrolin ang built-in browser: buksan ang URL, bumalik, pasulong, i-reload, pamahalaan ang mga tab</string>

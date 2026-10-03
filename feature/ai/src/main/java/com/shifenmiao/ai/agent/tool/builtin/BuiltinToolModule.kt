@@ -313,6 +313,11 @@ object BuiltinToolModule {
     @StringKey("manage_chess")
     fun provideManageChessTool(tool: ManageChessTool): AgentTool = tool
 
+    @Provides
+    @IntoMap
+    @StringKey("manage_decision_wheel")
+    fun provideManageDecisionWheelTool(tool: ManageDecisionWheelTool): AgentTool = tool
+
     // ========== 浏览器操控工具 ==========
 
     @Provides

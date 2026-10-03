@@ -180,8 +180,10 @@ abstract class AppDatabase : RoomDatabase() {
          * v10 Agent 创建 prompt 注册 FolderPicker/RangeSlider/Rating 组件, 需重刷覆盖旧版。
          * v11 Agent 工作模式 prompt 修正发现工具描述(discover(scope=all) → discover_tools(keywords)), 需重刷覆盖旧版。
          * v12 新增 AI 记忆/技能注入引导语预置(档案/近期日志及其无工具降级版/技能清单), 需重刷写入。
+         * v13 Agent 工作模式 prompt 引导 discover_tools 首次调用关键词给全(意图拆分/中英同义词/任务链预联想),
+         *     并收敛无效重搜, 需重刷覆盖旧版。
          */
-        private const val SYSTEM_PRESET_VERSION = 12
+        private const val SYSTEM_PRESET_VERSION = 13
 
         /**
          * 预置技能版本号：递增会强制重新 upsert skill 表的 BUNDLED 行。

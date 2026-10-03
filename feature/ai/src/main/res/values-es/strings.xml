@@ -611,6 +611,25 @@
     <string name="agent_tool_manage_xiangqi_imported_fen">FEN importado</string>
     <string name="agent_tool_manage_xiangqi_imported">Juego importado: %1$s</string>
     <string name="agent_tool_manage_xiangqi_import_failed">Importación fallida: %1$s</string>
+
+    <!-- manage_decision_wheel -->
+    <string name="agent_tool_manage_decision_wheel_title">Gestor de ruleta de decisiones</string>
+    <string name="agent_tool_manage_decision_wheel_summary">Lista, crea, actualiza opciones y elimina ruletas de decisiones para elegir al azar</string>
+    <string name="agent_tool_manage_decision_wheel_param_action">Tipo de acción: list (listar todas), create (crear ruleta), update_options (reemplazar opciones), delete (eliminar ruleta)</string>
+    <string name="agent_tool_manage_decision_wheel_param_title">Título de la ruleta, obligatorio en create, p. ej. 「Qué comer hoy」</string>
+    <string name="agent_tool_manage_decision_wheel_param_options">Array de nombres de opciones (mínimo 2), obligatorio en create/update_options</string>
+    <string name="agent_tool_manage_decision_wheel_param_wheel_id">ID de la ruleta, obligatorio en update_options/delete; obtenlo con list</string>
+    <string name="agent_tool_manage_decision_wheel_failed">Error en la operación de ruleta: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_unknown_action">Acción desconocida: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_missing_title">La acción create requiere el parámetro title</string>
+    <string name="agent_tool_manage_decision_wheel_missing_options">Esta acción requiere el parámetro options (al menos 2 nombres de opciones)</string>
+    <string name="agent_tool_manage_decision_wheel_missing_wheel_id">Esta acción requiere el parámetro wheel_id</string>
+    <string name="agent_tool_manage_decision_wheel_not_found">Ruleta no encontrada: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_created">Ruleta creada: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_updated">Opciones de la ruleta actualizadas: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deleted">Ruleta eliminada: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_label">Ruleta de decisiones</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_guidance">Abre la página de la ruleta y gírala para decidir</string>
     <string name="agent_tool_browser_not_available">El navegador no está disponible actualmente; abra primero la página del navegador integrado</string>
     <string name="agent_tool_browser_navigate_title">Navegación del navegador</string>
     <string name="agent_tool_browser_navigate_summary">Controlar el navegador integrado: abrir URL, retroceder, avanzar, recargar, gestionar pestañas</string>

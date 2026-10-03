@@ -685,6 +685,25 @@
     <string name="agent_tool_manage_xiangqi_imported">已导入对局: %1$s</string>
     <string name="agent_tool_manage_xiangqi_import_failed">导入失败: %1$s</string>
 
+    <!-- manage_decision_wheel -->
+    <string name="agent_tool_manage_decision_wheel_title">决策转盘管理</string>
+    <string name="agent_tool_manage_decision_wheel_summary">列出、创建、更新选项、删除决策转盘，随机帮你做决定</string>
+    <string name="agent_tool_manage_decision_wheel_param_action">操作类型: list(列出全部转盘), create(创建转盘), update_options(替换转盘选项), delete(删除转盘)</string>
+    <string name="agent_tool_manage_decision_wheel_param_title">转盘标题，create 必填，如"午餐吃什么"</string>
+    <string name="agent_tool_manage_decision_wheel_param_options">选项名称数组（至少 2 个），create/update_options 必填</string>
+    <string name="agent_tool_manage_decision_wheel_param_wheel_id">转盘 ID，update_options/delete 必填，可先通过 list 获取</string>
+    <string name="agent_tool_manage_decision_wheel_failed">转盘操作失败: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_unknown_action">未知操作: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_missing_title">create 操作需要 title 参数</string>
+    <string name="agent_tool_manage_decision_wheel_missing_options">该操作需要 options 参数（至少 2 个选项名称）</string>
+    <string name="agent_tool_manage_decision_wheel_missing_wheel_id">该操作需要 wheel_id 参数</string>
+    <string name="agent_tool_manage_decision_wheel_not_found">未找到转盘: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_created">已创建转盘: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_updated">已更新转盘选项: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deleted">已删除转盘: %1$s</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_label">决策转盘</string>
+    <string name="agent_tool_manage_decision_wheel_deeplink_guidance">打开转盘页面，转一转做决定</string>
+
     <!-- ===== Browser Automation Tools ===== -->
     <string name="agent_tool_browser_not_available">浏览器当前不可用，请先打开内置浏览器页面</string>
 
