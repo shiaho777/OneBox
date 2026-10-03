@@ -327,6 +327,12 @@
     <string name="agent_tool_manage_files_missing_folder_name">يتطلب وضع create_folder المعامل folder_name</string>
     <string name="agent_tool_manage_files_missing_content">يتطلب وضع write_file المعامل content</string>
     <string name="agent_tool_manage_files_failed">فشل تنفيذ أداة إدارة الملفات: %1$s</string>
+    <string name="agent_tool_unzip_file_title">فك ضغط الأرشيف</string>
+    <string name="agent_tool_unzip_file_summary">فك ضغط أرشيف zip في مجلد محلي (يُفترض مجلدًا يحمل اسم الأرشيف) وسرد الملفات المستخرجة</string>
+    <string name="agent_tool_unzip_file_param_source_uri">أرشيف zip المراد فك ضغطه: مسار محلي مطلق أو عنوان URI من نوع file:// أو content:// (نزّل الملفات من الويب أولًا بأداة download_file)</string>
+    <string name="agent_tool_unzip_file_param_destination_dir_uri">المجلد الهدف. اختياري؛ يُفترض مجلدًا يحمل اسم الأرشيف بجواره (مثل Download/a.zip ← Download/a/)</string>
+    <string name="agent_tool_unzip_file_missing_source_uri">المعامل source_uri مفقود (مسار أرشيف zip)</string>
+    <string name="agent_tool_unzip_file_failed">فشل فك الضغط: %1$s</string>
     <string name="ai_input_file">ملف</string>
     <string name="ai_chat_working_mode_ask_title">اسأل</string>
     <string name="ai_chat_working_mode_ask_description">الإجابة مباشرةً، مع استكشاف القدرات عند الحاجة فقط</string>
@@ -929,4 +935,27 @@
     <string name="agent_tool_manage_chess_imported">تم استيراد المباراة: %1$s</string>
     <string name="agent_tool_manage_chess_import_failed">فشل الاستيراد: %1$s</string>
     <string name="agent_tool_manage_chess_param_ai_as_white">ما إذا كان الذكاء الاصطناعي يلعب بالأبيض، أي النقلة الأولى (اختياري مع create/import_fen، والقيمة الافتراضية false فيلعب الإنسان بالأبيض؛ وفي import_fen احذفه ليدع الإنسان يلعب للجانب صاحب الدور)</string>
+    <string name="agent_tool_import_font_title">استيراد خط</string>
+    <string name="agent_tool_import_font_summary">سرد خطوط App المخصّصة (TTF/OTF) أو استيرادها أو إزالتها، مع إمكانية تعيين الخط المستورد خطًّا عامًّا للـ App</string>
+    <string name="agent_tool_import_font_param_action">نوع الإجراء. list=سرد الخطوط المخصّصة المستوردة؛ import=استيراد ملف خط؛ remove=إزالة خط مخصّص. **action هو المعامل المطلوب الوحيد**</string>
+    <string name="agent_tool_import_font_param_source">مصدر ملف الخط. مع import فقط: مسار ملف محلي مطلق (نزّل الخطوط من الويب أولًا بأداة download_file) أو عنوان URI من نوع content://؛ لا تُدعم إلا الملفات .ttf / .otf / .ttc (فكّ ضغط .zip أولًا بأداة unzip_file)</string>
+    <string name="agent_tool_import_font_param_name">الخط المراد إزالته: قيمة name أو filePath من نتيجة list. مع remove فقط</string>
+    <string name="agent_tool_import_font_param_apply">ما إذا كان يجب تعيين الخط المستورد خطًّا عامًّا للـ App فورًا، القيمة الافتراضية false. مع import فقط</string>
+    <string name="agent_tool_import_font_failed">فشلت عملية الخط: %1$s</string>
+    <string name="agent_tool_import_font_unknown_action">إجراء غير معروف: %1$s. يجب أن يكون واحدًا من list / import / remove</string>
+    <string name="agent_tool_import_font_missing_action">معامل action مفقود</string>
+    <string name="agent_tool_import_font_missing_source">يتطلّب إجراء import المعامل source (مسار ملف الخط أو عنوان URI من نوع content://)</string>
+    <string name="agent_tool_import_font_missing_name">يتطلّب إجراء remove المعامل name (اسم الخط أو مسار الملف)</string>
+    <string name="agent_tool_import_font_source_not_found">ملف الخط غير موجود: %1$s. نزّله أولًا بأداة download_file</string>
+    <string name="agent_tool_import_font_unsupported_format">صيغة خط غير مدعومة: %1$s. لا تُدعم إلا ملفات .ttf / .otf / .ttc</string>
+    <string name="agent_tool_import_font_use_unzip">%1$s هو أرشيف zip. فكّ ضغطه أولًا بأداة unzip_file، ثم استورد ملف الخط المستخرج</string>
+    <string name="agent_tool_import_font_invalid_font">الملف ليس خطًّا صالحًا: %1$s</string>
+    <string name="agent_tool_import_font_list_message">تمت قراءة قائمة الخطوط المخصّصة</string>
+    <string name="agent_tool_import_font_list_empty_message">لم تُستورد أي خطوط مخصّصة بعد</string>
+    <string name="agent_tool_import_font_import_message">تم استيراد الخط \"%1$s\"</string>
+    <string name="agent_tool_import_font_import_applied_message">تم استيراد الخط \"%1$s\" وتعيينه خطًّا عامًّا للـ App</string>
+    <string name="agent_tool_import_font_remove_message">تمت إزالة الخط \"%1$s\"</string>
+    <string name="agent_tool_import_font_remove_not_found">الخط المخصّص غير موجود: %1$s. استدعِ list لعرض الخطوط المستوردة</string>
+    <string name="agent_tool_import_font_deeplink_label">إعدادات العرض</string>
+    <string name="agent_tool_import_font_deeplink_guidance">انقر لإدارة الخطوط في إعدادات العرض</string>
 </resources>

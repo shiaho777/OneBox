@@ -326,6 +326,12 @@
     <string name="agent_tool_manage_files_missing_folder_name">El modo create_folder requiere el parámetro folder_name</string>
     <string name="agent_tool_manage_files_missing_content">El modo write_file requiere el parámetro content</string>
     <string name="agent_tool_manage_files_failed">La ejecución de la herramienta del administrador de archivos falló: %1$s</string>
+    <string name="agent_tool_unzip_file_title">Descomprimir archivo</string>
+    <string name="agent_tool_unzip_file_summary">Extrae un archivo comprimido zip en un directorio local (de forma predeterminada en una carpeta con el nombre del archivo comprimido) y lista los archivos extraídos</string>
+    <string name="agent_tool_unzip_file_param_source_uri">El archivo comprimido zip a extraer: ruta local absoluta o URI file:// o content:// (descarga primero los archivos web con la herramienta download_file)</string>
+    <string name="agent_tool_unzip_file_param_destination_dir_uri">Directorio de destino. Opcional; de forma predeterminada es una carpeta con el nombre del archivo comprimido junto a este (p. ej. Download/a.zip → Download/a/)</string>
+    <string name="agent_tool_unzip_file_missing_source_uri">Falta el parámetro source_uri (ruta del archivo comprimido zip)</string>
+    <string name="agent_tool_unzip_file_failed">Error al descomprimir: %1$s</string>
     <string name="ai_input_file">Archivo</string>
     <string name="ai_chat_working_mode_ask_title">Preguntar</string>
     <string name="ai_chat_working_mode_ask_description">Responder directamente, solo descubrir capacidades cuando sea necesario</string>
@@ -929,4 +935,27 @@
     <string name="ai_tools_session_skills">Habilidades de esta conversación</string>
     <string name="ai_tools_session_skills_hint">Muestra la lista de habilidades disponibles y permite que la IA cargue habilidades en esta conversación</string>
     <string name="ai_tools_session_global_off_hint">Desactivado globalmente en los ajustes de IA; el interruptor de la conversación no está disponible</string>
+    <string name="agent_tool_import_font_title">Importar fuente</string>
+    <string name="agent_tool_import_font_summary">Lista, importa o elimina fuentes personalizadas (TTF/OTF) de la app, con la opción de aplicar una fuente importada como fuente global</string>
+    <string name="agent_tool_import_font_param_action">Tipo de acción. list=listar las fuentes personalizadas importadas; import=importar un archivo de fuente; remove=eliminar una fuente personalizada. **Solo action es obligatorio**</string>
+    <string name="agent_tool_import_font_param_source">Origen del archivo de fuente. Solo import: ruta absoluta del archivo local (descarga primero las fuentes web con la herramienta download_file) o URI content://; solo se admiten .ttf / .otf / .ttc (extrae primero los .zip con la herramienta unzip_file)</string>
+    <string name="agent_tool_import_font_param_name">Fuente a eliminar: el name o filePath del resultado de list. Solo remove</string>
+    <string name="agent_tool_import_font_param_apply">Si se debe establecer la fuente importada como fuente global de la app de inmediato, predeterminado false. Solo import</string>
+    <string name="agent_tool_import_font_failed">Error en la operación de fuentes: %1$s</string>
+    <string name="agent_tool_import_font_unknown_action">Acción desconocida: %1$s. Debe ser una de list / import / remove</string>
+    <string name="agent_tool_import_font_missing_action">Falta el parámetro action</string>
+    <string name="agent_tool_import_font_missing_source">La acción import requiere el parámetro source (ruta del archivo de fuente o URI content://)</string>
+    <string name="agent_tool_import_font_missing_name">La acción remove requiere el parámetro name (nombre de la fuente o ruta del archivo)</string>
+    <string name="agent_tool_import_font_source_not_found">Archivo de fuente no encontrado: %1$s. Descárgalo primero con la herramienta download_file</string>
+    <string name="agent_tool_import_font_unsupported_format">Formato de fuente no admitido: %1$s. Solo se admiten archivos .ttf / .otf / .ttc</string>
+    <string name="agent_tool_import_font_use_unzip">%1$s es un archivo comprimido zip. Extráelo primero con la herramienta unzip_file y luego importa el archivo de fuente extraído</string>
+    <string name="agent_tool_import_font_invalid_font">El archivo no es una fuente válida: %1$s</string>
+    <string name="agent_tool_import_font_list_message">Lista de fuentes personalizadas consultada</string>
+    <string name="agent_tool_import_font_list_empty_message">Aún no se han importado fuentes personalizadas</string>
+    <string name="agent_tool_import_font_import_message">Fuente «%1$s» importada</string>
+    <string name="agent_tool_import_font_import_applied_message">Fuente «%1$s» importada y establecida como fuente global de la app</string>
+    <string name="agent_tool_import_font_remove_message">Fuente «%1$s» eliminada</string>
+    <string name="agent_tool_import_font_remove_not_found">Fuente personalizada no encontrada: %1$s. Llama a list para ver las fuentes importadas</string>
+    <string name="agent_tool_import_font_deeplink_label">Ajustes de pantalla</string>
+    <string name="agent_tool_import_font_deeplink_guidance">Toca para gestionar las fuentes en los ajustes de pantalla</string>
 </resources>

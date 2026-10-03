@@ -326,6 +326,12 @@
     <string name="agent_tool_manage_files_missing_folder_name">Ang create_folder mode ay nangangailangan ng folder_name parameter</string>
     <string name="agent_tool_manage_files_missing_content">Ang write_file mode ay nangangailangan ng content parameter</string>
     <string name="agent_tool_manage_files_failed">Nabigo ang pagpapatupad ng tool sa file manager: %1$s</string>
+    <string name="agent_tool_unzip_file_title">I-unzip ang Archive</string>
+    <string name="agent_tool_unzip_file_summary">I-extract ang isang zip archive sa isang local na direktoryo (default sa folder na pinangalanan ayon sa archive) at ilista ang mga na-extract na file</string>
+    <string name="agent_tool_unzip_file_param_source_uri">Ang zip archive na ie-extract: absolute local na path, file:// o content:// URI (i-download muna ang mga web file gamit ang tool na download_file)</string>
+    <string name="agent_tool_unzip_file_param_destination_dir_uri">Target na direktoryo. Opsyonal; default sa folder na pinangalanan ayon sa archive sa tabi nito (hal. Download/a.zip → Download/a/)</string>
+    <string name="agent_tool_unzip_file_missing_source_uri">Kulang ang parameter na source_uri (path ng zip archive)</string>
+    <string name="agent_tool_unzip_file_failed">Nabigo ang pag-unzip: %1$s</string>
     <string name="ai_input_file">File</string>
     <string name="ai_chat_working_mode_ask_title">Magtanong</string>
     <string name="ai_chat_working_mode_ask_description">Sagutin nang direkta, gawin ang pagtuklas ng kakayahan kung kinakailangan lamang</string>
@@ -929,4 +935,27 @@
     <string name="ai_tools_session_skills">Mga skill para sa usapang ito</string>
     <string name="ai_tools_session_skills_hint">Ipakita ang listahan ng available na skill at payagan ang AI na mag-load ng skill sa usapang ito</string>
     <string name="ai_tools_session_global_off_hint">Naka-off sa buong app sa mga setting ng AI; hindi available ang switch ng usapan</string>
+    <string name="agent_tool_import_font_title">Mag-import ng Font</string>
+    <string name="agent_tool_import_font_summary">Ilista, i-import o alisin ang mga custom na font (TTF/OTF) para sa app, opsyonal na itinatakda ang na-import na font bilang global na font</string>
+    <string name="agent_tool_import_font_param_action">Uri ng action. list=ilista ang mga na-import na custom na font; import=mag-import ng font file; remove=alisin ang isang custom na font. **Ang action lang ang kailangan**</string>
+    <string name="agent_tool_import_font_param_source">Source ng font file. import lamang: absolute local na path ng file (i-download muna ang mga web font gamit ang tool na download_file) o content:// URI; mga .ttf / .otf / .ttc lamang ang suportado (i-extract muna ang .zip gamit ang tool na unzip_file)</string>
+    <string name="agent_tool_import_font_param_name">Font na aalisin: ang name o filePath mula sa resulta ng list. remove lamang</string>
+    <string name="agent_tool_import_font_param_apply">Kung itatakda agad ang na-import na font bilang global na font ng app, default false. import lamang</string>
+    <string name="agent_tool_import_font_failed">Nabigo ang operasyon ng font: %1$s</string>
+    <string name="agent_tool_import_font_unknown_action">Hindi kilalang action: %1$s. Dapat isa sa list / import / remove</string>
+    <string name="agent_tool_import_font_missing_action">Kulang ang parameter na action</string>
+    <string name="agent_tool_import_font_missing_source">Ang action na import ay nangangailangan ng parameter na source (path ng font file o content:// URI)</string>
+    <string name="agent_tool_import_font_missing_name">Ang action na remove ay nangangailangan ng parameter na name (pangalan ng font o path ng file)</string>
+    <string name="agent_tool_import_font_source_not_found">Hindi natagpuan ang font file: %1$s. I-download muna ito gamit ang tool na download_file</string>
+    <string name="agent_tool_import_font_unsupported_format">Hindi suportadong format ng font: %1$s. Mga .ttf / .otf / .ttc na file lamang ang suportado</string>
+    <string name="agent_tool_import_font_use_unzip">Ang %1$s ay isang zip archive. I-extract muna ito gamit ang tool na unzip_file, pagkatapos ay i-import ang na-extract na font file</string>
+    <string name="agent_tool_import_font_invalid_font">Ang file ay hindi wastong font: %1$s</string>
+    <string name="agent_tool_import_font_list_message">Nabasa ang listahan ng custom na font</string>
+    <string name="agent_tool_import_font_list_empty_message">Wala pang na-import na custom na font</string>
+    <string name="agent_tool_import_font_import_message">Na-import ang font na \"%1$s\"</string>
+    <string name="agent_tool_import_font_import_applied_message">Na-import ang font na \"%1$s\" at itinakda bilang global na font ng app</string>
+    <string name="agent_tool_import_font_remove_message">Naalis ang font na \"%1$s\"</string>
+    <string name="agent_tool_import_font_remove_not_found">Hindi natagpuan ang custom na font: %1$s. Tawagin ang list para makita ang mga na-import na font</string>
+    <string name="agent_tool_import_font_deeplink_label">Mga Setting ng Display</string>
+    <string name="agent_tool_import_font_deeplink_guidance">I-tap para pamahalaan ang mga font sa mga setting ng display</string>
 </resources>

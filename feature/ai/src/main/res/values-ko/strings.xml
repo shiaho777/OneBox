@@ -326,6 +326,12 @@
     <string name="agent_tool_manage_files_missing_folder_name">create_folder 모드에는 folder_name 매개변수가 필요합니다.</string>
     <string name="agent_tool_manage_files_missing_content">write_file 모드에는 content 매개변수가 필요합니다.</string>
     <string name="agent_tool_manage_files_failed">파일 관리자 도구 실행 실패: %1$s</string>
+    <string name="agent_tool_unzip_file_title">압축 파일 해제</string>
+    <string name="agent_tool_unzip_file_summary">zip 압축 파일을 로컬 디렉터리(기본값: 압축 파일과 같은 이름의 폴더)로 압축 해제하고, 압축 해제된 파일 목록을 보여줍니다</string>
+    <string name="agent_tool_unzip_file_param_source_uri">압축 해제할 zip 압축 파일: 로컬 절대 경로, file:// 또는 content:// URI(웹 파일은 먼저 download_file 도구로 다운로드)</string>
+    <string name="agent_tool_unzip_file_param_destination_dir_uri">대상 디렉터리. 선택 사항. 기본값은 압축 파일 옆에 같은 이름의 폴더입니다(예: Download/a.zip → Download/a/)</string>
+    <string name="agent_tool_unzip_file_missing_source_uri">source_uri 매개변수가 없습니다(zip 압축 파일 경로)</string>
+    <string name="agent_tool_unzip_file_failed">압축 해제 실패: %1$s</string>
     <string name="ai_input_file">파일</string>
     <string name="ai_chat_working_mode_ask_title">질문</string>
     <string name="ai_chat_working_mode_ask_description">직접 답변하고, 필요한 경우에만 기능 탐색 수행</string>
@@ -929,4 +935,27 @@
     <string name="ai_tools_session_skills">이 대화의 스킬</string>
     <string name="ai_tools_session_skills_hint">사용 가능한 스킬 목록을 표시하고 이 대화에서 AI가 스킬을 불러오도록 허용합니다</string>
     <string name="ai_tools_session_global_off_hint">AI 설정에서 전역으로 꺼져 있어 대화별 스위치를 사용할 수 없습니다</string>
+    <string name="agent_tool_import_font_title">글꼴 가져오기</string>
+    <string name="agent_tool_import_font_summary">앱의 사용자 정의 글꼴(TTF/OTF)을 나열·가져오기·제거하고, 가져온 글꼴을 전역 글꼴로 바로 적용할 수 있습니다</string>
+    <string name="agent_tool_import_font_param_action">작업 유형. list=가져온 사용자 정의 글꼴 나열, import=글꼴 파일 가져오기, remove=사용자 정의 글꼴 제거. **action만 필수입니다**</string>
+    <string name="agent_tool_import_font_param_source">글꼴 파일 소스. import 전용: 로컬 파일의 절대 경로(웹 글꼴은 먼저 download_file 도구로 다운로드) 또는 content:// URI. .ttf / .otf / .ttc만 지원합니다(.zip 압축 파일은 먼저 unzip_file 도구로 압축 해제)</string>
+    <string name="agent_tool_import_font_param_name">제거할 글꼴: list 결과의 name 또는 filePath. remove 전용</string>
+    <string name="agent_tool_import_font_param_apply">가져온 글꼴을 바로 앱 전역 글꼴로 설정할지 여부, 기본값은 false. import 전용</string>
+    <string name="agent_tool_import_font_failed">글꼴 작업 실패: %1$s</string>
+    <string name="agent_tool_import_font_unknown_action">알 수 없는 작업: %1$s. list / import / remove 중 하나여야 합니다</string>
+    <string name="agent_tool_import_font_missing_action">action 매개변수가 없습니다</string>
+    <string name="agent_tool_import_font_missing_source">import 작업에는 source 매개변수가 필요합니다(글꼴 파일 경로 또는 content:// URI)</string>
+    <string name="agent_tool_import_font_missing_name">remove 작업에는 name 매개변수가 필요합니다(글꼴 이름 또는 파일 경로)</string>
+    <string name="agent_tool_import_font_source_not_found">글꼴 파일을 찾을 수 없습니다: %1$s. 먼저 download_file 도구로 다운로드하세요</string>
+    <string name="agent_tool_import_font_unsupported_format">지원하지 않는 글꼴 형식: %1$s. .ttf / .otf / .ttc 파일만 지원합니다</string>
+    <string name="agent_tool_import_font_use_unzip">%1$s은(는) zip 압축 파일입니다. 먼저 unzip_file 도구로 압축을 해제한 후, 압축 해제된 글꼴 파일을 가져오세요</string>
+    <string name="agent_tool_import_font_invalid_font">유효한 글꼴 파일이 아닙니다: %1$s</string>
+    <string name="agent_tool_import_font_list_message">사용자 정의 글꼴 목록을 읽었습니다</string>
+    <string name="agent_tool_import_font_list_empty_message">가져온 사용자 정의 글꼴이 아직 없습니다</string>
+    <string name="agent_tool_import_font_import_message">글꼴 \"%1$s\"을(를) 가져왔습니다</string>
+    <string name="agent_tool_import_font_import_applied_message">글꼴 \"%1$s\"을(를) 가져와 앱 전역 글꼴로 설정했습니다</string>
+    <string name="agent_tool_import_font_remove_message">글꼴 \"%1$s\"을(를) 제거했습니다</string>
+    <string name="agent_tool_import_font_remove_not_found">사용자 정의 글꼴을 찾을 수 없습니다: %1$s. list를 호출해 가져온 글꼴을 확인하세요</string>
+    <string name="agent_tool_import_font_deeplink_label">디스플레이 설정</string>
+    <string name="agent_tool_import_font_deeplink_guidance">디스플레이 설정에서 글꼴을 관리하려면 탭하세요</string>
 </resources>

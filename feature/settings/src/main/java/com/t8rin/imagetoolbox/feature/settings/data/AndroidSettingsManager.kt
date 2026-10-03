@@ -17,6 +17,7 @@
 
 package com.t8rin.imagetoolbox.feature.settings.data
 
+import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Typeface
 import androidx.core.net.toFile
@@ -887,7 +888,10 @@ internal class AndroidSettingsManager @Inject constructor(
         val font = context.contentResolver.openInputStream(uri.toUri())?.use {
             it.buffered().readBytes()
         } ?: ByteArray(0)
-        val filename = uri.toUri().getFilename(context) ?: "font${Random.nextInt()}.ttf"
+        val fontUri = uri.toUri()
+        val filename = fontUri.getFilename(context)
+            ?: fontUri.takeIf { it.scheme == ContentResolver.SCHEME_FILE }?.lastPathSegment
+            ?: "font${Random.nextInt()}.ttf"
 
         val directory = File(context.filesDir, "customFonts").apply {
             mkdir()

@@ -451,6 +451,20 @@
         <item>在这个目录下创建一个空白文件</item>
     </string-array>
 
+    <string-array name="agent_tool_unzip_file_keywords">
+        <item>unzip</item>
+        <item>extract</item>
+        <item>zip archive</item>
+        <item>decompress</item>
+        <item>unarchive</item>
+        <item>zip file</item>
+    </string-array>
+    <string-array name="agent_tool_unzip_file_examples">
+        <item>Unzip the archive in the Download folder</item>
+        <item>Extract this zip into a specific directory</item>
+        <item>Decompress the font package I downloaded</item>
+    </string-array>
+
     <string-array name="agent_tool_process_file_keywords">
         <item>读取文件</item>
         <item>查看代码</item>
@@ -983,6 +997,21 @@
         <item>Make the font bigger</item>
         <item>Set the font scale to 1.2</item>
         <item>Follow the system font size</item>
+    </string-array>
+
+    <string-array name="agent_tool_import_font_keywords">
+        <item>font</item>
+        <item>custom font</item>
+        <item>import font</item>
+        <item>typeface</item>
+        <item>ttf</item>
+        <item>otf</item>
+    </string-array>
+    <string-array name="agent_tool_import_font_examples">
+        <item>Which custom fonts did I import</item>
+        <item>Import the font file I downloaded</item>
+        <item>Import this font and use it app-wide</item>
+        <item>Remove that custom font</item>
     </string-array>
 
     <string-array name="agent_tool_night_mode_setting_keywords">

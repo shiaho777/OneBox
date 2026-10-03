@@ -352,3 +352,29 @@ data class AgentApplyRangePatchData(
     val preview: String,
 )
 
+@Serializable
+data class AgentUnzipFileParams(
+    val sourceUri: String,
+    val destinationDirectoryUri: String? = null,
+)
+
+@Serializable
+data class AgentUnzipFileItem(
+    val uri: String,
+    val path: String,
+    val relativePath: String,
+    val isDirectory: Boolean,
+    val sizeBytes: Long,
+)
+
+@Serializable
+data class AgentUnzipFileData(
+    val sourceUri: String,
+    val destinationDirectoryUri: String,
+    val displayPath: String,
+    val extractedCount: Int,
+    val skippedCount: Int,
+    val truncated: Boolean,
+    val items: List<AgentUnzipFileItem>,
+)
+

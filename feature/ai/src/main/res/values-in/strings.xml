@@ -326,6 +326,12 @@
     <string name="agent_tool_manage_files_missing_folder_name">Mode create_folder memerlukan parameter folder_name</string>
     <string name="agent_tool_manage_files_missing_content">Mode write_file memerlukan parameter content</string>
     <string name="agent_tool_manage_files_failed">Eksekusi alat manajer file gagal: %1$s</string>
+    <string name="agent_tool_unzip_file_title">Ekstrak Arsip</string>
+    <string name="agent_tool_unzip_file_summary">Ekstrak arsip zip ke direktori lokal (default ke folder bernama sesuai arsip) dan tampilkan daftar file hasil ekstraksi</string>
+    <string name="agent_tool_unzip_file_param_source_uri">Arsip zip yang akan diekstrak: jalur lokal absolut, URI file:// atau content:// (unduh file web terlebih dahulu dengan alat download_file)</string>
+    <string name="agent_tool_unzip_file_param_destination_dir_uri">Direktori tujuan. Opsional; default ke folder bernama sesuai arsip di sampingnya (mis. Download/a.zip → Download/a/)</string>
+    <string name="agent_tool_unzip_file_missing_source_uri">Parameter source_uri hilang (jalur arsip zip)</string>
+    <string name="agent_tool_unzip_file_failed">Ekstraksi gagal: %1$s</string>
     <string name="ai_input_file">File</string>
     <string name="ai_chat_working_mode_ask_title">Tanya</string>
     <string name="ai_chat_working_mode_ask_description">Jawab langsung, lakukan penemuan kemampuan hanya jika diperlukan</string>
@@ -929,4 +935,27 @@
     <string name="ai_tools_session_skills">Skill untuk percakapan ini</string>
     <string name="ai_tools_session_skills_hint">Tampilkan daftar skill yang tersedia dan izinkan AI memuat skill dalam percakapan ini</string>
     <string name="ai_tools_session_global_off_hint">Dimatikan secara global di pengaturan AI; sakelar percakapan tidak tersedia</string>
+    <string name="agent_tool_import_font_title">Impor Font</string>
+    <string name="agent_tool_import_font_summary">Tampilkan daftar, impor, atau hapus font kustom (TTF/OTF) untuk App, sekaligus dapat menjadikan font yang diimpor sebagai font global</string>
+    <string name="agent_tool_import_font_param_action">Jenis tindakan. list=tampilkan font kustom yang telah diimpor; import=impor file font; remove=hapus font kustom. **Hanya action yang wajib**</string>
+    <string name="agent_tool_import_font_param_source">Sumber file font. Khusus import: jalur file lokal absolut (unduh font web terlebih dahulu dengan alat download_file) atau URI content://; hanya mendukung .ttf / .otf / .ttc (ekstrak .zip terlebih dahulu dengan alat unzip_file)</string>
+    <string name="agent_tool_import_font_param_name">Font yang akan dihapus: nama atau filePath dari hasil list. Hanya untuk remove</string>
+    <string name="agent_tool_import_font_param_apply">Apakah langsung menjadikan font yang diimpor sebagai font global App, default false. Hanya untuk import</string>
+    <string name="agent_tool_import_font_failed">Operasi font gagal: %1$s</string>
+    <string name="agent_tool_import_font_unknown_action">Tindakan tidak dikenal: %1$s. Harus salah satu dari list / import / remove</string>
+    <string name="agent_tool_import_font_missing_action">Parameter action hilang</string>
+    <string name="agent_tool_import_font_missing_source">Tindakan import memerlukan parameter source (jalur file font atau URI content://)</string>
+    <string name="agent_tool_import_font_missing_name">Tindakan remove memerlukan parameter name (nama font atau jalur file)</string>
+    <string name="agent_tool_import_font_source_not_found">File font tidak ditemukan: %1$s. Unduh terlebih dahulu dengan alat download_file</string>
+    <string name="agent_tool_import_font_unsupported_format">Format font tidak didukung: %1$s. Hanya file .ttf / .otf / .ttc yang didukung</string>
+    <string name="agent_tool_import_font_use_unzip">%1$s adalah arsip zip. Ekstrak terlebih dahulu dengan alat unzip_file, lalu impor file font hasil ekstraksi</string>
+    <string name="agent_tool_import_font_invalid_font">File tersebut bukan font yang valid: %1$s</string>
+    <string name="agent_tool_import_font_list_message">Daftar font kustom telah dibaca</string>
+    <string name="agent_tool_import_font_list_empty_message">Belum ada font kustom yang diimpor</string>
+    <string name="agent_tool_import_font_import_message">Font \"%1$s\" telah diimpor</string>
+    <string name="agent_tool_import_font_import_applied_message">Font \"%1$s\" telah diimpor dan dijadikan font global App</string>
+    <string name="agent_tool_import_font_remove_message">Font \"%1$s\" telah dihapus</string>
+    <string name="agent_tool_import_font_remove_not_found">Font kustom tidak ditemukan: %1$s. Panggil list untuk melihat font yang telah diimpor</string>
+    <string name="agent_tool_import_font_deeplink_label">Pengaturan Tampilan</string>
+    <string name="agent_tool_import_font_deeplink_guidance">Ketuk untuk mengelola font di pengaturan tampilan</string>
 </resources>

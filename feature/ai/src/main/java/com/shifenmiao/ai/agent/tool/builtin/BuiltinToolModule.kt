@@ -108,6 +108,11 @@ object BuiltinToolModule {
 
     @Provides
     @IntoMap
+    @StringKey("import_font")
+    fun provideImportFontTool(tool: ImportFontTool): AgentTool = tool
+
+    @Provides
+    @IntoMap
     @StringKey("checksum_tool")
     fun provideChecksumTool(tool: ChecksumTool): AgentTool = tool
 
@@ -180,6 +185,11 @@ object BuiltinToolModule {
     @IntoMap
     @StringKey("manage_files")
     fun provideManageFilesTool(tool: ManageFilesTool): AgentTool = tool
+
+    @Provides
+    @IntoMap
+    @StringKey("unzip_file")
+    fun provideUnzipFileTool(tool: UnzipFileTool): AgentTool = tool
 
     @Provides
     @IntoMap

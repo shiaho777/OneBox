@@ -326,6 +326,12 @@
     <string name="agent_tool_manage_files_missing_folder_name">create_folder modu folder_name parametresini gerektirir</string>
     <string name="agent_tool_manage_files_missing_content">write_file modu content parametresini gerektirir</string>
     <string name="agent_tool_manage_files_failed">Dosya yöneticisi aracı çalıştırılamadı: %1$s</string>
+    <string name="agent_tool_unzip_file_title">Arşivi Çıkar</string>
+    <string name="agent_tool_unzip_file_summary">Bir zip arşivini yerel bir dizine çıkarır (varsayılan olarak arşivle aynı adlı bir klasöre) ve çıkarılan dosyaları listeler</string>
+    <string name="agent_tool_unzip_file_param_source_uri">Çıkarılacak zip arşivi: mutlak yerel dosya yolu, file:// veya content:// URI (web dosyalarını önce download_file aracıyla indirin)</string>
+    <string name="agent_tool_unzip_file_param_destination_dir_uri">Hedef dizin. İsteğe bağlı; varsayılan olarak arşivin yanında arşivle aynı adlı bir klasör (örn. Download/a.zip → Download/a/)</string>
+    <string name="agent_tool_unzip_file_missing_source_uri">source_uri parametresi eksik (zip arşivinin yolu)</string>
+    <string name="agent_tool_unzip_file_failed">Çıkarma başarısız oldu: %1$s</string>
     <string name="ai_input_file">Dosya</string>
     <string name="ai_chat_working_mode_ask_title">Sor</string>
     <string name="ai_chat_working_mode_ask_description">Doğrudan yanıtla, yetenek keşfini yalnızca gerektiğinde yap</string>
@@ -929,4 +935,27 @@
     <string name="ai_tools_session_skills">Bu sohbet için beceriler</string>
     <string name="ai_tools_session_skills_hint">Kullanılabilir beceri listesini gösterir ve AI\'nın bu sohbette beceri yüklemesine izin verir</string>
     <string name="ai_tools_session_global_off_hint">AI ayarlarında genel olarak kapatıldı; sohbet anahtarı kullanılamıyor</string>
+    <string name="agent_tool_import_font_title">Yazı Tipi İçe Aktar</string>
+    <string name="agent_tool_import_font_summary">App için özel yazı tiplerini (TTF/OTF) listeleyin, içe aktarın veya kaldırın; içe aktarılan bir yazı tipini isteğe bağlı olarak genel yazı tipi olarak uygulayın</string>
+    <string name="agent_tool_import_font_param_action">Eylem türü. list=içe aktarılmış özel yazı tiplerini listeler; import=bir yazı tipi dosyası içe aktarır; remove=özel bir yazı tipini kaldırır. **Yalnızca action zorunludur**</string>
+    <string name="agent_tool_import_font_param_source">Yazı tipi dosyası kaynağı. Yalnızca import: mutlak yerel dosya yolu (web yazı tiplerini önce download_file aracıyla indirin) veya content:// URI; yalnızca .ttf / .otf / .ttc desteklenir (.zip arşivlerini önce unzip_file aracıyla çıkarın)</string>
+    <string name="agent_tool_import_font_param_name">Kaldırılacak yazı tipi: list sonucundaki name veya filePath. Yalnızca remove</string>
+    <string name="agent_tool_import_font_param_apply">İçe aktarılan yazı tipinin hemen App genel yazı tipi olarak ayarlanıp ayarlanmayacağı, varsayılan false. Yalnızca import</string>
+    <string name="agent_tool_import_font_failed">Yazı tipi işlemi başarısız oldu: %1$s</string>
+    <string name="agent_tool_import_font_unknown_action">Bilinmeyen eylem: %1$s. list / import / remove değerlerinden biri olmalı</string>
+    <string name="agent_tool_import_font_missing_action">action parametresi eksik</string>
+    <string name="agent_tool_import_font_missing_source">import eylemi source parametresini gerektirir (yazı tipi dosya yolu veya content:// URI)</string>
+    <string name="agent_tool_import_font_missing_name">remove eylemi name parametresini gerektirir (yazı tipi adı veya dosya yolu)</string>
+    <string name="agent_tool_import_font_source_not_found">Yazı tipi dosyası bulunamadı: %1$s. Önce download_file aracıyla indirin</string>
+    <string name="agent_tool_import_font_unsupported_format">Desteklenmeyen yazı tipi biçimi: %1$s. Yalnızca .ttf / .otf / .ttc dosyaları desteklenir</string>
+    <string name="agent_tool_import_font_use_unzip">%1$s bir zip arşivi. Önce unzip_file aracıyla çıkarın, ardından çıkarılan yazı tipi dosyasını içe aktarın</string>
+    <string name="agent_tool_import_font_invalid_font">Dosya geçerli bir yazı tipi değil: %1$s</string>
+    <string name="agent_tool_import_font_list_message">Özel yazı tipi listesi okundu</string>
+    <string name="agent_tool_import_font_list_empty_message">Henüz içe aktarılmış özel yazı tipi yok</string>
+    <string name="agent_tool_import_font_import_message">\"%1$s\" yazı tipi içe aktarıldı</string>
+    <string name="agent_tool_import_font_import_applied_message">\"%1$s\" yazı tipi içe aktarıldı ve App genel yazı tipi olarak ayarlandı</string>
+    <string name="agent_tool_import_font_remove_message">\"%1$s\" yazı tipi kaldırıldı</string>
+    <string name="agent_tool_import_font_remove_not_found">Özel yazı tipi bulunamadı: %1$s. İçe aktarılmış yazı tiplerini görmek için list çağırın</string>
+    <string name="agent_tool_import_font_deeplink_label">Ekran Ayarları</string>
+    <string name="agent_tool_import_font_deeplink_guidance">Ekran ayarlarında yazı tiplerini yönetmek için dokunun</string>
 </resources>

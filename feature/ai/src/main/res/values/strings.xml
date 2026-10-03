@@ -355,6 +355,13 @@
     <string name="agent_tool_manage_files_missing_content">write_file mode requires the content parameter</string>
     <string name="agent_tool_manage_files_failed">File manager tool execution failed: %1$s</string>
 
+    <string name="agent_tool_unzip_file_title">Unzip Archive</string>
+    <string name="agent_tool_unzip_file_summary">Extract a zip archive into a local directory (defaults to a folder named after the archive) and list the extracted files</string>
+    <string name="agent_tool_unzip_file_param_source_uri">The zip archive to extract: absolute local path, file:// or content:// URI (download web files first with the download_file tool)</string>
+    <string name="agent_tool_unzip_file_param_destination_dir_uri">Target directory. Optional; defaults to a folder named after the archive next to it (e.g. Download/a.zip → Download/a/)</string>
+    <string name="agent_tool_unzip_file_missing_source_uri">Missing the source_uri parameter (path of the zip archive)</string>
+    <string name="agent_tool_unzip_file_failed">Unzip failed: %1$s</string>
+
     <!-- AI chat input area -->
     <string name="ai_input_file">File</string>
     <string name="ai_chat_working_mode_ask_title">Ask</string>
@@ -997,6 +1004,30 @@
     <string name="agent_tool_font_scale_setting_effective_hint">The new font scale has been applied; the interface will refresh automatically within a second</string>
     <string name="agent_tool_font_scale_setting_deeplink_label">Display Settings</string>
     <string name="agent_tool_font_scale_setting_deeplink_guidance">Tap to fine-tune the font size in display settings</string>
+
+    <string name="agent_tool_import_font_title">Import Font</string>
+    <string name="agent_tool_import_font_summary">List, import or remove custom fonts (TTF/OTF) for the app, optionally applying an imported font as the global font</string>
+    <string name="agent_tool_import_font_param_action">Action type. list=list imported custom fonts; import=import a font file; remove=remove a custom font. **Only action is required**</string>
+    <string name="agent_tool_import_font_param_source">Font file source. import only: absolute local file path (download web fonts first with the download_file tool) or content:// URI; only .ttf / .otf / .ttc supported (extract .zip first with the unzip_file tool)</string>
+    <string name="agent_tool_import_font_param_name">Font to remove: the name or filePath from the list result. remove only</string>
+    <string name="agent_tool_import_font_param_apply">Whether to set the imported font as the app global font right away, default false. import only</string>
+    <string name="agent_tool_import_font_failed">Font operation failed: %1$s</string>
+    <string name="agent_tool_import_font_unknown_action">Unknown action: %1$s. Must be one of list / import / remove</string>
+    <string name="agent_tool_import_font_missing_action">Missing action parameter</string>
+    <string name="agent_tool_import_font_missing_source">import action requires the source parameter (font file path or content:// URI)</string>
+    <string name="agent_tool_import_font_missing_name">remove action requires the name parameter (font name or file path)</string>
+    <string name="agent_tool_import_font_source_not_found">Font file not found: %1$s. Download it first with the download_file tool</string>
+    <string name="agent_tool_import_font_unsupported_format">Unsupported font format: %1$s. Only .ttf / .otf / .ttc files are supported</string>
+    <string name="agent_tool_import_font_use_unzip">%1$s is a zip archive. Extract it first with the unzip_file tool, then import the extracted font file</string>
+    <string name="agent_tool_import_font_invalid_font">The file is not a valid font: %1$s</string>
+    <string name="agent_tool_import_font_list_message">Custom font list read</string>
+    <string name="agent_tool_import_font_list_empty_message">No custom fonts imported yet</string>
+    <string name="agent_tool_import_font_import_message">Font "%1$s" imported</string>
+    <string name="agent_tool_import_font_import_applied_message">Font "%1$s" imported and set as the app global font</string>
+    <string name="agent_tool_import_font_remove_message">Font "%1$s" removed</string>
+    <string name="agent_tool_import_font_remove_not_found">Custom font not found: %1$s. Call list to see imported fonts</string>
+    <string name="agent_tool_import_font_deeplink_label">Display Settings</string>
+    <string name="agent_tool_import_font_deeplink_guidance">Tap to manage fonts in display settings</string>
 
     <string name="agent_tool_night_mode_setting_title">Night Mode</string>
     <string name="agent_tool_night_mode_setting_summary">Read or switch Light / Dark / System night mode (takes effect immediately)</string>

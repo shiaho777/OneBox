@@ -1,0 +1,23 @@
+自定义字体导入工具:列出 / 导入 / 移除 App 自定义字体(与显示设置页的"导入字体"同一能力)。
+
+三个 action:
+- list:列出已导入的自定义字体。响应 `customFonts` 数组含 `name`、`filePath`、`isCurrent`
+  (是否为当前全局字体);`count` 为字体数量,空列表时 message 已说明尚未导入。
+- import:导入字体文件。`source` 接受:
+  - 本地文件绝对路径(如 /storage/emulated/0/Download/xxx.ttf;网络字体先用 download_file
+    工具下载到本地再导入);
+  - 或 content:// URI;
+  - 仅支持 .ttf / .otf / .ttc 格式,导入时会校验文件是否为有效字体,重名字体会被替换。
+    拿到 .zip 字体包时,先用 unzip_file 工具解压,再把解压出的字体文件路径传给本工具。
+  可选 `apply`(boolean,默认 false):true 时导入成功后立即设为 App 全局字体。
+- remove:移除自定义字体。`name` 填 list 结果中的 `name` 或 `filePath`;
+  若移除的是当前全局字体,会自动回退为系统字体。
+
+示例:
+- "我导入了哪些字体" → {"action": "list"}
+- "把 /storage/emulated/0/Download/smiley.ttf 导入字体" → {"action": "import", "source": "/storage/emulated/0/Download/smiley.ttf"}
+- "导入这个字体并设为全局字体" → {"action": "import", "source": "...", "apply": true}
+- "删掉刚才那个字体" → {"action": "remove", "name": "smiley"}
+
+错误响应带 `reasonCode`("source_not_found"、"unsupported_format"、"invalid_font"、
+"font_not_found" 等)与 `message`,部分错误带 `validOptions`(合法格式)供下次自纠。

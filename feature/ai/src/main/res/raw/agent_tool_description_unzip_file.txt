@@ -1,0 +1,21 @@
+zip 解压工具:把 zip 压缩包解压到本地目录,返回解压出的文件列表。只做解压一件事,
+后续处理(如把解压出的字体交给 import_font 导入)按需组合其他工具完成。
+
+参数:
+- source_uri(必填):zip 压缩包。接受本地绝对路径、file:// 或 content:// URI;
+  网络文件先用 download_file 工具下载到本地。
+- destination_dir_uri(可选):解压目标目录。缺省时解压到压缩包所在目录下、
+  以压缩包名命名的同名文件夹(如 Download/a.zip → Download/a/)。
+
+响应:
+- destinationDirectoryUri / displayPath:实际解压目录;
+- extractedCount:成功解压的条目数;skippedCount:因路径越界(zip-slip 防护)跳过的条目数;
+- items:解压出的文件/目录列表(uri、path、relativePath、isDirectory、sizeBytes),
+  列表过长时截断(truncated=true 表示条目数达上限提前停止)。
+
+示例:
+- "解压 Download 里的字体包" → {"source_uri": "/storage/emulated/0/Download/font.zip"}
+- "解压到指定目录" → {"source_uri": "/storage/emulated/0/Download/font.zip", "destination_dir_uri": "/storage/emulated/0/Download/fonts"}
+
+典型组合:下载的字体是 zip 时,先 unzip_file 解压,再从 items 里挑 .ttf/.otf/.ttc
+文件路径调用 import_font 导入。

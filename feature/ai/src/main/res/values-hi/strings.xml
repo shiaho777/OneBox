@@ -326,6 +326,12 @@
     <string name="agent_tool_manage_files_missing_folder_name">create_folder मोड के लिए folder_name पैरामीटर आवश्यक है</string>
     <string name="agent_tool_manage_files_missing_content">write_file मोड के लिए content पैरामीटर आवश्यक है</string>
     <string name="agent_tool_manage_files_failed">फ़ाइल प्रबंधक टूल निष्पादन विफल: %1$s</string>
+    <string name="agent_tool_unzip_file_title">zip आर्काइव एक्सट्रैक्ट</string>
+    <string name="agent_tool_unzip_file_summary">zip आर्काइव को लोकल डायरेक्टरी में एक्सट्रैक्ट करें (डिफ़ॉल्ट रूप से आर्काइव के नाम वाले फ़ोल्डर में) और निकाली गई फ़ाइलों की सूची दें</string>
+    <string name="agent_tool_unzip_file_param_source_uri">एक्सट्रैक्ट करने वाला zip आर्काइव: लोकल फ़ाइल का निरपेक्ष पथ, file:// या content:// URI (वेब फ़ाइलें पहले download_file टूल से डाउनलोड करें)</string>
+    <string name="agent_tool_unzip_file_param_destination_dir_uri">टारगेट डायरेक्टरी। वैकल्पिक; डिफ़ॉल्ट रूप से आर्काइव के पास उसी नाम का फ़ोल्डर (जैसे Download/a.zip → Download/a/)</string>
+    <string name="agent_tool_unzip_file_missing_source_uri">source_uri पैरामीटर अनुपलब्ध है (zip आर्काइव का पथ)</string>
+    <string name="agent_tool_unzip_file_failed">एक्सट्रैक्ट विफल: %1$s</string>
     <string name="ai_input_file">फ़ाइल</string>
     <string name="ai_chat_working_mode_ask_title">पूछें</string>
     <string name="ai_chat_working_mode_ask_description">सीधे उत्तर दें, क्षमता खोज केवल आवश्यकता होने पर करें</string>
@@ -929,4 +935,27 @@
     <string name="ai_tools_session_skills">इस वार्तालाप के लिए स्किल</string>
     <string name="ai_tools_session_skills_hint">उपलब्ध स्किल की सूची दिखाएँ और AI को इस वार्तालाप में स्किल लोड करने की अनुमति दें</string>
     <string name="ai_tools_session_global_off_hint">AI सेटिंग्स में वैश्विक रूप से बंद है; वार्तालाप स्विच उपलब्ध नहीं है</string>
+    <string name="agent_tool_import_font_title">फ़ॉन्ट इम्पोर्ट</string>
+    <string name="agent_tool_import_font_summary">ऐप के लिए कस्टम फ़ॉन्ट (TTF/OTF) list करें, import करें या remove करें; इम्पोर्ट किए गए फ़ॉन्ट को वैकल्पिक रूप से वैश्विक फ़ॉन्ट के रूप में लागू करें</string>
+    <string name="agent_tool_import_font_param_action">क्रिया प्रकार। list=इम्पोर्ट किए गए कस्टम फ़ॉन्ट की सूची; import=फ़ॉन्ट फ़ाइल इम्पोर्ट करें; remove=कस्टम फ़ॉन्ट हटाएँ। **केवल action आवश्यक है**</string>
+    <string name="agent_tool_import_font_param_source">फ़ॉन्ट फ़ाइल का source। केवल import: लोकल फ़ाइल का निरपेक्ष पथ (वेब फ़ॉन्ट पहले download_file टूल से डाउनलोड करें) या content:// URI; केवल .ttf / .otf / .ttc समर्थित (.zip आर्काइव पहले unzip_file टूल से एक्सट्रैक्ट करें)</string>
+    <string name="agent_tool_import_font_param_name">हटाने वाला फ़ॉन्ट: list परिणाम से name या filePath। केवल remove</string>
+    <string name="agent_tool_import_font_param_apply">इम्पोर्ट किए गए फ़ॉन्ट को तुरंत ऐप के वैश्विक फ़ॉन्ट के रूप में सेट करना है या नहीं, डिफ़ॉल्ट false। केवल import</string>
+    <string name="agent_tool_import_font_failed">फ़ॉन्ट ऑपरेशन विफल: %1$s</string>
+    <string name="agent_tool_import_font_unknown_action">अज्ञात क्रिया: %1$s। list / import / remove में से एक होनी चाहिए</string>
+    <string name="agent_tool_import_font_missing_action">action पैरामीटर अनुपलब्ध है</string>
+    <string name="agent_tool_import_font_missing_source">import क्रिया के लिए source पैरामीटर आवश्यक है (फ़ॉन्ट फ़ाइल पथ या content:// URI)</string>
+    <string name="agent_tool_import_font_missing_name">remove क्रिया के लिए name पैरामीटर आवश्यक है (फ़ॉन्ट नाम या फ़ाइल पथ)</string>
+    <string name="agent_tool_import_font_source_not_found">फ़ॉन्ट फ़ाइल नहीं मिली: %1$s। इसे पहले download_file टूल से डाउनलोड करें</string>
+    <string name="agent_tool_import_font_unsupported_format">असमर्थित फ़ॉन्ट फ़ॉर्मैट: %1$s। केवल .ttf / .otf / .ttc फ़ाइलें समर्थित हैं</string>
+    <string name="agent_tool_import_font_use_unzip">%1$s एक zip आर्काइव है। पहले इसे unzip_file टूल से एक्सट्रैक्ट करें, फिर निकाली गई फ़ॉन्ट फ़ाइल इम्पोर्ट करें</string>
+    <string name="agent_tool_import_font_invalid_font">फ़ाइल मान्य फ़ॉन्ट नहीं है: %1$s</string>
+    <string name="agent_tool_import_font_list_message">कस्टम फ़ॉन्ट सूची पढ़ी गई</string>
+    <string name="agent_tool_import_font_list_empty_message">अभी तक कोई कस्टम फ़ॉन्ट इम्पोर्ट नहीं किया गया</string>
+    <string name="agent_tool_import_font_import_message">फ़ॉन्ट \"%1$s\" इम्पोर्ट किया गया</string>
+    <string name="agent_tool_import_font_import_applied_message">फ़ॉन्ट \"%1$s\" इम्पोर्ट किया गया और ऐप के वैश्विक फ़ॉन्ट के रूप में सेट किया गया</string>
+    <string name="agent_tool_import_font_remove_message">फ़ॉन्ट \"%1$s\" हटा दिया गया</string>
+    <string name="agent_tool_import_font_remove_not_found">कस्टम फ़ॉन्ट नहीं मिला: %1$s। इम्पोर्ट किए गए फ़ॉन्ट देखने के लिए list कॉल करें</string>
+    <string name="agent_tool_import_font_deeplink_label">डिस्प्ले सेटिंग्स</string>
+    <string name="agent_tool_import_font_deeplink_guidance">डिस्प्ले सेटिंग्स में फ़ॉन्ट प्रबंधित करने के लिए टैप करें</string>
 </resources>

@@ -326,6 +326,12 @@
     <string name="agent_tool_manage_files_missing_folder_name">create_folderモードにはfolder_nameパラメータが必要です</string>
     <string name="agent_tool_manage_files_missing_content">write_fileモードにはcontentパラメータが必要です</string>
     <string name="agent_tool_manage_files_failed">ファイルマネージャーツールの実行に失敗しました: %1$s</string>
+    <string name="agent_tool_unzip_file_title">アーカイブを解凍</string>
+    <string name="agent_tool_unzip_file_summary">zip アーカイブをローカルディレクトリに解凍し（デフォルトはアーカイブと同名のフォルダ）、解凍されたファイルを一覧表示</string>
+    <string name="agent_tool_unzip_file_param_source_uri">解凍する zip アーカイブ: ローカルファイルの絶対パス、file:// または content:// URI（Web 上のファイルは先に download_file ツールでダウンロード）</string>
+    <string name="agent_tool_unzip_file_param_destination_dir_uri">解凍先ディレクトリ。省略可。デフォルトはアーカイブと同じ場所にアーカイブ名のフォルダ（例: Download/a.zip → Download/a/）</string>
+    <string name="agent_tool_unzip_file_missing_source_uri">source_uri パラメータ（zip アーカイブのパス）がありません</string>
+    <string name="agent_tool_unzip_file_failed">解凍に失敗しました: %1$s</string>
     <string name="ai_input_file">ファイル</string>
     <string name="ai_chat_working_mode_ask_title">質問</string>
     <string name="ai_chat_working_mode_ask_description">直接回答し、必要な場合のみ機能検出を行う</string>
@@ -929,4 +935,27 @@
     <string name="ai_tools_session_skills">この会話のスキル</string>
     <string name="ai_tools_session_skills_hint">利用可能なスキルの一覧を表示し、この会話で AI がスキルを読み込めるようにします</string>
     <string name="ai_tools_session_global_off_hint">AI 設定で全体がオフになっているため、会話ごとのスイッチは使用できません</string>
+    <string name="agent_tool_import_font_title">フォントをインポート</string>
+    <string name="agent_tool_import_font_summary">App のカスタムフォント（TTF/OTF）を一覧表示・インポート・削除し、任意でインポートしたフォントをグローバルフォントとして適用</string>
+    <string name="agent_tool_import_font_param_action">アクションタイプ。list=インポート済みのカスタムフォントを一覧表示、import=フォントファイルをインポート、remove=カスタムフォントを削除。**action のみ必須**</string>
+    <string name="agent_tool_import_font_param_source">フォントファイルのソース。import のみ: ローカルファイルの絶対パス（Web フォントは先に download_file ツールでダウンロード）または content:// URI。.ttf / .otf / .ttc のみサポート（.zip アーカイブは先に unzip_file ツールで解凍）</string>
+    <string name="agent_tool_import_font_param_name">削除するフォント: list の結果に含まれる name または filePath。remove のみ</string>
+    <string name="agent_tool_import_font_param_apply">インポートしたフォントをその場で App のグローバルフォントに設定するかどうか。デフォルトは false。import のみ</string>
+    <string name="agent_tool_import_font_failed">フォント操作に失敗しました: %1$s</string>
+    <string name="agent_tool_import_font_unknown_action">不明なアクション: %1$s。list / import / remove のいずれかである必要があります</string>
+    <string name="agent_tool_import_font_missing_action">アクションパラメータがありません</string>
+    <string name="agent_tool_import_font_missing_source">import アクションには source パラメータ（フォントファイルのパスまたは content:// URI）が必要です</string>
+    <string name="agent_tool_import_font_missing_name">remove アクションには name パラメータ（フォント名またはファイルパス）が必要です</string>
+    <string name="agent_tool_import_font_source_not_found">フォントファイルが見つかりません: %1$s。先に download_file ツールでダウンロードしてください</string>
+    <string name="agent_tool_import_font_unsupported_format">サポートされていないフォント形式: %1$s。.ttf / .otf / .ttc ファイルのみサポートしています</string>
+    <string name="agent_tool_import_font_use_unzip">%1$s は zip アーカイブです。先に unzip_file ツールで解凍してから、解凍されたフォントファイルをインポートしてください</string>
+    <string name="agent_tool_import_font_invalid_font">このファイルは有効なフォントではありません: %1$s</string>
+    <string name="agent_tool_import_font_list_message">カスタムフォントの一覧を読み取りました</string>
+    <string name="agent_tool_import_font_list_empty_message">カスタムフォントはまだインポートされていません</string>
+    <string name="agent_tool_import_font_import_message">フォント「%1$s」をインポートしました</string>
+    <string name="agent_tool_import_font_import_applied_message">フォント「%1$s」をインポートし、App のグローバルフォントに設定しました</string>
+    <string name="agent_tool_import_font_remove_message">フォント「%1$s」を削除しました</string>
+    <string name="agent_tool_import_font_remove_not_found">カスタムフォントが見つかりません: %1$s。list を呼び出してインポート済みのフォントを確認してください</string>
+    <string name="agent_tool_import_font_deeplink_label">表示設定</string>
+    <string name="agent_tool_import_font_deeplink_guidance">タップして表示設定でフォントを管理できます</string>
 </resources>

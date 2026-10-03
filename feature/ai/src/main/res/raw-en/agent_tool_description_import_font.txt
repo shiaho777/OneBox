@@ -1,0 +1,30 @@
+Custom font import tool: list / import / remove the app's custom fonts (the same
+capability as "Import font" in Display settings).
+
+Three actions:
+- list: list imported custom fonts. The response `customFonts` array carries `name`,
+  `filePath` and `isCurrent` (whether it is the current global font); `count` is the
+  number of fonts, and an empty list is already explained in message.
+- import: import a font file. `source` accepts:
+  - an absolute local file path (e.g. /storage/emulated/0/Download/xxx.ttf — for fonts
+    on the web, download them first with the download_file tool, then import);
+  - or a content:// URI;
+  - only .ttf / .otf / .ttc formats are supported. The file is validated as a real
+    font on import, and a font with the same file name gets replaced.
+    When you get a .zip font package, extract it first with the unzip_file tool,
+    then pass the extracted font file path to this tool.
+  Optional `apply` (boolean, default false): when true, the imported font is
+  immediately set as the app's global font.
+- remove: remove a custom font. `name` takes the `name` or `filePath` from the list
+  result; removing the font currently applied as the global font falls back to the
+  system font automatically.
+
+Examples:
+- "which fonts did I import" → {"action": "list"}
+- "import /storage/emulated/0/Download/smiley.ttf" → {"action": "import", "source": "/storage/emulated/0/Download/smiley.ttf"}
+- "import this font and apply it app-wide" → {"action": "import", "source": "...", "apply": true}
+- "delete that font" → {"action": "remove", "name": "smiley"}
+
+Error responses carry `reasonCode` ("source_not_found", "unsupported_format",
+"invalid_font", "font_not_found", etc.) and `message`; some include `validOptions`
+(supported formats) to help you self-correct on the next attempt.

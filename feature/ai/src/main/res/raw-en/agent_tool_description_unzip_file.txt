@@ -1,0 +1,25 @@
+Zip extraction tool: extract a zip archive into a local directory and return the
+list of extracted files. It does extraction only — compose it with other tools for
+follow-up work (e.g. pass extracted fonts to import_font).
+
+Parameters:
+- source_uri (required): the zip archive. Accepts an absolute local path, file://
+  or content:// URI; for files on the web, download them first with the
+  download_file tool.
+- destination_dir_uri (optional): target directory. Defaults to a folder named
+  after the archive next to it (e.g. Download/a.zip → Download/a/).
+
+Response:
+- destinationDirectoryUri / displayPath: the actual extraction directory;
+- extractedCount: entries extracted; skippedCount: entries skipped by the
+  zip-slip guard (path escapes the target directory);
+- items: extracted files/directories (uri, path, relativePath, isDirectory,
+  sizeBytes). truncated=true means the entry cap was hit and extraction stopped
+  early.
+
+Examples:
+- "unzip the font package in Download" → {"source_uri": "/storage/emulated/0/Download/font.zip"}
+- "extract into a specific folder" → {"source_uri": "/storage/emulated/0/Download/font.zip", "destination_dir_uri": "/storage/emulated/0/Download/fonts"}
+
+Typical combination: when a downloaded font comes as a zip, extract it with
+unzip_file first, then pick a .ttf/.otf/.ttc path from items and call import_font.

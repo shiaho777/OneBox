@@ -432,6 +432,19 @@
         <item>在这个目录下创建一个空白文件</item>
     </string-array>
 
+    <string-array name="agent_tool_unzip_file_keywords">
+        <item>解压</item>
+        <item>解压缩</item>
+        <item>压缩包</item>
+        <item>zip</item>
+        <item>解压文件</item>
+    </string-array>
+    <string-array name="agent_tool_unzip_file_examples">
+        <item>解压下载目录里的压缩包</item>
+        <item>把这个 zip 解压到指定目录</item>
+        <item>把下载的字体包解压一下</item>
+    </string-array>
+
     <string-array name="agent_tool_process_file_keywords">
         <item>读取文件</item>
         <item>查看代码</item>
@@ -954,6 +967,21 @@
         <item>把字体调大一点</item>
         <item>字体缩放设为 1.2</item>
         <item>跟随系统字体大小</item>
+    </string-array>
+
+    <string-array name="agent_tool_import_font_keywords">
+        <item>字体</item>
+        <item>自定义字体</item>
+        <item>导入字体</item>
+        <item>字体文件</item>
+        <item>ttf</item>
+        <item>otf</item>
+    </string-array>
+    <string-array name="agent_tool_import_font_examples">
+        <item>我导入了哪些字体</item>
+        <item>把下载好的字体文件导入进来</item>
+        <item>导入这个字体并设为全局字体</item>
+        <item>删掉刚才导入的字体</item>
     </string-array>
 
     <string-array name="agent_tool_night_mode_setting_keywords">

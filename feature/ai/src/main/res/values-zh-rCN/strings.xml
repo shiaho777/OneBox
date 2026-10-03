@@ -355,6 +355,13 @@
     <string name="agent_tool_manage_files_missing_content">write_file 模式需要 content 参数</string>
     <string name="agent_tool_manage_files_failed">文件管理工具执行失败: %1$s</string>
 
+    <string name="agent_tool_unzip_file_title">解压压缩包</string>
+    <string name="agent_tool_unzip_file_summary">把 zip 压缩包解压到本地目录(默认解压到压缩包同名文件夹),并列出解压出的文件</string>
+    <string name="agent_tool_unzip_file_param_source_uri">要解压的 zip 压缩包:本地绝对路径、file:// 或 content:// URI(网络文件先用 download_file 工具下载到本地)</string>
+    <string name="agent_tool_unzip_file_param_destination_dir_uri">解压目标目录,可选;默认解压到压缩包所在目录下的同名文件夹(如 Download/a.zip → Download/a/)</string>
+    <string name="agent_tool_unzip_file_missing_source_uri">缺少 source_uri 参数(zip 压缩包路径)</string>
+    <string name="agent_tool_unzip_file_failed">解压失败:%1$s</string>
+
     <!-- AI 聊天输入区域 -->
     <string name="ai_input_file">文件</string>
     <string name="ai_chat_working_mode_ask_title">提问</string>
@@ -997,6 +1004,30 @@
     <string name="agent_tool_font_scale_setting_effective_hint">新的字体大小已应用,界面会在约 1 秒内自动刷新生效</string>
     <string name="agent_tool_font_scale_setting_deeplink_label">显示设置</string>
     <string name="agent_tool_font_scale_setting_deeplink_guidance">点击前往显示设置微调字体大小</string>
+
+    <string name="agent_tool_import_font_title">导入字体</string>
+    <string name="agent_tool_import_font_summary">列出、导入或移除 App 自定义字体(TTF/OTF),导入时可顺带设为全局字体</string>
+    <string name="agent_tool_import_font_param_action">操作类型。list=列出已导入的自定义字体;import=导入字体文件;remove=移除自定义字体。**仅 action 必填**</string>
+    <string name="agent_tool_import_font_param_source">字体文件来源。import 使用:本地文件绝对路径(网络字体先用 download_file 工具下载到本地)或 content:// URI;仅支持 .ttf / .otf / .ttc(.zip 压缩包先用 unzip_file 工具解压)</string>
+    <string name="agent_tool_import_font_param_name">要移除的字体:list 结果中的 name 或 filePath。仅 remove 使用</string>
+    <string name="agent_tool_import_font_param_apply">导入成功后是否立即设为 App 全局字体,默认 false。仅 import 使用</string>
+    <string name="agent_tool_import_font_failed">字体操作失败:%1$s</string>
+    <string name="agent_tool_import_font_unknown_action">未知操作:%1$s,必须是 list / import / remove 之一</string>
+    <string name="agent_tool_import_font_missing_action">缺少 action 参数</string>
+    <string name="agent_tool_import_font_missing_source">import 操作需要 source 参数(字体文件路径或 content:// URI)</string>
+    <string name="agent_tool_import_font_missing_name">remove 操作需要 name 参数(字体名称或文件路径)</string>
+    <string name="agent_tool_import_font_source_not_found">字体文件不存在:%1$s,可先用 download_file 工具下载字体文件</string>
+    <string name="agent_tool_import_font_unsupported_format">不支持的字体格式:%1$s,仅支持 .ttf / .otf / .ttc 文件</string>
+    <string name="agent_tool_import_font_use_unzip">%1$s 是 zip 压缩包,请先用 unzip_file 工具解压,再导入解压出的字体文件</string>
+    <string name="agent_tool_import_font_invalid_font">文件无法识别为有效字体:%1$s</string>
+    <string name="agent_tool_import_font_list_message">已读取自定义字体列表</string>
+    <string name="agent_tool_import_font_list_empty_message">尚未导入任何自定义字体</string>
+    <string name="agent_tool_import_font_import_message">字体「%1$s」已导入</string>
+    <string name="agent_tool_import_font_import_applied_message">字体「%1$s」已导入并设为 App 全局字体</string>
+    <string name="agent_tool_import_font_remove_message">字体「%1$s」已移除</string>
+    <string name="agent_tool_import_font_remove_not_found">未找到自定义字体:%1$s,可用 list 查看已导入的字体</string>
+    <string name="agent_tool_import_font_deeplink_label">显示设置</string>
+    <string name="agent_tool_import_font_deeplink_guidance">点击前往显示设置管理字体</string>
 
     <string name="agent_tool_night_mode_setting_title">日夜间模式</string>
     <string name="agent_tool_night_mode_setting_summary">读取或切换日间 / 夜间 / 跟随系统模式(即时生效)</string>

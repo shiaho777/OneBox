@@ -326,6 +326,12 @@
     <string name="agent_tool_manage_files_missing_folder_name">Режим create_folder требует параметр folder_name</string>
     <string name="agent_tool_manage_files_missing_content">Режим write_file требует параметр content</string>
     <string name="agent_tool_manage_files_failed">Сбой выполнения инструмента файлового менеджера: %1$s</string>
+    <string name="agent_tool_unzip_file_title">Распаковка архива</string>
+    <string name="agent_tool_unzip_file_summary">Распаковывает zip-архив в локальный каталог (по умолчанию — в папку с именем архива) и выводит список извлечённых файлов</string>
+    <string name="agent_tool_unzip_file_param_source_uri">Zip-архив для распаковки: абсолютный локальный путь, URI file:// или content:// (веб-файлы сначала скачайте инструментом download_file)</string>
+    <string name="agent_tool_unzip_file_param_destination_dir_uri">Целевой каталог. Необязательный; по умолчанию — папка с именем архива рядом с ним (например, Download/a.zip → Download/a/)</string>
+    <string name="agent_tool_unzip_file_missing_source_uri">Отсутствует параметр source_uri (путь к zip-архиву)</string>
+    <string name="agent_tool_unzip_file_failed">Ошибка распаковки: %1$s</string>
     <string name="ai_input_file">Файл</string>
     <string name="ai_chat_working_mode_ask_title">Спросить</string>
     <string name="ai_chat_working_mode_ask_description">Отвечать напрямую, поиск возможностей только при необходимости</string>
@@ -929,4 +935,27 @@
     <string name="ai_tools_session_skills">Навыки для этого диалога</string>
     <string name="ai_tools_session_skills_hint">Показывать список доступных навыков и разрешить AI загружать навыки в этом диалоге</string>
     <string name="ai_tools_session_global_off_hint">Отключено глобально в настройках AI; переключатель диалога недоступен</string>
+    <string name="agent_tool_import_font_title">Импорт шрифтов</string>
+    <string name="agent_tool_import_font_summary">Вывод списка, импорт или удаление пользовательских шрифтов (TTF/OTF) для App, с возможностью сразу установить импортированный шрифт как глобальный</string>
+    <string name="agent_tool_import_font_param_action">Тип действия. list=вывести импортированные пользовательские шрифты; import=импортировать файл шрифта; remove=удалить пользовательский шрифт. **Требуется только action**</string>
+    <string name="agent_tool_import_font_param_source">Источник файла шрифта. Только для import: абсолютный локальный путь к файлу (веб-шрифты сначала скачайте инструментом download_file) или URI content://; поддерживаются только файлы .ttf / .otf / .ttc (архивы .zip сначала распакуйте инструментом unzip_file)</string>
+    <string name="agent_tool_import_font_param_name">Шрифт для удаления: имя (name) или filePath из результата list. Только для remove</string>
+    <string name="agent_tool_import_font_param_apply">Установить ли импортированный шрифт сразу как глобальный шрифт App; по умолчанию false. Только для import</string>
+    <string name="agent_tool_import_font_failed">Ошибка операции со шрифтом: %1$s</string>
+    <string name="agent_tool_import_font_unknown_action">Неизвестное действие: %1$s. Должно быть одним из list / import / remove</string>
+    <string name="agent_tool_import_font_missing_action">Отсутствует параметр действия</string>
+    <string name="agent_tool_import_font_missing_source">Для действия import требуется параметр source (путь к файлу шрифта или URI content://)</string>
+    <string name="agent_tool_import_font_missing_name">Для действия remove требуется параметр name (имя шрифта или путь к файлу)</string>
+    <string name="agent_tool_import_font_source_not_found">Файл шрифта не найден: %1$s. Сначала скачайте его инструментом download_file</string>
+    <string name="agent_tool_import_font_unsupported_format">Неподдерживаемый формат шрифта: %1$s. Поддерживаются только файлы .ttf / .otf / .ttc</string>
+    <string name="agent_tool_import_font_use_unzip">%1$s — это архив zip. Сначала распакуйте его инструментом unzip_file, затем импортируйте извлечённый файл шрифта</string>
+    <string name="agent_tool_import_font_invalid_font">Файл не является корректным шрифтом: %1$s</string>
+    <string name="agent_tool_import_font_list_message">Список пользовательских шрифтов прочитан</string>
+    <string name="agent_tool_import_font_list_empty_message">Пользовательские шрифты ещё не импортированы</string>
+    <string name="agent_tool_import_font_import_message">Шрифт \"%1$s\" импортирован</string>
+    <string name="agent_tool_import_font_import_applied_message">Шрифт \"%1$s\" импортирован и установлен как глобальный шрифт App</string>
+    <string name="agent_tool_import_font_remove_message">Шрифт \"%1$s\" удалён</string>
+    <string name="agent_tool_import_font_remove_not_found">Пользовательский шрифт не найден: %1$s. Вызовите list, чтобы увидеть импортированные шрифты</string>
+    <string name="agent_tool_import_font_deeplink_label">Настройки отображения</string>
+    <string name="agent_tool_import_font_deeplink_guidance">Нажмите, чтобы управлять шрифтами в настройках отображения</string>
 </resources>

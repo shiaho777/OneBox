@@ -29,6 +29,8 @@ interface AgentFileService {
 
     suspend fun manageFile(params: AgentManageFileParams): AgentFileOperationResult<AgentManageFileData>
 
+    suspend fun unzipFile(params: AgentUnzipFileParams): AgentFileOperationResult<AgentUnzipFileData>
+
     /**
      * 将 content:// / file:// / 普通路径统一解析为本地文件路径。
      *

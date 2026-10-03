@@ -326,6 +326,12 @@
     <string name="agent_tool_manage_files_missing_folder_name">Der Modus create_folder erfordert den Parameter folder_name</string>
     <string name="agent_tool_manage_files_missing_content">Der Modus write_file erfordert den Parameter content</string>
     <string name="agent_tool_manage_files_failed">Ausführung des Dateimanager-Tools fehlgeschlagen: %1$s</string>
+    <string name="agent_tool_unzip_file_title">Archiv entpacken</string>
+    <string name="agent_tool_unzip_file_summary">Ein ZIP-Archiv in ein lokales Verzeichnis entpacken (standardmäßig in einen nach dem Archiv benannten Ordner) und die entpackten Dateien auflisten</string>
+    <string name="agent_tool_unzip_file_param_source_uri">Das zu entpackende ZIP-Archiv: absoluter lokaler Pfad, file://- oder content://-URI (Webdateien zuerst mit dem Werkzeug download_file herunterladen)</string>
+    <string name="agent_tool_unzip_file_param_destination_dir_uri">Zielverzeichnis. Optional; standardmäßig ein nach dem Archiv benannter Ordner daneben (z. B. Download/a.zip → Download/a/)</string>
+    <string name="agent_tool_unzip_file_missing_source_uri">Der Parameter source_uri fehlt (Pfad des ZIP-Archivs)</string>
+    <string name="agent_tool_unzip_file_failed">Entpacken fehlgeschlagen: %1$s</string>
     <string name="ai_input_file">Datei</string>
     <string name="ai_chat_working_mode_ask_title">Fragen</string>
     <string name="ai_chat_working_mode_ask_description">Direkt antworten, Fähigkeitserkennung nur bei Bedarf</string>
@@ -929,4 +935,27 @@
     <string name="ai_tools_session_skills">Skills für diese Unterhaltung</string>
     <string name="ai_tools_session_skills_hint">Die Liste der verfügbaren Skills anzeigen und der KI erlauben, in dieser Unterhaltung Skills zu laden</string>
     <string name="ai_tools_session_global_off_hint">In den KI-Einstellungen global deaktiviert; der Schalter für die Unterhaltung ist nicht verfügbar</string>
+    <string name="agent_tool_import_font_title">Schriftart importieren</string>
+    <string name="agent_tool_import_font_summary">Benutzerdefinierte Schriftarten (TTF/OTF) für die App auflisten, importieren oder entfernen; optional kann eine importierte Schriftart als globale Schriftart übernommen werden</string>
+    <string name="agent_tool_import_font_param_action">Aktionstyp. list=importierte benutzerdefinierte Schriftarten auflisten; import=eine Schriftartdatei importieren; remove=eine benutzerdefinierte Schriftart entfernen. **Nur action ist erforderlich**</string>
+    <string name="agent_tool_import_font_param_source">Quelle der Schriftartdatei. Nur import: absoluter lokaler Dateipfad (Webschriftarten zuerst mit dem Werkzeug download_file herunterladen) oder content://-URI; nur .ttf / .otf / .ttc werden unterstützt (.zip-Archive zuerst mit dem Werkzeug unzip_file entpacken)</string>
+    <string name="agent_tool_import_font_param_name">Zu entfernende Schriftart: der name oder filePath aus dem list-Ergebnis. Nur remove</string>
+    <string name="agent_tool_import_font_param_apply">Ob die importierte Schriftart sofort als globale App-Schriftart gesetzt werden soll, Standard false. Nur import</string>
+    <string name="agent_tool_import_font_failed">Schriftartoperation fehlgeschlagen: %1$s</string>
+    <string name="agent_tool_import_font_unknown_action">Unbekannte Aktion: %1$s. Muss eine von list / import / remove sein</string>
+    <string name="agent_tool_import_font_missing_action">Aktionsparameter fehlt</string>
+    <string name="agent_tool_import_font_missing_source">Die import-Aktion erfordert den Parameter source (Schriftartdateipfad oder content://-URI)</string>
+    <string name="agent_tool_import_font_missing_name">Die remove-Aktion erfordert den Parameter name (Schriftartname oder Dateipfad)</string>
+    <string name="agent_tool_import_font_source_not_found">Schriftartdatei nicht gefunden: %1$s. Zuerst mit dem Werkzeug download_file herunterladen</string>
+    <string name="agent_tool_import_font_unsupported_format">Nicht unterstütztes Schriftartformat: %1$s. Nur .ttf / .otf / .ttc-Dateien werden unterstützt</string>
+    <string name="agent_tool_import_font_use_unzip">%1$s ist ein ZIP-Archiv. Entpacke es zuerst mit dem Werkzeug unzip_file und importiere dann die entpackte Schriftartdatei</string>
+    <string name="agent_tool_import_font_invalid_font">Die Datei ist keine gültige Schriftart: %1$s</string>
+    <string name="agent_tool_import_font_list_message">Liste benutzerdefinierter Schriftarten gelesen</string>
+    <string name="agent_tool_import_font_list_empty_message">Noch keine benutzerdefinierten Schriftarten importiert</string>
+    <string name="agent_tool_import_font_import_message">Schriftart „%1$s“ importiert</string>
+    <string name="agent_tool_import_font_import_applied_message">Schriftart „%1$s“ importiert und als globale App-Schriftart gesetzt</string>
+    <string name="agent_tool_import_font_remove_message">Schriftart „%1$s“ entfernt</string>
+    <string name="agent_tool_import_font_remove_not_found">Benutzerdefinierte Schriftart nicht gefunden: %1$s. Rufe list auf, um die importierten Schriftarten zu sehen</string>
+    <string name="agent_tool_import_font_deeplink_label">Anzeigeeinstellungen</string>
+    <string name="agent_tool_import_font_deeplink_guidance">Tippen, um Schriftarten in den Anzeigeeinstellungen zu verwalten</string>
 </resources>

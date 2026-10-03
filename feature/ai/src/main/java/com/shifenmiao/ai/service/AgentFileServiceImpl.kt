@@ -41,6 +41,9 @@ import com.shifenmiao.model.file.AgentSearchContextParams
 import com.shifenmiao.model.file.AgentSearchFileData
 import com.shifenmiao.model.file.AgentSearchFileParams
 import com.shifenmiao.model.file.AgentStatFileData
+import com.shifenmiao.model.file.AgentUnzipFileData
+import com.shifenmiao.model.file.AgentUnzipFileItem
+import com.shifenmiao.model.file.AgentUnzipFileParams
 import com.shifenmiao.model.file.AgentWorkspaceRootItem
 import com.shifenmiao.model.file.AgentWorkspaceRootsData
 import com.t8rin.imagetoolbox.core.data.utils.SafUriUtils
@@ -54,6 +57,7 @@ import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.regex.Pattern
+import java.util.zip.ZipInputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -591,6 +595,87 @@ class AgentFileServiceImpl @Inject constructor(
                 }
             }.getOrElse {
                 AgentFileOperationResult.Error(it.message ?: "File operation failed")
+            }
+        }
+    }
+
+    override suspend fun unzipFile(params: AgentUnzipFileParams): AgentFileOperationResult<AgentUnzipFileData> {
+        return withContext(Dispatchers.IO) {
+            runCatching {
+                val source = resolveExistingFile(params.sourceUri)
+                    ?: return@withContext errorResult("Unable to resolve source URI to local file path")
+                if (source.isDirectory) {
+                    return@withContext errorResult("Source is a directory, expected a zip file")
+                }
+                val destination = params.destinationDirectoryUri
+                    ?.takeIf { it.isNotBlank() }
+                    ?.let(::resolveLocalFile)
+                    ?: File(source.parentFile, source.nameWithoutExtension)
+                val destCanonical = destination.canonicalFile
+                if (destCanonical.exists() && !destCanonical.isDirectory) {
+                    return@withContext errorResult("Destination exists and is not a directory")
+                }
+                if (!destCanonical.exists() && !destCanonical.mkdirs()) {
+                    return@withContext errorResult("Unable to create destination directory")
+                }
+
+                val items = mutableListOf<AgentUnzipFileItem>()
+                var extractedCount = 0
+                var skippedCount = 0
+                var truncated = false
+                ZipInputStream(source.inputStream().buffered()).use { zipIn ->
+                    var entry = zipIn.nextEntry
+                    while (entry != null) {
+                        if (extractedCount >= MAX_UNZIP_ENTRIES) {
+                            truncated = true
+                            break
+                        }
+                        // zip-slip 防护:条目必须落在目标目录内
+                        val outFile = File(destCanonical, entry.name).canonicalFile
+                        if (!isSameOrDescendant(outFile, destCanonical)) {
+                            skippedCount++
+                            zipIn.closeEntry()
+                            entry = zipIn.nextEntry
+                            continue
+                        }
+                        if (entry.isDirectory) {
+                            outFile.mkdirs()
+                        } else {
+                            outFile.parentFile?.mkdirs()
+                            outFile.outputStream().buffered().use { output ->
+                                zipIn.copyTo(output)
+                            }
+                        }
+                        extractedCount++
+                        if (items.size < MAX_UNZIP_LIST_ITEMS) {
+                            items.add(
+                                AgentUnzipFileItem(
+                                    uri = outFile.toFileUriString(),
+                                    path = outFile.absolutePath,
+                                    relativePath = entry.name,
+                                    isDirectory = entry.isDirectory,
+                                    sizeBytes = if (entry.isDirectory) 0L else outFile.length(),
+                                )
+                            )
+                        }
+                        zipIn.closeEntry()
+                        entry = zipIn.nextEntry
+                    }
+                }
+
+                AgentFileOperationResult.Success(
+                    AgentUnzipFileData(
+                        sourceUri = source.toFileUriString(),
+                        destinationDirectoryUri = destCanonical.toFileUriString(),
+                        displayPath = destCanonical.absolutePath,
+                        extractedCount = extractedCount,
+                        skippedCount = skippedCount,
+                        truncated = truncated,
+                        items = items,
+                    )
+                )
+            }.getOrElse {
+                AgentFileOperationResult.Error(it.message ?: "Unzip failed")
             }
         }
     }
@@ -1214,6 +1299,8 @@ class AgentFileServiceImpl @Inject constructor(
     companion object {
         private val timestampFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US)
         private const val TEXT_SAMPLE_BYTES = 8 * 1024
+        private const val MAX_UNZIP_ENTRIES = 5000
+        private const val MAX_UNZIP_LIST_ITEMS = 200
         private val TEXT_MIME_TYPES = setOf(
             "application/json",
             "application/xml",
