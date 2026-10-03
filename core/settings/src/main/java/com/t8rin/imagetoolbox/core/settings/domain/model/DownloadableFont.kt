@@ -26,7 +26,7 @@ data class DownloadableFont(
     @param:StringRes val nameRes: Int,
     val urls: List<String>,
     val fileName: String,
-    val approxSizeMb: Int,
+    val approxSizeMb: Float,
 )
 
 object DownloadableFonts {
@@ -43,7 +43,7 @@ object DownloadableFonts {
                 "https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf"
             ),
             fileName = "NotoSansSC.ttf",
-            approxSizeMb = 10
+            approxSizeMb = 10f
         ),
         DownloadableFont(
             id = "noto_serif_sc",
@@ -53,7 +53,7 @@ object DownloadableFonts {
                 "https://raw.githubusercontent.com/notofonts/noto-cjk/main/Serif/OTF/SimplifiedChinese/NotoSerifCJKsc-Regular.otf"
             ),
             fileName = "NotoSerifSC-Regular.ttf",
-            approxSizeMb = 15
+            approxSizeMb = 15f
         ),
         DownloadableFont(
             id = "lxgw_wenkai",
@@ -62,7 +62,7 @@ object DownloadableFonts {
                 "https://github.com/lxgw/LxgwWenKai/releases/latest/download/LXGWWenKai-Regular.ttf"
             ),
             fileName = "LXGWWenKai-Regular.ttf",
-            approxSizeMb = 19
+            approxSizeMb = 19f
         ),
         // 手写字体(2026-10,选自 freefonts.space 可追溯-手写体分类,文件自托管于 R2):
         // 鸿雷行书简体/江西拙楷/寒蝉手拙体源自官方公开发布(作者声明免费商用),仅 R2 单镜像;
@@ -72,21 +72,21 @@ object DownloadableFonts {
             nameRes = R.string.font_honglei_xingshu,
             urls = emptyList(),
             fileName = "HongLeiXingShu.ttf",
-            approxSizeMb = 9
+            approxSizeMb = 9f
         ),
         DownloadableFont(
             id = "jiangxi_zhuokai",
             nameRes = R.string.font_jiangxi_zhuokai,
             urls = emptyList(),
             fileName = "JiangXiZhuoKai.ttf",
-            approxSizeMb = 10
+            approxSizeMb = 10f
         ),
         DownloadableFont(
             id = "hanchan_shouzhuo",
             nameRes = R.string.font_hanchan_shouzhuo,
             urls = emptyList(),
             fileName = "HanChanShouZhuo.ttf",
-            approxSizeMb = 13
+            approxSizeMb = 13f
         ),
         DownloadableFont(
             id = "chenyuluoyan",
@@ -95,7 +95,7 @@ object DownloadableFonts {
                 "https://github.com/Chenyu-otf/chenyuluoyan_thin/releases/latest/download/ChenYuluoyan-2.0-Thin.ttf"
             ),
             fileName = "ChenYuluoyan-2.0-Thin.ttf",
-            approxSizeMb = 9
+            approxSizeMb = 9f
         ),
         DownloadableFont(
             id = "yozai",
@@ -104,7 +104,64 @@ object DownloadableFonts {
                 "https://github.com/lxgw/yozai-font/releases/latest/download/Yozai-Regular.ttf"
             ),
             fileName = "Yozai-Regular.ttf",
-            approxSizeMb = 15
+            approxSizeMb = 15f
+        ),
+        // 多语言字体(2026-10,Google Fonts OFL,补小语种覆盖):
+        // Caveat 手写(拉丁+西里尔)、Tajawal(阿拉伯)、Mukta(天城文/印地)、
+        // Sarabun(泰)、Noto Sans JP/KR(日/韩)。海外渠道 jsDelivr 优先,国内 R2 兜底
+        DownloadableFont(
+            id = "caveat",
+            nameRes = R.string.font_caveat,
+            urls = listOf(
+                "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/caveat/Caveat%5Bwght%5D.ttf"
+            ),
+            fileName = "Caveat.ttf",
+            approxSizeMb = 0.4f
+        ),
+        DownloadableFont(
+            id = "tajawal",
+            nameRes = R.string.font_tajawal,
+            urls = listOf(
+                "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/tajawal/Tajawal-Regular.ttf"
+            ),
+            fileName = "Tajawal-Regular.ttf",
+            approxSizeMb = 0.1f
+        ),
+        DownloadableFont(
+            id = "mukta",
+            nameRes = R.string.font_mukta,
+            urls = listOf(
+                "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/mukta/Mukta-Regular.ttf"
+            ),
+            fileName = "Mukta-Regular.ttf",
+            approxSizeMb = 0.4f
+        ),
+        DownloadableFont(
+            id = "sarabun",
+            nameRes = R.string.font_sarabun,
+            urls = listOf(
+                "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sarabun/Sarabun-Regular.ttf"
+            ),
+            fileName = "Sarabun-Regular.ttf",
+            approxSizeMb = 0.1f
+        ),
+        DownloadableFont(
+            id = "noto_sans_jp",
+            nameRes = R.string.font_noto_sans_jp,
+            urls = listOf(
+                "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notosansjp/NotoSansJP%5Bwght%5D.ttf"
+            ),
+            fileName = "NotoSansJP.ttf",
+            approxSizeMb = 9f
+        ),
+        DownloadableFont(
+            id = "noto_sans_kr",
+            nameRes = R.string.font_noto_sans_kr,
+            urls = listOf(
+                "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/notosanskr/NotoSansKR%5Bwght%5D.ttf"
+            ),
+            fileName = "NotoSansKR.ttf",
+            approxSizeMb = 10f
         ),
     )
 

@@ -346,10 +346,18 @@ private fun DownloadableFontRow(
     val downloadedPath = if (state == FontDownloadUiState.Downloaded) {
         fontCatalog.downloadedFont(font)?.path
     } else null
+    // 体积文案:小于 1MB 显示 "<1",否则四舍五入取整
+    val sizeText = if (font.approxSizeMb < 1f) "<1" else font.approxSizeMb.roundToInt().toString()
     val row: @Composable () -> Unit = {
         PreferenceRow(
         title = stringResource(font.nameRes),
-        subtitle = stringResource(R.string.font_preview_text) + " · ${font.approxSizeMb}MB",
+        // 已下载放大成两行样张(与已导入字体同款),未下载保持单行例句+体积
+        subtitle = if (downloadedPath != null) {
+            stringResource(R.string.font_preview_text) + "\n" +
+                stringResource(R.string.alphabet_and_numbers)
+        } else {
+            stringResource(R.string.font_preview_text) + " · ${sizeText}MB"
+        },
         // 与 FontItem(FontSelectionItem)一致的卡片样式:圆角容器 + surfaceContainerLow 底色
         color = SafeLocalContainerColor,
         shape = ShapeDefaults.default,

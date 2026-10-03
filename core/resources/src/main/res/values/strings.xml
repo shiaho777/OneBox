@@ -1591,6 +1591,12 @@
     <string name="font_hanchan_shouzhuo">HanChan ShouZhuo</string>
     <string name="font_chenyuluoyan">ChenYuluoyan Thin</string>
     <string name="font_yozai">Yozai</string>
+    <string name="font_caveat">Caveat</string>
+    <string name="font_tajawal">Tajawal</string>
+    <string name="font_mukta">Mukta</string>
+    <string name="font_sarabun">Sarabun</string>
+    <string name="font_noto_sans_jp">Noto Sans JP</string>
+    <string name="font_noto_sans_kr">Noto Sans KR</string>
     <string name="wrong_font">Only TTF fonts can be imported</string>
     <string name="export_fonts">Export fonts</string>
     <string name="filename_is_not_set">Filename is not set</string>
