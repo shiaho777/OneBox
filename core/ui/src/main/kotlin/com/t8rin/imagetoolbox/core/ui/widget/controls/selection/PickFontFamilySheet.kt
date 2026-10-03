@@ -76,6 +76,7 @@ import com.t8rin.imagetoolbox.core.ui.widget.modifier.ShapeDefaults
 import com.t8rin.imagetoolbox.core.ui.widget.other.GradientEdge
 import com.t8rin.imagetoolbox.core.ui.widget.other.InfoContainer
 import com.t8rin.imagetoolbox.core.ui.widget.preferences.PreferenceItemDefaults
+import com.t8rin.imagetoolbox.core.ui.widget.preferences.PreferenceItemOverload
 import com.t8rin.imagetoolbox.core.ui.widget.preferences.PreferenceRow
 import com.t8rin.imagetoolbox.core.ui.widget.system.OneBoxDesignSystem
 import com.t8rin.imagetoolbox.core.ui.widget.system.OneSecondaryButton
@@ -338,7 +339,8 @@ private fun DownloadableFontList(
 
 /** 单个可下载字体行。尾部状态图标与其余分区统一(全图标无文字):
  * 未下载=云朵(点击下载)、下载中=进度、已下载=单选圈(选中态与其他分区一致),
- * 选中行同样给 secondaryContainer 底色 + 描边。已下载后用实际字体渲染整行 */
+ * 选中行同样给 secondaryContainer 底色 + 描边。已下载后用实际字体渲染整行。
+ * 组件与 FontSelectionItem 同为 PreferenceItemOverload,保证各分区卡片 padding 完全一致 */
 @Composable
 private fun DownloadableFontRow(
     font: DownloadableFont,
@@ -357,7 +359,7 @@ private fun DownloadableFontRow(
     // 体积文案:小于 1MB 显示 "<1",否则四舍五入取整
     val sizeText = if (font.approxSizeMb < 1f) "<1" else font.approxSizeMb.roundToInt().toString()
     val row: @Composable () -> Unit = {
-        PreferenceRow(
+        PreferenceItemOverload(
         title = stringResource(font.nameRes),
         // 已下载放大成两行样张(与已导入字体同款),未下载保持单行例句+体积
         subtitle = if (downloadedPath != null) {
@@ -372,15 +374,17 @@ private fun DownloadableFontRow(
             else SafeLocalContainerColor
         },
         shape = ShapeDefaults.default,
-        modifier = Modifier.border(
-            width = settingsState.borderWidth,
-            color = animateColorAsState(
-                if (isSelected) {
-                    MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f)
-                } else Color.Transparent
-            ).value,
-            shape = ShapeDefaults.default
-        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = settingsState.borderWidth,
+                color = animateColorAsState(
+                    if (isSelected) {
+                        MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f)
+                    } else Color.Transparent
+                ).value,
+                shape = ShapeDefaults.default
+            ),
         onClick = when (state) {
             FontDownloadUiState.Downloaded -> {
                 {
@@ -399,50 +403,44 @@ private fun DownloadableFontRow(
             FontDownloadUiState.NotDownloaded -> onStartDownload
             is FontDownloadUiState.Downloading -> null
         },
-        startIcon = null,
-        endContent = {
+        endIcon = {
             // 尾部状态全图标:云朵下载 / 进度 / 单选圈,与其余分区语义一致
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(start = 8.dp, end = 4.dp)
-            ) {
-                when (state) {
-                    is FontDownloadUiState.Downloading -> if (state.progress > 0f) {
-                        Text(
-                            text = "${(state.progress * 100).roundToInt()}%",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    } else {
-                        // 无 Content-Length 时只有 0/1 回调,转不确定圈
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp
-                        )
-                    }
-
-                    FontDownloadUiState.Downloaded -> Icon(
-                        imageVector = if (isSelected) {
-                            com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineRadioChecked
-                        } else {
-                            com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineRadioUnchecked
-                        },
-                        contentDescription = stringResource(
-                            if (isSelected) R.string.font_downloaded else R.string.font_download
-                        ),
-                        tint = if (isSelected) {
-                            MaterialTheme.colorScheme.primary
-                        } else MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(24.dp)
+            when (state) {
+                is FontDownloadUiState.Downloading -> if (state.progress > 0f) {
+                    Text(
+                        text = "${(state.progress * 100).roundToInt()}%",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-
-                    FontDownloadUiState.NotDownloaded -> Icon(
-                        imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineCloudDownload,
-                        contentDescription = stringResource(R.string.font_download),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(20.dp)
+                } else {
+                    // 无 Content-Length 时只有 0/1 回调,转不确定圈
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        strokeWidth = 2.dp
                     )
                 }
+
+                FontDownloadUiState.Downloaded -> Icon(
+                    imageVector = if (isSelected) {
+                        com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineRadioChecked
+                    } else {
+                        com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineRadioUnchecked
+                    },
+                    contentDescription = stringResource(
+                        if (isSelected) R.string.font_downloaded else R.string.font_download
+                    ),
+                    tint = if (isSelected) {
+                        MaterialTheme.colorScheme.primary
+                    } else MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(24.dp)
+                )
+
+                FontDownloadUiState.NotDownloaded -> Icon(
+                    imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineCloudDownload,
+                    contentDescription = stringResource(R.string.font_download),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(20.dp)
+                )
             }
         }
         )
