@@ -19,6 +19,7 @@ package com.t8rin.imagetoolbox.core.ui.widget.controls.selection
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.t8rin.imagetoolbox.core.resources.R
 import com.t8rin.imagetoolbox.core.resources.icons.Delete
 import com.t8rin.imagetoolbox.core.settings.presentation.model.UiFontFamily
+import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedBottomSheetDefaults
 import com.t8rin.imagetoolbox.core.ui.widget.enhanced.hapticsClickable
 import com.t8rin.imagetoolbox.core.ui.widget.modifier.ShapeDefaults
 import com.t8rin.imagetoolbox.core.ui.widget.modifier.animateShape
@@ -98,19 +100,23 @@ internal fun LazyItemScope.FontItem(
             },
             directions = setOf(RevealDirection.EndToStart),
             swipeableContent = {
-                FontSelectionItem(
-                    font = font,
-                    onClick = {
-                        onFontSelected(font)
-                    },
-                    onLongClick = {
-                        scope.launch {
-                            state.animateTo(RevealValue.FullyRevealedStart)
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = shape
-                )
+                // 行背景在玻璃主题下是半透明的,底下的删除层会透出来与单选圈重叠,
+                // 垫一层与弹层同色不透明底,未滑动时彻底遮住删除层
+                Box(Modifier.background(EnhancedBottomSheetDefaults.containerColor)) {
+                    FontSelectionItem(
+                        font = font,
+                        onClick = {
+                            onFontSelected(font)
+                        },
+                        onLongClick = {
+                            scope.launch {
+                                state.animateTo(RevealValue.FullyRevealedStart)
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = shape
+                    )
+                }
             },
             interactionSource = interactionSource
         )

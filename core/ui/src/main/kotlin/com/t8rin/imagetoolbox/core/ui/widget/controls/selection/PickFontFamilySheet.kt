@@ -18,6 +18,8 @@
 package com.t8rin.imagetoolbox.core.ui.widget.controls.selection
 
 import android.net.Uri
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -52,14 +54,16 @@ import com.t8rin.imagetoolbox.core.domain.model.MimeType
 import com.t8rin.imagetoolbox.core.resources.R
 import com.t8rin.imagetoolbox.core.resources.icons.FileExport
 import com.t8rin.imagetoolbox.core.resources.icons.FileImport
-import com.t8rin.imagetoolbox.core.resources.icons.line.LineCloudDone
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineCloudDownload
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineExtension
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineFont
+import com.t8rin.imagetoolbox.core.resources.icons.line.LineRadioChecked
+import com.t8rin.imagetoolbox.core.resources.icons.line.LineRadioUnchecked
 import com.t8rin.imagetoolbox.core.settings.di.FontCatalogEntryPoint
 import com.t8rin.imagetoolbox.core.settings.domain.FontCatalog
 import com.t8rin.imagetoolbox.core.settings.domain.model.DownloadableFont
 import com.t8rin.imagetoolbox.core.settings.presentation.model.UiFontFamily
+import com.t8rin.imagetoolbox.core.settings.presentation.provider.LocalSettingsState
 import com.t8rin.imagetoolbox.core.ui.theme.takeColorFromScheme
 import com.t8rin.imagetoolbox.core.ui.theme.ProvideTypography
 import com.t8rin.imagetoolbox.core.ui.utils.content_pickers.rememberFilePicker
@@ -332,8 +336,9 @@ private fun DownloadableFontList(
     }
 }
 
-/** 单个可下载字体行:名称 + 预览文案 + 状态(云朵下载/进度/可选中);
- * 已下载后用实际字体渲染整行,下载前无法渲染只能系统字体 */
+/** 单个可下载字体行。尾部状态图标与其余分区统一(全图标无文字):
+ * 未下载=云朵(点击下载)、下载中=进度、已下载=单选圈(选中态与其他分区一致),
+ * 选中行同样给 secondaryContainer 底色 + 描边。已下载后用实际字体渲染整行 */
 @Composable
 private fun DownloadableFontRow(
     font: DownloadableFont,
@@ -343,9 +348,12 @@ private fun DownloadableFontRow(
     onStartDownload: () -> Unit,
 ) {
     val context = LocalContext.current
+    val settingsState = LocalSettingsState.current
     val downloadedPath = if (state == FontDownloadUiState.Downloaded) {
         fontCatalog.downloadedFont(font)?.path
     } else null
+    val isSelected = downloadedPath != null &&
+        settingsState.font == UiFontFamily.Custom(name = null, filePath = downloadedPath)
     // 体积文案:小于 1MB 显示 "<1",否则四舍五入取整
     val sizeText = if (font.approxSizeMb < 1f) "<1" else font.approxSizeMb.roundToInt().toString()
     val row: @Composable () -> Unit = {
@@ -358,9 +366,21 @@ private fun DownloadableFontRow(
         } else {
             stringResource(R.string.font_preview_text) + " · ${sizeText}MB"
         },
-        // 与 FontItem(FontSelectionItem)一致的卡片样式:圆角容器 + surfaceContainerLow 底色
-        color = SafeLocalContainerColor,
+        // 与 FontItem(FontSelectionItem)一致的卡片样式与选中高亮
+        color = takeColorFromScheme {
+            if (isSelected) secondaryContainer
+            else SafeLocalContainerColor
+        },
         shape = ShapeDefaults.default,
+        modifier = Modifier.border(
+            width = settingsState.borderWidth,
+            color = animateColorAsState(
+                if (isSelected) {
+                    MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f)
+                } else Color.Transparent
+            ).value,
+            shape = ShapeDefaults.default
+        ),
         onClick = when (state) {
             FontDownloadUiState.Downloaded -> {
                 {
@@ -381,24 +401,11 @@ private fun DownloadableFontRow(
         },
         startIcon = null,
         endContent = {
-            // 状态图标 + 文字,左右留 padding,与 PreferenceRow 图标边距对齐不贴边
+            // 尾部状态全图标:云朵下载 / 进度 / 单选圈,与其余分区语义一致
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(start = 8.dp, end = 4.dp)
             ) {
-                Text(
-                    text = stringResource(
-                        when (state) {
-                            FontDownloadUiState.Downloaded -> R.string.font_downloaded
-                            else -> R.string.font_download
-                        }
-                    ),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = if (state is FontDownloadUiState.Downloaded) {
-                        MaterialTheme.colorScheme.primary
-                    } else MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(end = 6.dp)
-                )
                 when (state) {
                     is FontDownloadUiState.Downloading -> if (state.progress > 0f) {
                         Text(
@@ -415,10 +422,18 @@ private fun DownloadableFontRow(
                     }
 
                     FontDownloadUiState.Downloaded -> Icon(
-                        imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineCloudDone,
-                        contentDescription = stringResource(R.string.font_downloaded),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.size(20.dp)
+                        imageVector = if (isSelected) {
+                            com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineRadioChecked
+                        } else {
+                            com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineRadioUnchecked
+                        },
+                        contentDescription = stringResource(
+                            if (isSelected) R.string.font_downloaded else R.string.font_download
+                        ),
+                        tint = if (isSelected) {
+                            MaterialTheme.colorScheme.primary
+                        } else MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(24.dp)
                     )
 
                     FontDownloadUiState.NotDownloaded -> Icon(
