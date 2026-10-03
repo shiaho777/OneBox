@@ -56,7 +56,7 @@ class NightModeSettingTool @Inject constructor(
         ToolDeepLink(
             uri = AppNavigationRegistry.buildStructuredDeeplink(
                 targetType = AppNavigationTargetType.SCREEN,
-                routeKey = "display_settings",
+                routeKey = "theme_settings",
             ),
             label = textProvider.string(R.string.agent_tool_night_mode_setting_deeplink_label),
             guidance = textProvider.string(R.string.agent_tool_night_mode_setting_deeplink_guidance),

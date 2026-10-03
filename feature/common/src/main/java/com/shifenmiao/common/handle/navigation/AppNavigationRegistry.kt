@@ -439,7 +439,11 @@ object AppNavigationRegistry {
             ),
             staticScreen(
                 screen = Screen.ThemeSettings,
-                aliases = listOf("theme", "theme_settings", "display_settings")
+                aliases = listOf("theme", "theme_settings")
+            ),
+            staticScreen(
+                screen = Screen.DisplaySettings,
+                aliases = listOf("display_settings", "display")
             ),
             staticScreen(
                 screen = Screen.Feedback(),
