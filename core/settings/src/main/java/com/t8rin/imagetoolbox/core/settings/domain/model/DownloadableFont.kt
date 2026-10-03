@@ -64,6 +64,48 @@ object DownloadableFonts {
             fileName = "LXGWWenKai-Regular.ttf",
             approxSizeMb = 19
         ),
+        // 手写字体(2026-10,选自 freefonts.space 可追溯-手写体分类,文件自托管于 R2):
+        // 鸿雷行书简体/江西拙楷/寒蝉手拙体源自官方公开发布(作者声明免费商用),仅 R2 单镜像;
+        // 辰宇落雁體/悠哉字体 GitHub 有官方 release,海外渠道可走 GitHub 镜像
+        DownloadableFont(
+            id = "honglei_xingshu",
+            nameRes = R.string.font_honglei_xingshu,
+            urls = emptyList(),
+            fileName = "HongLeiXingShu.ttf",
+            approxSizeMb = 9
+        ),
+        DownloadableFont(
+            id = "jiangxi_zhuokai",
+            nameRes = R.string.font_jiangxi_zhuokai,
+            urls = emptyList(),
+            fileName = "JiangXiZhuoKai.ttf",
+            approxSizeMb = 10
+        ),
+        DownloadableFont(
+            id = "hanchan_shouzhuo",
+            nameRes = R.string.font_hanchan_shouzhuo,
+            urls = emptyList(),
+            fileName = "HanChanShouZhuo.ttf",
+            approxSizeMb = 13
+        ),
+        DownloadableFont(
+            id = "chenyuluoyan",
+            nameRes = R.string.font_chenyuluoyan,
+            urls = listOf(
+                "https://github.com/Chenyu-otf/chenyuluoyan_thin/releases/latest/download/ChenYuluoyan-2.0-Thin.ttf"
+            ),
+            fileName = "ChenYuluoyan-2.0-Thin.ttf",
+            approxSizeMb = 9
+        ),
+        DownloadableFont(
+            id = "yozai",
+            nameRes = R.string.font_yozai,
+            urls = listOf(
+                "https://github.com/lxgw/yozai-font/releases/latest/download/Yozai-Regular.ttf"
+            ),
+            fileName = "Yozai-Regular.ttf",
+            approxSizeMb = 15
+        ),
     )
 
     fun byId(id: String): DownloadableFont? = all.find { it.id == id }

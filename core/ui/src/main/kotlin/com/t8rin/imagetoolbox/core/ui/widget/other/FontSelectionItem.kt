@@ -55,7 +55,9 @@ fun FontSelectionItem(
             onClick = onClick,
             onLongClick = onLongClick,
             title = (name ?: stringResource(id = R.string.system)) + isVariable.toVariable(),
-            subtitle = stringResource(R.string.alphabet_and_numbers),
+            // 两行样张:真实例句 + 字母数字,整行走 ProvideTypography 以当前字体渲染
+            subtitle = stringResource(R.string.font_preview_text) + "\n" +
+                stringResource(R.string.alphabet_and_numbers),
             containerColor = takeColorFromScheme {
                 if (selected) secondaryContainer
                 else SafeLocalContainerColor

@@ -1586,6 +1586,11 @@
     <string name="font_noto_sans">思源黑體</string>
     <string name="font_noto_serif">思源宋體</string>
     <string name="font_lxgw">霞鶩文楷體</string>
+    <string name="font_honglei_xingshu">鴻雷行書簡體</string>
+    <string name="font_jiangxi_zhuokai">江西拙楷</string>
+    <string name="font_hanchan_shouzhuo">寒蟬手拙體</string>
+    <string name="font_chenyuluoyan">辰宇落雁體</string>
+    <string name="font_yozai">悠哉字體</string>
     <string name="wrong_font">只有 TTF 字型可以被匯入</string>
     <string name="export_fonts">匯出字型</string>
     <string name="filename_is_not_set">未設定檔案名稱</string>

@@ -61,6 +61,7 @@ import com.t8rin.imagetoolbox.core.settings.domain.FontCatalog
 import com.t8rin.imagetoolbox.core.settings.domain.model.DownloadableFont
 import com.t8rin.imagetoolbox.core.settings.presentation.model.UiFontFamily
 import com.t8rin.imagetoolbox.core.ui.theme.takeColorFromScheme
+import com.t8rin.imagetoolbox.core.ui.theme.ProvideTypography
 import com.t8rin.imagetoolbox.core.ui.utils.content_pickers.rememberFilePicker
 import com.t8rin.imagetoolbox.core.ui.utils.provider.SafeLocalContainerColor
 import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedBottomSheetDefaults
@@ -331,7 +332,8 @@ private fun DownloadableFontList(
     }
 }
 
-/** 单个可下载字体行:名称 + 预览文案 + 状态(云朵下载/进度/可选中) */
+/** 单个可下载字体行:名称 + 预览文案 + 状态(云朵下载/进度/可选中);
+ * 已下载后用实际字体渲染整行,下载前无法渲染只能系统字体 */
 @Composable
 private fun DownloadableFontRow(
     font: DownloadableFont,
@@ -341,7 +343,11 @@ private fun DownloadableFontRow(
     onStartDownload: () -> Unit,
 ) {
     val context = LocalContext.current
-    PreferenceRow(
+    val downloadedPath = if (state == FontDownloadUiState.Downloaded) {
+        fontCatalog.downloadedFont(font)?.path
+    } else null
+    val row: @Composable () -> Unit = {
+        PreferenceRow(
         title = stringResource(font.nameRes),
         subtitle = stringResource(R.string.font_preview_text) + " · ${font.approxSizeMb}MB",
         // 与 FontItem(FontSelectionItem)一致的卡片样式:圆角容器 + surfaceContainerLow 底色
@@ -416,5 +422,13 @@ private fun DownloadableFontRow(
                 }
             }
         }
-    )
+        )
+    }
+    if (downloadedPath != null) {
+        ProvideTypography(UiFontFamily.Custom(name = null, filePath = downloadedPath)) {
+            row()
+        }
+    } else {
+        row()
+    }
 }

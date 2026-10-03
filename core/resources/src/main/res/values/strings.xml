@@ -1586,6 +1586,11 @@
     <string name="font_noto_sans">Noto Sans SC</string>
     <string name="font_noto_serif">Noto Serif SC</string>
     <string name="font_lxgw">LXGW WenKai</string>
+    <string name="font_honglei_xingshu">HongLei XingShu</string>
+    <string name="font_jiangxi_zhuokai">JiangXi ZhuoKai</string>
+    <string name="font_hanchan_shouzhuo">HanChan ShouZhuo</string>
+    <string name="font_chenyuluoyan">ChenYuluoyan Thin</string>
+    <string name="font_yozai">Yozai</string>
     <string name="wrong_font">Only TTF fonts can be imported</string>
     <string name="export_fonts">Export fonts</string>
     <string name="filename_is_not_set">Filename is not set</string>
