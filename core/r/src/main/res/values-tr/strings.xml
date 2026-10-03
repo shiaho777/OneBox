@@ -941,7 +941,7 @@
     <string name="all_files_access_permission_title">\"Tüm Dosyalara Erişim\"i Etkinleştir</string>
     <string name="all_files_access_permission_description">Bu izin, tam dosya tarama, yönetim ve aktarım özellikleri için gereklidir. Bu izin olmadan bazı özellikler çalışmayabilir.</string>
     <string name="go_to_grant">İzin Ver</string>
-    <string name="mark_todo">Yapılacaklar Listesi</string>
+    <string name="mark_todo">Yapılacaklar</string>
     <string name="mark_todo_escription">Yapılacaklarınızı tamamlanma durumuyla gruplayın ve takip edin.</string>
     <string name="schedule">Takvim Merkezi</string>
     <string name="schedule_description">Etkinlikleri ve programları tek yerde yönetin, Google Takvim ile senkronizasyona hazır.</string>

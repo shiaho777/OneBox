@@ -618,7 +618,7 @@
     <string name="agent_tool_manage_decision_wheel_param_action">İşlem türü: list (tüm çarkları listele), create (çark oluştur), update_options (çark seçeneklerini değiştir), delete (çarkı sil)</string>
     <string name="agent_tool_manage_decision_wheel_param_title">Çark başlığı, create için gerekli, örn. 「Öğle yemeğinde ne var」</string>
     <string name="agent_tool_manage_decision_wheel_param_options">Seçenek adları dizisi (en az 2), create/update_options için gerekli</string>
-    <string name="agent_tool_manage_decision_wheel_param_wheel_id">Çark ID'si, update_options/delete için gerekli; list işlemiyle alınır</string>
+    <string name="agent_tool_manage_decision_wheel_param_wheel_id">Çark ID\'si, update_options/delete için gerekli; list işlemiyle alınır</string>
     <string name="agent_tool_manage_decision_wheel_failed">Çark işlemi başarısız: %1$s</string>
     <string name="agent_tool_manage_decision_wheel_unknown_action">Bilinmeyen işlem: %1$s</string>
     <string name="agent_tool_manage_decision_wheel_missing_title">create işlemi title parametresi gerektirir</string>

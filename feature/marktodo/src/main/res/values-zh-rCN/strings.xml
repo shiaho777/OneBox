@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Module Name -->
-    <string name="marktodo">待办清单</string>
+    <string name="marktodo">待办事项</string>
 
     <!-- Add Category / Add Task Dialog -->
     <string name="action_add_category">添加分类</string>

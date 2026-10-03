@@ -1063,7 +1063,7 @@ Hint: If you choose "Hide Forever", you can bring me back later in Settings > Di
     <string name="all_files_access_permission_title">Enable "All Files Access"</string>
     <string name="all_files_access_permission_description">This permission is needed for full file browsing, management, and transfer features. Some features may not work without it.</string>
     <string name="go_to_grant">Grant Permission</string>
-    <string name="mark_todo">To-Do List</string>
+    <string name="mark_todo">To-do List</string>
     <string name="mark_todo_escription">Group and track your to-dos with completion status.</string>
     <string name="schedule">Schedule Hub</string>
     <string name="schedule_description">Manage events and schedules in one place, with sync ready for Google Calendar.</string>

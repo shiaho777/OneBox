@@ -1341,7 +1341,7 @@
     <string name="nav_create_new_task">Tugas Baru</string>
     <string name="nav_new_qr_code">Pindai</string>
     <string name="nav_notebook">Catatan</string>
-    <string name="nav_todo_list">To-Do</string>
+    <string name="nav_todo_list">Tugas</string>
     <string name="nav_ai_app">Obrolan</string>
     <string name="game_2048_title">2048</string>
     <string name="game_2048_description">Permainan puzzle penggabungan angka klasik</string>

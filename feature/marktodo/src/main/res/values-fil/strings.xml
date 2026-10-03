@@ -31,7 +31,7 @@
     <string name="date_days_ago">%1$d araw ang nakalipas</string>
     <string name="date_tomorrow">Bukas</string>
     <string name="date_days_later">Sa loob ng %1$d araw</string>
-    <string name="marktodo">Listahan ng Gagawin</string>
+    <string name="marktodo">Mga Gawain</string>
     <string name="action_add_category">Magdagdag ng Kategorya</string>
     <string name="dialog_add_category_title">Magdagdag ng Paksa ng To-do</string>
     <string name="dialog_edit_category_title">I-edit ang Paksa ng To-do</string>

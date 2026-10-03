@@ -31,7 +31,7 @@
     <string name="date_days_ago">%1$d gün önce</string>
     <string name="date_tomorrow">Yarın</string>
     <string name="date_days_later">%1$d gün içinde</string>
-    <string name="marktodo">Yapılacaklar listesi</string>
+    <string name="marktodo">Yapılacaklar</string>
     <string name="action_add_category">Kategori ekle</string>
     <string name="dialog_add_category_title">Yapılacaklar konusu ekle</string>
     <string name="dialog_edit_category_title">Yapılacaklar konusunu düzenle</string>

@@ -31,7 +31,7 @@
     <string name="date_days_ago">%1$d일 전</string>
     <string name="date_tomorrow">내일</string>
     <string name="date_days_later">%1$d일 후</string>
-    <string name="marktodo">할 일 목록</string>
+    <string name="marktodo">할 일</string>
     <string name="action_add_category">카테고리 추가</string>
     <string name="dialog_add_category_title">할 일 주제 추가</string>
     <string name="dialog_edit_category_title">할 일 주제 편집</string>

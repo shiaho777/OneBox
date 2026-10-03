@@ -941,7 +941,7 @@
     <string name="all_files_access_permission_title">I-enable ang \"All Files Access\"</string>
     <string name="all_files_access_permission_description">Kailangan ang permission na ito para sa buong file browsing, pamamahala, at transfer features. Maaaring hindi gumana ang ilang feature kung wala ito.</string>
     <string name="go_to_grant">Ibigay ang Permission</string>
-    <string name="mark_todo">To-Do List</string>
+    <string name="mark_todo">Mga Gawain</string>
     <string name="mark_todo_escription">I-grupo at i-track ang iyong mga to-do na may completion status.</string>
     <string name="schedule">Schedule Hub</string>
     <string name="schedule_description">Pamahalaan ang mga event at schedule sa isang lugar, handa na para sa Google Calendar sync.</string>

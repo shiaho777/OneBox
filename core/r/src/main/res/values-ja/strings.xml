@@ -941,7 +941,7 @@
     <string name="all_files_access_permission_title">「すべてのファイルへのアクセス」を有効にする</string>
     <string name="all_files_access_permission_description">この権限は、完全なファイル閲覧・管理・転送機能に必要です。これがないと一部の機能が動作しない場合があります。</string>
     <string name="go_to_grant">権限を許可</string>
-    <string name="mark_todo">To-Doリスト</string>
+    <string name="mark_todo">やることリスト</string>
     <string name="mark_todo_escription">To-Doをグループ化し、完了状態を追跡します。</string>
     <string name="schedule">スケジュールハブ</string>
     <string name="schedule_description">イベントやスケジュールを一元管理し、Googleカレンダーとの同期に対応。</string>
@@ -1341,7 +1341,7 @@
     <string name="nav_create_new_task">新しいタスク</string>
     <string name="nav_new_qr_code">スキャン</string>
     <string name="nav_notebook">メモ</string>
-    <string name="nav_todo_list">To-Do</string>
+    <string name="nav_todo_list">やること</string>
     <string name="nav_ai_app">チャット</string>
     <string name="game_2048_title">2048</string>
     <string name="game_2048_description">定番の数字合体パズルゲーム</string>

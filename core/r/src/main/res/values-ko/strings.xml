@@ -941,7 +941,7 @@
     <string name="all_files_access_permission_title">\"모든 파일 액세스\" 활성화</string>
     <string name="all_files_access_permission_description">이 권한은 전체 파일 탐색, 관리 및 전송 기능에 필요합니다. 이 권한이 없으면 일부 기능이 작동하지 않을 수 있습니다.</string>
     <string name="go_to_grant">권한 부여</string>
-    <string name="mark_todo">할 일 목록</string>
+    <string name="mark_todo">할 일</string>
     <string name="mark_todo_escription">완료 상태와 함께 할 일을 그룹화하고 추적합니다.</string>
     <string name="schedule">일정 허브</string>
     <string name="schedule_description">이벤트와 일정을 한곳에서 관리하며, Google 캘린더와 동기화가 준비되어 있습니다.</string>

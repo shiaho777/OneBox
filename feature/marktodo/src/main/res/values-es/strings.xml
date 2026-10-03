@@ -31,7 +31,7 @@
     <string name="date_days_ago">Hace %1$d días</string>
     <string name="date_tomorrow">Mañana</string>
     <string name="date_days_later">En %1$d días</string>
-    <string name="marktodo">Lista de tareas</string>
+    <string name="marktodo">Tareas</string>
     <string name="action_add_category">Añadir categoría</string>
     <string name="dialog_add_category_title">Añadir tema de tareas</string>
     <string name="dialog_edit_category_title">Editar tema de tareas</string>

@@ -31,7 +31,7 @@
     <string name="date_days_ago">%1$d日前</string>
     <string name="date_tomorrow">明日</string>
     <string name="date_days_later">%1$d日後</string>
-    <string name="marktodo">ToDoリスト</string>
+    <string name="marktodo">やることリスト</string>
     <string name="action_add_category">カテゴリを追加</string>
     <string name="dialog_add_category_title">ToDoトピックを追加</string>
     <string name="dialog_edit_category_title">ToDoトピックを編集</string>

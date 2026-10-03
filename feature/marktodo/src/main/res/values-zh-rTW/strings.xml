@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="marktodo">待辦清單</string>
+    <string name="marktodo">待辦事項</string>
     <string name="action_add_category">新增分類</string>
     <string name="dialog_add_category_title">新增待辦主題</string>
     <string name="dialog_edit_category_title">編輯待辦主題</string>
