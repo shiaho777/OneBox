@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.wanbaohe.recordcenter.R
 import com.wanbaohe.recordcenter.registry.RecordField
 import com.wanbaohe.recordcenter.registry.RecordTypeDefinition
+import com.wanbaohe.recordcenter.registry.TrendChartKind
 
 /** 血糖记录 */
 object BloodGlucoseRecordType : RecordTypeDefinition {
@@ -24,5 +25,6 @@ object BloodGlucoseRecordType : RecordTypeDefinition {
     )
     override val referenceRangeRes: Int = R.string.record_center_ref_blood_glucose
     override val chartFieldKeys: List<String> = listOf("value")
+    override val trendChartKind: TrendChartKind = TrendChartKind.BAR
     override val sortOrder: Int = 30
 }

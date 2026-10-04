@@ -85,6 +85,14 @@
     <string name="record_center_save_success">已保存</string>
     <string name="record_center_range_all_label">全部记录</string>
 
+    <!-- 聚合页底部 tab -->
+    <string name="record_center_tab_records">记录</string>
+    <string name="record_center_tab_trends">趋势</string>
+    <string name="record_center_tab_mine">我的</string>
+    <string name="record_center_no_record">暂无记录</string>
+    <string name="record_center_trend_empty">暂无趋势</string>
+    <string name="record_center_vs_last_week">较上周</string>
+
     <!-- AI 解读 -->
     <string name="record_center_ai_insight">AI 解读</string>
     <string name="record_center_ai_insight_hint">让 AI 帮你解读这段时间的数据趋势</string>
@@ -105,6 +113,9 @@
     <string name="record_center_profile_field_age">年龄</string>
     <string name="record_center_profile_field_height">身高 (cm)</string>
     <string name="record_center_profile_field_weight">体重 (kg)</string>
+    <string name="record_center_profile_age_placeholder">请输入年龄</string>
+    <string name="record_center_profile_height_placeholder">请输入身高</string>
+    <string name="record_center_profile_weight_placeholder">请输入体重</string>
     <string name="record_center_profile_age_years">%1$d 岁</string>
     <string name="record_center_profile_invalid">请输入有效数值</string>
     <string name="record_center_empty_go_ai">去 AI 助手记录</string>

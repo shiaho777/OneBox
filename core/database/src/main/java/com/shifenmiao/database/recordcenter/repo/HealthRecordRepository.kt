@@ -31,6 +31,10 @@ class HealthRecordRepository @Inject constructor(
         return database.healthRecordDao().observeLatestPerType()
     }
 
+    fun observeSinceAllTypes(from: Long): Flow<List<HealthRecordEntity>> {
+        return database.healthRecordDao().observeSinceAllTypes(from)
+    }
+
     suspend fun getById(id: String): HealthRecordEntity? {
         return database.healthRecordDao().getById(id)
     }

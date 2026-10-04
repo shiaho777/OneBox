@@ -36,6 +36,10 @@ interface HealthRecordDao {
     )
     fun observeLatestPerType(): Flow<List<HealthRecordEntity>>
 
+    // 全部类型在 [from, +∞) 区间内的记录(趋势聚合页用),时间正序
+    @Query("SELECT * FROM health_record WHERE happened_at >= :from ORDER BY happened_at ASC")
+    fun observeSinceAllTypes(from: Long): Flow<List<HealthRecordEntity>>
+
     @Query("SELECT * FROM health_record WHERE id = :id")
     suspend fun getById(id: String): HealthRecordEntity?
 

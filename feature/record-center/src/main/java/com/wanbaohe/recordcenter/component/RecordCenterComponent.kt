@@ -8,22 +8,29 @@ import com.t8rin.imagetoolbox.core.ui.utils.BaseComponent
 import com.t8rin.imagetoolbox.core.ui.utils.navigation.Screen
 import com.wanbaohe.recordcenter.data.HealthProfile
 import com.wanbaohe.recordcenter.data.HealthProfileStore
+import com.wanbaohe.recordcenter.model.RecordTrendSummary
+import com.wanbaohe.recordcenter.model.buildRecordTrendSummaries
 import com.wanbaohe.recordcenter.registry.RecordTypeCatalog
 import com.wanbaohe.recordcenter.registry.RecordTypeDefinition
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import java.time.LocalDate
+import java.time.ZoneId
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-/** 聚合页布局模式:列表 / 双列网格 */
-enum class RecordCenterLayout { LIST, GRID }
+/** 聚合页底部 tab:记录宫格 / 趋势图表 / 我的(基础信息) */
+enum class RecordCenterTab { RECORDS, TRENDS, MINE }
 
 /**
- * 记录中心聚合页 Component — 展示全部记录类型卡片及各类型最新一条记录。
+ * 记录中心聚合页 Component — 底部三 tab:
+ * 记录(各类型最新记录宫格)、趋势(近 7 天图表 + 较上周增量)、我的(基础信息)。
  *
  * 只读,写操作在列表页/录入页走 RecordCenterService。
  */
@@ -40,7 +47,7 @@ class RecordCenterComponent @AssistedInject internal constructor(
     /** 全部记录类型定义,按 sortOrder 升序 */
     val recordTypes: List<RecordTypeDefinition> = catalog.all()
 
-    /** 基础信息(性别/年龄/身高/体重),置顶卡片展示与编辑 */
+    /** 基础信息(性别/年龄/身高/体重),"我的" tab 展示与编辑 */
     val profile: StateFlow<HealthProfile> = profileStore.profile
 
     fun saveProfile(profile: HealthProfile) {
@@ -53,25 +60,27 @@ class RecordCenterComponent @AssistedInject internal constructor(
         .map { list -> list.associateBy { it.type } }
         .stateIn(componentScope, SharingStarted.WhileSubscribed(5_000L), emptyMap())
 
+    private val _currentTab = MutableStateFlow(RecordCenterTab.RECORDS)
+    val currentTab: StateFlow<RecordCenterTab> = _currentTab.asStateFlow()
+
+    fun switchTab(tab: RecordCenterTab) {
+        _currentTab.value = tab
+    }
+
     /**
-     * 布局模式,内存级状态(重启不持久化):
-     * 初始值与 App 全局布局设置一致并跟随其变化(见 RecordCenterScreen 的同步逻辑),
-     * 页面内切换只改本地状态,不回写全局设置。
+     * 趋势 tab 聚合数据:近 14 天记录(本周图表 + 上周对比)+ 全量最新值。
+     * 窗口起点在组件创建时按自然日确定,记录变更经 Flow 自动重算。
      */
-    private val _layoutMode = MutableStateFlow(RecordCenterLayout.LIST)
-    val layoutMode: StateFlow<RecordCenterLayout> = _layoutMode
-
-    fun toggleLayoutMode() {
-        _layoutMode.value = when (_layoutMode.value) {
-            RecordCenterLayout.LIST -> RecordCenterLayout.GRID
-            RecordCenterLayout.GRID -> RecordCenterLayout.LIST
-        }
-    }
-
-    /** 跟随 App 全局布局设置(true=双列网格) */
-    fun syncLayoutWithAppSetting(isGridMode: Boolean) {
-        _layoutMode.value = if (isGridMode) RecordCenterLayout.GRID else RecordCenterLayout.LIST
-    }
+    val trendSummaries: StateFlow<List<RecordTrendSummary>> = combine(
+        repository.observeSinceAllTypes(trendWindowFrom()),
+        repository.observeLatestPerType(),
+    ) { recent, latest ->
+        buildRecordTrendSummaries(
+            definitions = recordTypes,
+            recentRecords = recent,
+            latestByType = latest.associateBy { it.type },
+        )
+    }.stateIn(componentScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
 
     fun navigateToRecordList(recordType: String) {
         onNavigate(
@@ -88,3 +97,7 @@ class RecordCenterComponent @AssistedInject internal constructor(
         ): RecordCenterComponent
     }
 }
+
+/** 趋势窗口起点:13 天前的自然日 0 点(覆盖本周 7 天 + 上周 7 天) */
+private fun trendWindowFrom(): Long =
+    LocalDate.now().minusDays(13).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()

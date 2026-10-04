@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.wanbaohe.recordcenter.R
 import com.wanbaohe.recordcenter.registry.RecordField
 import com.wanbaohe.recordcenter.registry.RecordTypeDefinition
+import com.wanbaohe.recordcenter.registry.TrendChartKind
 
 /** 尿酸记录 */
 object UricAcidRecordType : RecordTypeDefinition {
@@ -24,5 +25,6 @@ object UricAcidRecordType : RecordTypeDefinition {
     )
     override val referenceRangeRes: Int = R.string.record_center_ref_uric_acid
     override val chartFieldKeys: List<String> = listOf("value")
+    override val trendChartKind: TrendChartKind = TrendChartKind.BAR
     override val sortOrder: Int = 70
 }

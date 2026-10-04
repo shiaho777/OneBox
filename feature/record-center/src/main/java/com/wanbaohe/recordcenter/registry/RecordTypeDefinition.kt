@@ -35,9 +35,16 @@ interface RecordTypeDefinition {
     /** 趋势图上绘制的字段 key 列表 */
     val chartFieldKeys: List<String>
 
+    /** 趋势聚合页卡片使用的图表形态,默认折线 */
+    val trendChartKind: TrendChartKind
+        get() = TrendChartKind.LINE
+
     /** 目录排序权重,越小越靠前 */
     val sortOrder: Int
 }
+
+/** 趋势卡片图表形态:折线(连续监测类)/ 柱状(离散测量类) */
+enum class TrendChartKind { LINE, BAR }
 
 /**
  * 单个数值字段定义。

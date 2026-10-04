@@ -39,6 +39,20 @@ fun formatRecordValues(definition: RecordTypeDefinition, fieldsJson: String): St
     }
 }
 
+/**
+ * 记录数值拆成 数值/单位 两部分,供"大数字 + 小单位"排版。
+ * 单位不一致时取首个字段的单位;无单位(如 BMI)单位部分为 null。
+ */
+@Composable
+fun formatRecordValueParts(definition: RecordTypeDefinition, fieldsJson: String): Pair<String, String?> {
+    val values = RecordFieldsCodec.decode(fieldsJson)
+    val present = definition.fields.filter { values.containsKey(it.key) }
+    if (present.isEmpty()) return "" to null
+    val joined = present.joinToString("/") { RecordFieldsCodec.formatValue(values.getValue(it.key)) }
+    val unit = present.map { it.unit }.distinct().firstOrNull()?.takeIf { it.isNotEmpty() }
+    return joined to unit
+}
+
 /** 相对日期:今天 / 昨天 / N天前 / 具体日期 */
 @Composable
 fun formatRelativeDate(millis: Long): String {

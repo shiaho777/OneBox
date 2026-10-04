@@ -85,6 +85,14 @@
     <string name="record_center_save_success">Saved</string>
     <string name="record_center_range_all_label">All records</string>
 
+    <!-- 聚合页底部 tab -->
+    <string name="record_center_tab_records">Records</string>
+    <string name="record_center_tab_trends">Trends</string>
+    <string name="record_center_tab_mine">Mine</string>
+    <string name="record_center_no_record">No records</string>
+    <string name="record_center_trend_empty">No trend yet</string>
+    <string name="record_center_vs_last_week">vs last week</string>
+
     <!-- AI 解读 -->
     <string name="record_center_ai_insight">AI Insight</string>
     <string name="record_center_ai_insight_hint">Let AI interpret the trend of your records in this period</string>
@@ -105,6 +113,9 @@
     <string name="record_center_profile_field_age">Age</string>
     <string name="record_center_profile_field_height">Height (cm)</string>
     <string name="record_center_profile_field_weight">Weight (kg)</string>
+    <string name="record_center_profile_age_placeholder">Enter age</string>
+    <string name="record_center_profile_height_placeholder">Enter height</string>
+    <string name="record_center_profile_weight_placeholder">Enter weight</string>
     <string name="record_center_profile_age_years">%1$d yrs</string>
     <string name="record_center_profile_invalid">Please enter valid numbers</string>
     <string name="record_center_empty_go_ai">Record with AI Assistant</string>
