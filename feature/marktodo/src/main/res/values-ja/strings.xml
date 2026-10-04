@@ -22,6 +22,8 @@
     <string name="error_todo_not_found">To-doが見つかりません</string>
     <string name="error_category_not_found">カテゴリが見つかりません</string>
     <string name="error_load_failed">読み込みに失敗しました</string>
+    <string name="error_create_tag_failed">タグの作成に失敗しました</string>
+    <string name="tag_already_exists">タグはすでに存在します</string>
     <string name="cd_task_completed">完了</string>
     <string name="cd_task_pending">保留中</string>
     <string name="cd_add_star">スターを追加</string>

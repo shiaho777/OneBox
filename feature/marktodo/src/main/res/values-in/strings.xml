@@ -22,6 +22,8 @@
     <string name="error_todo_not_found">Tugas tidak ditemukan</string>
     <string name="error_category_not_found">Kategori tidak ditemukan</string>
     <string name="error_load_failed">Gagal memuat</string>
+    <string name="error_create_tag_failed">Gagal membuat tag</string>
+    <string name="tag_already_exists">Tag sudah ada</string>
     <string name="cd_task_completed">Selesai</string>
     <string name="cd_task_pending">Menunggu</string>
     <string name="cd_add_star">Tambah bintang</string>

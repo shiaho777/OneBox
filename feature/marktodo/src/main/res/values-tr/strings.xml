@@ -22,6 +22,8 @@
     <string name="error_todo_not_found">Yapılacak bulunamadı</string>
     <string name="error_category_not_found">Kategori bulunamadı</string>
     <string name="error_load_failed">Yüklenemedi</string>
+    <string name="error_create_tag_failed">Etiket oluşturulamadı</string>
+    <string name="tag_already_exists">Etiket zaten mevcut</string>
     <string name="cd_task_completed">Tamamlandı</string>
     <string name="cd_task_pending">Beklemede</string>
     <string name="cd_add_star">Yıldız ekle</string>

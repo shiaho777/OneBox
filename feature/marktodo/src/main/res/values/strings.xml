@@ -136,6 +136,8 @@
     <string name="error_todo_not_found">To-do not found</string>
     <string name="error_category_not_found">Category not found</string>
     <string name="error_load_failed">Failed to load</string>
+    <string name="error_create_tag_failed">Failed to create tag</string>
+    <string name="tag_already_exists">Tag already exists</string>
 
     <!-- Task State Descriptions -->
     <string name="cd_task_completed">Completed</string>

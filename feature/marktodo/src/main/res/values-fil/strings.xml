@@ -22,6 +22,8 @@
     <string name="error_todo_not_found">Hindi nahanap ang gawain</string>
     <string name="error_category_not_found">Hindi nahanap ang kategorya</string>
     <string name="error_load_failed">Nabigong i-load</string>
+    <string name="error_create_tag_failed">Hindi nagawa ang tag</string>
+    <string name="tag_already_exists">Umiiral na ang tag</string>
     <string name="cd_task_completed">Nakumpleto</string>
     <string name="cd_task_pending">Nakabinbin</string>
     <string name="cd_add_star">Magdagdag ng bituin</string>

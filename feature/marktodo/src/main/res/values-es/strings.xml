@@ -22,6 +22,8 @@
     <string name="error_todo_not_found">Tarea no encontrada</string>
     <string name="error_category_not_found">Categoría no encontrada</string>
     <string name="error_load_failed">Error al cargar</string>
+    <string name="error_create_tag_failed">No se pudo crear la etiqueta</string>
+    <string name="tag_already_exists">La etiqueta ya existe</string>
     <string name="cd_task_completed">Completada</string>
     <string name="cd_task_pending">Pendiente</string>
     <string name="cd_add_star">Añadir estrella</string>

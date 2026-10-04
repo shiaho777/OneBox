@@ -22,6 +22,8 @@
     <string name="error_todo_not_found">Aufgabe nicht gefunden</string>
     <string name="error_category_not_found">Kategorie nicht gefunden</string>
     <string name="error_load_failed">Laden fehlgeschlagen</string>
+    <string name="error_create_tag_failed">Tag konnte nicht erstellt werden</string>
+    <string name="tag_already_exists">Tag existiert bereits</string>
     <string name="cd_task_completed">Abgeschlossen</string>
     <string name="cd_task_pending">Ausstehend</string>
     <string name="cd_add_star">Stern hinzufügen</string>

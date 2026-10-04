@@ -22,6 +22,8 @@
     <string name="error_todo_not_found">Tarefa não encontrada</string>
     <string name="error_category_not_found">Categoria não encontrada</string>
     <string name="error_load_failed">Falha ao carregar</string>
+    <string name="error_create_tag_failed">Falha ao criar a tag</string>
+    <string name="tag_already_exists">A tag já existe</string>
     <string name="cd_task_completed">Concluída</string>
     <string name="cd_task_pending">Pendente</string>
     <string name="cd_add_star">Adicionar estrela</string>

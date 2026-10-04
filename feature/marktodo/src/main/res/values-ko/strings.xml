@@ -22,6 +22,8 @@
     <string name="error_todo_not_found">할 일을 찾을 수 없습니다</string>
     <string name="error_category_not_found">카테고리를 찾을 수 없습니다</string>
     <string name="error_load_failed">불러오기 실패</string>
+    <string name="error_create_tag_failed">태그 생성에 실패했습니다</string>
+    <string name="tag_already_exists">이미 존재하는 태그입니다</string>
     <string name="cd_task_completed">완료됨</string>
     <string name="cd_task_pending">대기 중</string>
     <string name="cd_add_star">별표 추가</string>

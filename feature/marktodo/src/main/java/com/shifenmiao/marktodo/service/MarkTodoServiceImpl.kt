@@ -323,7 +323,7 @@ class MarkTodoServiceImpl @Inject constructor(
         }
     }
 
-    /** 新建自定义标签（追加到标签池末尾），返回新标签 id */
+    /** 新建自定义标签（追加到标签池末尾），返回新标签 id；同名（忽略大小写）标签已存在时直接返回其 id，不产生重复行 */
     suspend fun createTag(
         name: String,
         colorArgb: Int?,
@@ -332,6 +332,9 @@ class MarkTodoServiceImpl @Inject constructor(
         runCatching {
             val trimmed = name.trim()
             require(trimmed.isNotEmpty()) { "Tag name is blank" }
+            // 按名字关联的模型下重名是脏数据，并发/直调时在此兜底
+            repository.getTags().firstOrNull { it.name.equals(trimmed, ignoreCase = true) }
+                ?.let { return@runCatching it.id }
             val now = System.currentTimeMillis()
             val tagId = UUID.randomUUID().toString()
             repository.upsertTag(

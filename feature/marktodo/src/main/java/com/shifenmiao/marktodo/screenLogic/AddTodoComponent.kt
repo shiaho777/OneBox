@@ -259,6 +259,15 @@ class AddTodoComponent @AssistedInject internal constructor(
     private fun addCustomTag(name: String, colorArgb: Int?) {
         val trimmed = name.trim()
         if (trimmed.isEmpty()) return
+        // 标签按名字关联，重名会让筛选/配色混乱：命中已有标签时直接选中它，不再新建
+        val existing = _uiState.value.tags.firstOrNull { it.name.equals(trimmed, ignoreCase = true) }
+        if (existing != null) {
+            _uiState.value = _uiState.value.copy(
+                selectedTagNames = _uiState.value.selectedTagNames + existing.name
+            )
+            AppToastHost.showToast(context.getString(R.string.tag_already_exists))
+            return
+        }
         componentScope.launch {
             service.createTag(
                 name = trimmed,
@@ -270,7 +279,7 @@ class AddTodoComponent @AssistedInject internal constructor(
                     selectedTagNames = _uiState.value.selectedTagNames + trimmed
                 )
             }.onFailure {
-                AppToastHost.showToast(context.getString(R.string.error_load_failed))
+                AppToastHost.showToast(context.getString(R.string.error_create_tag_failed))
             }
         }
     }

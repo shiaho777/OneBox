@@ -22,6 +22,8 @@
     <string name="error_todo_not_found">कार्य नहीं मिला</string>
     <string name="error_category_not_found">श्रेणी नहीं मिली</string>
     <string name="error_load_failed">लोड करने में विफल</string>
+    <string name="error_create_tag_failed">टैग बनाने में विफल</string>
+    <string name="tag_already_exists">टैग पहले से मौजूद है</string>
     <string name="cd_task_completed">पूर्ण</string>
     <string name="cd_task_pending">लंबित</string>
     <string name="cd_add_star">स्टार जोड़ें</string>

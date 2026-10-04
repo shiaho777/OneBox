@@ -95,6 +95,8 @@
     <string name="error_todo_not_found">لم يتم العثور على المهمة</string>
     <string name="error_category_not_found">لم يتم العثور على الفئة</string>
     <string name="error_load_failed">فشل التحميل</string>
+    <string name="error_create_tag_failed">فشل إنشاء الوسم</string>
+    <string name="tag_already_exists">الوسم موجود بالفعل</string>
     <string name="cd_task_completed">مكتملة</string>
     <string name="cd_task_pending">قيد الانتظار</string>
     <string name="cd_add_star">إضافة نجمة</string>

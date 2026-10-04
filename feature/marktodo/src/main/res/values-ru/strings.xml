@@ -22,6 +22,8 @@
     <string name="error_todo_not_found">Задача не найдена</string>
     <string name="error_category_not_found">Категория не найдена</string>
     <string name="error_load_failed">Не удалось загрузить</string>
+    <string name="error_create_tag_failed">Не удалось создать тег</string>
+    <string name="tag_already_exists">Тег уже существует</string>
     <string name="cd_task_completed">Завершено</string>
     <string name="cd_task_pending">Ожидает</string>
     <string name="cd_add_star">Добавить звезду</string>
