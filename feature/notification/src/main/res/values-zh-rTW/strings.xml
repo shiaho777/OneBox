@@ -15,4 +15,5 @@
     <string name="notification_replied_to_you">%1$s 回覆了你的評論：</string>
     <string name="notification_from_source">來自: %1$s</string>
     <string name="notification_replier_anonymous">用戶</string>
+    <string name="notification_section_messages">通知</string>
 </resources>

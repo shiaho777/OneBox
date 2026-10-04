@@ -15,4 +15,5 @@
     <string name="notification_replied_to_you">%1$s ने आपकी टिप्पणी का उत्तर दिया:</string>
     <string name="notification_from_source">इससे: %1$s</string>
     <string name="notification_replier_anonymous">कोई</string>
+    <string name="notification_section_messages">सूचनाएँ</string>
 </resources>

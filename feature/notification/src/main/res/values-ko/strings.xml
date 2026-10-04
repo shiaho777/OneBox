@@ -15,4 +15,5 @@
     <string name="notification_replied_to_you">%1$s님이 내 댓글에 답글을 남겼습니다:</string>
     <string name="notification_from_source">출처: %1$s</string>
     <string name="notification_replier_anonymous">익명</string>
+    <string name="notification_section_messages">알림</string>
 </resources>

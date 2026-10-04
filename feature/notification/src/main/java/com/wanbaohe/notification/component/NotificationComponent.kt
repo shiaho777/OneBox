@@ -44,19 +44,23 @@ data class NotificationUiState(
     val myCommentsPage: Int = 0,
     val myCommentsPageCount: Int = 1,
     val isLoadingMoreMyComments: Boolean = false,
-    /** 「用户回复」section(通知 type=comment_reply) */
-    val replies: List<UserNotification> = emptyList(),
-    val repliesPage: Int = 0,
-    val repliesPageCount: Int = 1,
-    val isLoadingMoreReplies: Boolean = false,
+    /** 「通知」section: 评论回复 + 反馈回复 + 系统通知, 全部通知类型 */
+    val notifications: List<UserNotification> = emptyList(),
+    val notificationsPage: Int = 0,
+    val notificationsPageCount: Int = 1,
+    val isLoadingMoreNotifications: Boolean = false,
 )
 
 /**
- * 消息中心 Component — 「我发表的评论」+「用户回复」双 section 分页 + 已读操作编排。
+ * 消息中心 Component — 「我发表的评论」+「通知」双 section 分页 + 已读操作编排。
  *
- * 未读数由 [NotificationRepository.unreadCount] 全局共享,
- * 标记已读/全部已读直接同步给个人中心角标。
- * 「用户回复」只拉取 comment_reply 类型通知,卡片点击即标已读。
+ * 未读数由 [NotificationRepository.unreadCount] 全局共享, 标记已读/全部已读直接同步给
+ * 个人中心角标。
+ *
+ * 「通知」section **不按 type 过滤**: 服务端的未读数统计的是该用户全部未读行
+ * (`/user-notifications/unread-count` 不分类型), 之前这里只拉 comment_reply, 于是
+ * 反馈回复 / 系统通知的未读在列表里根本没有入口可以点掉, 红点只能靠「全部已读」清。
+ * 列表口径与未读数口径必须一致, 所以这里拉全部类型, 由 UI 按 type 渲染不同卡片。
  */
 class NotificationComponent @AssistedInject internal constructor(
     @Assisted componentContext: ComponentContext,
@@ -139,22 +143,31 @@ class NotificationComponent @AssistedInject internal constructor(
             if (!state.isLoadingMoreMyComments && state.myCommentsPage < state.myCommentsPageCount) {
                 loadMyCommentsPage(state.myCommentsPage + 1)
             }
-            if (!state.isLoadingMoreReplies && state.repliesPage < state.repliesPageCount) {
-                loadRepliesPage(state.repliesPage + 1)
+            if (!state.isLoadingMoreNotifications &&
+                state.notificationsPage < state.notificationsPageCount
+            ) {
+                loadNotificationsPage(state.notificationsPage + 1)
             }
         }
     }
 
-    /** 点击回复卡片:已读的忽略,未读的乐观更新后调接口,并打开来源评论区. */
+    /**
+     * 点击通知卡片: 评论回复顺带打开来源评论区, 再乐观标已读并落库.
+     *
+     * 另外两类 (feedback_reply / system) 没有可跳转的页面, 点一下只负责把未读清掉 ——
+     * 这正是之前红点掉不掉的症结: 它们从未出现在列表里, 也就永远点不到。
+     */
     fun markRead(item: UserNotification) {
-        openComments(
-            documentId = item.sourceDocumentId.orEmpty(),
-            sourceTitle = item.sourceTitle,
-            focusCommentId = item.relatedCommentId,
-        )
+        if (item.type == UserNotification.TYPE_COMMENT_REPLY) {
+            openComments(
+                documentId = item.sourceDocumentId.orEmpty(),
+                sourceTitle = item.sourceTitle,
+                focusCommentId = item.relatedCommentId,
+            )
+        }
         if (item.read) return
         _uiState.value = _uiState.value.copy(
-            replies = _uiState.value.replies.map {
+            notifications = _uiState.value.notifications.map {
                 if (it.id == item.id) it.copy(read = true) else it
             }
         )
@@ -207,9 +220,9 @@ class NotificationComponent @AssistedInject internal constructor(
     }
 
     fun markAllRead() {
-        if (_uiState.value.replies.none { !it.read }) return
+        if (_uiState.value.notifications.none { !it.read }) return
         _uiState.value = _uiState.value.copy(
-            replies = _uiState.value.replies.map { it.copy(read = true) }
+            notifications = _uiState.value.notifications.map { it.copy(read = true) }
         )
         componentScope.launch {
             repository.markAllRead()
@@ -219,7 +232,7 @@ class NotificationComponent @AssistedInject internal constructor(
     /** 首屏 / 刷新:两个 section 的第一页并发拉取,两个都失败且都为空才算错误态 */
     private suspend fun loadFirstPages(isRefresh: Boolean) {
         val state = _uiState.value
-        val showLoading = !isRefresh && state.myComments.isEmpty() && state.replies.isEmpty()
+        val showLoading = !isRefresh && state.myComments.isEmpty() && state.notifications.isEmpty()
         _uiState.value = state.copy(
             isLoading = showLoading,
             isRefreshing = isRefresh,
@@ -227,11 +240,10 @@ class NotificationComponent @AssistedInject internal constructor(
         )
         coroutineScope {
             val myCommentsDeferred = async { repository.fetchMyComments(page = 1) }
-            val repliesDeferred = async {
-                repository.fetchNotifications(page = 1, type = UserNotification.TYPE_COMMENT_REPLY)
-            }
+            // 不带 type: 与服务端未读数统计口径保持一致 (见类注释)
+            val notificationsDeferred = async { repository.fetchNotifications(page = 1) }
             val myCommentsResult = myCommentsDeferred.await()
-            val repliesResult = repliesDeferred.await()
+            val notificationsResult = notificationsDeferred.await()
 
             var newState = _uiState.value
             myCommentsResult
@@ -242,19 +254,21 @@ class NotificationComponent @AssistedInject internal constructor(
                         myCommentsPageCount = response.meta.pagination.pageCount,
                     )
                 }
-            repliesResult
+            notificationsResult
                 .onSuccess { response ->
                     newState = newState.copy(
-                        replies = response.data.distinctBy { it.id },
-                        repliesPage = response.meta.pagination.page,
-                        repliesPageCount = response.meta.pagination.pageCount,
+                        notifications = response.data.distinctBy { it.id },
+                        notificationsPage = response.meta.pagination.page,
+                        notificationsPageCount = response.meta.pagination.pageCount,
                     )
                 }
-            val bothFailed = myCommentsResult.isFailure && repliesResult.isFailure
+            val bothFailed = myCommentsResult.isFailure && notificationsResult.isFailure
             _uiState.value = newState.copy(
                 isLoading = false,
                 isRefreshing = false,
-                isError = bothFailed && newState.myComments.isEmpty() && newState.replies.isEmpty(),
+                isError = bothFailed &&
+                    newState.myComments.isEmpty() &&
+                    newState.notifications.isEmpty(),
             )
         }
     }
@@ -275,19 +289,19 @@ class NotificationComponent @AssistedInject internal constructor(
             }
     }
 
-    private suspend fun loadRepliesPage(page: Int) {
-        _uiState.value = _uiState.value.copy(isLoadingMoreReplies = true)
-        repository.fetchNotifications(page = page, type = UserNotification.TYPE_COMMENT_REPLY)
+    private suspend fun loadNotificationsPage(page: Int) {
+        _uiState.value = _uiState.value.copy(isLoadingMoreNotifications = true)
+        repository.fetchNotifications(page = page)
             .onSuccess { response ->
                 _uiState.value = _uiState.value.copy(
-                    isLoadingMoreReplies = false,
-                    replies = (_uiState.value.replies + response.data).distinctBy { it.id },
-                    repliesPage = response.meta.pagination.page,
-                    repliesPageCount = response.meta.pagination.pageCount,
+                    isLoadingMoreNotifications = false,
+                    notifications = (_uiState.value.notifications + response.data).distinctBy { it.id },
+                    notificationsPage = response.meta.pagination.page,
+                    notificationsPageCount = response.meta.pagination.pageCount,
                 )
             }
             .onFailure {
-                _uiState.value = _uiState.value.copy(isLoadingMoreReplies = false)
+                _uiState.value = _uiState.value.copy(isLoadingMoreNotifications = false)
             }
     }
 

@@ -15,4 +15,5 @@
     <string name="notification_replied_to_you">Новый ответ на ваш комментарий от %1$s:</string>
     <string name="notification_from_source">Из: %1$s</string>
     <string name="notification_replier_anonymous">Кто-то</string>
+    <string name="notification_section_messages">Уведомления</string>
 </resources>

@@ -59,6 +59,7 @@ import com.shifenmiao.network.model.notification.UserNotification
 import com.t8rin.imagetoolbox.core.resources.Icons
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineChevronRight
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineMore
+import com.t8rin.imagetoolbox.core.resources.icons.line.LineChatBubble
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineNotifications
 import com.t8rin.imagetoolbox.core.ui.utils.provider.LocalLoginState
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassCard
@@ -89,7 +90,7 @@ fun NotificationScreen(component: NotificationComponent) {
                 ) {
                     DropdownMenuItem(
                         text = { Text(text = stringResource(R.string.notification_mark_all_read)) },
-                        enabled = uiState.replies.any { !it.read },
+                        enabled = uiState.notifications.any { !it.read },
                         onClick = {
                             showMenu = false
                             component.markAllRead()
@@ -146,7 +147,7 @@ private fun NotificationList(component: NotificationComponent) {
         onRefresh = component::refresh,
         isRefreshing = uiState.isRefreshing,
     ) {
-        if (uiState.myComments.isEmpty() && uiState.replies.isEmpty()) {
+        if (uiState.myComments.isEmpty() && uiState.notifications.isEmpty()) {
             EmptyBox(
                 modifier = Modifier
                     .padding(16.dp)
@@ -176,22 +177,22 @@ private fun NotificationList(component: NotificationComponent) {
                         )
                     }
                 }
-                if (uiState.replies.isNotEmpty()) {
-                    item(key = "header_replies") {
-                        SectionHeader(text = stringResource(R.string.notification_section_replies))
+                if (uiState.notifications.isNotEmpty()) {
+                    item(key = "header_notifications") {
+                        SectionHeader(text = stringResource(R.string.notification_section_messages))
                     }
                     items(
-                        count = uiState.replies.size,
-                        key = { index -> "rp_${uiState.replies[index].id}" },
+                        count = uiState.notifications.size,
+                        key = { index -> "nt_${uiState.notifications[index].id}" },
                     ) { index ->
-                        val item = uiState.replies[index]
-                        ReplyCard(
+                        val item = uiState.notifications[index]
+                        NotificationCard(
                             item = item,
                             onClick = { component.markRead(item) },
                         )
                     }
                 }
-                if (uiState.isLoadingMoreMyComments || uiState.isLoadingMoreReplies) {
+                if (uiState.isLoadingMoreMyComments || uiState.isLoadingMoreNotifications) {
                     item {
                         Box(
                             modifier = Modifier
@@ -248,23 +249,37 @@ private fun MyCommentCard(
     )
 }
 
-/** 「用户回复」卡片:回复人头像 + 回复引用 + 来源 + 相对时间,未读加红点/加粗 */
+/**
+ * 「通知」卡片:按 type 区分文案与头像,未读加红点/加粗。
+ *
+ * 服务端未读数统计该用户全部未读行, 所以三类都要有列表入口 (点一下就标已读);
+ * comment_reply 额外带来源内容, 点开进评论区; 另外两类只负责清未读。
+ */
 @Composable
-private fun ReplyCard(
+private fun NotificationCard(
     item: UserNotification,
     onClick: () -> Unit,
 ) {
+    val isCommentReply = item.type == UserNotification.TYPE_COMMENT_REPLY
     MessageCard(
         avatar = {
-            ReplyAvatar(
-                avatarUrl = item.replierAvatar,
-                name = item.replierName,
-            )
+            if (isCommentReply) {
+                ReplyAvatar(
+                    avatarUrl = item.replierAvatar,
+                    name = item.replierName,
+                )
+            } else {
+                TypeAvatar(type = item.type)
+            }
         },
-        title = stringResource(
-            R.string.notification_replied_to_you,
-            item.replierName.ifBlank { stringResource(R.string.notification_replier_anonymous) },
-        ),
+        title = if (isCommentReply) {
+            stringResource(
+                R.string.notification_replied_to_you,
+                item.replierName.ifBlank { stringResource(R.string.notification_replier_anonymous) },
+            )
+        } else {
+            notificationTitle(item)
+        },
         titleBold = !item.read,
         quote = item.content,
         sourceTitle = item.sourceTitle,
@@ -272,6 +287,36 @@ private fun ReplyCard(
         showUnreadDot = !item.read,
         onClick = onClick,
     )
+}
+
+/** 非评论回复类通知的标题: 系统通知优先用后台下发的标题, 反馈回复用固定文案。 */
+@Composable
+private fun notificationTitle(item: UserNotification): String = when (item.type) {
+    UserNotification.TYPE_FEEDBACK_REPLY -> stringResource(R.string.notification_type_feedback_reply)
+    else -> item.title.ifBlank { stringResource(R.string.notification_type_system) }
+}
+
+/** 非评论类通知的头像位: 用类型图标占位, 保持三类卡片左侧视觉一致。 */
+@Composable
+private fun TypeAvatar(type: String) {
+    Box(
+        modifier = Modifier
+            .size(36.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.secondaryContainer),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            imageVector = if (type == UserNotification.TYPE_FEEDBACK_REPLY) {
+                Icons.Outlined.LineChatBubble
+            } else {
+                Icons.Outlined.LineNotifications
+            },
+            contentDescription = null,
+            modifier = Modifier.size(18.dp),
+            tint = MaterialTheme.colorScheme.onSecondaryContainer,
+        )
+    }
 }
 
 /** 参考图卡片:左侧头像 + 标题 + 引用内容 + 来源,右侧相对时间 + chevron */
