@@ -53,8 +53,7 @@ import com.shifenmiao.base.pullrefresh.rememberPullToRefreshStateOnTime
 import com.shifenmiao.base.ui.DeleteConfirmDialog
 import com.shifenmiao.base.utils.DateUtils.convertElapsedTimeIntoText
 import com.shifenmiao.common.components.LoadingNextPageItem
-import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import com.shifenmiao.common.components.comments.CommentsHost
+import com.shifenmiao.common.components.comments.commentUidForListType
 import com.shifenmiao.common.handle.HandleEvent
 import com.shifenmiao.common.handle.LocalUrlNavigator
 import com.shifenmiao.common.sync.ManualRefreshPolicy
@@ -420,9 +419,6 @@ private fun ItemGrid(
     // 最近一张普通卡片的实测高度,用于"创建新xx"引导卡与旁边卡片对齐(双列瀑布流本身不保证行高一致)
     var siblingCardHeight by remember { mutableStateOf<Dp?>(null) }
 
-    // 评论浮动层: 由 ItemListComponent 的 childSlot 驱动生命周期.
-    val commentsSlot by itemListComponent.commentsSlot.subscribeAsState()
-
     val isNoteTab = listType == ListItemType.NOTE
     val cardMaxTitleLines = if (isNoteTab) 2 else 1
 
@@ -515,19 +511,9 @@ private fun ItemGrid(
             }
         }
     }
-
-    commentsSlot.child?.instance?.let { child ->
-        CommentsHost(
-            component = child.component,
-            onDismissed = itemListComponent::dismissComments,
-        )
-    }
 }
 
-private fun uidFor(listType: ListItemType): String = when (listType) {
-    ListItemType.BLOG -> "api::blog.blog"
-    else -> "api::item-list.item-list"
-}
+private fun uidFor(listType: ListItemType): String = commentUidForListType(listType.id)
 
 @Composable
 private fun gridColumns(isGrid: Boolean): StaggeredGridCells {

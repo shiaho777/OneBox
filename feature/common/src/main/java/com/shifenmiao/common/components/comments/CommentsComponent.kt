@@ -39,6 +39,12 @@ const val COMMENT_PAGE_SIZE = 20
 const val COMMENT_MAX_IMAGES = 3
 
 /**
+ * 为定位 [CommentsComponent.focusCommentId] 额外向后拉取的页数上限.
+ * 目标评论可能在很后面, 无上限会一路把评论翻到底; 这里只做有限次自动翻页.
+ */
+private const val FOCUS_MAX_EXTRA_PAGES = 5
+
+/**
  * 一个 sheet 一份 component, 每次点评论图标新建一份, 关掉后被 GC → 协程取消 → 状态清空.
  *
  * 持有 [BaseComponent.componentScope] 这个 lifecycle-aware scope, 关闭后所有正在
@@ -57,6 +63,8 @@ class CommentsComponent @AssistedInject internal constructor(
     @Assisted("documentId") val documentId: String,
     @Assisted("itemTitle") val itemTitle: String,
     @Assisted("uid") val uid: String,
+    /** 需要定位的评论 id (消息中心跳转带上), 0 = 不定位. */
+    @Assisted("focusCommentId") val focusCommentId: Int,
     @Assisted("onClose") val onClose: () -> Unit,
     @Assisted("onCommentCountChanged") val onCommentCountChanged: (delta: Int) -> Unit,
     settingsManager: SettingsManager,
@@ -125,6 +133,12 @@ class CommentsComponent @AssistedInject internal constructor(
 
     /** 加载互斥, 防止快速滚动/重复触发导致重复请求. */
     private val loadMutex = Mutex()
+
+    /** 是否已把 [focusCommentId] 载入列表 (载入后就不再为定位翻页). */
+    private var focusResolved: Boolean = false
+
+    /** 为定位目标评论已额外拉取的页数. */
+    private var focusSearchPages: Int = 0
 
     init {
         refreshCurrentUser()
@@ -267,6 +281,7 @@ class CommentsComponent @AssistedInject internal constructor(
             } finally {
                 _isLoading.value = false
                 loadMutex.unlock()
+                continueFocusSearch()
             }
         }
     }
@@ -297,9 +312,31 @@ class CommentsComponent @AssistedInject internal constructor(
             } finally {
                 _isLoading.value = false
                 loadMutex.unlock()
+                continueFocusSearch()
             }
         }
     }
+
+    /**
+     * 自动翻页直到找到 [focusCommentId] (最多 [FOCUS_MAX_EXTRA_PAGES] 页).
+     *
+     * 消息中心点进来的评论可能排在很后面, 只加载首页会让用户"看不到自己的评论".
+     * 找到 / 到底 / 超限都会停下, 不影响正常的下拉翻页.
+     */
+    private fun continueFocusSearch() {
+        if (focusCommentId <= 0 || focusResolved) return
+        if (containsFocus(_comments.value)) {
+            focusResolved = true
+            return
+        }
+        if (!_hasMore.value || focusSearchPages >= FOCUS_MAX_EXTRA_PAGES) return
+        focusSearchPages++
+        loadMore()
+    }
+
+    /** 目标评论本身是一级评论, 或者是某一级评论的最新回复, 都算命中 (与 UI 高亮口径一致). */
+    private fun containsFocus(list: List<Comment>): Boolean =
+        list.any { it.matchesFocus(focusCommentId) }
 
     fun sendComment() {
         refreshCurrentUser()
@@ -444,6 +481,7 @@ class CommentsComponent @AssistedInject internal constructor(
             @Assisted("documentId") documentId: String,
             @Assisted("itemTitle") itemTitle: String,
             @Assisted("uid") uid: String,
+            @Assisted("focusCommentId") focusCommentId: Int,
             @Assisted("onClose") onClose: () -> Unit,
             @Assisted("onCommentCountChanged") onCommentCountChanged: (delta: Int) -> Unit,
         ): CommentsComponent

@@ -5,8 +5,11 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.shifenmiao.common.components.comments.CommentsHost
 import com.shifenmiao.model.HomeTabKey
 import com.shifenmiao.model.ListItemType
 import com.shifenmiao.online.component.ItemListComponent
@@ -61,5 +64,19 @@ fun HomeContent(
                 playgroundComponent = playgroundComponent,
             )
         }
+    }
+
+    // 评论浮动层: 整个首页只挂这一个宿主.
+    //
+    // 之前它挂在 Pager 每一页的 ItemGrid 里, 而所有页共享同一个 ItemListComponent
+    // (同一个 commentsSlot). 页面切换时 Compose 会同时合成相邻两页 (手势 / 动画期间
+    // 还可能更久), 于是同一个 child 被两处渲染 → 每处都创建一个全屏 PopupLayout →
+    // 一次点击弹出多层评论浮动层. 宿主体积小, 提到 Pager 外层后与页数彻底解耦.
+    val commentsSlot by itemListComponent.commentsSlot.subscribeAsState()
+    commentsSlot.child?.instance?.let { child ->
+        CommentsHost(
+            component = child.component,
+            onDismissed = itemListComponent::dismissComments,
+        )
     }
 }

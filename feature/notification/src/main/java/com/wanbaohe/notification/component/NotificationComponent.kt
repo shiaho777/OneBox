@@ -1,7 +1,17 @@
 package com.wanbaohe.notification.component
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.router.slot.ChildSlot
+import com.arkivanov.decompose.router.slot.SlotNavigation
+import com.arkivanov.decompose.router.slot.activate
+import com.arkivanov.decompose.router.slot.childSlot
+import com.arkivanov.decompose.router.slot.dismiss
+import com.arkivanov.decompose.value.Value
 import com.shifenmiao.base.utils.ActionUtils
+import com.shifenmiao.common.components.comments.CommentsComponent
+import com.shifenmiao.common.components.comments.commentUidForListType
+import com.shifenmiao.common.components.comments.commentUidForSourceTitle
+import com.shifenmiao.database.AppDatabase
 import com.shifenmiao.network.model.comment.MyComment
 import com.shifenmiao.network.model.notification.UserNotification
 import com.shifenmiao.storage.TokenStorage
@@ -17,6 +27,8 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 
 data class NotificationUiState(
     /** 未登录时展示登录引导态 */
@@ -52,12 +64,42 @@ class NotificationComponent @AssistedInject internal constructor(
     @Assisted val onNavigate: (Screen) -> Unit,
     dispatchersHolder: DispatchersHolder,
     private val repository: NotificationRepository,
+    private val appDatabase: AppDatabase,
+    private val commentsComponentFactory: CommentsComponent.Factory,
 ) : BaseComponent(dispatchersHolder, componentContext) {
 
     private val _uiState = MutableStateFlow(NotificationUiState())
     val uiState: StateFlow<NotificationUiState> = _uiState
 
     val unreadCount: StateFlow<Int> = repository.unreadCount
+
+    // ── 评论浮动层 (Decompose childSlot) ──────────────────────────────────
+    //
+    // 复用列表页那套评论浮动层: 点消息卡片 → 打开该内容(博客 / 条目)的评论区,
+    // 并带上目标评论 id 让弹层自动翻页定位 + 高亮.
+
+    private val commentsNavigation = SlotNavigation<CommentsConfig>()
+
+    val commentsSlot: Value<ChildSlot<CommentsConfig, CommentsChild>> = childSlot(
+        source = commentsNavigation,
+        serializer = CommentsConfig.serializer(),
+        key = "NotificationCommentsSlot",
+        initialConfiguration = { null },
+        handleBackButton = false,
+        childFactory = { config, context ->
+            CommentsChild(
+                component = commentsComponentFactory(
+                    componentContext = context,
+                    documentId = config.documentId,
+                    itemTitle = config.itemTitle,
+                    uid = config.uid,
+                    focusCommentId = config.focusCommentId,
+                    onClose = commentsNavigation::dismiss,
+                    onCommentCountChanged = {},
+                )
+            )
+        }
+    )
 
     init {
         componentScope.launch {
@@ -103,8 +145,13 @@ class NotificationComponent @AssistedInject internal constructor(
         }
     }
 
-    /** 点击回复卡片:已读的忽略,未读的乐观更新后调接口 */
+    /** 点击回复卡片:已读的忽略,未读的乐观更新后调接口,并打开来源评论区. */
     fun markRead(item: UserNotification) {
+        openComments(
+            documentId = item.sourceDocumentId.orEmpty(),
+            sourceTitle = item.sourceTitle,
+            focusCommentId = item.relatedCommentId,
+        )
         if (item.read) return
         _uiState.value = _uiState.value.copy(
             replies = _uiState.value.replies.map {
@@ -113,6 +160,49 @@ class NotificationComponent @AssistedInject internal constructor(
         )
         componentScope.launch {
             repository.markRead(item.id)
+        }
+    }
+
+    /** 点击「我发表的评论」卡片: 打开来源评论区并定位到这条评论. */
+    fun openMyComment(comment: MyComment) {
+        openComments(
+            documentId = comment.sourceDocumentId.orEmpty(),
+            sourceTitle = comment.sourceTitle,
+            focusCommentId = comment.id,
+        )
+    }
+
+    fun dismissComments() {
+        commentsNavigation.dismiss()
+    }
+
+    /**
+     * 打开来源内容的评论区.
+     *
+     * uid 决定了查询的是哪张表的评论 (related = "<uid>:<documentId>"), 上报接口只给
+     * documentId + 来源标题, 所以先按本地同步下来的条目类型判断, 查不到再用
+     * "有标题=博客" 兜底 (go-proxy 只给 blog 回填 sourceTitle).
+     */
+    private fun openComments(documentId: String, sourceTitle: String, focusCommentId: Int) {
+        if (documentId.isBlank()) return
+        componentScope.launch {
+            val localItem = withContext(ioDispatcher) {
+                runCatching {
+                    appDatabase.itemEntityDao().getItemByDocumentId(documentId)
+                }.getOrNull()
+            }
+            val uid = localItem?.listType?.let(::commentUidForListType)
+                ?: commentUidForSourceTitle(sourceTitle)
+            commentsNavigation.activate(
+                CommentsConfig(
+                    documentId = documentId,
+                    // 条目类来源没有 sourceTitle (只有 blog 才有), 用本地同步下来的标题补上.
+                    itemTitle = sourceTitle.ifBlank { localItem?.title.orEmpty() },
+                    uid = uid,
+                    focusCommentId = focusCommentId,
+                    activationId = System.nanoTime(),
+                )
+            )
         }
     }
 
@@ -200,6 +290,17 @@ class NotificationComponent @AssistedInject internal constructor(
                 _uiState.value = _uiState.value.copy(isLoadingMoreReplies = false)
             }
     }
+
+    @Serializable
+    data class CommentsConfig(
+        val documentId: String,
+        val itemTitle: String,
+        val uid: String,
+        val focusCommentId: Int = 0,
+        val activationId: Long = 0,
+    )
+
+    data class CommentsChild(val component: CommentsComponent)
 
     @AssistedFactory
     fun interface Factory {

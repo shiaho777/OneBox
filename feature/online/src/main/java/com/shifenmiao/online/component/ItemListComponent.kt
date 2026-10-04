@@ -88,6 +88,7 @@ class ItemListComponent @AssistedInject internal constructor(
                     documentId = config.documentId,
                     itemTitle = config.itemTitle,
                     uid = config.uid,
+                    focusCommentId = config.focusCommentId,
                     onClose = commentsNavigation::dismiss,
                     onCommentCountChanged = { delta ->
                         updateLocalCommentCount(config.localItemId, delta)
@@ -97,7 +98,13 @@ class ItemListComponent @AssistedInject internal constructor(
         }
     )
 
-    fun showComments(documentId: String, itemTitle: String, uid: String, localItemId: Int) {
+    fun showComments(
+        documentId: String,
+        itemTitle: String,
+        uid: String,
+        localItemId: Int,
+        focusCommentId: Int = 0,
+    ) {
         // 每次点击都生成新的 activationId, 保证 Decompose 会重新创建 CommentsChild,
         // CommentsHost 重新进入 composition, 从而避免关闭动画期间再次点击无法 reopen 的问题.
         commentsNavigation.activate(
@@ -106,6 +113,7 @@ class ItemListComponent @AssistedInject internal constructor(
                 itemTitle = itemTitle,
                 uid = uid,
                 localItemId = localItemId,
+                focusCommentId = focusCommentId,
                 activationId = System.nanoTime(),
             )
         )
@@ -131,6 +139,7 @@ class ItemListComponent @AssistedInject internal constructor(
         val itemTitle: String,
         val uid: String,
         val localItemId: Int,
+        val focusCommentId: Int = 0,
         val activationId: Long = 0,
     )
 

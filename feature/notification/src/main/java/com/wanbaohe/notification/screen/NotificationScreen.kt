@@ -45,12 +45,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.shifenmiao.base.pullrefresh.PullToRefreshLayout
 import com.shifenmiao.base.pullrefresh.rememberPullToRefreshStateOnTime
 import com.shifenmiao.base.ui.loading.EmptyBox
 import com.shifenmiao.base.utils.DateUtils
 import com.shifenmiao.common.components.Avatar
 import com.shifenmiao.common.components.PageLoader
+import com.shifenmiao.common.components.comments.CommentsHost
 import com.shifenmiao.common.ui.BaseScreen
 import com.shifenmiao.network.model.comment.MyComment
 import com.shifenmiao.network.model.notification.UserNotification
@@ -103,6 +105,16 @@ fun NotificationScreen(component: NotificationComponent) {
             uiState.isError -> ErrorContent(onRetry = component::refresh)
             else -> NotificationList(component = component)
         }
+    }
+
+    // 评论浮动层: 点消息卡片后复用列表页的评论弹层展示来源内容的评论区.
+    // 整个消息中心只挂一个宿主 (放这里是防止 Pager / 转场同时合成出多个弹层).
+    val commentsSlot by component.commentsSlot.subscribeAsState()
+    commentsSlot.child?.instance?.let { child ->
+        CommentsHost(
+            component = child.component,
+            onDismissed = component::dismissComments,
+        )
     }
 }
 
@@ -157,7 +169,11 @@ private fun NotificationList(component: NotificationComponent) {
                         count = uiState.myComments.size,
                         key = { index -> "mc_${uiState.myComments[index].id}" },
                     ) { index ->
-                        MyCommentCard(comment = uiState.myComments[index])
+                        val item = uiState.myComments[index]
+                        MyCommentCard(
+                            comment = item,
+                            onClick = { component.openMyComment(item) },
+                        )
                     }
                 }
                 if (uiState.replies.isNotEmpty()) {
@@ -204,7 +220,10 @@ private fun SectionHeader(text: String) {
 
 /** 「我发表的评论」卡片:自己的头像 + 评论引用 + 来源 + 相对时间 */
 @Composable
-private fun MyCommentCard(comment: MyComment) {
+private fun MyCommentCard(
+    comment: MyComment,
+    onClick: () -> Unit,
+) {
     val loginState = LocalLoginState.current
     MessageCard(
         avatar = {
@@ -225,7 +244,7 @@ private fun MyCommentCard(comment: MyComment) {
         quote = comment.content,
         sourceTitle = comment.sourceTitle,
         createdAt = comment.createdAt,
-        onClick = {},
+        onClick = onClick,
     )
 }
 

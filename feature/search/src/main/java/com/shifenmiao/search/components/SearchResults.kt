@@ -34,6 +34,7 @@ import com.shifenmiao.base.ui.loading.EmptyBox
 import com.shifenmiao.base.ui.utils.Animation
 import com.shifenmiao.common.components.SearchMessageCard
 import com.shifenmiao.common.components.comments.CommentsHost
+import com.shifenmiao.common.components.comments.commentUidForListType
 import com.shifenmiao.common.handle.HandleEvent
 import com.shifenmiao.common.utils.BaseUtils
 import com.shifenmiao.core.R
@@ -198,10 +199,8 @@ fun SearchResults(
     }
 }
 
-private fun uidFor(listType: ListItemType?): String = when (listType) {
-    ListItemType.BLOG -> "api::blog.blog"
-    else -> "api::item-list.item-list"
-}
+private fun uidFor(listType: ListItemType?): String =
+    commentUidForListType(listType?.id)
 
 private class DeleteState {
     val showDialog = mutableStateOf(false)

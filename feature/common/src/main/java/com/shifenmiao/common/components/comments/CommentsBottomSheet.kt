@@ -43,7 +43,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -70,10 +69,8 @@ import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassIconButton
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassOutlinedTextField
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassStyle
 import com.t8rin.imagetoolbox.core.ui.widget.glass.glassBackground
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
 import com.t8rin.imagetoolbox.core.resources.icons.Close
 import com.t8rin.imagetoolbox.core.resources.icons.Delete
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineUnlock
@@ -86,6 +83,9 @@ import com.t8rin.imagetoolbox.core.resources.icons.line.LineReply
  * 客户端先拦截, 提交前避免无效网络请求.
  */
 const val COMMENT_CONTENT_MAX_LEN = 1000
+
+/** 关闭评论浮动层时, 等待收起动画播完再销毁 child 的时长. */
+private const val SHEET_DISMISS_DELAY_MS = 380L
 
 /**
  * 评论浮动层的"宿主" Composable.
@@ -112,19 +112,23 @@ fun CommentsHost(
     onDismissed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
     // 只要 CommentsHost 还在 composition, 说明 Decompose slot 里存在 child,
     // 底部弹层应当处于打开状态; 关闭动画结束后再通过 onDismissed 移除 slot.
-    var sheetVisible by remember { mutableStateOf(true) }
-    var pendingCloseJob by remember { mutableStateOf<Job?>(null) }
+    //
+    // 状态必须按 [component] 重置: 同一个宿主会连续承载多次 activate (例如关闭动画
+    // 还没结束用户又点了另一个条目的评论入口), 若沿用上一份 component 的
+    // visible=false / 已挂起的关闭任务, 新弹层会立刻被"上一次的关闭"杀掉.
+    var sheetVisible by remember(component) { mutableStateOf(true) }
 
-    val dismiss = {
-        if (pendingCloseJob?.isActive != true) {
-            sheetVisible = false
-            pendingCloseJob = scope.launch {
-                kotlinx.coroutines.delay(380.milliseconds)
-                onDismissed()
-            }
+    val dismiss = { sheetVisible = false }
+
+    // 关闭动画 (~300ms) 结束后再通知父级销毁 child, 让收起动画播完.
+    // 用 LaunchedEffect 而不是手动 Job: component 变更或宿主离场时自动取消,
+    // 不会出现"旧 component 的延时任务关掉新弹层"的问题.
+    LaunchedEffect(component, sheetVisible) {
+        if (!sheetVisible) {
+            delay(SHEET_DISMISS_DELAY_MS)
+            onDismissed()
         }
     }
 
@@ -192,6 +196,7 @@ private fun CommentsSheetContent(
             isLoggedIn = isLoggedIn,
             isAdmin = isAdmin,
             isMutating = isMutating,
+            focusCommentId = component.focusCommentId,
             onLoadMore = component::loadMore,
             onReply = component::setReplyTarget,
             onCancelReply = component::clearReplyTarget,
@@ -266,6 +271,7 @@ private fun CommentsList(
     isLoggedIn: Boolean,
     isAdmin: Boolean,
     isMutating: Boolean,
+    focusCommentId: Int,
     onLoadMore: () -> Unit,
     onReply: (Comment?) -> Unit,
     onCancelReply: () -> Unit,
@@ -274,6 +280,8 @@ private fun CommentsList(
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
+    // 只在定位成功的那一次滚动, 之后用户手动滚动 / 追加分页都不再被打断.
+    var focusScrolled by remember(focusCommentId) { mutableStateOf(false) }
 
     LaunchedEffect(listState, comments.size) {
         snapshotFlow {
@@ -287,6 +295,15 @@ private fun CommentsList(
                     onLoadMore()
                 }
             }
+    }
+
+    LaunchedEffect(comments, focusCommentId) {
+        if (focusScrolled || focusCommentId <= 0 || comments.isEmpty()) return@LaunchedEffect
+        val index = comments.indexOfFirst { it.matchesFocus(focusCommentId) }
+        if (index >= 0) {
+            focusScrolled = true
+            listState.animateScrollToItem(index)
+        }
     }
     if (comments.isEmpty() && isLoading) {
         Box(
@@ -330,6 +347,7 @@ private fun CommentsList(
                 CommentRow(
                     comment = comment,
                     isAdmin = isAdmin,
+                    highlighted = comment.matchesFocus(focusCommentId),
                     onReply = { onReply(comment) },
                     onCancelReply = onCancelReply,
                     onDelete = { onDelete(comment) },
@@ -478,21 +496,40 @@ private fun EmptyFeedbackState(
 private fun CommentRow(
     comment: Comment,
     isAdmin: Boolean,
+    highlighted: Boolean = false,
     onReply: () -> Unit,
     onCancelReply: () -> Unit,
     onDelete: () -> Unit,
     onToggleBlock: () -> Unit,
 ) {
     val blocked = comment.blocked
+    val shape = RoundedCornerShape(12.dp)
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
+            .clip(shape)
             .glassBackground(
                 style = GlassStyle.Thin,
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
-                shape = RoundedCornerShape(12.dp),
+                color = if (highlighted) {
+                    MaterialTheme.colorScheme.primaryContainer
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerLow
+                },
+                shape = shape,
+                borderWidth = 0.dp,
+            )
+            // 玻璃底的色差在浅色主题下几乎看不出来, 定位到的评论再补一圈实色描边.
+            .then(
+                if (highlighted) {
+                    Modifier.border(
+                        width = 1.5.dp,
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = shape,
+                    )
+                } else {
+                    Modifier
+                }
             )
             .padding(horizontal = 12.dp, vertical = 10.dp),
     ) {
