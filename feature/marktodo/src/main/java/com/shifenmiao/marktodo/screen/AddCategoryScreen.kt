@@ -42,7 +42,7 @@ import com.shifenmiao.marktodo.R
 import com.shifenmiao.marktodo.data.iconFromKey
 import com.shifenmiao.marktodo.screenLogic.AddCategoryComponent
 import com.shifenmiao.marktodo.screenLogic.AddCategoryUiEvent
-import com.shifenmiao.marktodo.theme.CategoryColorPalette
+import com.shifenmiao.marktodo.theme.categoryPaletteWithThemeColors
 import com.t8rin.imagetoolbox.core.resources.icons.Check
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineNote
 import com.t8rin.imagetoolbox.core.resources.icons.line.LinePaletteTools
@@ -166,7 +166,7 @@ fun AddCategoryScreen(
                     title = stringResource(R.string.dialog_add_category_color),
                     icon = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LinePaletteTools,
                     allowAlpha = false,
-                    defaultColors = CategoryColorPalette,
+                    defaultColors = categoryPaletteWithThemeColors(),
                     contentHorizontalPadding = 0.dp
                 )
             }

@@ -29,6 +29,14 @@ val CategoryColorPalette: List<Color> = listOf(
 /** 色板的 ARGB int 形式（持久化/默认值用） */
 val CategoryColorPaletteArgb: List<Int> = CategoryColorPalette.map { it.toArgb() }
 
+/** 快捷色板：当前主题三主色（primary/secondary/tertiary）前置 + 固定色板，按 ARGB 去重 */
+@Composable
+fun categoryPaletteWithThemeColors(): List<Color> {
+    val scheme = MaterialTheme.colorScheme
+    return (listOf(scheme.primary, scheme.secondary, scheme.tertiary) + CategoryColorPalette)
+        .distinctBy { it.toArgb() }
+}
+
 /** 按分类 ID 稳定分配色板色 */
 fun categoryPaletteColorForId(categoryId: String): Color =
     CategoryColorPalette[abs(categoryId.hashCode()) % CategoryColorPalette.size]

@@ -48,6 +48,7 @@ import com.shifenmiao.marktodo.model.TodoTag
 import com.shifenmiao.marktodo.model.TodoTask
 import com.shifenmiao.marktodo.screenLogic.AddTodoComponent
 import com.shifenmiao.marktodo.theme.CategoryColorPalette
+import com.shifenmiao.marktodo.theme.categoryPaletteWithThemeColors
 import com.shifenmiao.marktodo.theme.categoryAccentColor
 import com.shifenmiao.marktodo.theme.priorityColor
 import com.shifenmiao.theme.AppTheme
@@ -561,7 +562,7 @@ private fun AddTagDialog(
                 ColorSelectionRow(
                     value = selectedColor,
                     onValueChange = { selectedColor = it },
-                    defaultColors = CategoryColorPalette,
+                    defaultColors = categoryPaletteWithThemeColors(),
                     allowAlpha = false,
                     modifier = Modifier.fillMaxWidth()
                 )
