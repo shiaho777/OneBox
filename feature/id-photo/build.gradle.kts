@@ -20,6 +20,7 @@ dependencies {
     implementation(projects.core.resources)
     implementation(projects.core.settings)
     implementation(projects.core.ui)
+    implementation(projects.core.utils)
     implementation(projects.feature.common)
 
     // 裁剪相关依赖

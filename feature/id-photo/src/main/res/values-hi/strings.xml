@@ -41,54 +41,6 @@
     <string name="id_photo_field_description_optional">विवरण (वैकल्पिक)</string>
     <string name="id_photo_resolution_sufficient">छवि रिज़ॉल्यूशन पर्याप्त है (%1$d×%2$d)</string>
     <string name="id_photo_resolution_insufficient">⚠️ छवि रिज़ॉल्यूशन कम है और प्रिंट गुणवत्ता को प्रभावित कर सकता है (%1$d×%2$d &lt; %3$d×%4$d)</string>
-    <string name="id_photo_preset_size_one_inch">1-इंच</string>
-    <string name="id_photo_preset_size_small_one_inch">छोटा 1-इंच</string>
-    <string name="id_photo_preset_size_large_one_inch">बड़ा 1-इंच</string>
-    <string name="id_photo_preset_size_two_inch">2-इंच</string>
-    <string name="id_photo_preset_size_small_two_inch">छोटा 2-इंच</string>
-    <string name="id_photo_preset_size_large_two_inch">बड़ा 2-इंच</string>
-    <string name="id_photo_preset_size_us_visa">अमेरिकी वीज़ा</string>
-    <string name="id_photo_preset_size_korea_visa">कोरिया वीज़ा</string>
-    <string name="id_photo_preset_size_drivers_license">ड्राइवर का लाइसेंस</string>
-    <string name="id_photo_preset_size_social_security">सामाजिक सुरक्षा कार्ड</string>
-    <string name="id_photo_preset_size_civil_service">सिविल सेवा परीक्षा</string>
-    <string name="id_photo_preset_size_putonghua">पुतोंगहुआ दक्षता परीक्षण</string>
-    <string name="id_photo_preset_size_gaokao">गाओकाओ पंजीकरण</string>
-    <string name="id_photo_preset_size_ncre">राष्ट्रीय कंप्यूटर रैंक परीक्षा</string>
-    <string name="id_photo_preset_size_teacher_cert">शिक्षक प्रमाणन</string>
-    <string name="id_photo_preset_size_nurse">नर्स लाइसेंसिंग परीक्षा</string>
-    <string name="id_photo_preset_size_accounting">लेखा प्रमाणन</string>
-    <string name="id_photo_preset_size_tax_advisor">कर सलाहकार प्रमाणन</string>
-    <string name="id_photo_preset_size_judicial">राष्ट्रीय न्यायिक परीक्षा</string>
-    <string name="id_photo_preset_size_health_professional">स्वास्थ्य पेशेवर योग्यता</string>
-    <string name="id_photo_preset_size_insurance">बीमा एजेंट लाइसेंस</string>
-    <string name="id_photo_preset_size_tour_guide">टूर गाइड लाइसेंस</string>
-    <string name="id_photo_preset_size_chsi">CHSI/Xuexin</string>
-    <string name="id_photo_preset_size_id_card">आईडी कार्ड</string>
-    <string name="id_photo_preset_size_desc_one_inch">आमतौर पर आईडी कार्ड और ड्राइवर लाइसेंस के लिए उपयोग किया जाता है</string>
-    <string name="id_photo_preset_size_desc_small_one_inch">आमतौर पर रिज्यूमे और परीक्षा पंजीकरण के लिए उपयोग किया जाता है</string>
-    <string name="id_photo_preset_size_desc_large_one_inch">आमतौर पर पासपोर्ट और HK/Macau यात्रा परमिट के लिए उपयोग किया जाता है</string>
-    <string name="id_photo_preset_size_desc_two_inch">आमतौर पर पासपोर्ट और वीज़ा के लिए उपयोग किया जाता है</string>
-    <string name="id_photo_preset_size_desc_small_two_inch">आमतौर पर चीनी पासपोर्ट के लिए उपयोग किया जाता है</string>
-    <string name="id_photo_preset_size_desc_large_two_inch">आमतौर पर कुछ वीज़ा के लिए उपयोग किया जाता है</string>
-    <string name="id_photo_preset_size_desc_us_visa">अमेरिकी वीज़ा आवेदन के लिए</string>
-    <string name="id_photo_preset_size_desc_korea_visa">कोरिया वीज़ा आवेदन के लिए</string>
-    <string name="id_photo_preset_size_desc_drivers_license">ड्राइवर लाइसेंस के लिए</string>
-    <string name="id_photo_preset_size_desc_social_security">सामाजिक सुरक्षा कार्ड के लिए</string>
-    <string name="id_photo_preset_size_desc_civil_service">सिविल सेवा परीक्षा के लिए</string>
-    <string name="id_photo_preset_size_desc_putonghua">पुतोंगहुआ प्रवीणता परीक्षण के लिए</string>
-    <string name="id_photo_preset_size_desc_gaokao">गाओकाओ पंजीकरण के लिए</string>
-    <string name="id_photo_preset_size_desc_ncre">राष्ट्रीय कंप्यूटर रैंक परीक्षा के लिए</string>
-    <string name="id_photo_preset_size_desc_teacher_cert">शिक्षक प्रमाणन पंजीकरण के लिए</string>
-    <string name="id_photo_preset_size_desc_nurse">नर्स लाइसेंसिंग परीक्षा पंजीकरण के लिए</string>
-    <string name="id_photo_preset_size_desc_accounting">जूनियर लेखा प्रमाणन परीक्षा के लिए</string>
-    <string name="id_photo_preset_size_desc_tax_advisor">कर सलाहकार प्रमाणन परीक्षा के लिए</string>
-    <string name="id_photo_preset_size_desc_judicial">राष्ट्रीय न्यायिक परीक्षा के लिए</string>
-    <string name="id_photo_preset_size_desc_health_professional">स्वास्थ्य पेशेवर योग्यता परीक्षा के लिए</string>
-    <string name="id_photo_preset_size_desc_insurance">बीमा एजेंट लाइसेंस के लिए</string>
-    <string name="id_photo_preset_size_desc_tour_guide">टूर गाइड लाइसेंस के लिए</string>
-    <string name="id_photo_preset_size_desc_chsi">CHSI/Xuexin फोटो संग्रह के लिए</string>
-    <string name="id_photo_preset_size_desc_id_card">दूसरी पीढ़ी के आईडी कार्ड के लिए</string>
     <string name="id_photo_export_target_size">निर्यात आकार</string>
     <string name="id_photo_export_source_size">स्रोत आकार</string>
     <string name="id_photo_export_estimated_size">अनुमानित आकार</string>
@@ -241,4 +193,11 @@
     <string name="id_photo_bp_desc_leg_thin">अधिक = पतली टाँगें</string>
     <string name="id_photo_bp_desc_leg_long">अधिक = लंबी टाँगें</string>
     <string name="id_photo_bp_desc_body_heighten">अधिक = लंबा कद</string>
+    <!-- 预置尺寸名称（按语言环境预置的当地规格） -->
+    <string name="id_photo_preset_in_passport">भारतीय पासपोर्ट</string>
+    <string name="id_photo_preset_in_passport_desc">भारतीय पासपोर्ट फोटो, 3.5 × 4.5 cm</string>
+    <string name="id_photo_preset_in_visa">वीज़ा फोटो 2×2</string>
+    <string name="id_photo_preset_in_visa_desc">भारतीय और अमेरिकी वीज़ा फोटो, 2 × 2 in</string>
+    <string name="id_photo_preset_in_pan_card">पैन कार्ड / स्टैम्प साइज़</string>
+    <string name="id_photo_preset_in_pan_card_desc">पैन कार्ड व स्टैम्प साइज़ आवेदन हेतु, 2.5 × 3.5 cm</string>
 </resources>

@@ -36,7 +36,6 @@ import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassSurface
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassTonalIconButton
 import com.wanbaohe.idphoto.R
 import com.wanbaohe.idphoto.domain.IdPhotoSize
-import com.wanbaohe.idphoto.util.localizedSizeName
 import com.t8rin.imagetoolbox.core.resources.icons.Add
 import com.t8rin.imagetoolbox.core.resources.icons.Edit
 
@@ -157,9 +156,9 @@ private fun SizePresetItem(
 
             Spacer(modifier = Modifier.height(2.dp))
 
-            // 尺寸名称
+            // 尺寸名称（播种时已按当前语言本地化）
             Text(
-                text = localizedSizeName(size.name),
+                text = size.name,
                 style = MaterialTheme.typography.labelSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

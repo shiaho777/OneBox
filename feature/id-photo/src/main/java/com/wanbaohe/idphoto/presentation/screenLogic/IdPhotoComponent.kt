@@ -32,7 +32,6 @@ import com.t8rin.imagetoolbox.core.domain.saving.model.SaveResult
 import com.t8rin.imagetoolbox.core.ui.utils.ImageBaseComponent
 import com.t8rin.imagetoolbox.core.ui.utils.helper.AppToastHost
 import com.t8rin.imagetoolbox.core.ui.utils.state.update
-import com.t8rin.logger.makeLog
 import com.wanbaohe.idphoto.R
 import com.wanbaohe.idphoto.data.IdPhotoSizeRepository
 import com.wanbaohe.idphoto.domain.BeautyParamSpec
@@ -87,8 +86,8 @@ class IdPhotoComponent @AssistedInject internal constructor(
 
     // ========== 证件照特有状态 ==========
 
-    /** 当前选择的尺寸 */
-    private val _currentSize: MutableState<IdPhotoSize> = mutableStateOf(IdPhotoSize.DEFAULT)
+    /** 当前选择的尺寸（初始为当前语言的默认预置尺寸，库加载完再对齐） */
+    private val _currentSize: MutableState<IdPhotoSize> = mutableStateOf(sizeRepository.defaultSize())
     val currentSize: IdPhotoSize by _currentSize
 
     /** 当前选择的背景色 */
@@ -114,7 +113,7 @@ class IdPhotoComponent @AssistedInject internal constructor(
         CropDefaults.properties(
             cropType = CropType.Static,
             cropOutlineProperty = defaultCropOutline,
-            aspectRatio = AspectRatio(IdPhotoSize.DEFAULT.aspectRatio),
+            aspectRatio = AspectRatio(sizeRepository.defaultSize().aspectRatio),
             fixedAspectRatio = true,
             handleSize = 0f,           // 禁用边角拖动
             middleHandleSize = 0f,     // 禁用中间点拖动
@@ -703,7 +702,7 @@ class IdPhotoComponent @AssistedInject internal constructor(
 
     override fun resetState() {
         super.resetState()
-        _currentSize.update { IdPhotoSize.DEFAULT }
+        _currentSize.update { sizeRepository.defaultSize() }
         _currentBackground.update { IdPhotoBackground.DEFAULT }
         _croppedBitmap.update { null }
         _exportConfig.update { IdPhotoExportConfig() }

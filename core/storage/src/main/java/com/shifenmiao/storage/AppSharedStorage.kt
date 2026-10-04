@@ -44,6 +44,7 @@ object AppSharedStorage {
     private const val TOOL_CATALOG_SNAPSHOT_VERSION = "tool_catalog_snapshot_version"
     private const val SYSTEM_PRESET_VERSION = "system_preset_version"
     private const val SKILL_PRESET_VERSION = "skill_preset_version"
+    private const val ID_PHOTO_PRESET_CATALOG = "id_photo_preset_catalog"
     private const val HABIT_PRESETS_SEEDED = "habit_presets_seeded"
     private const val LANGUAGE_SWITCH_NOTICE_DISMISSED = "language_switch_notice_dismissed"
     private const val LANGUAGE_USER_CHOSEN = "language_user_chosen"
@@ -600,6 +601,19 @@ object AppSharedStorage {
 
     fun saveSkillPresetVersion(version: String) {
         localeMmkv.encode(SKILL_PRESET_VERSION, version)
+    }
+
+    // ─── 证件照预置尺寸目录版本（按语言隔离：预置尺寸写入各语言自己的 Room 库） ──────────
+    //
+    // 证件照预置尺寸随语言环境不同（zh-CN 一寸/二寸、ja 履歴書、en 美加英欧…），
+    // 而 FeatureDatabase 按语言分库，因此各语言库要各自判断"库里播的是哪一版目录"：
+    // 空值或不等于当前目录 id（如老版本播的中国规格）时整表重播。
+
+    fun loadIdPhotoPresetCatalogId(): String =
+        localeMmkv.decodeString(ID_PHOTO_PRESET_CATALOG, "") ?: ""
+
+    fun saveIdPhotoPresetCatalogId(catalogId: String) {
+        localeMmkv.encode(ID_PHOTO_PRESET_CATALOG, catalogId)
     }
 
     // ─── 习惯打卡预置播种 flag ───────────────────────────────────────────────

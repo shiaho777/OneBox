@@ -1,7 +1,6 @@
 package com.shifenmiao.database.idphoto.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -14,18 +13,6 @@ import kotlinx.coroutines.flow.Flow
  */
 @Dao
 interface IdPhotoSizeDao {
-
-    /**
-     * 获取所有尺寸（按更新时间降序）
-     */
-    @Query("SELECT * FROM id_photo_size ORDER BY updatedAt DESC")
-    fun getAllSizes(): Flow<List<IdPhotoSizeEntity>>
-
-    /**
-     * 获取所有自定义尺寸（非预设）
-     */
-    @Query("SELECT * FROM id_photo_size WHERE isPreset = 0 ORDER BY updatedAt DESC")
-    fun getCustomSizes(): Flow<List<IdPhotoSizeEntity>>
 
     /**
      * 获取最近使用的尺寸
@@ -52,22 +39,10 @@ interface IdPhotoSizeDao {
     suspend fun updateSize(size: IdPhotoSizeEntity)
 
     /**
-     * 删除尺寸
-     */
-    @Delete
-    suspend fun deleteSize(size: IdPhotoSizeEntity)
-
-    /**
      * 根据 ID 删除尺寸
      */
     @Query("DELETE FROM id_photo_size WHERE id = :id")
     suspend fun deleteSizeById(id: Long)
-
-    /**
-     * 删除所有尺寸
-     */
-    @Query("DELETE FROM id_photo_size")
-    suspend fun deleteAllSizes()
 
     /**
      * 删除所有预置尺寸
@@ -82,9 +57,8 @@ interface IdPhotoSizeDao {
     suspend fun updateSizeTime(id: Long, time: Long = System.currentTimeMillis())
 
     /**
-     * 检查是否有数据
+     * 预置尺寸条数（判断库里播的是哪一版预置目录，见 IdPhotoSizeRepository）
      */
-    @Query("SELECT COUNT(*) FROM id_photo_size")
-    suspend fun getCount(): Int
+    @Query("SELECT COUNT(*) FROM id_photo_size WHERE isPreset = 1")
+    suspend fun getPresetCount(): Int
 }
-

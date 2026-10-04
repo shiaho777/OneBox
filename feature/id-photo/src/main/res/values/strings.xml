@@ -117,6 +117,96 @@
     <string name="id_photo_preset_size_desc_chsi">For CHSI/Xuexin photo collection</string>
     <string name="id_photo_preset_size_desc_id_card">For second-generation ID cards</string>
 
+    <!-- 预置尺寸名称（按语言环境预置：默认/国际通用规格） -->
+    <string name="id_photo_preset_intl_passport">Passport 35×45</string>
+    <string name="id_photo_preset_intl_passport_desc">Standard photo for UK, Schengen, Australian and most other passports</string>
+    <string name="id_photo_preset_intl_canada">Canada Passport</string>
+    <string name="id_photo_preset_intl_canada_desc">For Canadian passport and citizenship applications</string>
+    <string name="id_photo_preset_intl_china_visa">China Visa</string>
+    <string name="id_photo_preset_intl_china_visa_desc">For Chinese visa applications</string>
+    <string name="id_photo_preset_intl_japan_visa">Japan Visa</string>
+    <string name="id_photo_preset_intl_japan_visa_desc">For Japanese visa applications</string>
+    <string name="id_photo_preset_intl_photo_3x4">Photo 3×4 cm</string>
+    <string name="id_photo_preset_intl_photo_3x4_desc">Common document photo size in Asia and Latin America</string>
+
+    <!-- 预置尺寸名称（台湾） -->
+    <string name="id_photo_preset_tw_id_card">Taiwan ID Card</string>
+    <string name="id_photo_preset_tw_id_card_desc">Taiwan national ID photo, portrait 4.5 × 3.5 cm</string>
+    <string name="id_photo_preset_tw_passport">Taiwan Passport</string>
+    <string name="id_photo_preset_tw_passport_desc">Taiwan passport photo, 3.5 × 4.5 cm</string>
+    <string name="id_photo_preset_tw_photo_2inch">2-inch Headshot</string>
+    <string name="id_photo_preset_tw_photo_2inch_desc">Taiwan 2-inch headshot, 4.2 × 4.7 cm</string>
+    <string name="id_photo_preset_tw_drivers_license">Taiwan Driver\'s License</string>
+    <string name="id_photo_preset_tw_drivers_license_desc">Taiwan driving licence photo, 2.5 × 3.5 cm</string>
+    <string name="id_photo_preset_tw_hk_travel_doc">Hong Kong Passport</string>
+    <string name="id_photo_preset_tw_hk_travel_doc_desc">HKSAR passport and identity card photo, 4.0 × 5.0 cm</string>
+
+    <!-- 预置尺寸名称（日本） -->
+    <string name="id_photo_preset_jp_resume_30x40">Resume Photo 3×4</string>
+    <string name="id_photo_preset_jp_resume_30x40_desc">Japanese résumé photo, 3 × 4 cm</string>
+    <string name="id_photo_preset_jp_passport">Japan Passport</string>
+    <string name="id_photo_preset_jp_passport_desc">Japanese passport photo, 3.5 × 4.5 cm</string>
+    <string name="id_photo_preset_jp_mynumber">My Number Card</string>
+    <string name="id_photo_preset_jp_mynumber_desc">Photo for Japan\'s My Number card, 3.5 × 4.5 cm</string>
+    <string name="id_photo_preset_jp_residence_card">Residence Card</string>
+    <string name="id_photo_preset_jp_residence_card_desc">Japanese residence card photo, 3 × 4 cm</string>
+    <string name="id_photo_preset_jp_drivers_license">Japan Driver\'s License</string>
+    <string name="id_photo_preset_jp_drivers_license_desc">Japanese driving licence photo, 2.4 × 3 cm</string>
+
+    <!-- 预置尺寸名称（韩国） -->
+    <string name="id_photo_preset_kr_id_30x40">ID Photo 3×4</string>
+    <string name="id_photo_preset_kr_id_30x40_desc">Korean 반명함 ID photo for résumés, 3 × 4 cm</string>
+    <string name="id_photo_preset_kr_id_35x45">ID Photo 3.5×4.5</string>
+    <string name="id_photo_preset_kr_id_35x45_desc">Korean passport, ID card and driving licence photo, 3.5 × 4.5 cm</string>
+
+    <!-- 预置尺寸名称（印尼） -->
+    <string name="id_photo_preset_id_2x3">Photo 2×3</string>
+    <string name="id_photo_preset_id_2x3_desc">Indonesian 2 × 3 cm photo</string>
+    <string name="id_photo_preset_id_3x4">Photo 3×4</string>
+    <string name="id_photo_preset_id_3x4_desc">Indonesian 3 × 4 cm photo, most common size</string>
+    <string name="id_photo_preset_id_4x6">Photo 4×6</string>
+    <string name="id_photo_preset_id_4x6_desc">Indonesian 4 × 6 cm photo, red or blue background</string>
+
+    <!-- 预置尺寸名称（印度） -->
+    <string name="id_photo_preset_in_passport">India Passport</string>
+    <string name="id_photo_preset_in_passport_desc">Indian passport photo, 3.5 × 4.5 cm</string>
+    <string name="id_photo_preset_in_visa">India Visa 2×2</string>
+    <string name="id_photo_preset_in_visa_desc">Indian and US visa photo, 2 × 2 in</string>
+    <string name="id_photo_preset_in_pan_card">PAN / Stamp Size</string>
+    <string name="id_photo_preset_in_pan_card_desc">For PAN card and stamp-size applications, 2.5 × 3.5 cm</string>
+
+    <!-- 预置尺寸名称（菲律宾） -->
+    <string name="id_photo_preset_ph_2x2">ID Photo 2×2</string>
+    <string name="id_photo_preset_ph_2x2_desc">Philippine 2 × 2 in ID photo, used for NBI and most forms</string>
+    <string name="id_photo_preset_ph_1x1">ID Photo 1×1</string>
+    <string name="id_photo_preset_ph_1x1_desc">Philippine 1 × 1 in ID photo</string>
+
+    <!-- 预置尺寸名称（巴西） -->
+    <string name="id_photo_preset_br_3x4">Photo 3×4</string>
+    <string name="id_photo_preset_br_3x4_desc">Brazilian 3 × 4 cm photo, most common size</string>
+    <string name="id_photo_preset_br_passport">Brazil Passport</string>
+    <string name="id_photo_preset_br_passport_desc">Brazilian passport photo, 5 × 7 cm</string>
+
+    <!-- 预置尺寸名称（欧盟/申根） -->
+    <string name="id_photo_preset_eu_biometric">Biometric Passport</string>
+    <string name="id_photo_preset_eu_biometric_desc">Schengen and EU biometric passport and ID photo, 3.5 × 4.5 cm</string>
+
+    <!-- 预置尺寸名称（西班牙：身份证/护照 2.6×3.2cm） -->
+    <string name="id_photo_preset_es_dni">DNI / Passport</string>
+    <string name="id_photo_preset_es_dni_desc">Spanish DNI, passport and driving licence photo, 2.6 × 3.2 cm</string>
+
+    <!-- 预置尺寸名称（俄罗斯） -->
+    <string name="id_photo_preset_ru_passport">Russia Passport</string>
+    <string name="id_photo_preset_ru_passport_desc">Russian passport and visa photo, 3.5 × 4.5 cm</string>
+
+    <!-- 预置尺寸名称（土耳其） -->
+    <string name="id_photo_preset_tr_biometric">Biometric Photo</string>
+    <string name="id_photo_preset_tr_biometric_desc">Turkish biometric photo, 5 × 6 cm</string>
+
+    <!-- 预置尺寸名称（阿拉伯语地区） -->
+    <string name="id_photo_preset_ar_4x6">Photo 4×6</string>
+    <string name="id_photo_preset_ar_4x6_desc">Common ID and visa photo in the Gulf and Egypt, 4 × 6 cm</string>
+
     <!-- AI 美化 -->
     <string name="id_photo_tab_beauty">One-Tap Beautify</string>
     <string name="id_photo_beauty_light">Light</string>

@@ -41,54 +41,6 @@
     <string name="id_photo_field_description_optional">Beschreibung (optional)</string>
     <string name="id_photo_resolution_sufficient">Bildauflösung ist ausreichend (%1$d×%2$d)</string>
     <string name="id_photo_resolution_insufficient">⚠️ Bildauflösung ist niedrig und kann die Druckqualität beeinträchtigen (%1$d×%2$d &lt; %3$d×%4$d)</string>
-    <string name="id_photo_preset_size_one_inch">1-Zoll</string>
-    <string name="id_photo_preset_size_small_one_inch">Klein 1-Zoll</string>
-    <string name="id_photo_preset_size_large_one_inch">Groß 1-Zoll</string>
-    <string name="id_photo_preset_size_two_inch">2-Zoll</string>
-    <string name="id_photo_preset_size_small_two_inch">Klein 2-Zoll</string>
-    <string name="id_photo_preset_size_large_two_inch">Groß 2-Zoll</string>
-    <string name="id_photo_preset_size_us_visa">US-Visum</string>
-    <string name="id_photo_preset_size_korea_visa">Korea-Visum</string>
-    <string name="id_photo_preset_size_drivers_license">Führerschein</string>
-    <string name="id_photo_preset_size_social_security">Sozialversicherungsausweis</string>
-    <string name="id_photo_preset_size_civil_service">Beamtenprüfung</string>
-    <string name="id_photo_preset_size_putonghua">Putonghua-Sprachtest</string>
-    <string name="id_photo_preset_size_gaokao">Gaokao-Anmeldung</string>
-    <string name="id_photo_preset_size_ncre">Nationaler Computerprüfung</string>
-    <string name="id_photo_preset_size_teacher_cert">Lehrerzertifizierung</string>
-    <string name="id_photo_preset_size_nurse">Krankenpflege-Lizenzprüfung</string>
-    <string name="id_photo_preset_size_accounting">Buchhaltungszertifizierung</string>
-    <string name="id_photo_preset_size_tax_advisor">Steuerberater-Zertifizierung</string>
-    <string name="id_photo_preset_size_judicial">Nationale Justizprüfung</string>
-    <string name="id_photo_preset_size_health_professional">Gesundheitliche Berufsqualifikation</string>
-    <string name="id_photo_preset_size_insurance">Versicherungsvertreter-Lizenz</string>
-    <string name="id_photo_preset_size_tour_guide">Reiseleiter-Lizenz</string>
-    <string name="id_photo_preset_size_chsi">CHSI/Xuexin</string>
-    <string name="id_photo_preset_size_id_card">Personalausweis</string>
-    <string name="id_photo_preset_size_desc_one_inch">Wird häufig für Personalausweise und Führerscheine verwendet</string>
-    <string name="id_photo_preset_size_desc_small_one_inch">Wird häufig für Lebensläufe und Prüfungsanmeldungen verwendet</string>
-    <string name="id_photo_preset_size_desc_large_one_inch">Wird häufig für Reisepässe und HK/Macau-Reisegenehmigungen verwendet</string>
-    <string name="id_photo_preset_size_desc_two_inch">Wird häufig für Reisepässe und Visa verwendet</string>
-    <string name="id_photo_preset_size_desc_small_two_inch">Wird häufig für chinesische Reisepässe verwendet</string>
-    <string name="id_photo_preset_size_desc_large_two_inch">Wird häufig für einige Visa verwendet</string>
-    <string name="id_photo_preset_size_desc_us_visa">Für US-Visumanträge</string>
-    <string name="id_photo_preset_size_desc_korea_visa">Für Korea-Visumanträge</string>
-    <string name="id_photo_preset_size_desc_drivers_license">Für Führerscheine</string>
-    <string name="id_photo_preset_size_desc_social_security">Für Sozialversicherungskarten</string>
-    <string name="id_photo_preset_size_desc_civil_service">Für Beamtenprüfungen</string>
-    <string name="id_photo_preset_size_desc_putonghua">Für den Putonghua-Sprachtest</string>
-    <string name="id_photo_preset_size_desc_gaokao">Für die Gaokao-Anmeldung</string>
-    <string name="id_photo_preset_size_desc_ncre">Für die nationale Computer-Rangprüfung</string>
-    <string name="id_photo_preset_size_desc_teacher_cert">Für die Lehrerzertifizierungsanmeldung</string>
-    <string name="id_photo_preset_size_desc_nurse">Für die Anmeldung zur Krankenpflege-Lizenzprüfung</string>
-    <string name="id_photo_preset_size_desc_accounting">Für die Junior-Buchhaltungszertifizierungsprüfung</string>
-    <string name="id_photo_preset_size_desc_tax_advisor">Für die Steuerberater-Zertifizierungsprüfung</string>
-    <string name="id_photo_preset_size_desc_judicial">Für die nationale Justizprüfung</string>
-    <string name="id_photo_preset_size_desc_health_professional">Für Prüfungen zur gesundheitlichen Berufsqualifikation</string>
-    <string name="id_photo_preset_size_desc_insurance">Für Versicherungsvertreter-Lizenzen</string>
-    <string name="id_photo_preset_size_desc_tour_guide">Für Reiseleiter-Lizenzen</string>
-    <string name="id_photo_preset_size_desc_chsi">Für die CHSI/Xuexin-Fotosammlung</string>
-    <string name="id_photo_preset_size_desc_id_card">Für Personalausweise der zweiten Generation</string>
     <string name="id_photo_export_target_size">Exportgröße</string>
     <string name="id_photo_export_source_size">Quellgröße</string>
     <string name="id_photo_export_estimated_size">Geschätzte Größe</string>
@@ -241,4 +193,14 @@
     <string name="id_photo_bp_desc_leg_thin">Höher = schmalere Beine</string>
     <string name="id_photo_bp_desc_leg_long">Höher = längere Beine</string>
     <string name="id_photo_bp_desc_body_heighten">Höher = größere Körpergröße</string>
+    <!-- 预置尺寸名称（按语言环境预置的当地规格） -->
+    <string name="id_photo_preset_eu_biometric">Biometriepass</string>
+    <string name="id_photo_preset_eu_biometric_desc">Biometrischer Pass und Ausweis (Schengen/EU), 3.5 × 4.5 cm</string>
+    <string name="id_photo_preset_intl_photo_3x4">Foto 3×4 cm</string>
+    <string name="id_photo_preset_intl_photo_3x4_desc">Übliches Dokumentfoto in Asien und Lateinamerika</string>
+    <string name="id_photo_preset_intl_china_visa">China-Visum</string>
+    <string name="id_photo_preset_intl_china_visa_desc">Für Visa-Anträge für China</string>
+    <!-- 预置尺寸名称（旧中国规格里被多语言目录复用的条目） -->
+    <string name="id_photo_preset_size_us_visa">US-Visum</string>
+    <string name="id_photo_preset_size_desc_us_visa">Für US-Visumanträge</string>
 </resources>

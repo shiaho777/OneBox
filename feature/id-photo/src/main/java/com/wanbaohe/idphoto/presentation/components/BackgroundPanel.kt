@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import com.t8rin.imagetoolbox.core.resources.icons.Check
 import com.wanbaohe.idphoto.R
 import com.wanbaohe.idphoto.domain.IdPhotoBackground
-import com.wanbaohe.idphoto.util.localizedBackgroundName
 
 /**
  * 背景选择面板(「背景」tab,位于「一键美化」之前):
@@ -48,7 +47,7 @@ fun BackgroundPanel(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        items(IdPhotoBackground.PRESETS, key = { it.name }) { background ->
+        items(IdPhotoBackground.PRESETS, key = { it.nameRes }) { background ->
             BackgroundColorItem(
                 background = background,
                 isSelected = background == currentBackground,
@@ -140,7 +139,7 @@ private fun BackgroundColorItem(
         }
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = localizedBackgroundName(background.name),
+            text = stringResource(background.nameRes),
             style = MaterialTheme.typography.labelSmall,
             color = if (isSelected) {
                 MaterialTheme.colorScheme.primary

@@ -47,8 +47,6 @@ import com.shifenmiao.theme.AppTheme
 import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedModalBottomSheet
 import com.wanbaohe.idphoto.R
 import com.wanbaohe.idphoto.domain.IdPhotoSize
-import com.wanbaohe.idphoto.util.localizedSizeDescription
-import com.wanbaohe.idphoto.util.localizedSizeName
 import com.t8rin.imagetoolbox.core.resources.icons.Add
 import com.t8rin.imagetoolbox.core.resources.icons.Check
 import com.t8rin.imagetoolbox.core.resources.icons.Close
@@ -323,7 +321,7 @@ private fun SizeListItem(
         // 尺寸信息
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = localizedSizeName(size.name),
+                text = size.name,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
@@ -337,7 +335,7 @@ private fun SizeListItem(
             )
             if (size.description.isNotEmpty()) {
                 Text(
-                    text = localizedSizeDescription(size.name, size.description),
+                    text = size.description,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                     maxLines = 1,

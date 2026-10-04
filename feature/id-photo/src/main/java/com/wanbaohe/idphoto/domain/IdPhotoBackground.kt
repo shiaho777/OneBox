@@ -1,14 +1,18 @@
 package com.wanbaohe.idphoto.domain
 
+import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
+import com.wanbaohe.idphoto.R
 
 /**
  * 证件照背景色
+ *
+ * 名称只存字符串资源 id，「原图/透明」靠 [isOriginal]/[isTransparent] 判定，
+ * 不再用中文 name 当业务标识。
  */
 data class IdPhotoBackground(
-    val name: String,
+    @StringRes val nameRes: Int,
     val color: Long,
-    val description: String = ""
 ) {
     fun getColor(): Color = Color(color)
 
@@ -23,16 +27,14 @@ data class IdPhotoBackground(
     companion object {
         /** 保留原图背景(默认):不触发抠图,颜色占位为透明 */
         val ORIGINAL = IdPhotoBackground(
-            name = "原图",
+            nameRes = R.string.id_photo_bg_original,
             color = 0x00000000,
-            description = "保留照片原背景"
         )
 
-        /** 透明背景:触发 AI 抠图但不填色,颜色占位与「原图」相同,靠 name 区分 */
+        /** 透明背景:触发 AI 抠图但不填色,颜色占位与「原图」相同,靠 isTransparent 区分 */
         val TRANSPARENT = IdPhotoBackground(
-            name = "透明",
+            nameRes = R.string.id_photo_bg_transparent,
             color = 0x00000000,
-            description = "透明背景,便于二次合成"
         )
 
         /**
@@ -42,28 +44,23 @@ data class IdPhotoBackground(
             ORIGINAL,
             TRANSPARENT,
             IdPhotoBackground(
-                name = "白色",
+                nameRes = R.string.id_photo_bg_white,
                 color = 0xFFFFFFFF,
-                description = "护照、身份证、驾驶证"
             ),
             IdPhotoBackground(
-                name = "蓝色",
+                nameRes = R.string.id_photo_bg_blue,
                 color = 0xFF438EDB,
-                description = "毕业证、工作证、简历"
             ),
             IdPhotoBackground(
-                name = "红色",
+                nameRes = R.string.id_photo_bg_red,
                 color = 0xFFD03D33,
-                description = "结婚证、保险、医保"
             ),
             IdPhotoBackground(
-                name = "渐变蓝",
+                nameRes = R.string.id_photo_bg_gradient_blue,
                 color = 0xFF5B9BD5,
-                description = "证件照常用"
             ),
         )
 
         val DEFAULT = ORIGINAL
     }
 }
-

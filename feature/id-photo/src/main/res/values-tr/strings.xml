@@ -41,54 +41,6 @@
     <string name="id_photo_field_description_optional">Açıklama (isteğe bağlı)</string>
     <string name="id_photo_resolution_sufficient">Görüntü çözünürlüğü yeterli (%1$d×%2$d)</string>
     <string name="id_photo_resolution_insufficient">⚠️ Görüntü çözünürlüğü düşük ve baskı kalitesini etkileyebilir (%1$d×%2$d &lt; %3$d×%4$d)</string>
-    <string name="id_photo_preset_size_one_inch">1 inç</string>
-    <string name="id_photo_preset_size_small_one_inch">Küçük 1 inç</string>
-    <string name="id_photo_preset_size_large_one_inch">Büyük 1 inç</string>
-    <string name="id_photo_preset_size_two_inch">2 inç</string>
-    <string name="id_photo_preset_size_small_two_inch">Küçük 2 inç</string>
-    <string name="id_photo_preset_size_large_two_inch">Büyük 2 inç</string>
-    <string name="id_photo_preset_size_us_visa">ABD Vizesi</string>
-    <string name="id_photo_preset_size_korea_visa">Kore Vizesi</string>
-    <string name="id_photo_preset_size_drivers_license">Sürücü Belgesi</string>
-    <string name="id_photo_preset_size_social_security">Sosyal Güvenlik Kartı</string>
-    <string name="id_photo_preset_size_civil_service">Kamu Personeli Sınavı</string>
-    <string name="id_photo_preset_size_putonghua">Putonghua Yeterlilik Testi</string>
-    <string name="id_photo_preset_size_gaokao">Gaokao Kayıt</string>
-    <string name="id_photo_preset_size_ncre">Ulusal Bilgisayar Sınavı</string>
-    <string name="id_photo_preset_size_teacher_cert">Öğretmen Sertifikası</string>
-    <string name="id_photo_preset_size_nurse">Hemşirelik Lisans Sınavı</string>
-    <string name="id_photo_preset_size_accounting">Muhasebe Sertifikası</string>
-    <string name="id_photo_preset_size_tax_advisor">Vergi Danışmanı Sertifikası</string>
-    <string name="id_photo_preset_size_judicial">Ulusal Adli Sınav</string>
-    <string name="id_photo_preset_size_health_professional">Sağlık Meslek Yeterliliği</string>
-    <string name="id_photo_preset_size_insurance">Sigorta Acentesi Lisansı</string>
-    <string name="id_photo_preset_size_tour_guide">Turist Rehberi Lisansı</string>
-    <string name="id_photo_preset_size_chsi">CHSI/Xuexin</string>
-    <string name="id_photo_preset_size_id_card">Kimlik Kartı</string>
-    <string name="id_photo_preset_size_desc_one_inch">Genellikle kimlik kartları ve sürücü belgeleri için kullanılır</string>
-    <string name="id_photo_preset_size_desc_small_one_inch">Genellikle özgeçmişler ve sınav kayıtları için kullanılır</string>
-    <string name="id_photo_preset_size_desc_large_one_inch">Genellikle pasaportlar ve HK/Makao seyahat izinleri için kullanılır</string>
-    <string name="id_photo_preset_size_desc_two_inch">Genellikle pasaportlar ve vizeler için kullanılır</string>
-    <string name="id_photo_preset_size_desc_small_two_inch">Genellikle Çin pasaportları için kullanılır</string>
-    <string name="id_photo_preset_size_desc_large_two_inch">Genellikle bazı vizeler için kullanılır</string>
-    <string name="id_photo_preset_size_desc_us_visa">ABD vize başvuruları için</string>
-    <string name="id_photo_preset_size_desc_korea_visa">Kore vize başvuruları için</string>
-    <string name="id_photo_preset_size_desc_drivers_license">Sürücü belgeleri için</string>
-    <string name="id_photo_preset_size_desc_social_security">Sosyal güvenlik kartları için</string>
-    <string name="id_photo_preset_size_desc_civil_service">Kamu personeli sınavları için</string>
-    <string name="id_photo_preset_size_desc_putonghua">Putonghua Yeterlilik Testi için</string>
-    <string name="id_photo_preset_size_desc_gaokao">Gaokao kayıtları için</string>
-    <string name="id_photo_preset_size_desc_ncre">Ulusal Bilgisayar Sınavı için</string>
-    <string name="id_photo_preset_size_desc_teacher_cert">Öğretmen sertifikası kayıtları için</string>
-    <string name="id_photo_preset_size_desc_nurse">Hemşirelik lisans sınavı kayıtları için</string>
-    <string name="id_photo_preset_size_desc_accounting">Ön muhasebe sertifika sınavları için</string>
-    <string name="id_photo_preset_size_desc_tax_advisor">Vergi danışmanı sertifika sınavları için</string>
-    <string name="id_photo_preset_size_desc_judicial">Ulusal Adli Sınav için</string>
-    <string name="id_photo_preset_size_desc_health_professional">Sağlık meslek yeterlilik sınavları için</string>
-    <string name="id_photo_preset_size_desc_insurance">Sigorta acentesi lisansları için</string>
-    <string name="id_photo_preset_size_desc_tour_guide">Turist rehberi lisansları için</string>
-    <string name="id_photo_preset_size_desc_chsi">CHSI/Xuexin fotoğraf toplama için</string>
-    <string name="id_photo_preset_size_desc_id_card">İkinci nesil kimlik kartları için</string>
     <string name="id_photo_export_target_size">Dışa Aktarma Boyutu</string>
     <string name="id_photo_export_source_size">Kaynak Boyutu</string>
     <string name="id_photo_export_estimated_size">Tahmini Boyut</string>
@@ -241,4 +193,12 @@
     <string name="id_photo_bp_desc_leg_thin">Daha yüksek = daha ince bacaklar</string>
     <string name="id_photo_bp_desc_leg_long">Daha yüksek = daha uzun bacaklar</string>
     <string name="id_photo_bp_desc_body_heighten">Daha yüksek = daha uzun boy</string>
+    <!-- 预置尺寸名称（按语言环境预置的当地规格） -->
+    <string name="id_photo_preset_tr_biometric">Biyometrik Fotoğraf</string>
+    <string name="id_photo_preset_tr_biometric_desc">Kimlik, pasaport ve vize için biyometrik fotoğraf, 5 × 6 cm</string>
+    <string name="id_photo_preset_intl_passport">Pasaport 35×45</string>
+    <string name="id_photo_preset_intl_passport_desc">İngiltere, Schengen ve çoğu ülke için standart pasaport fotoğrafı</string>
+    <!-- 预置尺寸名称（旧中国规格里被多语言目录复用的条目） -->
+    <string name="id_photo_preset_size_us_visa">ABD Vizesi</string>
+    <string name="id_photo_preset_size_desc_us_visa">ABD vize başvuruları için</string>
 </resources>

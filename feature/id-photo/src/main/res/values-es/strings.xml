@@ -41,54 +41,6 @@
     <string name="id_photo_field_description_optional">Descripción (opcional)</string>
     <string name="id_photo_resolution_sufficient">La resolución de la imagen es suficiente (%1$d×%2$d)</string>
     <string name="id_photo_resolution_insufficient">⚠️ La resolución de la imagen es baja y puede afectar la calidad de impresión (%1$d×%2$d &lt; %3$d×%4$d)</string>
-    <string name="id_photo_preset_size_one_inch">1 pulgada</string>
-    <string name="id_photo_preset_size_small_one_inch">1 pulgada pequeña</string>
-    <string name="id_photo_preset_size_large_one_inch">1 pulgada grande</string>
-    <string name="id_photo_preset_size_two_inch">2 pulgadas</string>
-    <string name="id_photo_preset_size_small_two_inch">2 pulgadas pequeñas</string>
-    <string name="id_photo_preset_size_large_two_inch">2 pulgadas grandes</string>
-    <string name="id_photo_preset_size_us_visa">Visa de EE. UU.</string>
-    <string name="id_photo_preset_size_korea_visa">Visa de Corea</string>
-    <string name="id_photo_preset_size_drivers_license">Licencia de conducir</string>
-    <string name="id_photo_preset_size_social_security">Tarjeta de Seguridad Social</string>
-    <string name="id_photo_preset_size_civil_service">Examen de Servicio Civil</string>
-    <string name="id_photo_preset_size_putonghua">Examen de Competencia en Putonghua</string>
-    <string name="id_photo_preset_size_gaokao">Inscripción al Gaokao</string>
-    <string name="id_photo_preset_size_ncre">Examen Nacional de Computación</string>
-    <string name="id_photo_preset_size_teacher_cert">Certificación de Maestro</string>
-    <string name="id_photo_preset_size_nurse">Examen de Licencia de Enfermería</string>
-    <string name="id_photo_preset_size_accounting">Certificación de Contabilidad</string>
-    <string name="id_photo_preset_size_tax_advisor">Certificación de Asesor Fiscal</string>
-    <string name="id_photo_preset_size_judicial">Examen Judicial Nacional</string>
-    <string name="id_photo_preset_size_health_professional">Titulación de Profesional de Salud</string>
-    <string name="id_photo_preset_size_insurance">Licencia de Agente de Seguros</string>
-    <string name="id_photo_preset_size_tour_guide">Licencia de Guía Turístico</string>
-    <string name="id_photo_preset_size_chsi">CHSI/Xuexin</string>
-    <string name="id_photo_preset_size_id_card">DNI</string>
-    <string name="id_photo_preset_size_desc_one_inch">Se usa comúnmente para DNI y licencias de conducir</string>
-    <string name="id_photo_preset_size_desc_small_one_inch">Se usa comúnmente para currículos y registro de exámenes</string>
-    <string name="id_photo_preset_size_desc_large_one_inch">Se usa comúnmente para pasaportes y permisos de viaje a Hong Kong/Macau</string>
-    <string name="id_photo_preset_size_desc_two_inch">Se usa comúnmente para pasaportes y visados</string>
-    <string name="id_photo_preset_size_desc_small_two_inch">Se usa comúnmente para pasaportes chinos</string>
-    <string name="id_photo_preset_size_desc_large_two_inch">Se usa comúnmente para algunos visados</string>
-    <string name="id_photo_preset_size_desc_us_visa">Para solicitudes de visado de EE. UU.</string>
-    <string name="id_photo_preset_size_desc_korea_visa">Para solicitudes de visado de Corea</string>
-    <string name="id_photo_preset_size_desc_drivers_license">Para licencias de conducir</string>
-    <string name="id_photo_preset_size_desc_social_security">Para tarjetas de seguridad social</string>
-    <string name="id_photo_preset_size_desc_civil_service">Para exámenes de servicio civil</string>
-    <string name="id_photo_preset_size_desc_putonghua">Para la prueba de competencia en putonghua</string>
-    <string name="id_photo_preset_size_desc_gaokao">Para la inscripción al Gaokao</string>
-    <string name="id_photo_preset_size_desc_ncre">Para el examen nacional de informática</string>
-    <string name="id_photo_preset_size_desc_teacher_cert">Para la inscripción a la certificación de maestros</string>
-    <string name="id_photo_preset_size_desc_nurse">Para la inscripción al examen de licencia de enfermería</string>
-    <string name="id_photo_preset_size_desc_accounting">Para exámenes de certificación de contabilidad junior</string>
-    <string name="id_photo_preset_size_desc_tax_advisor">Para exámenes de certificación de asesores fiscales</string>
-    <string name="id_photo_preset_size_desc_judicial">Para el examen judicial nacional</string>
-    <string name="id_photo_preset_size_desc_health_professional">Para exámenes de titulación de profesionales de salud</string>
-    <string name="id_photo_preset_size_desc_insurance">Para licencias de agente de seguros</string>
-    <string name="id_photo_preset_size_desc_tour_guide">Para licencias de guía turístico</string>
-    <string name="id_photo_preset_size_desc_chsi">Para la recopilación de fotos de CHSI/Xuexin</string>
-    <string name="id_photo_preset_size_desc_id_card">Para DNI de segunda generación</string>
     <string name="id_photo_export_target_size">Tamaño de exportación</string>
     <string name="id_photo_export_source_size">Tamaño original</string>
     <string name="id_photo_export_estimated_size">Tamaño estimado</string>
@@ -241,4 +193,14 @@
     <string name="id_photo_bp_desc_leg_thin">Más alto = piernas más delgadas</string>
     <string name="id_photo_bp_desc_leg_long">Más alto = piernas más largas</string>
     <string name="id_photo_bp_desc_body_heighten">Más alto = figura más alta</string>
+    <!-- 预置尺寸名称（按语言环境预置的当地规格） -->
+    <string name="id_photo_preset_es_dni">DNI / Pasaporte</string>
+    <string name="id_photo_preset_es_dni_desc">Foto para DNI, pasaporte y permiso de conducir, 2.6 × 3.2 cm</string>
+    <string name="id_photo_preset_intl_passport">Pasaporte 35×45</string>
+    <string name="id_photo_preset_intl_passport_desc">Foto estándar para pasaportes de Reino Unido, Schengen y Australia</string>
+    <string name="id_photo_preset_intl_china_visa">Visa China</string>
+    <string name="id_photo_preset_intl_china_visa_desc">Para solicitudes de visa china</string>
+    <!-- 预置尺寸名称（旧中国规格里被多语言目录复用的条目） -->
+    <string name="id_photo_preset_size_us_visa">Visa de EE. UU.</string>
+    <string name="id_photo_preset_size_desc_us_visa">Para solicitudes de visado de EE. UU.</string>
 </resources>
