@@ -32,6 +32,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Edit
@@ -52,7 +54,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
@@ -85,6 +86,7 @@ import com.t8rin.imagetoolbox.core.resources.icons.NoteAdd
 import java.util.Locale
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineInfo
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineEventAvailable
+import com.t8rin.imagetoolbox.core.resources.icons.line.LineFavorite
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineEventRepeat
 
 @Composable
@@ -319,7 +321,7 @@ private fun BoxScope.LifetimeFabMenu(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalAlignment = Alignment.End
             ) {
-                SpeedDialAction(
+                PillAction(
                     label = stringResource(R.string.lifetime_action_countdown),
                     icon = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineEventAvailable,
                     onClick = {
@@ -327,15 +329,15 @@ private fun BoxScope.LifetimeFabMenu(
                         onAddCountdown()
                     },
                 )
-                SpeedDialAction(
+                PillAction(
                     label = stringResource(R.string.lifetime_action_milestones),
-                    icon = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.Edit,
+                    icon = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineFavorite,
                     onClick = {
                         expanded = false
                         onAddMilestone()
                     },
                 )
-                SpeedDialAction(
+                PillAction(
                     label = stringResource(R.string.lifetime_action_frequency_events),
                     icon = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineEventRepeat,
                     onClick = {
@@ -347,53 +349,63 @@ private fun BoxScope.LifetimeFabMenu(
         }
 
         FloatingActionButton(
-            modifier = Modifier.graphicsLayer {
-                scaleX = fabScale
-                scaleY = fabScale
-            },
+            modifier = Modifier
+                .size(58.dp)
+                .graphicsLayer {
+                    scaleX = fabScale
+                    scaleY = fabScale
+                },
             onClick = { expanded = !expanded },
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = Color.White,
+            shape = CircleShape,
+            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            contentColor = MaterialTheme.colorScheme.primaryContainer,
             elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp),
         ) {
             Icon(
                 imageVector = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.Add,
                 contentDescription = stringResource(if (expanded) R.string.lifetime_cancel else R.string.lifetime_add),
+                tint = MaterialTheme.colorScheme.primaryContainer,
                 modifier = Modifier.graphicsLayer { rotationZ = fabRotation },
             )
         }
     }
 }
 
+/**
+ * 药丸形快捷入口：图标 + 文字同放一条 onPrimaryContainer 底色的圆角条里，
+ * 文字与图标用 primaryContainer 反色。
+ */
 @Composable
-private fun SpeedDialAction(
+private fun PillAction(
     label: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     onClick: () -> Unit,
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    val accent = MaterialTheme.colorScheme.primaryContainer
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(50),
+        color = MaterialTheme.colorScheme.onPrimaryContainer,
+        contentColor = accent,
+        shadowElevation = 6.dp,
     ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.SemiBold
-            ),
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-
-        FloatingActionButton(
-            onClick = onClick,
-            modifier = Modifier.size(44.dp),
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 2.dp),
+        Row(
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(20.dp),
+                tint = accent,
+                modifier = Modifier.size(21.dp),
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = FontWeight.SemiBold
+                ),
+                color = accent,
             )
         }
     }
