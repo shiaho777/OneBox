@@ -1,7 +1,6 @@
 package com.wanbaohe.altitude.ui
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -44,8 +43,9 @@ internal fun AltitudeBottomNavBar(
         onItemClick = { clicked ->
             clicked.id.toIntOrNull()?.let(onTabSelected)
         },
-        modifier = modifier
-            .fillMaxWidth()
-            .navigationBarsPadding(),
+        // 不要在这里再套一层 navigationBarsPadding():BottomNavigationBar 内部默认
+        // navigationBarsPadding = true,已把系统导航条高度算进玻璃容器高度(72dp + inset),
+        // 并作为容器内边距。外面再加一层会让玻璃容器整体上移 inset,底边露出一条外部空隙。
+        modifier = modifier.fillMaxWidth(),
     )
 }
