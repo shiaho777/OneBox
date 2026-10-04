@@ -119,12 +119,15 @@ internal class AndroidWatermarkApplier @Inject constructor(
             }
 
             is WatermarkingType.Image -> {
+                // 图案尺寸按背景图比例算,小图或水印体积很小时会算成 0 像素,
+                // 而 Coil 的 Size(0, 0) 会抛 IllegalArgumentException: px must be > 0
+                val watermarkSize = IntegerSize(
+                    (image.width * type.size).toInt().coerceAtLeast(1),
+                    (image.height * type.size).toInt().coerceAtLeast(1)
+                )
                 imageGetter.getImage(
                     data = type.imageData,
-                    size = IntegerSize(
-                        (image.width * type.size).toInt(),
-                        (image.height * type.size).toInt()
-                    )
+                    size = watermarkSize
                 )?.let { watermarkSource ->
                     WatermarkBuilder
                         .create(context, image, !originalSize)
@@ -252,7 +255,17 @@ internal class AndroidWatermarkApplier @Inject constructor(
             val verticalPadding = padding - (6f * padding / 20f)
             val horizontalPadding = padding
 
-            val processedText = BitmapUtils.textAsBitmap(context, watermark, image)
+            // androidwm 的 BitmapUtils.resizeBitmap 把文字位图缩放成
+            // 「背景图宽度 × size」后再交给 Bitmap.createBitmap,而 createBitmap 会对
+            // 缩放后的宽高取整;源图很小(例如 4×4 的测试图)或水印体积很小时,
+            // 取整结果会变成 0,于是抛 IllegalArgumentException: width and height must be > 0。
+            // 这种输入下印章本身就不到 1 像素、不可见,跳过绘制即可,不能让整个保存流程崩溃。
+            val processedText = runCatching {
+                BitmapUtils.textAsBitmap(context, watermark, image)
+            }.getOrNull()
+                ?.takeIf { it.width > 0 && it.height > 0 }
+                ?: return@applyCanvas
+
             val scaled = imageScaler.scaleImage(
                 image = processedText,
                 width = (processedText.width - 2 * horizontalPadding).roundToInt(),
