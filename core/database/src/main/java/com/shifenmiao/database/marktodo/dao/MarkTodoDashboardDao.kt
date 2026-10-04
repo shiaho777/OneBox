@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface MarkTodoDashboardDao {
 
     @Transaction
-    @Query("SELECT * FROM marktodo_category ORDER BY sort_order ASC, created_at DESC")
+    @Query("SELECT * FROM marktodo_category ORDER BY is_pinned DESC, sort_order ASC, created_at DESC")
     suspend fun getCategoriesWithTasks(): List<CategoryWithTasks>
 
     /**
@@ -18,7 +18,7 @@ interface MarkTodoDashboardDao {
      * 当数据库中的分类或任务发生变化时，会自动触发更新
      */
     @Transaction
-    @Query("SELECT * FROM marktodo_category ORDER BY sort_order ASC, created_at DESC")
+    @Query("SELECT * FROM marktodo_category ORDER BY is_pinned DESC, sort_order ASC, created_at DESC")
     fun observeCategoriesWithTasks(): Flow<List<CategoryWithTasks>>
 }
 

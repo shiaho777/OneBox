@@ -31,6 +31,9 @@ interface MarkTodoCategoryDao {
     @Query("UPDATE marktodo_category SET sort_order = :sortOrder, updated_at = :updatedAt WHERE id = :categoryId")
     suspend fun updateSortOrder(categoryId: String, sortOrder: Int, updatedAt: Long = System.currentTimeMillis())
 
+    @Query("SELECT MAX(sort_order) FROM marktodo_category")
+    suspend fun getMaxSortOrder(): Int?
+
     @Query("DELETE FROM marktodo_category")
     suspend fun deleteAll()
 

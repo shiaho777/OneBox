@@ -32,4 +32,12 @@
     <string name="sys_prompt_memory_recent_no_tool_desc">Panghaliling bersyon na ginagamit kapag hindi sinusuportahan ng modelo ang mga tool call</string>
     <string name="sys_prompt_skills_guidance_title">Gabay sa Listahan ng Mga Skill</string>
     <string name="sys_prompt_skills_guidance_desc">Panimulang bahagi na ipinapasok bago ang listahan ng mga magagamit na skill</string>
+    <string name="marktodo_preset_category_title">Mga To-do Ko</string>
+    <string name="marktodo_preset_tag_health">Kalusugan</string>
+    <string name="marktodo_preset_tag_life">Buhay</string>
+    <string name="marktodo_preset_tag_study">Pag-aaral</string>
+    <string name="marktodo_preset_tag_travel">Paglalakbay</string>
+    <string name="marktodo_preset_tag_work">Trabaho</string>
+    <string name="marktodo_preset_task_note">I-tap ang checkbox sa kaliwa para kumpletuhin ako; i-tap ako para mag-edit; pindutin nang matagal ang paksa card para i-edit o tanggalin</string>
+    <string name="marktodo_preset_task_title">Maligayang pagdating sa To-do List</string>
 </resources>

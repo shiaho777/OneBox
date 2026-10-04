@@ -43,6 +43,16 @@ data class MarkTodoTaskEntity(
 
     @ColumnInfo(name = "is_starred") val isStarred: Boolean = false,
 
+    /**
+     * 优先级：0=低，1=中（默认），2=高。
+     */
+    @ColumnInfo(name = "priority", defaultValue = "1") val priority: Int = 1,
+
+    /**
+     * 完成时间；未完成时为 null，取消完成时清回 null。
+     */
+    @ColumnInfo(name = "completed_at") val completedAt: Long? = null,
+
     @ColumnInfo(name = "sort_order") val sortOrder: Int = 0,
 
     @ColumnInfo(name = "created_at") val createdAt: Long = System.currentTimeMillis(),

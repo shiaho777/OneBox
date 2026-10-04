@@ -31,4 +31,12 @@
     <string name="activity_log_habit_app_title">متتبّع العادات</string>
     <string name="activity_log_habit_created">عادة جديدة: %1$s</string>
     <string name="activity_log_habit_check_in">تسجيل حضور: %1$s</string>
+    <string name="marktodo_preset_category_title">مهامي</string>
+    <string name="marktodo_preset_tag_health">الصحة</string>
+    <string name="marktodo_preset_tag_life">الحياة</string>
+    <string name="marktodo_preset_tag_study">الدراسة</string>
+    <string name="marktodo_preset_tag_travel">السفر</string>
+    <string name="marktodo_preset_tag_work">العمل</string>
+    <string name="marktodo_preset_task_note">اضغط على مربع الاختيار لإكمالي؛ اضغط عليّ للتعديل؛ اضغط مطولًا على بطاقة الموضوع للتعديل أو الحذف</string>
+    <string name="marktodo_preset_task_title">مرحبًا بك في قائمة المهام</string>
 </resources>

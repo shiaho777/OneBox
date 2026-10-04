@@ -3,7 +3,9 @@ package com.shifenmiao.database.marktodo.repo
 import com.shifenmiao.database.marktodo.dao.MarkTodoCategoryDao
 import com.shifenmiao.database.marktodo.dao.MarkTodoDashboardDao
 import com.shifenmiao.database.marktodo.dao.MarkTodoTaskDao
+import com.shifenmiao.database.marktodo.dao.MarkTodoTagDao
 import com.shifenmiao.database.marktodo.entity.MarkTodoCategoryEntity
+import com.shifenmiao.database.marktodo.entity.MarkTodoTagEntity
 import com.shifenmiao.database.marktodo.entity.MarkTodoTaskEntity
 import com.shifenmiao.database.marktodo.model.CategoryWithTasks
 import kotlinx.coroutines.flow.Flow
@@ -15,6 +17,7 @@ class MarkTodoRepository @Inject constructor(
     private val dashboardDao: MarkTodoDashboardDao,
     private val categoryDao: MarkTodoCategoryDao,
     private val taskDao: MarkTodoTaskDao,
+    private val tagDao: MarkTodoTagDao,
 ) {
 
     suspend fun isEmpty(): Boolean = categoryDao.count() == 0
@@ -60,6 +63,8 @@ class MarkTodoRepository @Inject constructor(
         taskDao.upsert(task.copy(sortOrder = maxOrder + 1))
     }
 
+    suspend fun getTaskById(taskId: String): MarkTodoTaskEntity? = taskDao.getById(taskId)
+
     suspend fun updateTask(task: MarkTodoTaskEntity) {
         taskDao.upsert(task)
     }
@@ -80,11 +85,32 @@ class MarkTodoRepository @Inject constructor(
         taskDao.deleteById(taskId)
     }
 
+    suspend fun getMaxCategorySortOrder(): Int? = categoryDao.getMaxSortOrder()
+
     suspend fun existsCategoryTitle(title: String): Boolean {
         return categoryDao.countByNormalizedTitle(title) > 0
     }
 
     suspend fun existsTaskTitleInCategory(categoryId: String, title: String): Boolean {
         return taskDao.countByCategoryIdAndNormalizedTitle(categoryId = categoryId, title = title) > 0
+    }
+
+    // ── 标签 ─────────────────────────────────────────
+
+    fun observeTags(): Flow<List<MarkTodoTagEntity>> = tagDao.observeAll()
+
+    suspend fun getTags(): List<MarkTodoTagEntity> = tagDao.getAll()
+
+    suspend fun upsertTag(tag: MarkTodoTagEntity) = tagDao.upsert(tag)
+
+    suspend fun deleteTag(tagId: String) = tagDao.deleteById(tagId)
+
+    /**
+     * 预置标签兜底种子：表为空时写入（升级老库走这里，新装由 FeatureDatabase onCreate 本地化写入）。
+     */
+    suspend fun ensurePresetTags(presets: List<MarkTodoTagEntity>) {
+        if (tagDao.count() == 0) {
+            tagDao.insertIgnore(presets)
+        }
     }
 }

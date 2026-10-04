@@ -18,12 +18,15 @@ import androidx.compose.runtime.Immutable
 data class TodoTask(
     val id: String,
     val title: String,
+    val categoryId: String = "", // 所属主题 id（编辑跳转用）
     val note: String? = null,
     val startDate: Long = System.currentTimeMillis(), // 开始时间，默认为创建时间
     val dueDate: Long? = null, // 截止日期
     val tags: List<String> = emptyList(),
     val isCompleted: Boolean = false,
     val isStarred: Boolean = false,
+    val priority: Int = PRIORITY_MEDIUM, // 0=低 1=中 2=高
+    val completedAt: Long? = null, // 完成时间，未完成时为 null
     val sortOrder: Int = 0
 ) {
     /**
@@ -47,4 +50,10 @@ data class TodoTask(
      */
     @Deprecated("Use dueDate instead", ReplaceWith("dueDate"))
     val date: Long? get() = dueDate
+
+    companion object {
+        const val PRIORITY_LOW = 0
+        const val PRIORITY_MEDIUM = 1
+        const val PRIORITY_HIGH = 2
+    }
 }

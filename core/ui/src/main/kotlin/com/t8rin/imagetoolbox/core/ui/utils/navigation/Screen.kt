@@ -1320,7 +1320,10 @@ sealed class Screen(
 
             @Serializable
             @SerialName("AddTodo")
-            data class AddTodo(val initialCategoryId: String? = null) : MarkTodoType
+            data class AddTodo(
+                val initialCategoryId: String? = null,
+                val editingTaskId: String? = null
+            ) : MarkTodoType
 
             @Serializable
             @SerialName("AddCategory")

@@ -33,4 +33,13 @@
     <string name="activity_log_habit_app_title">Habit Tracker</string>
     <string name="activity_log_habit_created">New habit: %1$s</string>
     <string name="activity_log_habit_check_in">Check-in: %1$s</string>
+    <!-- MarkTodo preset seeds (written by FeatureDatabase onCreate) -->
+    <string name="marktodo_preset_category_title">My To-dos</string>
+    <string name="marktodo_preset_task_title">Welcome to To-do List</string>
+    <string name="marktodo_preset_task_note">Tap the checkbox to complete me; tap me to edit</string>
+    <string name="marktodo_preset_tag_work">Work</string>
+    <string name="marktodo_preset_tag_study">Study</string>
+    <string name="marktodo_preset_tag_life">Life</string>
+    <string name="marktodo_preset_tag_health">Health</string>
+    <string name="marktodo_preset_tag_travel">Travel</string>
 </resources>

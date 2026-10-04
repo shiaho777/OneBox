@@ -12,14 +12,23 @@ data class CategoryInput(
     val title: String,
     val iconKey: String,
     val sortOrder: Int = 0,
+    val description: String? = null,
+    val colorArgb: Int? = null,
+    val isPinned: Boolean = false,
+    /** 可选：调用方预生成的分类 id（用于「按 ID 分配默认色」与最终入库 id 一致）；null = 服务端生成 */
+    val id: String? = null,
 )
 
+/**
+ * @param priority 0=低，1=中（默认），2=高
+ */
 data class TaskInput(
     val categoryId: String,
     val title: String,
     val note: String?,
     val dueDateMillis: Long?,
     val tags: List<String>,
+    val priority: Int = 1,
 )
 
 // ── 读取 DTO（供 AgentTool 使用，不依赖 Compose） ──────────
@@ -34,6 +43,9 @@ data class TodoCategoryDto(
     val title: String,
     val iconKey: String,
     val tasks: List<TodoTaskDto>,
+    val description: String? = null,
+    val colorArgb: Int? = null,
+    val isPinned: Boolean = false,
 )
 
 data class TodoTaskDto(
@@ -45,4 +57,6 @@ data class TodoTaskDto(
     val tags: List<String>,
     val isCompleted: Boolean,
     val isStarred: Boolean,
+    val priority: Int = 1,
+    val completedAt: Long? = null,
 )

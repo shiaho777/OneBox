@@ -43,6 +43,7 @@ class MarkTodoRouterComponent @AssistedInject internal constructor(
             addTodoFactory(
                 componentContext = componentContext.childContext("marktodo_add_todo"),
                 initialCategoryId = type.initialCategoryId,
+                editingTaskId = type.editingTaskId,
                 onNavigate = onNavigate,
                 onGoBack = onGoBack,
             )

@@ -4,8 +4,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.shifenmiao.base.ui.icon.IconRegistry
 import com.shifenmiao.database.marktodo.entity.MarkTodoCategoryEntity
+import com.shifenmiao.database.marktodo.entity.MarkTodoTagEntity
 import com.shifenmiao.database.marktodo.entity.MarkTodoTaskEntity
 import com.shifenmiao.marktodo.model.TodoCategory
+import com.shifenmiao.marktodo.model.TodoTag
 import com.shifenmiao.marktodo.model.TodoTask
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineInbox
 
@@ -26,6 +28,9 @@ internal fun TodoCategory.toEntity(
         id = id,
         title = title,
         iconKey = iconKeyOverride,
+        description = description,
+        colorArgb = colorArgb,
+        isPinned = isPinned,
         sortOrder = sortOrder,
         updatedAt = System.currentTimeMillis(),
     )
@@ -39,7 +44,19 @@ internal fun MarkTodoCategoryEntity.toModel(
         id = id,
         title = title.ifBlank { iconKey },
         icon = icon,
+        description = description,
+        colorArgb = colorArgb,
+        isPinned = isPinned,
         tasks = tasks
+    )
+}
+
+internal fun MarkTodoTagEntity.toModel(): TodoTag {
+    return TodoTag(
+        id = id,
+        name = name,
+        colorArgb = colorArgb,
+        isPreset = isPreset
     )
 }
 
@@ -56,6 +73,8 @@ internal fun TodoTask.toEntity(categoryId: String): MarkTodoTaskEntity {
         tags = tags,
         isCompleted = isCompleted,
         isStarred = isStarred,
+        priority = priority,
+        completedAt = completedAt,
         sortOrder = sortOrder,
         updatedAt = System.currentTimeMillis(),
     )
@@ -65,12 +84,15 @@ internal fun MarkTodoTaskEntity.toModel(): TodoTask {
     return TodoTask(
         id = id,
         title = title,
+        categoryId = categoryId,
         note = note,
         startDate = startDate,
         dueDate = dueDate,
         tags = tags,
         isCompleted = isCompleted,
         isStarred = isStarred,
+        priority = priority,
+        completedAt = completedAt,
         sortOrder = sortOrder
     )
 }

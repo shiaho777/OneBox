@@ -46,6 +46,7 @@ import com.shifenmiao.database.lifetime.dao.FrequencyEventDao
 import com.shifenmiao.database.lifetime.dao.MilestoneAiInsightDao
 import com.shifenmiao.database.marktodo.dao.MarkTodoCategoryDao
 import com.shifenmiao.database.marktodo.dao.MarkTodoDashboardDao
+import com.shifenmiao.database.marktodo.dao.MarkTodoTagDao
 import com.shifenmiao.database.marktodo.dao.MarkTodoTaskDao
 import com.shifenmiao.database.marktodo.repo.MarkTodoRepository
 import com.shifenmiao.database.passwordvault.dao.PasswordVaultCategoryDao
@@ -220,16 +221,23 @@ object DatabaseModule {
     }
 
     @Provides
+    fun provideMarkTodoTagDao(database: FeatureDatabase): MarkTodoTagDao {
+        return database.markTodoTagDao()
+    }
+
+    @Provides
     @Singleton
     fun provideMarkTodoRepository(
         dashboardDao: MarkTodoDashboardDao,
         categoryDao: MarkTodoCategoryDao,
         taskDao: MarkTodoTaskDao,
+        tagDao: MarkTodoTagDao,
     ): MarkTodoRepository {
         return MarkTodoRepository(
             dashboardDao = dashboardDao,
             categoryDao = categoryDao,
             taskDao = taskDao,
+            tagDao = tagDao,
         )
     }
 

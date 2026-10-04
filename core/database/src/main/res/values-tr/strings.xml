@@ -32,4 +32,12 @@
     <string name="sys_prompt_memory_recent_no_tool_desc">Model araç çağrılarını desteklemediğinde kullanılan yedek sürüm</string>
     <string name="sys_prompt_skills_guidance_title">Beceriler Listesi Yönergesi</string>
     <string name="sys_prompt_skills_guidance_desc">Kullanılabilir beceriler listesinden önce eklenen giriş metni</string>
+    <string name="marktodo_preset_category_title">Yapılacaklarım</string>
+    <string name="marktodo_preset_tag_health">Sağlık</string>
+    <string name="marktodo_preset_tag_life">Yaşam</string>
+    <string name="marktodo_preset_tag_study">Eğitim</string>
+    <string name="marktodo_preset_tag_travel">Seyahat</string>
+    <string name="marktodo_preset_tag_work">İş</string>
+    <string name="marktodo_preset_task_note">Beni tamamlamak için soldaki onay kutusuna dokunun; düzenlemek için üzerime dokunun; konu kartını düzenlemek veya silmek için uzun basın</string>
+    <string name="marktodo_preset_task_title">Yapılacaklar Listesine Hoş Geldiniz</string>
 </resources>

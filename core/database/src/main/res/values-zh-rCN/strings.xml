@@ -33,4 +33,13 @@
     <string name="activity_log_habit_app_title">习惯打卡</string>
     <string name="activity_log_habit_created">新建习惯:%1$s</string>
     <string name="activity_log_habit_check_in">打卡:%1$s</string>
+    <!-- 待办事项预置种子(FeatureDatabase onCreate 写入) -->
+    <string name="marktodo_preset_category_title">我的待办</string>
+    <string name="marktodo_preset_task_title">欢迎使用待办事项</string>
+    <string name="marktodo_preset_task_note">点左侧勾选框完成我；点我进入编辑；长按主题卡片可编辑或删除</string>
+    <string name="marktodo_preset_tag_work">工作</string>
+    <string name="marktodo_preset_tag_study">学习</string>
+    <string name="marktodo_preset_tag_life">生活</string>
+    <string name="marktodo_preset_tag_health">健康</string>
+    <string name="marktodo_preset_tag_travel">旅行</string>
 </resources>

@@ -32,4 +32,12 @@
     <string name="sys_prompt_memory_recent_no_tool_desc">Резервный вариант, используемый, когда модель не поддерживает вызов инструментов</string>
     <string name="sys_prompt_skills_guidance_title">Руководство по списку навыков</string>
     <string name="sys_prompt_skills_guidance_desc">Вступление, добавляемое перед списком доступных навыков</string>
+    <string name="marktodo_preset_category_title">Мои дела</string>
+    <string name="marktodo_preset_tag_health">Здоровье</string>
+    <string name="marktodo_preset_tag_life">Жизнь</string>
+    <string name="marktodo_preset_tag_study">Учёба</string>
+    <string name="marktodo_preset_tag_travel">Путешествия</string>
+    <string name="marktodo_preset_tag_work">Работа</string>
+    <string name="marktodo_preset_task_note">Отметьте флажок слева, чтобы завершить меня; нажмите на меня, чтобы редактировать; долгое нажатие на карточку темы — изменить или удалить</string>
+    <string name="marktodo_preset_task_title">Добро пожаловать в список дел</string>
 </resources>

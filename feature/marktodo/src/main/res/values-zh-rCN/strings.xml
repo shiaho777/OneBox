@@ -149,4 +149,42 @@
     <string name="date_days_ago">%1$d天前</string>
     <string name="date_tomorrow">明天</string>
     <string name="date_days_later">%1$d天后</string>
+
+    <!-- Redesign: status tabs / tag filter -->
+    <string name="action_save">保存</string>
+    <string name="task_progress_percent">%1$d%%</string>
+    <string name="preset_tag_work">工作</string>
+    <string name="preset_tag_study">学习</string>
+    <string name="preset_tag_life">生活</string>
+    <string name="preset_tag_health">健康</string>
+    <string name="preset_tag_travel">旅行</string>
+
+    <!-- Redesign: add/edit task form -->
+    <string name="field_due_time">截止时间</string>
+    <string name="select_due_time_hint">请选择截止时间</string>
+    <string name="field_priority">优先级</string>
+    <string name="priority_high">高</string>
+    <string name="priority_medium">中</string>
+    <string name="priority_low">低</string>
+    <string name="task_category">所属主题</string>
+    <string name="note_char_count">%1$d/%2$d</string>
+
+    <!-- Redesign: add/edit topic form -->
+    <string name="category_name">主题名称</string>
+    <string name="category_description">主题描述</string>
+    <string name="dialog_add_category_desc_hint">请输入主题描述（可选）</string>
+    <string name="category_pin_top">是否置顶</string>
+    <string name="category_pin_top_hint">开启后，该主题将在列表顶部显示</string>
+    <string name="action_create_category">创建主题</string>
+    <string name="category_task_count">%1$d 个任务</string>
+    <string name="view_grid">双列</string>
+    <string name="view_list">单列</string>
+
+    <!-- 改版第二轮:筛选空态 / 备注上限 / 自定义标签 -->
+    <string name="empty_filtered_tasks">当前筛选下没有待办</string>
+    <string name="note_char_count_at_limit">%1$d/%2$d · 已达上限</string>
+    <string name="action_add_tag">新建标签</string>
+    <string name="dialog_add_tag_title">新建标签</string>
+    <string name="tag_name_hint">标签名称</string>
+    <string name="action_sort_categories">排序主题</string>
 </resources>

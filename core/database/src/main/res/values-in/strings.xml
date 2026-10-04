@@ -32,4 +32,12 @@
     <string name="sys_prompt_memory_recent_no_tool_desc">Varian cadangan yang dipakai saat model tidak mendukung pemanggilan alat</string>
     <string name="sys_prompt_skills_guidance_title">Panduan Daftar Skill</string>
     <string name="sys_prompt_skills_guidance_desc">Pembuka yang disisipkan sebelum daftar skill yang tersedia</string>
+    <string name="marktodo_preset_category_title">To-do Saya</string>
+    <string name="marktodo_preset_tag_health">Kesehatan</string>
+    <string name="marktodo_preset_tag_life">Kehidupan</string>
+    <string name="marktodo_preset_tag_study">Belajar</string>
+    <string name="marktodo_preset_tag_travel">Perjalanan</string>
+    <string name="marktodo_preset_tag_work">Pekerjaan</string>
+    <string name="marktodo_preset_task_note">Ketuk kotak centang di kiri untuk menyelesaikanku; ketuk aku untuk masuk ke edit; tekan lama kartu topik untuk mengedit atau menghapus</string>
+    <string name="marktodo_preset_task_title">Selamat datang di Daftar To-do</string>
 </resources>

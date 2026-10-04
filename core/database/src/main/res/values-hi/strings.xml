@@ -32,4 +32,12 @@
     <string name="sys_prompt_memory_recent_no_tool_desc">जब मॉडल टूल कॉल का समर्थन नहीं करता तब उपयोग किया जाने वाला वैकल्पिक रूप</string>
     <string name="sys_prompt_skills_guidance_title">स्किल सूची मार्गदर्शन</string>
     <string name="sys_prompt_skills_guidance_desc">उपलब्ध स्किल सूची से पहले जोड़ी जाने वाली प्रस्तावना</string>
+    <string name="marktodo_preset_category_title">मेरे कार्य</string>
+    <string name="marktodo_preset_tag_health">स्वास्थ्य</string>
+    <string name="marktodo_preset_tag_life">जीवन</string>
+    <string name="marktodo_preset_tag_study">अध्ययन</string>
+    <string name="marktodo_preset_tag_travel">यात्रा</string>
+    <string name="marktodo_preset_tag_work">काम</string>
+    <string name="marktodo_preset_task_note">मुझे पूरा करने के लिए बाईं ओर का चेकबॉक्स टैप करें; मुझे टैप करके संपादित करें; विषय कार्ड को संपादित या हटाने के लिए देर तक दबाएं</string>
+    <string name="marktodo_preset_task_title">टू-डू सूची में आपका स्वागत है</string>
 </resources>

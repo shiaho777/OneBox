@@ -147,4 +147,42 @@
     <string name="date_days_ago">%1$d days ago</string>
     <string name="date_tomorrow">Tomorrow</string>
     <string name="date_days_later">In %1$d days</string>
+
+    <!-- Redesign: status tabs / tag filter -->
+    <string name="action_save">Save</string>
+    <string name="task_progress_percent">%1$d%%</string>
+    <string name="preset_tag_work">Work</string>
+    <string name="preset_tag_study">Study</string>
+    <string name="preset_tag_life">Life</string>
+    <string name="preset_tag_health">Health</string>
+    <string name="preset_tag_travel">Travel</string>
+
+    <!-- Redesign: add/edit task form -->
+    <string name="field_due_time">Due Time</string>
+    <string name="select_due_time_hint">Select due time</string>
+    <string name="field_priority">Priority</string>
+    <string name="priority_high">High</string>
+    <string name="priority_medium">Medium</string>
+    <string name="priority_low">Low</string>
+    <string name="task_category">Topic</string>
+    <string name="note_char_count">%1$d/%2$d</string>
+
+    <!-- Redesign: add/edit topic form -->
+    <string name="category_name">Topic Name</string>
+    <string name="category_description">Topic Description</string>
+    <string name="dialog_add_category_desc_hint">Enter a description (optional)</string>
+    <string name="category_pin_top">Pin to Top</string>
+    <string name="category_pin_top_hint">When enabled, this topic appears at the top of the list</string>
+    <string name="action_create_category">Create Topic</string>
+    <string name="category_task_count">%1$d tasks</string>
+    <string name="view_grid">Grid</string>
+    <string name="view_list">List</string>
+
+    <!-- Redesign round 2: filtered empty state / note limit / custom tag -->
+    <string name="empty_filtered_tasks">No to-dos match the current filter</string>
+    <string name="note_char_count_at_limit">%1$d/%2$d · Limit reached</string>
+    <string name="action_add_tag">New tag</string>
+    <string name="dialog_add_tag_title">New Tag</string>
+    <string name="tag_name_hint">Tag name</string>
+    <string name="action_sort_categories">Sort topics</string>
 </resources>

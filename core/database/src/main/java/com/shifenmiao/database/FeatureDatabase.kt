@@ -61,8 +61,10 @@ import com.shifenmiao.database.lifetime.entity.PersonalMilestoneEntity
 import com.shifenmiao.database.marktodo.MarkTodoTypeConverters
 import com.shifenmiao.database.marktodo.dao.MarkTodoCategoryDao
 import com.shifenmiao.database.marktodo.dao.MarkTodoDashboardDao
+import com.shifenmiao.database.marktodo.dao.MarkTodoTagDao
 import com.shifenmiao.database.marktodo.dao.MarkTodoTaskDao
 import com.shifenmiao.database.marktodo.entity.MarkTodoCategoryEntity
+import com.shifenmiao.database.marktodo.entity.MarkTodoTagEntity
 import com.shifenmiao.database.marktodo.entity.MarkTodoTaskEntity
 import com.shifenmiao.database.ocr.dao.PaddleOcrTaskDao
 import com.shifenmiao.database.ocr.entity.PaddleOcrTaskEntity
@@ -100,8 +102,6 @@ import com.shifenmiao.database.xiangqi.entity.XiangqiGameEntity
 import com.shifenmiao.database.xiangqi.entity.XiangqiPlyEntity
 import com.t8rin.imagetoolbox.core.utils.LocaleUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.io.BufferedReader
-import java.io.InputStreamReader
 
 /**
  * Feature-only database.
@@ -113,6 +113,7 @@ import java.io.InputStreamReader
     entities = [
         MarkTodoCategoryEntity::class,
         MarkTodoTaskEntity::class,
+        MarkTodoTagEntity::class,
         FrequencyEventEntity::class,
         PersonalMilestoneEntity::class,
         CountdownEventEntity::class,
@@ -158,7 +159,7 @@ import java.io.InputStreamReader
         HouseholdItemEntity::class,
         PeriodRecordEntity::class,
     ],
-    version = Release141Migrations.VERSION,
+    version = Release145Migrations.VERSION,
     exportSchema = true
 )
 @TypeConverters(MarkTodoTypeConverters::class)
@@ -172,6 +173,8 @@ abstract class FeatureDatabase : RoomDatabase() {
     abstract fun markTodoTaskDao(): MarkTodoTaskDao
 
     abstract fun markTodoDashboardDao(): MarkTodoDashboardDao
+
+    abstract fun markTodoTagDao(): MarkTodoTagDao
 
     abstract fun scheduleEventDao(): ScheduleEventDao
 
@@ -417,37 +420,15 @@ abstract class FeatureDatabase : RoomDatabase() {
                         MIGRATION_3_4,
                         *Release140Migrations.feature,
                         *Release141Migrations.feature,
+                        *Release145Migrations.feature,
                     )
                     .fallbackToDestructiveMigration(true)
                     .addCallback(object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
-                            try {
-                                val inputStream =
-                                    context.resources.openRawResource(R.raw.marktodo_presets)
-                                val reader = BufferedReader(InputStreamReader(inputStream))
-                                val sql = StringBuilder()
-                                var line: String?
-                                db.beginTransaction()
-                                try {
-                                    while (reader.readLine().also { line = it } != null) {
-                                        val trimmedLine = line!!.trim()
-                                        if (trimmedLine.isEmpty() || trimmedLine.startsWith("--")) {
-                                            continue
-                                        }
-                                        sql.append(line).append("\n")
-                                        if (trimmedLine.endsWith(";")) {
-                                            db.execSQL(sql.toString())
-                                            sql.setLength(0)
-                                        }
-                                    }
-                                    db.setTransactionSuccessful()
-                                } finally {
-                                    db.endTransaction()
-                                }
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
+                            // 预置数据按建库时的语言本地化（按 locale 分库，切语言建新库会重新走这里）
+                            runCatching { seedMarkTodoPresets(context, db) }
+                                .onFailure { it.printStackTrace() }
                         }
 
                         override fun onOpen(db: SupportSQLiteDatabase) {
@@ -461,6 +442,66 @@ abstract class FeatureDatabase : RoomDatabase() {
                 INSTANCE = instance
                 INSTANCE_LOCALE = currentLocale
                 instance
+            }
+        }
+
+        /**
+         * 待办事项预置种子（onCreate 时按当前语言写入本地化名称）。
+         *
+         * 历史版本用 res/raw/marktodo_presets.sql，非中/英语言会回落英文脏数据；
+         * 改为字符串资源 + 参数绑定插入，各语言库各自本地化。
+         */
+        private fun seedMarkTodoPresets(context: Context, db: SupportSQLiteDatabase) {
+            val now = System.currentTimeMillis()
+            db.execSQL(
+                """
+                INSERT OR IGNORE INTO marktodo_category
+                    (id, title, icon_key, description, color_argb, is_pinned, sort_order, created_at, updated_at)
+                VALUES (?, ?, ?, NULL, ?, 0, 0, ?, ?)
+                """.trimIndent(),
+                arrayOf<Any>(
+                    "default_theme",
+                    context.getString(R.string.marktodo_preset_category_title),
+                    "StarBorder",
+                    -7643914,
+                    now,
+                    now
+                )
+            )
+            db.execSQL(
+                """
+                INSERT OR IGNORE INTO marktodo_task
+                    (id, category_id, title, note, start_date, due_date, tags, is_completed, is_starred, sort_order, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, NULL, '', 0, 0, 0, ?, ?)
+                """.trimIndent(),
+                arrayOf<Any>(
+                    "default_task_1",
+                    "default_theme",
+                    context.getString(R.string.marktodo_preset_task_title),
+                    context.getString(R.string.marktodo_preset_task_note),
+                    now,
+                    now,
+                    now
+                )
+            )
+            val tagNames = listOf(
+                "preset_work" to R.string.marktodo_preset_tag_work,
+                "preset_study" to R.string.marktodo_preset_tag_study,
+                "preset_life" to R.string.marktodo_preset_tag_life,
+                "preset_health" to R.string.marktodo_preset_tag_health,
+                "preset_travel" to R.string.marktodo_preset_tag_travel,
+            )
+            // 与 feature/marktodo 的 PRESET_TAG_COLORS / PresetTagColors 保持一致
+            val tagColors = listOf(-10777105, -7643914, -1292135, -15681151, -680437)
+            tagNames.forEachIndexed { index, (tagId, nameRes) ->
+                db.execSQL(
+                    """
+                    INSERT OR IGNORE INTO marktodo_tag
+                        (id, name, color_argb, sort_order, is_preset, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, 1, ?, ?)
+                    """.trimIndent(),
+                    arrayOf<Any>(tagId, context.getString(nameRes), tagColors[index], index, now, now)
+                )
             }
         }
     }

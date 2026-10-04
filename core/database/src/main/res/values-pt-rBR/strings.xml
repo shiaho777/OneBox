@@ -32,4 +32,12 @@
     <string name="sys_prompt_memory_recent_no_tool_desc">Variante de fallback usada quando o modelo não oferece suporte a chamadas de ferramentas</string>
     <string name="sys_prompt_skills_guidance_title">Orientação da Lista de Habilidades</string>
     <string name="sys_prompt_skills_guidance_desc">Preâmbulo injetado antes da lista de habilidades disponíveis</string>
+    <string name="marktodo_preset_category_title">Minhas tarefas</string>
+    <string name="marktodo_preset_tag_health">Saúde</string>
+    <string name="marktodo_preset_tag_life">Vida</string>
+    <string name="marktodo_preset_tag_study">Estudos</string>
+    <string name="marktodo_preset_tag_travel">Viagem</string>
+    <string name="marktodo_preset_tag_work">Trabalho</string>
+    <string name="marktodo_preset_task_note">Toque na caixa à esquerda para me concluir; toque em mim para editar; mantenha pressionado o cartão do tópico para editar ou excluir</string>
+    <string name="marktodo_preset_task_title">Bem-vindo à Lista de Tarefas</string>
 </resources>

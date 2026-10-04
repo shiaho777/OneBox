@@ -2,6 +2,7 @@ package com.shifenmiao.marktodo.service
 
 import com.shifenmiao.database.activity.ActivityLogRecorder
 import com.shifenmiao.database.marktodo.entity.MarkTodoCategoryEntity
+import com.shifenmiao.database.marktodo.entity.MarkTodoTagEntity
 import com.shifenmiao.database.marktodo.entity.MarkTodoTaskEntity
 import com.shifenmiao.database.marktodo.repo.MarkTodoRepository
 import com.shifenmiao.marktodo.data.iconFromKey
@@ -45,12 +46,16 @@ class MarkTodoServiceImpl @Inject constructor(
         source: String,
     ): Result<String> = withContext(Dispatchers.IO) {
         runCatching {
-            val categoryId = UUID.randomUUID().toString()
+            val categoryId = input.id?.takeIf { it.isNotBlank() } ?: UUID.randomUUID().toString()
             val entity = MarkTodoCategoryEntity(
                 id = categoryId,
                 title = input.title.trim(),
                 iconKey = input.iconKey,
-                sortOrder = input.sortOrder,
+                description = input.description?.trim()?.takeIf { it.isNotBlank() },
+                colorArgb = input.colorArgb,
+                isPinned = input.isPinned,
+                // 新主题追加到列表末尾
+                sortOrder = (repository.getMaxCategorySortOrder() ?: -1) + 1,
                 createdAt = System.currentTimeMillis(),
                 updatedAt = System.currentTimeMillis(),
             )
@@ -74,11 +79,16 @@ class MarkTodoServiceImpl @Inject constructor(
         source: String,
     ): Result<Unit> = withContext(Dispatchers.IO) {
         runCatching {
+            val existing = repository.getCategoryWithTasks(categoryId)?.category
             val entity = MarkTodoCategoryEntity(
                 id = categoryId,
                 title = input.title.trim(),
                 iconKey = input.iconKey,
-                sortOrder = input.sortOrder,
+                description = input.description?.trim()?.takeIf { it.isNotBlank() },
+                colorArgb = input.colorArgb,
+                isPinned = input.isPinned,
+                sortOrder = existing?.sortOrder ?: input.sortOrder,
+                createdAt = existing?.createdAt ?: System.currentTimeMillis(),
                 updatedAt = System.currentTimeMillis(),
             )
             repository.upsertCategory(entity)
@@ -151,9 +161,10 @@ class MarkTodoServiceImpl @Inject constructor(
                 tags = input.tags,
                 isCompleted = false,
                 isStarred = false,
-                sortOrder = (repository.getDashboard()
-                    .flatMap { it.tasks }
-                    .maxOfOrNull { it.sortOrder } ?: -1) + 1,
+                priority = input.priority.coerceIn(0, 2),
+                completedAt = null,
+                // repository.addTask 会按分类内 max(sortOrder)+1 覆盖此值
+                sortOrder = 0,
             )
             repository.addTask(entity)
 
@@ -175,14 +186,21 @@ class MarkTodoServiceImpl @Inject constructor(
         source: String,
     ): Result<Unit> = withContext(Dispatchers.IO) {
         runCatching {
+            val existing = repository.getTaskById(taskId)
             val entity = MarkTodoTaskEntity(
                 id = taskId,
                 categoryId = input.categoryId,
                 title = input.title.trim(),
                 note = input.note?.trim()?.takeIf { it.isNotBlank() },
-                startDate = System.currentTimeMillis(),
+                startDate = existing?.startDate ?: System.currentTimeMillis(),
                 dueDate = input.dueDateMillis,
                 tags = input.tags,
+                isCompleted = existing?.isCompleted ?: false,
+                isStarred = existing?.isStarred ?: false,
+                priority = input.priority.coerceIn(0, 2),
+                completedAt = existing?.completedAt,
+                sortOrder = existing?.sortOrder ?: 0,
+                createdAt = existing?.createdAt ?: System.currentTimeMillis(),
                 updatedAt = System.currentTimeMillis(),
             )
             repository.updateTask(entity)
@@ -280,6 +298,86 @@ class MarkTodoServiceImpl @Inject constructor(
         }
     }
 
+    // ── 标签 ────────────────────────────────────────
+
+    /**
+     * 预置标签兜底种子（老库升级后表为空时补齐；新装由 FeatureDatabase onCreate 本地化写入）。
+     *
+     * @param localizedNames 预置标签 id → 当前语言名称（由调用方从字符串资源解析）
+     */
+    suspend fun ensurePresetTags(localizedNames: Map<String, String>): Result<Unit> = withContext(Dispatchers.IO) {
+        runCatching {
+            val now = System.currentTimeMillis()
+            val presets = localizedNames.entries.mapIndexed { index, (id, name) ->
+                MarkTodoTagEntity(
+                    id = id,
+                    name = name,
+                    colorArgb = PRESET_TAG_COLORS[id],
+                    sortOrder = index,
+                    isPreset = true,
+                    createdAt = now,
+                    updatedAt = now,
+                )
+            }
+            repository.ensurePresetTags(presets)
+        }
+    }
+
+    /** 新建自定义标签（追加到标签池末尾），返回新标签 id */
+    suspend fun createTag(
+        name: String,
+        colorArgb: Int?,
+        source: String,
+    ): Result<String> = withContext(Dispatchers.IO) {
+        runCatching {
+            val trimmed = name.trim()
+            require(trimmed.isNotEmpty()) { "Tag name is blank" }
+            val now = System.currentTimeMillis()
+            val tagId = UUID.randomUUID().toString()
+            repository.upsertTag(
+                MarkTodoTagEntity(
+                    id = tagId,
+                    name = trimmed,
+                    colorArgb = colorArgb,
+                    sortOrder = (repository.getTags().maxOfOrNull { it.sortOrder } ?: -1) + 1,
+                    isPreset = false,
+                    createdAt = now,
+                    updatedAt = now,
+                )
+            )
+
+            activityLogRecorder.recordMarkTodo(
+                entityId = tagId,
+                entityType = "TAG",
+                actionType = "CREATE",
+                source = source,
+                title = "新增标签: $trimmed",
+                description = "创建了待办标签「$trimmed」"
+            )
+            tagId
+        }
+    }
+
+    /** 删除自定义标签（预置标签不允许删除，调用方负责拦截） */
+    suspend fun deleteTag(
+        tagId: String,
+        tagName: String,
+        source: String,
+    ): Result<Unit> = withContext(Dispatchers.IO) {
+        runCatching {
+            repository.deleteTag(tagId)
+
+            activityLogRecorder.recordMarkTodo(
+                entityId = tagId,
+                entityType = "TAG",
+                actionType = "DELETE",
+                source = source,
+                title = "删除标签: $tagName",
+                description = "删除了待办标签「$tagName」"
+            )
+        }
+    }
+
     // ── 只读查询（供 Component 与 Agent 使用）────────
 
     suspend fun getDashboard(): List<TodoCategory> = withContext(Dispatchers.IO) {
@@ -303,10 +401,7 @@ class MarkTodoServiceImpl @Inject constructor(
     }
 
     suspend fun getTask(taskId: String): TodoTask? = withContext(Dispatchers.IO) {
-        repository.getDashboard()
-            .flatMap { it.tasks }
-            .find { it.id == taskId }
-            ?.toModel()
+        repository.getTaskById(taskId)?.toModel()
     }
 
     // ── DTO 读操作（实现接口，供 AgentTool 使用）────────
@@ -317,6 +412,9 @@ class MarkTodoServiceImpl @Inject constructor(
                 id = rel.category.id,
                 title = rel.category.title,
                 iconKey = rel.category.iconKey.ifBlank { "inbox" },
+                description = rel.category.description,
+                colorArgb = rel.category.colorArgb,
+                isPinned = rel.category.isPinned,
                 tasks = rel.tasks.map { task ->
                     TodoTaskDto(
                         id = task.id,
@@ -326,7 +424,9 @@ class MarkTodoServiceImpl @Inject constructor(
                         dueDate = task.dueDate,
                         tags = task.tags,
                         isCompleted = task.isCompleted,
-                        isStarred = task.isStarred
+                        isStarred = task.isStarred,
+                        priority = task.priority,
+                        completedAt = task.completedAt
                     )
                 }
             )
@@ -334,9 +434,7 @@ class MarkTodoServiceImpl @Inject constructor(
     }
 
     override suspend fun getTaskDto(taskId: String): TodoTaskDto? = withContext(Dispatchers.IO) {
-        repository.getDashboard()
-            .flatMap { it.tasks }
-            .find { it.id == taskId }
+        repository.getTaskById(taskId)
             ?.let { task ->
                 TodoTaskDto(
                     id = task.id,
@@ -346,7 +444,9 @@ class MarkTodoServiceImpl @Inject constructor(
                     dueDate = task.dueDate,
                     tags = task.tags,
                     isCompleted = task.isCompleted,
-                    isStarred = task.isStarred
+                    isStarred = task.isStarred,
+                    priority = task.priority,
+                    completedAt = task.completedAt
                 )
             }
     }
@@ -357,3 +457,12 @@ class MarkTodoServiceImpl @Inject constructor(
             ?.let { CategoryLookup(id = it.category.id, title = it.category.title) }
     }
 }
+
+/** 预置标签 id → ARGB 颜色（与 raw/marktodo_presets.sql 中的 color_argb 一致） */
+private val PRESET_TAG_COLORS: Map<String, Int> = mapOf(
+    "preset_work" to 0xFF5B8DEF.toInt(),
+    "preset_study" to 0xFF8B5CF6.toInt(),
+    "preset_life" to 0xFFEC4899.toInt(),
+    "preset_health" to 0xFF10B981.toInt(),
+    "preset_travel" to 0xFFF59E0B.toInt(),
+)

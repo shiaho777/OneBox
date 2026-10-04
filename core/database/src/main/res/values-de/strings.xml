@@ -32,4 +32,12 @@
     <string name="sys_prompt_memory_recent_no_tool_desc">Fallback-Variante, die verwendet wird, wenn das Modell keine Tool-Aufrufe unterstützt</string>
     <string name="sys_prompt_skills_guidance_title">Anleitung zur Skills-Liste</string>
     <string name="sys_prompt_skills_guidance_desc">Präambel, die vor der Liste der verfügbaren Skills eingefügt wird</string>
+    <string name="marktodo_preset_category_title">Meine To-dos</string>
+    <string name="marktodo_preset_tag_health">Gesundheit</string>
+    <string name="marktodo_preset_tag_life">Alltag</string>
+    <string name="marktodo_preset_tag_study">Lernen</string>
+    <string name="marktodo_preset_tag_travel">Reisen</string>
+    <string name="marktodo_preset_tag_work">Arbeit</string>
+    <string name="marktodo_preset_task_note">Tippe links auf das Kontrollkästchen, um mich abzuhaken; tippe auf mich, um mich zu bearbeiten; durch langes Drücken auf eine Themenkarte kannst du sie bearbeiten oder löschen</string>
+    <string name="marktodo_preset_task_title">Willkommen bei der To-do-Liste</string>
 </resources>

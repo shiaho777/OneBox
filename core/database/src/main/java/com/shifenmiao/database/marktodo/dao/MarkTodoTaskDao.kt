@@ -15,10 +15,13 @@ interface MarkTodoTaskDao {
     @Query("SELECT * FROM marktodo_task ORDER BY updated_at DESC")
     suspend fun getAll(): List<MarkTodoTaskEntity>
 
+    @Query("SELECT * FROM marktodo_task WHERE id = :taskId")
+    suspend fun getById(taskId: String): MarkTodoTaskEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(task: MarkTodoTaskEntity)
 
-    @Query("UPDATE marktodo_task SET is_completed = :isCompleted, updated_at = :updatedAt WHERE id = :taskId")
+    @Query("UPDATE marktodo_task SET is_completed = :isCompleted, completed_at = CASE WHEN :isCompleted THEN :updatedAt ELSE NULL END, updated_at = :updatedAt WHERE id = :taskId")
     suspend fun setCompleted(taskId: String, isCompleted: Boolean, updatedAt: Long = System.currentTimeMillis())
 
     @Query("UPDATE marktodo_task SET is_starred = :isStarred, updated_at = :updatedAt WHERE id = :taskId")

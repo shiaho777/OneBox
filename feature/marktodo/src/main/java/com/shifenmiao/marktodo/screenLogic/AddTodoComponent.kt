@@ -3,6 +3,7 @@ package com.shifenmiao.marktodo.screenLogic
 import android.content.Context
 import com.arkivanov.decompose.ComponentContext
 import com.shifenmiao.database.marktodo.repo.MarkTodoRepository
+import com.shifenmiao.marktodo.R
 import com.shifenmiao.marktodo.data.iconFromKey
 import com.shifenmiao.marktodo.data.toModel
 import com.shifenmiao.marktodo.model.AddTodoUiEvent
@@ -11,7 +12,9 @@ import com.shifenmiao.marktodo.service.MarkTodoServiceImpl
 import com.shifenmiao.model.todo.TaskInput
 import com.t8rin.imagetoolbox.core.domain.coroutines.DispatchersHolder
 import com.t8rin.imagetoolbox.core.ui.utils.BaseComponent
+import com.t8rin.imagetoolbox.core.ui.utils.helper.AppToastHost
 import com.t8rin.imagetoolbox.core.ui.utils.navigation.Screen
+import com.wanbaohe.schedule.service.ScheduleService
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -21,21 +24,29 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * 新增/编辑待办页组件。
+ *
+ * @param editingTaskId 非空时为编辑模式：进入时加载原任务，保存走 updateTask
+ */
 class AddTodoComponent @AssistedInject internal constructor(
     @Assisted componentContext: ComponentContext,
-    @Assisted val initialCategoryId: String?,
+    @Assisted("initialCategoryId") val initialCategoryId: String?,
+    @Assisted("editingTaskId") val editingTaskId: String?,
     @Assisted val onNavigate: (Screen) -> Unit,
     @Assisted val onGoBack: () -> Unit,
     @ApplicationContext private val context: Context,
     dispatchersHolder: DispatchersHolder,
     private val repository: MarkTodoRepository,
     private val service: MarkTodoServiceImpl,
+    private val scheduleService: ScheduleService,
 ) : BaseComponent(dispatchersHolder, componentContext) {
 
-    private val _uiState = MutableStateFlow(AddTodoUiState())
+    private val _uiState = MutableStateFlow(AddTodoUiState(editingTaskId = editingTaskId))
     val uiState: StateFlow<AddTodoUiState> = _uiState.asStateFlow()
 
     init {
+        // 分类列表
         componentScope.launch {
             repository.observeDashboard().collect { dashboardData ->
                 val categories = dashboardData.map { rel ->
@@ -61,6 +72,33 @@ class AddTodoComponent @AssistedInject internal constructor(
                 )
             }
         }
+
+        // 标签池
+        componentScope.launch {
+            repository.observeTags().collect { tags ->
+                _uiState.value = _uiState.value.copy(tags = tags.map { it.toModel() })
+            }
+        }
+
+        // 编辑模式：加载原任务；失败（任务已删/异常）提示后返回，避免空表单保存写坏数据
+        if (editingTaskId != null) {
+            componentScope.launch {
+                val task = runCatching { service.getTask(editingTaskId) }.getOrNull()
+                if (task != null) {
+                    _uiState.value = _uiState.value.copy(
+                        editingTaskLoaded = true,
+                        taskTitle = task.title,
+                        taskNote = task.note.orEmpty(),
+                        selectedTagNames = task.tags.toSet(),
+                        priority = task.priority,
+                        dueDateMillis = task.dueDate,
+                    )
+                } else {
+                    AppToastHost.showToast(context.getString(R.string.error_todo_not_found))
+                    onGoBack()
+                }
+            }
+        }
     }
 
     fun handleEvent(event: AddTodoUiEvent): Boolean {
@@ -81,11 +119,28 @@ class AddTodoComponent @AssistedInject internal constructor(
                 true
             }
             is AddTodoUiEvent.UpdateTaskNote -> {
-                _uiState.value = _uiState.value.copy(taskNote = event.note)
+                _uiState.value = _uiState.value.copy(
+                    taskNote = event.note.take(AddTodoUiState.NOTE_MAX_LENGTH)
+                )
                 true
             }
-            is AddTodoUiEvent.UpdateTaskTags -> {
-                _uiState.value = _uiState.value.copy(taskTagsText = event.tags)
+            is AddTodoUiEvent.ToggleTag -> {
+                val current = _uiState.value.selectedTagNames
+                _uiState.value = _uiState.value.copy(
+                    selectedTagNames = if (event.tagName in current) {
+                        current - event.tagName
+                    } else {
+                        current + event.tagName
+                    }
+                )
+                true
+            }
+            is AddTodoUiEvent.AddCustomTag -> {
+                addCustomTag(event.name, event.colorArgb)
+                true
+            }
+            is AddTodoUiEvent.SelectPriority -> {
+                _uiState.value = _uiState.value.copy(priority = event.priority)
                 true
             }
             is AddTodoUiEvent.UpdateDueDate -> {
@@ -99,8 +154,28 @@ class AddTodoComponent @AssistedInject internal constructor(
                 _uiState.value = _uiState.value.copy(showDatePicker = event.show)
                 true
             }
+            is AddTodoUiEvent.CreateLinkedSchedule -> {
+                createLinkedSchedule()
+                true
+            }
+            is AddTodoUiEvent.OpenScheduleHub -> {
+                openScheduleHub()
+                true
+            }
             is AddTodoUiEvent.SubmitTask -> {
                 submitTask()
+            }
+            is AddTodoUiEvent.DeleteTask -> {
+                _uiState.value = _uiState.value.copy(showDeleteConfirm = true)
+                true
+            }
+            is AddTodoUiEvent.ConfirmDeleteTask -> {
+                confirmDelete()
+                true
+            }
+            is AddTodoUiEvent.DismissDeleteConfirm -> {
+                _uiState.value = _uiState.value.copy(showDeleteConfirm = false)
+                true
             }
             is AddTodoUiEvent.NavigateBack -> {
                 onGoBack()
@@ -113,26 +188,134 @@ class AddTodoComponent @AssistedInject internal constructor(
         val currentState = _uiState.value
         val title = currentState.taskTitle.trim()
 
+        // 编辑模式下原任务未加载成功时不允许保存（防止空表单 REPLACE 掉原数据）
+        if (editingTaskId != null && !currentState.editingTaskLoaded) return false
+
         if (title.isBlank() || currentState.selectedCategory == null) {
             _uiState.value = currentState.copy(showValidationErrors = true)
             return false
         }
 
+        val input = TaskInput(
+            categoryId = currentState.selectedCategory.id,
+            title = title,
+            note = currentState.taskNote.takeIf { it.isNotBlank() },
+            dueDateMillis = currentState.dueDateMillis,
+            tags = currentState.selectedTagNames.toList(),
+            priority = currentState.priority
+        )
+
         componentScope.launch {
-            service.createTask(
-                input = TaskInput(
-                    categoryId = currentState.selectedCategory.id,
-                    title = title,
-                    note = currentState.taskNote.takeIf { it.isNotBlank() },
-                    dueDateMillis = currentState.dueDateMillis,
-                    tags = currentState.parsedTags
-                ),
-                source = "UI:AddTodoScreen"
-            )
+            if (editingTaskId != null) {
+                service.updateTask(
+                    taskId = editingTaskId,
+                    input = input,
+                    source = "UI:EditTodoScreen"
+                ).onSuccess {
+                    // 日程联动：有截止日期则同步已有日程事件，没有则删除关联事件
+                    syncLinkedSchedule(editingTaskId, input)
+                }
+            } else {
+                service.createTask(
+                    input = input,
+                    source = "UI:AddTodoScreen"
+                )
+            }
             onGoBack()
         }
 
         return true
+    }
+
+    private suspend fun syncLinkedSchedule(taskId: String, input: TaskInput) {
+        runCatching {
+            input.dueDateMillis?.let { dueDate ->
+                scheduleService.syncTaskDeadlineEventIfExists(
+                    linkedTaskId = taskId,
+                    title = input.title,
+                    description = input.note,
+                    dueAtMillis = dueDate,
+                    source = "UI:EditTodoScreen:SyncSchedule"
+                )
+            } ?: scheduleService.deleteEventsByLinkedTaskId(taskId)
+        }
+    }
+
+    private fun confirmDelete() {
+        val taskId = editingTaskId ?: return
+        _uiState.value = _uiState.value.copy(showDeleteConfirm = false)
+        componentScope.launch {
+            // 级联删除关联日程事件
+            runCatching { scheduleService.deleteEventsByLinkedTaskId(taskId) }
+            service.deleteTask(
+                taskId = taskId,
+                taskTitle = _uiState.value.taskTitle,
+                source = "UI:EditTodoScreen"
+            )
+            onGoBack()
+        }
+    }
+
+    private fun addCustomTag(name: String, colorArgb: Int?) {
+        val trimmed = name.trim()
+        if (trimmed.isEmpty()) return
+        componentScope.launch {
+            service.createTag(
+                name = trimmed,
+                colorArgb = colorArgb,
+                source = "UI:AddTodoScreen"
+            ).onSuccess {
+                // 新建后自动选中该标签
+                _uiState.value = _uiState.value.copy(
+                    selectedTagNames = _uiState.value.selectedTagNames + trimmed
+                )
+            }.onFailure {
+                AppToastHost.showToast(context.getString(R.string.error_load_failed))
+            }
+        }
+    }
+
+    // ── 日程联动（承接原 TodoDetailScreen 的能力） ──────────────
+
+    private fun openScheduleHub() {
+        val taskId = editingTaskId ?: return
+        onNavigate(
+            Screen.Schedule(
+                linkedTaskId = taskId,
+                focusDateMillis = _uiState.value.dueDateMillis
+            )
+        )
+    }
+
+    private fun createLinkedSchedule() {
+        val taskId = editingTaskId ?: return
+        val state = _uiState.value
+        val dueDate = state.dueDateMillis ?: run {
+            AppToastHost.showToast(context.getString(R.string.schedule_missing_due_date))
+            return
+        }
+        if (state.isCreatingSchedule) return
+
+        _uiState.value = state.copy(isCreatingSchedule = true)
+        componentScope.launch {
+            val result = scheduleService.createTaskDeadlineEvent(
+                linkedTaskId = taskId,
+                title = state.taskTitle.trim(),
+                description = state.taskNote.takeIf { it.isNotBlank() },
+                dueAtMillis = dueDate,
+                source = "UI:EditTodoScreen"
+            )
+            _uiState.value = _uiState.value.copy(isCreatingSchedule = false)
+
+            result
+                .onSuccess {
+                    AppToastHost.showToast(context.getString(R.string.schedule_created_success))
+                    openScheduleHub()
+                }
+                .onFailure {
+                    AppToastHost.showToast(context.getString(R.string.schedule_created_failed))
+                }
+        }
     }
 
     private fun navigateToAddCategory() {
@@ -147,7 +330,8 @@ class AddTodoComponent @AssistedInject internal constructor(
     fun interface Factory {
         operator fun invoke(
             componentContext: ComponentContext,
-            initialCategoryId: String?,
+            @Assisted("initialCategoryId") initialCategoryId: String?,
+            @Assisted("editingTaskId") editingTaskId: String?,
             onNavigate: (Screen) -> Unit,
             onGoBack: () -> Unit
         ): AddTodoComponent
