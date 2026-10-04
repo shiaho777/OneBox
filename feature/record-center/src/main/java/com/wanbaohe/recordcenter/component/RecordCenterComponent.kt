@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
@@ -69,7 +70,8 @@ class RecordCenterComponent @AssistedInject internal constructor(
 
     /**
      * 趋势 tab 聚合数据:近 14 天记录(本周图表 + 上周对比)+ 全量最新值。
-     * 窗口起点在组件创建时按自然日确定,记录变更经 Flow 自动重算。
+     * 窗口起点在组件创建时按自然日确定,记录变更经 Flow 自动重算;
+     * 聚合在默认调度器执行,UI 仅在趋势 tab 可见时订阅(见 RecordCenterScreen)。
      */
     val trendSummaries: StateFlow<List<RecordTrendSummary>> = combine(
         repository.observeSinceAllTypes(trendWindowFrom()),
@@ -80,7 +82,8 @@ class RecordCenterComponent @AssistedInject internal constructor(
             recentRecords = recent,
             latestByType = latest.associateBy { it.type },
         )
-    }.stateIn(componentScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
+    }.flowOn(defaultDispatcher)
+        .stateIn(componentScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
 
     fun navigateToRecordList(recordType: String) {
         onNavigate(

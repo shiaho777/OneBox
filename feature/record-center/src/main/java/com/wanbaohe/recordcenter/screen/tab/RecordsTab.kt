@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,10 +52,12 @@ import com.wanbaohe.recordcenter.screen.util.formatRelativeDate
 fun RecordsTab(
     recordTypes: List<RecordTypeDefinition>,
     latestByType: Map<String, HealthRecordEntity>,
+    gridState: LazyGridState,
     onTypeClick: (String) -> Unit,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
+        state = gridState,
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
@@ -92,7 +96,9 @@ private fun RecordTypeGridCard(
     val iconBgColor = sectionIconContainerColor(theme)
     val iconTint = sectionIconColor(theme)
 
-    val valueParts = latest?.let { formatRecordValueParts(definition, it.fieldsJson) }
+    val valueParts = remember(latest) {
+        latest?.let { formatRecordValueParts(definition, it.fieldsJson) }
+    }
     val dateLabel = latest?.let { formatRelativeDate(it.happenedAt) }
 
     GlassCard(

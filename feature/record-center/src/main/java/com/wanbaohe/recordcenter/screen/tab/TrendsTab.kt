@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,10 +60,12 @@ import java.math.RoundingMode
 @Composable
 fun TrendsTab(
     summaries: List<RecordTrendSummary>,
+    gridState: LazyGridState,
     onTypeClick: (String) -> Unit,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
+        state = gridState,
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
@@ -98,11 +102,15 @@ private fun TrendCard(
     val iconBgColor = sectionIconContainerColor(theme)
     val accentColor = sectionIconColor(theme)
 
-    val chartUnit = definition.chartFieldKeys.firstOrNull()
-        ?.let { key -> definition.fields.firstOrNull { it.key == key } }
-        ?.unit
-        ?.takeIf { it.isNotEmpty() }
-    val valueParts = summary.latest?.let { formatRecordValueParts(definition, it.fieldsJson) }
+    val chartUnit = remember(definition) {
+        definition.chartFieldKeys.firstOrNull()
+            ?.let { key -> definition.fields.firstOrNull { it.key == key } }
+            ?.unit
+            ?.takeIf { it.isNotEmpty() }
+    }
+    val valueParts = remember(summary.latest) {
+        summary.latest?.let { formatRecordValueParts(definition, it.fieldsJson) }
+    }
 
     GlassCard(
         onClick = onClick,
@@ -252,7 +260,7 @@ private fun TrendCardChart(
     accentColor: Color,
 ) {
     val definition = summary.definition
-    val xLabels = summary.dayStarts.map(::formatChartDate)
+    val xLabels = remember(summary) { summary.dayStarts.map(::formatChartDate) }
     val seriesColors = listOf(
         accentColor,
         MaterialTheme.colorScheme.tertiary,
@@ -281,12 +289,14 @@ private fun TrendCardChart(
         }
         TrendChartKind.BAR -> {
             val fieldKey = definition.chartFieldKeys.first()
-            val entries = summary.dailyPoints[fieldKey].orEmpty().mapIndexed { index, value ->
-                BarChartEntry(
-                    // 半宽卡片上 7 个日期标签会挤在一起,隔一个显示
-                    label = if (index % 2 == 0) xLabels.getOrElse(index) { "" } else "",
-                    value = value ?: 0f,
-                )
+            val entries = remember(summary) {
+                summary.dailyPoints[fieldKey].orEmpty().mapIndexed { index, value ->
+                    BarChartEntry(
+                        // 半宽卡片上 7 个日期标签会挤在一起,隔一个显示
+                        label = if (index % 2 == 0) xLabels.getOrElse(index) { "" } else "",
+                        value = value ?: 0f,
+                    )
+                }
             }
             CompareBarChart(
                 entries = entries,

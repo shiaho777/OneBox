@@ -1,16 +1,10 @@
 package com.wanbaohe.recordcenter.screen
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,8 +34,10 @@ import com.wanbaohe.recordcenter.screen.tab.TrendsTab
 fun RecordCenterScreen(component: RecordCenterComponent) {
     val currentTab by component.currentTab.collectAsState()
     val latestByType by component.latestByType.collectAsState()
-    val trendSummaries by component.trendSummaries.collectAsState()
     val profile by component.profile.collectAsState()
+    // 滚动状态托管在宿主:tab 切换后位置不丢,也避免整页从零重组
+    val recordsGridState = rememberLazyGridState()
+    val trendsGridState = rememberLazyGridState()
 
     BaseScreen(
         title = {
@@ -61,34 +57,28 @@ fun RecordCenterScreen(component: RecordCenterComponent) {
                         .weight(1f)
                         .fillMaxWidth(),
                 ) {
-                    AnimatedContent(
-                        targetState = currentTab,
-                        transitionSpec = {
-                            val direction = if (targetState.ordinal > initialState.ordinal) 1 else -1
-                            (fadeIn(animationSpec = tween(250)) +
-                                slideInHorizontally(animationSpec = tween(300)) { it / 4 * direction })
-                                .togetherWith(
-                                    fadeOut(animationSpec = tween(200)) +
-                                        slideOutHorizontally(animationSpec = tween(300)) { -it / 4 * direction }
-                                )
-                        },
-                        label = "record_center_tab_switch",
-                    ) { tab ->
-                        when (tab) {
-                            RecordCenterTab.RECORDS -> RecordsTab(
-                                recordTypes = component.recordTypes,
-                                latestByType = latestByType,
-                                onTypeClick = component::navigateToRecordList,
-                            )
-                            RecordCenterTab.TRENDS -> TrendsTab(
+                    // 直接切换而非 AnimatedContent:滑动动画期间新旧两棵
+                    // LazyVerticalGrid(含 Canvas 图表)会同时组合并逐帧重绘,卡顿明显
+                    when (currentTab) {
+                        RecordCenterTab.RECORDS -> RecordsTab(
+                            recordTypes = component.recordTypes,
+                            latestByType = latestByType,
+                            gridState = recordsGridState,
+                            onTypeClick = component::navigateToRecordList,
+                        )
+                        RecordCenterTab.TRENDS -> {
+                            // 仅在趋势 tab 订阅聚合数据,离开后上游查询自动停止
+                            val trendSummaries by component.trendSummaries.collectAsState()
+                            TrendsTab(
                                 summaries = trendSummaries,
+                                gridState = trendsGridState,
                                 onTypeClick = component::navigateToRecordList,
-                            )
-                            RecordCenterTab.MINE -> MineTab(
-                                profile = profile,
-                                onSave = component::saveProfile,
                             )
                         }
+                        RecordCenterTab.MINE -> MineTab(
+                            profile = profile,
+                            onSave = component::saveProfile,
+                        )
                     }
                 }
                 RecordCenterBottomBar(
