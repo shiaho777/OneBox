@@ -43,7 +43,6 @@ import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassOutlinedTextField
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassTextFieldVisualPreset
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassStyle
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassSurface
-import com.t8rin.imagetoolbox.core.ui.widget.glass.glassDense
 import com.t8rin.imagetoolbox.core.ui.widget.glass.glassMedium
 
 @Immutable
@@ -356,7 +355,7 @@ fun OneBoxPillButton(
             .alpha(if (enabled) 1f else 0.5f)
             .clip(shape)
             .clickable(enabled = enabled, onClick = onClick)
-            .glassDense(
+            .glassMedium(
                 color = containerColor,
                 shape = shape,
             )

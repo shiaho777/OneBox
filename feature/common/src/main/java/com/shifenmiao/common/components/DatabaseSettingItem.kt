@@ -23,12 +23,12 @@ import com.shifenmiao.core.R
 import com.shifenmiao.theme.AppTheme
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineCloudUpload
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineCloudDownload
-import com.t8rin.imagetoolbox.core.ui.widget.glass.glassDense
+import com.t8rin.imagetoolbox.core.ui.widget.glass.glassMedium
 
 /**
  * 简单的两列「备份 / 恢复」按钮行，不包含任何业务逻辑。
  *
- * 背景与「我的」页设置卡片、胶囊按钮共用 glassDense + surfaceContainer。
+ * 背景与「我的」页设置卡片、胶囊按钮共用 glassMedium + surfaceContainer。
  *
  * @param onClicked 0 = 备份, 1 = 恢复
  */
@@ -73,7 +73,7 @@ private fun DatabaseActionButton(
                 indication = null,
                 onClick = onClick,
             )
-            .glassDense(
+            .glassMedium(
                 color = MaterialTheme.colorScheme.surfaceContainer,
                 shape = shape,
             )

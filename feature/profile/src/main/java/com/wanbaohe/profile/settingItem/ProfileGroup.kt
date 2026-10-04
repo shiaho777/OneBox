@@ -11,13 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.t8rin.imagetoolbox.core.ui.widget.glass.glassDense
+import com.t8rin.imagetoolbox.core.ui.widget.glass.glassMedium
 import com.t8rin.imagetoolbox.core.ui.widget.system.OneBoxDesignSystem
 
 /**
  * 「我的」页设置分组卡片。
  *
- * 与页面底部「备份 / 恢复」按钮、胶囊按钮共用 glassDense + surfaceContainer，
+ * 与页面底部「备份 / 恢复」按钮、胶囊按钮共用 glassMedium + surfaceContainer，
  * 保证卡片与按钮是同一套玻璃灰度。
  */
 @Composable
@@ -31,7 +31,7 @@ fun ProfileGroup(
             .fillMaxWidth()
             .wrapContentHeight()
             .clip(shape)
-            .glassDense(
+            .glassMedium(
                 color = MaterialTheme.colorScheme.surfaceContainer,
                 shape = shape,
             )
