@@ -1,5 +1,6 @@
 package com.t8rin.imagetoolbox.core.ui.widget.system
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -107,6 +108,7 @@ fun OneBoxSectionHeader(
 fun OneBoxSectionCard(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
     contentPadding: PaddingValues = PaddingValues(OneBoxDesignSystem.cardPadding),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(OneBoxDesignSystem.itemSpacing),
     content: @Composable ColumnScope.() -> Unit,
@@ -117,7 +119,7 @@ fun OneBoxSectionCard(
         shape = OneBoxDesignSystem.sectionCardShape,
         containerAlpha = 0.22f,
         colors = androidx.compose.material3.CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
+            containerColor = containerColor
         ),
     ) {
         Column(
