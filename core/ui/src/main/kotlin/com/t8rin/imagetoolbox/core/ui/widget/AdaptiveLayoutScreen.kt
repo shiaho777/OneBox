@@ -57,6 +57,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -117,6 +119,15 @@ fun AdaptiveLayoutScreen(
 ) {
     val isPortrait by isPortraitOrientationAsState()
     val settingsState = LocalSettingsState.current
+
+    // 底部操作栏（OneBoxBottomActionBar / BottomButtonsBlock）横跨屏幕底边、浮在内容之上，
+    // 本身自带 navigationBarsPadding()。这里实测它渲染出来的高度，再折算成列表底部留白，
+    // 让滚动内容停在操作栏上方，而不是从玻璃栏底下穿过去。
+    // 实测而非写死：多语言下"Select image / Save"会换行，栏高并不固定。
+    val density = LocalDensity.current
+    var actionsBarHeightPx by rememberSaveable { mutableStateOf(0) }
+    val actionsBarHeight = with(density) { actionsBarHeightPx.toDp() }
+    val actionsBarMeasureModifier = Modifier.onSizeChanged { actionsBarHeightPx = it.height }
 
     var imageState by rememberImageState()
 
@@ -238,14 +249,23 @@ fun AdaptiveLayoutScreen(
                                 Dispatchers.Main.immediate
                             }
 
+                            // 底部操作栏占位：实测高度 + 8dp 呼吸位；横屏栏在右侧，竖屏才需要留白。
+                            // 首帧还没测到高度时退回旧值 100dp，避免留白跳变。
+                            val actionsBarInset = if (isPortrait || !canShowScreenData) {
+                                actionsBarHeight.coerceAtLeast(100.dp) + 8.dp
+                            } else {
+                                contentPadding
+                            }
+
                             LazyColumn(
                                 state = listState,
                                 contentPadding = PaddingValues(
+                                    // 留白 = 系统导航条 + 底部操作栏占位，滚到底时最后一屏控件完整露在操作栏上方
                                     bottom = WindowInsets
                                         .navigationBars
                                         .union(WindowInsets.ime)
                                         .asPaddingValues()
-                                        .calculateBottomPadding() + (if (!isPortrait && canShowScreenData) contentPadding else 100.dp),
+                                        .calculateBottomPadding() + actionsBarInset,
                                     top = if (!canShowScreenData || !isPortrait) contentPadding else portraitTopPadding,
                                     start = contentPadding + cutout,
                                     end = contentPadding
@@ -307,7 +327,10 @@ fun AdaptiveLayoutScreen(
                                 }
                             }
                         }
-                        AnimatedVisibility(!isPortrait && canShowScreenData) {
+                        AnimatedVisibility(
+                            !isPortrait && canShowScreenData,
+                            modifier = actionsBarMeasureModifier
+                        ) {
                             buttons(actions)
                         }
                     }
@@ -316,7 +339,9 @@ fun AdaptiveLayoutScreen(
 
             AnimatedVisibility(
                 visible = isPortrait || !canShowScreenData,
-                modifier = Modifier.align(settingsState.fabAlignment)
+                modifier = Modifier
+                    .align(settingsState.fabAlignment)
+                    .then(actionsBarMeasureModifier)
             ) {
                 buttons(actions)
             }
