@@ -96,6 +96,17 @@
     <string name="cloud_storage_ai_assist_title">云存储配置助手</string>
     <string name="cloud_storage_ai_assist_prompt">你是用户的远程存储配置助手。用户描述存储服务时，用 manage_cloud_connections 工具帮他添加连接。需要 Endpoint、AccessKey、SecretKey 和 Bucket。用户未提供的信息请简短追问，不要编造密钥。配置完成后可用 browse_cloud_files 浏览文件。</string>
     <string name="cloud_storage_ai_assist_fill_in">帮我添加一个阿里云 OSS 连接，用来备份照片</string>
+    <string name="cloud_storage_guide_action_title">使用指南与常见问题</string>
+    <string name="cloud_storage_guide_action_desc">怎么连接、要不要花钱，一看就懂</string>
+    <string name="cloud_storage_guide_sheet_title">使用指南与常见问题</string>
+    <string name="cloud_storage_guide_q1">这是什么？</string>
+    <string name="cloud_storage_guide_a1">把你已有的云存储（阿里云 OSS、百度云 BOS、腾讯云 COS、华为云 OBS、AWS S3，以及 SMB、WebDAV）连到手机，在一个 App 里浏览、上传、下载、管理文件。</string>
+    <string name="cloud_storage_guide_q2">怎么连接？</string>
+    <string name="cloud_storage_guide_a2">点「立刻添加云存储」选服务商，填入 Endpoint、AccessKey、SecretKey（在云厂商控制台的对象存储服务里创建）；不会填可点「云存储配置助手」让 AI 一步步带配。</string>
+    <string name="cloud_storage_guide_q3">要花钱吗？</string>
+    <string name="cloud_storage_guide_a3">万宝盒不收任何费用；云存储是云厂商的服务，一般有少量免费额度，超出按存储量和流量由云厂商计费，以各厂商官网为准；只连接不存文件不产生费用。</string>
+    <string name="cloud_storage_guide_q4">数据安全吗？</string>
+    <string name="cloud_storage_guide_a4">密钥只保存在你自己的手机里（系统级加密存储），文件传输由手机直连云厂商服务器，不经过万宝盒的服务器。</string>
     <string name="cloud_storage_state_error_title">云同步发生异常</string>
     <string name="cloud_storage_refresh_list_action">重新刷新列表</string>
 

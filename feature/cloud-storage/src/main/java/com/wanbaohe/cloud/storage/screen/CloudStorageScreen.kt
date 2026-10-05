@@ -71,6 +71,7 @@ import com.wanbaohe.cloud.storage.screen.components.BucketSwitcherSheet
 import com.wanbaohe.cloud.storage.screen.components.CloudFileGrid
 import com.wanbaohe.cloud.storage.screen.components.ConnectionSheet
 import com.wanbaohe.cloud.storage.screen.components.ConnectionSwitcherSheet
+import com.wanbaohe.cloud.storage.screen.components.GuideSheet
 import com.wanbaohe.cloud.storage.screen.components.ObjectDetailSheet
 import com.wanbaohe.cloud.storage.screen.components.SearchTabContent
 import com.wanbaohe.cloud.storage.screen.components.SyncPlaceholderTab
@@ -86,6 +87,7 @@ import com.t8rin.imagetoolbox.core.resources.icons.line.LineExpandMore
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineWarning
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineCloudUpload
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineAutoFix
+import com.t8rin.imagetoolbox.core.resources.icons.line.LineHelp
 
 @Composable
 fun CloudStorageScreen(
@@ -635,6 +637,7 @@ private fun CloudNoConnectionGuide(
     modifier: Modifier = Modifier,
 ) {
     val onNavigate = com.t8rin.imagetoolbox.core.ui.utils.navigation.LocalOnNavigate.current
+    var showGuide by remember { mutableStateOf(false) }
     EmptyStateGuide(
         icon = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineCloudStorage,
         title = stringResource(R.string.cloud_storage_no_connection_title),
@@ -663,8 +666,18 @@ private fun CloudNoConnectionGuide(
                 },
                 emphasized = true,
             ),
+            EmptyStateGuideAction(
+                icon = com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineHelp,
+                title = stringResource(R.string.cloud_storage_guide_action_title),
+                description = stringResource(R.string.cloud_storage_guide_action_desc),
+                onClick = { showGuide = true },
+            ),
         ),
         footerHint = stringResource(R.string.cloud_storage_no_connection_desc),
         modifier = modifier,
     )
+
+    if (showGuide) {
+        GuideSheet(onDismiss = { showGuide = false })
+    }
 }

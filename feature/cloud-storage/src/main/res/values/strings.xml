@@ -96,6 +96,17 @@
     <string name="cloud_storage_ai_assist_title">Cloud Storage Setup Assistant</string>
     <string name="cloud_storage_ai_assist_prompt">You are the user\'s remote storage setup assistant. When the user describes a storage service, add a connection with the manage_cloud_connections tool. You need Endpoint, AccessKey, SecretKey and Bucket. Ask briefly for anything missing and never invent credentials. After setup, you can browse files with browse_cloud_files.</string>
     <string name="cloud_storage_ai_assist_fill_in">Help me add an Aliyun OSS connection to back up photos</string>
+    <string name="cloud_storage_guide_action_title">Usage Guide &amp; FAQ</string>
+    <string name="cloud_storage_guide_action_desc">Connection, cost, and security explained</string>
+    <string name="cloud_storage_guide_sheet_title">Usage Guide &amp; FAQ</string>
+    <string name="cloud_storage_guide_q1">What is this?</string>
+    <string name="cloud_storage_guide_a1">Connect the cloud storage you already have (Alibaba Cloud OSS, Baidu BOS, Tencent Cloud COS, Huawei Cloud OBS, AWS S3, plus SMB and WebDAV) to your phone, and browse, upload, download, and manage files all in one app.</string>
+    <string name="cloud_storage_guide_q2">How do I connect?</string>
+    <string name="cloud_storage_guide_a2">Tap \"Add cloud storage\", pick a provider, and enter the Endpoint, AccessKey, and SecretKey (created in the object storage console of your cloud provider). Not sure what to fill in? Tap \"Cloud Storage Setup Assistant\" and let AI walk you through it step by step.</string>
+    <string name="cloud_storage_guide_q3">Does it cost anything?</string>
+    <string name="cloud_storage_guide_a3">OneBox charges nothing. Cloud storage is a service of the cloud provider: most offer a small free tier, and usage beyond that is billed by the provider based on storage and traffic — check each provider\'s official site for details. Just connecting without storing any files costs nothing.</string>
+    <string name="cloud_storage_guide_q4">Is my data safe?</string>
+    <string name="cloud_storage_guide_a4">Your keys never leave your phone (they are stored with system-level encryption), and files travel directly between your phone and the cloud provider\'s servers — nothing goes through OneBox servers.</string>
     <string name="cloud_storage_state_error_title">Something went wrong</string>
     <string name="cloud_storage_refresh_list_action">Refresh the list</string>
 
