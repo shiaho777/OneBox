@@ -7,9 +7,9 @@
     <string name="edit_options">Seçenekleri Düzenle</string>
     <string name="spin_again">Tekrar Döndür</string>
     <string name="options_list">Seçenek Listesi</string>
-    <string name="result_is">Sonuç olarak,</string>
+    <string name="result_is">Sonuç:</string>
     <string name="close">Kapat</string>
-    <string name="spin_again_action">Tekrar dön.</string>
+    <string name="spin_again_action">Tekrar Döndür</string>
     <string name="start">Başlat</string>
     <string name="wheel_title">Çark Başlığı</string>
     <string name="options_list_count">Seçenek Listesi ( %1$d )</string>

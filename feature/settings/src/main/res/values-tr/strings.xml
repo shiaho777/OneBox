@@ -97,6 +97,8 @@
     <string name="ai_engine_dialog_validation_failed">Lütfen zorunlu alanları doldurun ve geçersiz olanları düzeltin.</string>
     <string name="ai_engine_name_label">Hizmet Anahtarı</string>
     <string name="ai_engine_title_label">Görünen Ad</string>
+    <string name="ai_engine_title_hint">Listelerde ve sohbetlerde görüntülenen ad; istediğiniz zaman değiştirebilirsiniz.</string>
+    <string name="ai_engine_name_edit_hint">Hizmetin benzersiz tanımlayıcısı; değiştirdiğinizde modeller onunla birlikte taşınır, genellikle değiştirmeniz gerekmez.</string>
     <string name="ai_engine_description_label">Açıklama</string>
     <string name="ai_engine_protocol_label">İstek Protokolü</string>
     <string name="ai_engine_protocol_openai">OpenAI Chat/completions API</string>
@@ -133,6 +135,8 @@
     <string name="ai_engine_model_edit_dialog_title">Modeli Düzenle</string>
     <string name="ai_engine_model_name">Model Anahtarı</string>
     <string name="ai_engine_model_display_name">Model Adı</string>
+    <string name="ai_engine_model_dialog_primary_hint">Hizmetin istediği model kimliğini girin; görünen ad otomatik olarak oluşturulur.</string>
+    <string name="ai_engine_model_display_name_hint">Boş bırakırsanız model anahtarından otomatik oluşturulur.</string>
     <string name="ai_engine_model_description">Model Açıklaması</string>
     <string name="ai_engine_model_add_success">Model kaydedildi</string>
     <string name="ai_engine_model_add_failed">Model kaydedilemedi. Lütfen daha sonra tekrar deneyin.</string>
@@ -167,6 +171,7 @@
     <string name="ai_working_model_status_proxy">Geçerli rota: proxy mevcut</string>
     <string name="ai_working_model_status_unavailable">Geçerli rota: kullanılamıyor — önce ayarlara gidin</string>
     <string name="ai_engine_api_url">API URL\'si</string>
+    <string name="ai_engine_api_url_hint">Alan odaktan çıktığında https:// ve sondaki / otomatik tamamlanır.</string>
     <string name="ai_engine_api_path">API Yolu</string>
     <string name="ai_engine_auth_token">Kimlik Doğrulama Belirteci</string>
     <string name="ai_engine_auth_type_label">Kimlik Doğrulama Türü</string>

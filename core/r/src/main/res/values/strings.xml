@@ -385,7 +385,7 @@
     <string name="pay_desc">Get %s points</string>
     <string name="pay_coffee">Coffee for the coder</string>
     <string name="pay_tea">A cup of inspiration</string>
-    <string name="pay_juice">Recharge and refresh</string>
+    <string name="pay_juice">An orange juice to fully recharge</string>
     <string name="pay_beer">Cheers, my friend</string>
     <string name="pay_sauna">Relax those muscles</string>
     <string name="pay_travel">Dream big, boss pays</string>
@@ -753,8 +753,8 @@
     <string name="home_created_content_hint">Your new content will appear here</string>
     <string name="my_content_empty">You haven’t created any local content yet</string>
     <string name="my_content_empty_action_note">Create in Notebook</string>
-    <string name="playground_empty_title">No ideas yet</string>
-    <string name="playground_empty_description">Be the first to share your idea</string>
+    <string name="playground_empty_title">No playground posts yet</string>
+    <string name="playground_empty_description">Be the first to share yours</string>
     <string name="playground_footer_title">Share your idea</string>
     <string name="playground_footer_description">Got a good idea? Write an article and explore it together</string>
     <string name="favorite_time_just_now">Just now</string>

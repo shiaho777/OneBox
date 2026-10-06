@@ -485,8 +485,7 @@ object ContextUtils {
                 for (i in 0 until supportedLocales.size()) {
                     val locale = supportedLocales.get(i) ?: continue
                     add(
-                        locale.toLanguageTag() to locale.getDisplayName(locale)
-                            .replaceFirstChar(Char::uppercase)
+                        locale.toLanguageTag() to locale.nativeLanguageDisplayName()
                     )
                 }
             }
@@ -500,6 +499,14 @@ object ContextUtils {
             listOf(tags.first()) + tags.drop(1).sortedBy { it.second }
         }.toMap()
     }
+
+    // ICU 对印尼语返回的母语名是国名 "Indonesia",语言面板应显示 "Bahasa Indonesia"
+    private fun Locale.nativeLanguageDisplayName(): String =
+        if (language == "in" || language == "id") {
+            "Bahasa Indonesia"
+        } else {
+            getDisplayName(this).replaceFirstChar(Char::uppercase)
+        }
 
     /**
      * 判断 APK 是否打包了多于一种语言（除系统默认外还有可选语言）。

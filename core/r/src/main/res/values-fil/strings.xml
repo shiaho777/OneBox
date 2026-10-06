@@ -903,7 +903,7 @@
     <string name="category_section_label">Kategorya</string>
     <string name="item_note_title">Mga Tala</string>
     <string name="item_note_description">I-capture ang iyong mga iniisip</string>
-    <string name="decision_wheel_title">Decision Wheel</string>
+    <string name="decision_wheel_title">Gulong ng Desisyon</string>
     <string name="decision_wheel_description">Iikot ang gulong para gumawa ng random na desisyon. Hal., Ano ang hapunan?</string>
     <string name="file_transfer_title">Paglipat ng File</string>
     <string name="file_transfer_description">I-access ang mga file ng iyong telepono mula sa isang browser</string>

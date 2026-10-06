@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="camera_watermark_title">Kamera Filigranı</string>
+    <string name="camera_watermark_title">Su İşareti Kamerası</string>
     <string name="camera_watermark_tab_selected_images">Seçildi (%d)</string>
     <string name="camera_watermark_tab_select_style">Stil Seç</string>
     <string name="camera_watermark_export_settings">Dışa Aktarma Ayarları</string>

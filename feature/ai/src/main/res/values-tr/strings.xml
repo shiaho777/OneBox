@@ -590,6 +590,9 @@
     <string name="agent_tool_manage_todo_category_created">Kategori oluşturuldu: %1$s</string>
     <string name="agent_tool_manage_todo_toggled">Görev %1$s %2$s oldu</string>
     <string name="agent_tool_manage_todo_task_deleted">Görev silindi: %1$s</string>
+    <string name="agent_tool_manage_todo_param_tasks">Öğe başlıkları dizisi, create_list için zorunludur, örneğin [\"AI ile video kurgulamayı öğren\", \"12 kitap oku\"]</string>
+    <string name="agent_tool_manage_todo_missing_tasks">create_list eylemi tasks parametresi gerektirir (öğe başlıkları dizisi)</string>
+    <string name="agent_tool_manage_todo_list_created">\"%1$s\" listesi oluşturuldu, toplam %2$d öğe</string>
     <string name="agent_tool_manage_xiangqi_title">Xiangqi Oyunlarını Yönet</string>
     <string name="agent_tool_manage_xiangqi_summary">Çin satrancı oyunlarını sorgula, oluştur, son/açılış içe aktar, oyun kayıtlarını içe aktar, sil ve dışa aktar</string>
     <string name="agent_tool_manage_xiangqi_param_action">Eylem türü: list / detail / create / import_fen / import_json / delete / export</string>
