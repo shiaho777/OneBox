@@ -46,6 +46,7 @@ import com.shifenmiao.base.utils.Navigation
 import com.shifenmiao.common.logic.AppComponent
 import com.shifenmiao.common.ui.BaseScreen
 import com.shifenmiao.core.R
+import com.shifenmiao.model.channel.FlavorType
 import com.shifenmiao.storage.AppSharedStorage
 import com.shifenmiao.theme.AppTheme
 import com.smarttoolfactory.colordetector.util.ColorUtil.roundToTwoDigits
@@ -134,8 +135,11 @@ fun DisplaySettingsScreen(component: DisplaySettingsComponent) {
                         Spacer(modifier = Modifier.height(OneBoxDesignSystem.compactSpacing))
                         QuickSettingItem(component.appComponentProxy)
                         Spacer(modifier = Modifier.height(OneBoxDesignSystem.compactSpacing))
-                        MiniProgramSettingItem()
-                        Spacer(modifier = Modifier.height(OneBoxDesignSystem.compactSpacing))
+                        // 微信小程序开关仅国内渠道有意义, 海外(google/foss)隐藏
+                        if (!FlavorType.fromName().isOverseas) {
+                            MiniProgramSettingItem()
+                            Spacer(modifier = Modifier.height(OneBoxDesignSystem.compactSpacing))
+                        }
                         FontFamilySettingSection(settingsComponent)
                         Spacer(modifier = Modifier.height(OneBoxDesignSystem.compactSpacing))
                         FontSizeSettingSection(settingsComponent)
