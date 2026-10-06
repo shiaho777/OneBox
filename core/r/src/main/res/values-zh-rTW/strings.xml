@@ -592,6 +592,8 @@
     <string name="ai_chat_quick_start_14">我昨天來月經了，腹痛有點明顯</string>
     <string name="ai_chat_quick_start_15">幫我寫一段 30 秒的開場白提詞稿</string>
     <string name="ai_chat_quick_start_16">幫我整理一份週末出遊攻略網頁</string>
+    <string name="ai_chat_quick_start_17">幫我寫一篇筆記，主題是</string>
+    <string name="ai_chat_quick_start_18">幫我收藏一個網址：</string>
     <string name="ai_chat_jump_to_latest_streaming">正在生成新內容，點擊回到底部</string>
     <string name="ai_chat_jump_to_latest_message">有新訊息，點擊查看</string>
     <string name="ai_chat_message_limit_notice">僅載入最近 50 則訊息，更早訊息已封存</string>
