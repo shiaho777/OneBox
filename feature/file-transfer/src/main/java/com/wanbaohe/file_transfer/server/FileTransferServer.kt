@@ -366,16 +366,18 @@ class FileTransferServer(
      */
     private fun refreshSession(sessionId: String): Boolean {
         val now = System.currentTimeMillis()
-        pruneExpiredSessions(now)
+        val lastSeenAt = authenticatedSessions[sessionId]
+        val valid = lastSeenAt != null && now - lastSeenAt <= SESSION_TTL_MS
 
-        val lastSeenAt = authenticatedSessions[sessionId] ?: return false
-        return if (now - lastSeenAt > SESSION_TTL_MS) {
-            authenticatedSessions.remove(sessionId, lastSeenAt)
-            false
-        } else {
+        if (valid) {
+            // 先续期再清理：刚通过校验的 session 时间戳最新，不会被容量上限挤掉
             authenticatedSessions[sessionId] = now
-            true
+            pruneExpiredSessions(now)
+        } else if (lastSeenAt != null) {
+            authenticatedSessions.remove(sessionId, lastSeenAt)
         }
+
+        return valid
     }
 
     /**
@@ -418,9 +420,10 @@ class FileTransferServer(
 
         return if (password == config.password) {
             val now = System.currentTimeMillis()
-            pruneExpiredSessions(now)
             val sessionId = java.util.UUID.randomUUID().toString()
+            // 先写入再清理：容量上限淘汰最久未活跃的，新 session 时间戳最新，不会被自己挤掉
             authenticatedSessions[sessionId] = now
+            pruneExpiredSessions(now)
 
             val response = newFixedLengthResponse(
                 Response.Status.OK,
