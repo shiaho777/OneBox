@@ -20,12 +20,14 @@ import com.t8rin.logger.makeLog
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -72,6 +74,9 @@ class ItemSyncManager @Inject constructor(
     private companion object {
         /** 页面进入同步的默认冷却时间：1 天，可被 RemoteConfig 覆盖。 */
         const val DEFAULT_PAGE_ENTER_SYNC_COOLDOWN_MS = 24 * 60 * 60 * 1000L
+
+        /** 用户可见同步（下拉刷新/进页同步）的超时：断网时 TCP 连接可能长时间挂起不报错。 */
+        const val VISIBLE_SYNC_TIMEOUT_MS = 10_000L
     }
 
     /**
@@ -80,7 +85,13 @@ class ItemSyncManager @Inject constructor(
      */
     fun sync(listType: ListItemType, categoryDocumentId: String? = null) {
         scope.launch(ioDispatcher) {
-            syncInternal(listType, categoryDocumentId, syncCategories = true, forceRefresh = true)
+            try {
+                withTimeout(VISIBLE_SYNC_TIMEOUT_MS) {
+                    syncInternal(listType, categoryDocumentId, syncCategories = true, forceRefresh = true)
+                }
+            } catch (_: TimeoutCancellationException) {
+                markSyncTimeout(listType, categoryDocumentId)
+            }
         }
     }
 
@@ -162,8 +173,19 @@ class ItemSyncManager @Inject constructor(
         if (now - AppSharedStorage.loadPageEnterSyncAt(listType.id) < getPageEnterCooldownMs()) return
         AppSharedStorage.savePageEnterSyncAt(listType.id, now)
         scope.launch(ioDispatcher) {
-            syncInternal(listType, categoryDocumentId = null, syncCategories = false, forceRefresh = true)
+            try {
+                withTimeout(VISIBLE_SYNC_TIMEOUT_MS) {
+                    syncInternal(listType, categoryDocumentId = null, syncCategories = false, forceRefresh = true)
+                }
+            } catch (_: TimeoutCancellationException) {
+                markSyncTimeout(listType, categoryDocumentId = null)
+            }
         }
+    }
+
+    /** 超时后把状态复位为 Error, 否则下拉刷新 spinner 会一直挂到网络恢复才收敛。 */
+    private fun markSyncTimeout(listType: ListItemType, categoryDocumentId: String?) {
+        syncStateFlow(listType, categoryDocumentId).value = SyncState.Error(SyncTimeoutException())
     }
 
     private fun getPageEnterCooldownMs(): Long {
@@ -328,3 +350,6 @@ sealed interface SyncState {
     data object Success : SyncState
     data class Error(val cause: Throwable) : SyncState
 }
+
+/** 用户可见同步超时的标记异常, UI 据此展示"网络异常"提示。 */
+class SyncTimeoutException : Exception()

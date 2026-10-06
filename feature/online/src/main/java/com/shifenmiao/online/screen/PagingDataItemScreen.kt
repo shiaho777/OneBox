@@ -58,6 +58,7 @@ import com.shifenmiao.common.handle.HandleEvent
 import com.shifenmiao.common.handle.LocalUrlNavigator
 import com.shifenmiao.common.sync.ManualRefreshPolicy
 import com.shifenmiao.common.sync.SyncState
+import com.shifenmiao.common.sync.SyncTimeoutException
 import com.shifenmiao.core.R
 import com.shifenmiao.database.item.entity.ItemWithCategoriesAndStats
 import com.shifenmiao.model.ListItemType
@@ -135,12 +136,17 @@ fun PagingDataItemScreen(
         .collectAsState()
     val isRefreshing = initialLoadInProgress || refreshState is SyncState.Loading
     val refreshFailedText = stringResource(R.string.ai_refresh_failed)
+    val networkErrorText = stringResource(R.string.comment_network_error)
     val refreshCooldownText = stringResource(R.string.refresh_cooldown_hint)
     LaunchedEffect(refreshState) {
         (refreshState as? SyncState.Error)?.let { state ->
-            val message = state.cause.message
-                ?.takeIf { it.isNotBlank() }
-                ?: refreshFailedText
+            // 断网挂起触发的超时明确提示网络异常, 其余错误优先展示服务端/网络层文案
+            val message = when (state.cause) {
+                is SyncTimeoutException -> networkErrorText
+                else -> state.cause.message
+                    ?.takeIf { it.isNotBlank() }
+                    ?: refreshFailedText
+            }
             AppToastHost.showToast(message)
         }
     }
