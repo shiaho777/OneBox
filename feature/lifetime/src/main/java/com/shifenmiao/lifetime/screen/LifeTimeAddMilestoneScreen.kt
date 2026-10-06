@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,9 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.shifenmiao.base.ui.icon.IconRegistry
-import com.shifenmiao.base.ui.icon.IconSelector
-import com.shifenmiao.base.ui.icon.IconSelectorDisplayMode
+import com.shifenmiao.base.ui.icon.BuildCustomIcon
+import com.shifenmiao.base.ui.icon.IconPickerSheet
 import com.shifenmiao.base.ui.picker.ChineseDatePickerDialog
 import com.shifenmiao.common.ui.BaseScreen
 import com.shifenmiao.common.ui.BottomSaveCancelBar
@@ -41,6 +42,7 @@ fun LifeTimeAddMilestoneScreen(
 ) {
     var name by remember { mutableStateOf("") }
     var selectedIconKey by remember { mutableStateOf("EmojiEvents") }
+    var showIconPicker by remember { mutableStateOf(false) }
     var targetDate by remember { mutableStateOf<LocalDate?>(null) }
     var showDatePicker by remember { mutableStateOf(false) }
     var note by remember { mutableStateOf("") }
@@ -85,10 +87,8 @@ fun LifeTimeAddMilestoneScreen(
                 OneBoxSectionHeader(
                     title = stringResource(R.string.lifetime_milestone_name_hint)
                 )
-                val nameTextStyle = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.ExtraBold
-                )
-                val namePlaceholderTextStyle = MaterialTheme.typography.headlineMedium
+                val nameTextStyle = MaterialTheme.typography.titleMedium
+                val namePlaceholderTextStyle = MaterialTheme.typography.titleMedium
                 OneBoxOutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
@@ -103,38 +103,21 @@ fun LifeTimeAddMilestoneScreen(
                     singleLine = true,
                     textStyle = nameTextStyle,
                     isError = shouldShowNameError,
+                    leadingIcon = {
+                        IconButton(onClick = { showIconPicker = true }) {
+                            BuildCustomIcon(
+                                iconName = selectedIconKey,
+                                modifier = Modifier.size(28.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    },
                     supportingText = {
                         if (shouldShowNameError) {
                             Text(stringResource(R.string.lifetime_validation_milestone_name_required))
                         }
                     }
                 )
-            }
-
-            // Icon selector
-            GlassCard(
-                modifier = Modifier.fillMaxWidth(),
-                shape = OneBoxDesignSystem.sectionCardShape,
-                containerAlpha = 0.22f,
-                colors = androidx.compose.material3.CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(OneBoxDesignSystem.cardPadding),
-                    verticalArrangement = Arrangement.spacedBy(OneBoxDesignSystem.itemSpacing)
-                ) {
-                    OneBoxSectionHeader(
-                        title = stringResource(R.string.lifetime_choose_icon)
-                    )
-                    IconSelector(
-                        selectedIconKey = selectedIconKey,
-                        onIconSelected = { selectedIconKey = it },
-                        iconKeys = IconRegistry.allKeys,
-                        displayMode = IconSelectorDisplayMode.ROW,
-                        modifier = Modifier.height(56.dp)
-                    )
-                }
             }
 
             // Target date
@@ -234,4 +217,11 @@ fun LifeTimeAddMilestoneScreen(
             onDismiss = { showDatePicker = false }
         )
     }
+
+    IconPickerSheet(
+        visible = showIconPicker,
+        onDismiss = { showIconPicker = false },
+        onIconSelected = { selectedIconKey = it },
+        selectedIconName = selectedIconKey
+    )
 }

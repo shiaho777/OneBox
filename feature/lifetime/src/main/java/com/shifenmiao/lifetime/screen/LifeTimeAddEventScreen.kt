@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,11 +27,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.shifenmiao.base.ui.icon.IconRegistry
-import com.shifenmiao.base.ui.icon.IconSelector
-import com.shifenmiao.base.ui.icon.IconSelectorDisplayMode
+import com.shifenmiao.base.ui.icon.BuildCustomIcon
+import com.shifenmiao.base.ui.icon.IconPickerSheet
 import com.shifenmiao.common.ui.BaseScreen
 import com.shifenmiao.common.ui.BottomSaveCancelBar
 import com.shifenmiao.lifetime.R
@@ -52,6 +52,7 @@ fun LifeTimeAddEventScreen(
 ) {
     var name by remember { mutableStateOf("") }
     var selectedIconKey by remember { mutableStateOf("Category") }
+    var showIconPicker by remember { mutableStateOf(false) }
     var frequencyType by remember { mutableStateOf(FrequencyType.DAILY) }
     var timesPerPeriod by remember { mutableStateOf("1") }
     var selectedUnit by remember { mutableStateOf("次") }
@@ -87,10 +88,8 @@ fun LifeTimeAddEventScreen(
                 OneBoxSectionHeader(
                     title = stringResource(R.string.lifetime_event_name_label)
                 )
-                val nameTextStyle = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.ExtraBold
-                )
-                val namePlaceholderTextStyle = MaterialTheme.typography.headlineMedium
+                val nameTextStyle = MaterialTheme.typography.titleMedium
+                val namePlaceholderTextStyle = MaterialTheme.typography.titleMedium
                 OneBoxOutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
@@ -105,37 +104,21 @@ fun LifeTimeAddEventScreen(
                     singleLine = true,
                     textStyle = nameTextStyle,
                     isError = shouldShowNameError,
+                    leadingIcon = {
+                        IconButton(onClick = { showIconPicker = true }) {
+                            BuildCustomIcon(
+                                iconName = selectedIconKey,
+                                modifier = Modifier.size(28.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    },
                     supportingText = {
                         if (shouldShowNameError) {
                             Text(stringResource(R.string.lifetime_validation_event_name_required))
                         }
                     }
                 )
-            }
-
-            GlassCard(
-                modifier = Modifier.fillMaxWidth(),
-                shape = OneBoxDesignSystem.sectionCardShape,
-                containerAlpha = 0.22f,
-                colors = androidx.compose.material3.CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(OneBoxDesignSystem.cardPadding),
-                    verticalArrangement = Arrangement.spacedBy(OneBoxDesignSystem.itemSpacing)
-                ) {
-                    OneBoxSectionHeader(
-                        title = stringResource(R.string.lifetime_choose_icon)
-                    )
-                    IconSelector(
-                        selectedIconKey = selectedIconKey,
-                        onIconSelected = { selectedIconKey = it },
-                        iconKeys = IconRegistry.allKeys,
-                        displayMode = IconSelectorDisplayMode.ROW,
-                        modifier = Modifier.height(56.dp)
-                    )
-                }
             }
 
             GlassCard(
@@ -260,6 +243,13 @@ fun LifeTimeAddEventScreen(
             saveText = stringResource(R.string.lifetime_add_to_timeline)
         )
     }
+
+    IconPickerSheet(
+        visible = showIconPicker,
+        onDismiss = { showIconPicker = false },
+        onIconSelected = { selectedIconKey = it },
+        selectedIconName = selectedIconKey
+    )
 }
 
 @Composable
