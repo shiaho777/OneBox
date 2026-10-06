@@ -269,4 +269,8 @@
     <string name="xiangqi_tts_default_checkmate">Mat!</string>
     <string name="xiangqi_tts_default_draw">Berabere!</string>
     <string name="xiangqi_new_ai_create">AI ile oyun oluştur</string>
+    <string name="xiangqi_log_game_created">Yeni oyun: %1$s</string>
+    <string name="xiangqi_log_game_renamed">Oyun yeniden adlandırıldı: %1$s</string>
+    <string name="xiangqi_log_game_resigned">Oyundan çekildi: %1$s</string>
+    <string name="xiangqi_log_game_deleted">Oyun silindi: %1$s</string>
 </resources>

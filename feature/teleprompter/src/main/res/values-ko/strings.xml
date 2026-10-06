@@ -2,14 +2,14 @@
 <resources>
     <string name="teleprompter_title">텔레프롬프터</string>
     <string name="teleprompter_my_scripts">내 대본</string>
-    <string name="teleprompter_recent_scripts">최근 통신</string>
-    <string name="teleprompter_scripts_total">총 %d개 대본</string>
+    <string name="teleprompter_recent_scripts">최근 대본</string>
+    <string name="teleprompter_scripts_total">합계: %d개 대본</string>
     <string name="teleprompter_empty">대본이 없습니다. 오른쪽 하단 +를 눌러 새로 만드세요</string>
-    <string name="teleprompter_word_count">%d 단어</string>
+    <plurals name="teleprompter_word_count"><item quantity="other">%d 단어</item></plurals>
     <string name="teleprompter_new_script">새 대본</string>
     <string name="teleprompter_edit_script">대본 편집</string>
     <string name="teleprompter_title_hint">대본 제목</string>
-    <string name="teleprompter_content_hint">여기에 도입부 내용을 입력하세요...</string>
+    <string name="teleprompter_content_hint">여기에 대본 내용을 입력하세요…</string>
     <string name="teleprompter_save">저장</string>
     <string name="teleprompter_play">재생</string>
     <string name="teleprompter_delete">삭제</string>
@@ -58,4 +58,10 @@
     <string name="teleprompter_ai_assist_title">대본 도우미</string>
     <string name="teleprompter_ai_assist_prompt">당신은 텔레프롬프터 대본 도우미입니다. 장면, 길이, 주제를 받으면 manage_teleprompter로 대본을 만들거나 수정하세요.</string>
     <string name="teleprompter_ai_assist_fill_in">30초짜리 오프닝 대본을 작성해서 텔레프롬프터에 저장해 줘</string>
+    <string name="teleprompter_log_created_title">새 대본: %1$s</string>
+    <string name="teleprompter_log_updated_title">대본 업데이트: %1$s</string>
+    <string name="teleprompter_log_deleted_title">대본 삭제: %1$s</string>
+    <string name="teleprompter_log_created_desc">대본 “%1$s” 생성됨(%2$d 단어)</string>
+    <string name="teleprompter_log_updated_desc">대본 “%1$s” 업데이트됨(%2$d 단어)</string>
+    <string name="teleprompter_log_deleted_desc">대본 “%1$s” 삭제됨</string>
 </resources>

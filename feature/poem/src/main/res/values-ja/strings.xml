@@ -105,4 +105,7 @@
     <string name="agent_tool_poem_open_search_link">詩の検索を開く</string>
     <string name="agent_tool_poem_open_home_link">中国詩を開く</string>
     <string name="agent_tool_poem_unknown_error">不明なエラー</string>
+    <string name="poem_log_favorited">お気に入り: 「%1$s」</string>
+    <string name="poem_log_unfavorited">お気に入り解除: 「%1$s」</string>
+    <string name="poem_log_deleted">削除: 「%1$s」</string>
 </resources>

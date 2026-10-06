@@ -269,4 +269,8 @@
     <string name="xiangqi_tts_default_checkmate">Xeque-mate!</string>
     <string name="xiangqi_tts_default_draw">Empate!</string>
     <string name="xiangqi_new_ai_create">Criar partida com IA</string>
+    <string name="xiangqi_log_game_created">Nova partida: %1$s</string>
+    <string name="xiangqi_log_game_renamed">Partida renomeada: %1$s</string>
+    <string name="xiangqi_log_game_resigned">Desistência: %1$s</string>
+    <string name="xiangqi_log_game_deleted">Partida excluída: %1$s</string>
 </resources>

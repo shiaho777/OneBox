@@ -269,4 +269,8 @@
     <string name="xiangqi_tts_default_checkmate">¡Jaque mate!</string>
     <string name="xiangqi_tts_default_draw">¡Tablas!</string>
     <string name="xiangqi_new_ai_create">IA crea partida</string>
+    <string name="xiangqi_log_game_created">Nueva partida: %1$s</string>
+    <string name="xiangqi_log_game_renamed">Partida renombrada: %1$s</string>
+    <string name="xiangqi_log_game_resigned">Abandono: %1$s</string>
+    <string name="xiangqi_log_game_deleted">Partida eliminada: %1$s</string>
 </resources>

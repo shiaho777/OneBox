@@ -7,6 +7,8 @@ import com.wanbaohe.xiangqi.domain.model.GameSetup
 import com.wanbaohe.xiangqi.domain.model.GameStatus
 import com.wanbaohe.xiangqi.domain.model.Side
 import com.shifenmiao.database.activity.ActivityLogRecorder
+import com.shifenmiao.interfaces.singleton.AppContext
+import com.wanbaohe.xiangqi.R
 import org.json.JSONObject
 import java.util.UUID
 import javax.inject.Inject
@@ -81,7 +83,7 @@ class CreateGameUseCase @Inject constructor(
         activityLogRecorder.recordXiangqi(
             gameId = gameId,
             actionType = "CREATE",
-            title = "新建对局: $title",
+            title = AppContext.getString(R.string.xiangqi_log_game_created, title),
             description = "模式: ${setup.mode.name}",
         )
 

@@ -268,4 +268,8 @@
     <string name="xiangqi_tts_default_checkmate">Tsek-mate!</string>
     <string name="xiangqi_tts_default_draw">Tabla!</string>
     <string name="xiangqi_new_ai_create">Gumawa ng laro ang AI</string>
+    <string name="xiangqi_log_game_created">Bagong laro: %1$s</string>
+    <string name="xiangqi_log_game_renamed">Pinalitan ang pangalan: %1$s</string>
+    <string name="xiangqi_log_game_resigned">Sumuko: %1$s</string>
+    <string name="xiangqi_log_game_deleted">Tinanggal na laro: %1$s</string>
 </resources>

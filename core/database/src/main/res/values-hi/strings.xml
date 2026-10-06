@@ -40,4 +40,9 @@
     <string name="marktodo_preset_tag_work">काम</string>
     <string name="marktodo_preset_task_note">मुझे पूरा करने के लिए बाईं ओर का चेकबॉक्स टैप करें; मुझे टैप करके संपादित करें; विषय कार्ड को संपादित या हटाने के लिए देर तक दबाएं</string>
     <string name="marktodo_preset_task_title">टू-डू सूची में आपका स्वागत है</string>
+    <string name="activity_log_teleprompter_app_title">टेलीप्रॉम्प्टर</string>
+    <string name="activity_log_bookkeeping_app_title">बही-खाता</string>
+    <string name="activity_log_poem_app_title">चीनी शास्त्रीय कविता</string>
+    <string name="activity_log_todo_app_title">कार्य सूची</string>
+    <string name="activity_log_xiangqi_app_title">चीनी शतरंज</string>
 </resources>

@@ -108,4 +108,7 @@
     <string name="agent_tool_poem_open_search_link">打开诗词搜索</string>
     <string name="agent_tool_poem_open_home_link">打开中国古诗词</string>
     <string name="agent_tool_poem_unknown_error">未知错误</string>
+    <string name="poem_log_favorited">收藏《%1$s》</string>
+    <string name="poem_log_unfavorited">取消收藏《%1$s》</string>
+    <string name="poem_log_deleted">删除《%1$s》</string>
 </resources>

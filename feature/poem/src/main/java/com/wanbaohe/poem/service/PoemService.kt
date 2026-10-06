@@ -2,11 +2,13 @@ package com.wanbaohe.poem.service
 
 import com.shifenmiao.database.activity.ActivityLogRecorder
 import com.shifenmiao.database.poem.repo.PoemRepository
+import com.shifenmiao.interfaces.singleton.AppContext
 import com.shifenmiao.model.ModelProvider
 import com.shifenmiao.storage.MMKVName
 import com.shifenmiao.storage.RemoteConfigStorage
 import com.t8rin.logger.makeLog
 import com.tencent.mmkv.MMKV
+import com.wanbaohe.poem.R
 import com.wanbaohe.poem.model.Poem
 import com.wanbaohe.poem.model.PoemListResponse
 import com.wanbaohe.poem.model.PoemNameListResponse
@@ -192,7 +194,10 @@ class PoemService @Inject constructor(
         recordPoemLog(
             actionType = if (newValue) "FAVORITE" else "UNFAVORITE",
             poem = entity.toDomain().copy(isFavorite = newValue),
-            title = (if (newValue) "收藏《" else "取消收藏《") + entity.title + "》",
+            title = AppContext.getString(
+                if (newValue) R.string.poem_log_favorited else R.string.poem_log_unfavorited,
+                entity.title
+            ),
         )
     }
 
@@ -203,7 +208,7 @@ class PoemService @Inject constructor(
             recordPoemLog(
                 actionType = "DELETE",
                 poem = it.toDomain(),
-                title = "删除《${it.title}》",
+                title = AppContext.getString(R.string.poem_log_deleted, it.title),
             )
         }
     }

@@ -2,14 +2,14 @@
 <resources>
     <string name="teleprompter_title">टेलीप्रॉम्प्टर</string>
     <string name="teleprompter_my_scripts">मेरी स्क्रिप्ट</string>
-    <string name="teleprompter_recent_scripts">नवीनतम संचार</string>
-    <string name="teleprompter_scripts_total">कुल %d स्क्रिप्ट</string>
+    <string name="teleprompter_recent_scripts">हाल की स्क्रिप्ट</string>
+    <string name="teleprompter_scripts_total">कुल: %d स्क्रिप्ट</string>
     <string name="teleprompter_empty">कोई स्क्रिप्ट नहीं, नीचे दाईं ओर + नया पर क्लिक करें</string>
-    <string name="teleprompter_word_count">%d शब्द</string>
+    <plurals name="teleprompter_word_count"><item quantity="one">%d शब्द</item><item quantity="other">%d शब्द</item></plurals>
     <string name="teleprompter_new_script">नई स्क्रिप्ट</string>
     <string name="teleprompter_edit_script">स्क्रिप्ट संपादित करें</string>
     <string name="teleprompter_title_hint">स्क्रिप्ट शीर्षक</string>
-    <string name="teleprompter_content_hint">यहाँ परिचय की सामग्री दर्ज करें...</string>
+    <string name="teleprompter_content_hint">यहाँ स्क्रिप्ट की सामग्री दर्ज करें…</string>
     <string name="teleprompter_save">सहेजें</string>
     <string name="teleprompter_play">चलाएँ</string>
     <string name="teleprompter_delete">हटाएँ</string>
@@ -58,4 +58,10 @@
     <string name="teleprompter_ai_assist_title">टेलीप्रॉम्प्टर स्क्रिप्ट सहायक</string>
     <string name="teleprompter_ai_assist_prompt">आप टेलीप्रॉम्प्टर स्क्रिप्ट सहायक हैं। दृश्य, अवधि या विषय बताने पर manage_teleprompter से स्क्रिप्ट बनाएं या अपडेट करें।</string>
     <string name="teleprompter_ai_assist_fill_in">30 सेकंड की ओपनिंग स्क्रिप्ट लिखें और उसे टेलीप्रॉम्प्टर में सहेजें</string>
+    <string name="teleprompter_log_created_title">नई स्क्रिप्ट: %1$s</string>
+    <string name="teleprompter_log_updated_title">स्क्रिप्ट अपडेट: %1$s</string>
+    <string name="teleprompter_log_deleted_title">स्क्रिप्ट हटाई: %1$s</string>
+    <string name="teleprompter_log_created_desc">स्क्रिप्ट “%1$s” बनाई गई (%2$d शब्द)</string>
+    <string name="teleprompter_log_updated_desc">स्क्रिप्ट “%1$s” अपडेट की गई (%2$d शब्द)</string>
+    <string name="teleprompter_log_deleted_desc">स्क्रिप्ट “%1$s” हटाई गई</string>
 </resources>

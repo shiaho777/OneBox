@@ -136,4 +136,21 @@
     <string name="view_grid">그리드</string>
     <string name="view_list">목록</string>
     <string name="action_sort_categories">주제 정렬</string>
+    <string name="marktodo_log_category_created">새 카테고리: %1$s</string>
+    <string name="marktodo_log_category_updated">카테고리 수정: %1$s</string>
+    <string name="marktodo_log_category_deleted">카테고리 삭제: %1$s</string>
+    <string name="marktodo_log_categories_reordered">카테고리 재정렬</string>
+    <string name="marktodo_log_task_created">새 할 일: %1$s</string>
+    <string name="marktodo_log_task_updated">할 일 수정: %1$s</string>
+    <string name="marktodo_log_task_deleted">할 일 삭제: %1$s</string>
+    <string name="marktodo_log_task_completed">완료: %1$s</string>
+    <string name="marktodo_log_task_reopened">다시 열기: %1$s</string>
+    <string name="marktodo_log_task_starred">별표: %1$s</string>
+    <string name="marktodo_log_task_unstarred">별표 해제: %1$s</string>
+    <string name="marktodo_log_tasks_reordered">할 일 재정렬</string>
+    <string name="marktodo_log_tag_created">새 태그: %1$s</string>
+    <string name="marktodo_log_tag_deleted">태그 삭제: %1$s</string>
+    <string name="marktodo_log_category_deleted_desc">카테고리 “%1$s” 및 모든 할 일 삭제됨</string>
+    <string name="marktodo_log_categories_reordered_desc">카테고리 %1$d개 재정렬됨</string>
+    <string name="marktodo_log_tasks_reordered_desc">할 일 %1$d개 재정렬됨</string>
 </resources>

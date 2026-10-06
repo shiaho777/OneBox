@@ -40,4 +40,9 @@
     <string name="marktodo_preset_tag_work">仕事</string>
     <string name="marktodo_preset_task_note">左のチェックボックスをタップして完了、タップで編集できます。トピックカードの長押しで編集・削除できます</string>
     <string name="marktodo_preset_task_title">ToDoリストへようこそ</string>
+    <string name="activity_log_teleprompter_app_title">テレプロンプター</string>
+    <string name="activity_log_bookkeeping_app_title">家計簿</string>
+    <string name="activity_log_poem_app_title">中国古典詩詞</string>
+    <string name="activity_log_todo_app_title">タスクリスト</string>
+    <string name="activity_log_xiangqi_app_title">シャンチー</string>
 </resources>

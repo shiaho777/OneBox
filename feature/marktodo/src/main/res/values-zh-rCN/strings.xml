@@ -189,4 +189,21 @@
     <string name="dialog_add_tag_title">新建标签</string>
     <string name="tag_name_hint">标签名称</string>
     <string name="action_sort_categories">排序主题</string>
+    <string name="marktodo_log_category_created">新增分类: %1$s</string>
+    <string name="marktodo_log_category_updated">编辑分类: %1$s</string>
+    <string name="marktodo_log_category_deleted">删除分类: %1$s</string>
+    <string name="marktodo_log_categories_reordered">重排分类</string>
+    <string name="marktodo_log_task_created">新增待办: %1$s</string>
+    <string name="marktodo_log_task_updated">编辑待办: %1$s</string>
+    <string name="marktodo_log_task_deleted">删除待办: %1$s</string>
+    <string name="marktodo_log_task_completed">完成待办: %1$s</string>
+    <string name="marktodo_log_task_reopened">重新打开: %1$s</string>
+    <string name="marktodo_log_task_starred">收藏待办: %1$s</string>
+    <string name="marktodo_log_task_unstarred">取消收藏: %1$s</string>
+    <string name="marktodo_log_tasks_reordered">重排任务</string>
+    <string name="marktodo_log_tag_created">新增标签: %1$s</string>
+    <string name="marktodo_log_tag_deleted">删除标签: %1$s</string>
+    <string name="marktodo_log_category_deleted_desc">删除了待办分类「%1$s」及其所有任务</string>
+    <string name="marktodo_log_categories_reordered_desc">调整了 %1$d 个分类的排序</string>
+    <string name="marktodo_log_tasks_reordered_desc">调整了 %1$d 个任务的排序</string>
 </resources>

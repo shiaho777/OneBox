@@ -136,4 +136,21 @@
     <string name="view_grid">Izgara</string>
     <string name="view_list">Liste</string>
     <string name="action_sort_categories">Konuları sırala</string>
+    <string name="marktodo_log_category_created">Yeni kategori: %1$s</string>
+    <string name="marktodo_log_category_updated">Kategori düzenlendi: %1$s</string>
+    <string name="marktodo_log_category_deleted">Kategori silindi: %1$s</string>
+    <string name="marktodo_log_categories_reordered">Kategoriler yeniden sıralandı</string>
+    <string name="marktodo_log_task_created">Yeni görev: %1$s</string>
+    <string name="marktodo_log_task_updated">Görev düzenlendi: %1$s</string>
+    <string name="marktodo_log_task_deleted">Görev silindi: %1$s</string>
+    <string name="marktodo_log_task_completed">Tamamlandı: %1$s</string>
+    <string name="marktodo_log_task_reopened">Yeniden açıldı: %1$s</string>
+    <string name="marktodo_log_task_starred">Yıldızlandı: %1$s</string>
+    <string name="marktodo_log_task_unstarred">Yıldız kaldırıldı: %1$s</string>
+    <string name="marktodo_log_tasks_reordered">Görevler yeniden sıralandı</string>
+    <string name="marktodo_log_tag_created">Yeni etiket: %1$s</string>
+    <string name="marktodo_log_tag_deleted">Etiket silindi: %1$s</string>
+    <string name="marktodo_log_category_deleted_desc">“%1$s” kategorisi ve tüm görevleri silindi</string>
+    <string name="marktodo_log_categories_reordered_desc">%1$d kategori yeniden sıralandı</string>
+    <string name="marktodo_log_tasks_reordered_desc">%1$d görev yeniden sıralandı</string>
 </resources>

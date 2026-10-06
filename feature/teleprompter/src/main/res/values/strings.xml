@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources><string name="teleprompter_title">Teleprompter</string>
     <string name="teleprompter_my_scripts">My Script</string>
-    <string name="teleprompter_recent_scripts">Latest communications</string>
-    <string name="teleprompter_scripts_total">Total   %d Scripts</string>
+    <string name="teleprompter_recent_scripts">Recent scripts</string>
+    <string name="teleprompter_scripts_total">Total: %d scripts</string>
     <string name="teleprompter_empty">No script, click on bottom right + new</string>
     <string name="teleprompter_empty_title">No scripts yet</string>
     <string name="teleprompter_empty_description">Create one manually, or tell AI what you need and let it draft for you</string>
@@ -12,11 +12,11 @@
     <string name="teleprompter_ai_assist_title">Teleprompter Script Assistant</string>
     <string name="teleprompter_ai_assist_prompt">You are the user\'s teleprompter script assistant. When the user describes a scene, duration or topic, create or update a script with the manage_teleprompter tool. Write short spoken sentences suited for reading aloud, and match the requested duration. Briefly confirm the title and word count after generating.</string>
     <string name="teleprompter_ai_assist_fill_in">Write a 30-second opening script and save it to the teleprompter</string>
-    <string name="teleprompter_word_count"> %d word</string>
+    <plurals name="teleprompter_word_count"><item quantity="one">%d word</item><item quantity="other">%d words</item></plurals>
     <string name="teleprompter_new_script">New Script</string>
     <string name="teleprompter_edit_script">Edit Script</string>
     <string name="teleprompter_title_hint">Script title</string>
-    <string name="teleprompter_content_hint">Enter here the content of the introduction...</string>
+    <string name="teleprompter_content_hint">Enter the script content here…</string>
     <string name="teleprompter_save">Save</string>
     <string name="teleprompter_play">Play</string>
     <string name="teleprompter_delete">Delete</string>
@@ -60,4 +60,10 @@
     <string name="agent_tool_manage_teleprompter_deeplink_guidance_edit">Open the editor for this script</string>
     <string name="agent_tool_manage_teleprompter_deeplink_label_play">Play Script</string>
     <string name="agent_tool_manage_teleprompter_deeplink_guidance_play">Start teleprompter playback now</string>
+    <string name="teleprompter_log_created_title">New script: %1$s</string>
+    <string name="teleprompter_log_updated_title">Update script: %1$s</string>
+    <string name="teleprompter_log_deleted_title">Delete script: %1$s</string>
+    <string name="teleprompter_log_created_desc">Created script “%1$s” (%2$d words)</string>
+    <string name="teleprompter_log_updated_desc">Updated script “%1$s” (%2$d words)</string>
+    <string name="teleprompter_log_deleted_desc">Deleted script “%1$s”</string>
 </resources>

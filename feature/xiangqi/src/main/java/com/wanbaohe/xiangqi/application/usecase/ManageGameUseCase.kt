@@ -9,6 +9,8 @@ import com.wanbaohe.xiangqi.domain.GameArbiter
 import com.wanbaohe.xiangqi.domain.model.GameStatus
 import com.wanbaohe.xiangqi.domain.model.Side
 import com.shifenmiao.database.activity.ActivityLogRecorder
+import com.shifenmiao.interfaces.singleton.AppContext
+import com.wanbaohe.xiangqi.R
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -111,7 +113,7 @@ class ManageGameUseCase @Inject constructor(
         activityLogRecorder.recordXiangqi(
             gameId = gameId,
             actionType = "RENAME",
-            title = "重命名对局: $trimmed",
+            title = AppContext.getString(R.string.xiangqi_log_game_renamed, trimmed),
             description = "旧名称: $oldTitle",
         )
 
@@ -138,7 +140,7 @@ class ManageGameUseCase @Inject constructor(
         activityLogRecorder.recordXiangqi(
             gameId = gameId,
             actionType = "RESIGN",
-            title = "对局认输: ${game.title}",
+            title = AppContext.getString(R.string.xiangqi_log_game_resigned, game.title),
             description = "${resigningSide.name} 方认输，${winner.name} 方获胜",
         )
 

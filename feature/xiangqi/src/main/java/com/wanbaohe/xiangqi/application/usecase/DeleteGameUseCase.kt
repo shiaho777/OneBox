@@ -1,6 +1,8 @@
 package com.wanbaohe.xiangqi.application.usecase
 
 import com.shifenmiao.database.activity.ActivityLogRecorder
+import com.shifenmiao.interfaces.singleton.AppContext
+import com.wanbaohe.xiangqi.R
 import com.wanbaohe.xiangqi.application.port.outbound.AiTaskStore
 import com.wanbaohe.xiangqi.application.port.outbound.GameStore
 import com.wanbaohe.xiangqi.application.port.outbound.MoveStore
@@ -23,7 +25,7 @@ class DeleteGameUseCase @Inject constructor(
         activityLogRecorder.recordXiangqi(
             gameId = gameId,
             actionType = "DELETE",
-            title = "删除对局: ${game?.title ?: gameId}",
+            title = AppContext.getString(R.string.xiangqi_log_game_deleted, game?.title ?: gameId),
             description = "",
         )
     }

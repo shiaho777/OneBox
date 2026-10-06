@@ -104,4 +104,7 @@
     <string name="agent_tool_poem_open_search_link">開啟詩詞搜尋</string>
     <string name="agent_tool_poem_open_home_link">開啟中國古詩詞</string>
     <string name="agent_tool_poem_unknown_error">未知錯誤</string>
+    <string name="poem_log_favorited">收藏《%1$s》</string>
+    <string name="poem_log_unfavorited">取消收藏《%1$s》</string>
+    <string name="poem_log_deleted">刪除《%1$s》</string>
 </resources>

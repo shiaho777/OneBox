@@ -32,4 +32,9 @@
     <string name="marktodo_preset_tag_life">生活</string>
     <string name="marktodo_preset_tag_health">健康</string>
     <string name="marktodo_preset_tag_travel">旅行</string>
+    <string name="activity_log_teleprompter_app_title">提詞器</string>
+    <string name="activity_log_bookkeeping_app_title">記帳本</string>
+    <string name="activity_log_poem_app_title">中國古詩詞</string>
+    <string name="activity_log_todo_app_title">待辦清單</string>
+    <string name="activity_log_xiangqi_app_title">中國象棋</string>
 </resources>

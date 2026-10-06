@@ -136,4 +136,21 @@
     <string name="view_grid">Сетка</string>
     <string name="view_list">Список</string>
     <string name="action_sort_categories">Сортировать темы</string>
+    <string name="marktodo_log_category_created">Новая категория: %1$s</string>
+    <string name="marktodo_log_category_updated">Категория изменена: %1$s</string>
+    <string name="marktodo_log_category_deleted">Категория удалена: %1$s</string>
+    <string name="marktodo_log_categories_reordered">Порядок категорий изменён</string>
+    <string name="marktodo_log_task_created">Новая задача: %1$s</string>
+    <string name="marktodo_log_task_updated">Задача изменена: %1$s</string>
+    <string name="marktodo_log_task_deleted">Задача удалена: %1$s</string>
+    <string name="marktodo_log_task_completed">Выполнено: %1$s</string>
+    <string name="marktodo_log_task_reopened">Открыто снова: %1$s</string>
+    <string name="marktodo_log_task_starred">В избранном: %1$s</string>
+    <string name="marktodo_log_task_unstarred">Убрано из избранного: %1$s</string>
+    <string name="marktodo_log_tasks_reordered">Порядок задач изменён</string>
+    <string name="marktodo_log_tag_created">Новый тег: %1$s</string>
+    <string name="marktodo_log_tag_deleted">Тег удалён: %1$s</string>
+    <string name="marktodo_log_category_deleted_desc">Категория «%1$s» и все её задачи удалены</string>
+    <string name="marktodo_log_categories_reordered_desc">Порядок %1$d категорий изменён</string>
+    <string name="marktodo_log_tasks_reordered_desc">Порядок %1$d задач изменён</string>
 </resources>

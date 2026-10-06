@@ -40,4 +40,9 @@
     <string name="marktodo_preset_tag_work">Trabalho</string>
     <string name="marktodo_preset_task_note">Toque na caixa à esquerda para me concluir; toque em mim para editar; mantenha pressionado o cartão do tópico para editar ou excluir</string>
     <string name="marktodo_preset_task_title">Bem-vindo à Lista de Tarefas</string>
+    <string name="activity_log_teleprompter_app_title">Teleprompter</string>
+    <string name="activity_log_bookkeeping_app_title">Livro de contas</string>
+    <string name="activity_log_poem_app_title">Poesia clássica chinesa</string>
+    <string name="activity_log_todo_app_title">Tarefas</string>
+    <string name="activity_log_xiangqi_app_title">Xadrez chinês</string>
 </resources>

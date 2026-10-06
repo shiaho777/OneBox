@@ -288,4 +288,8 @@
     <string name="xiangqi_local_engine_delete">删除</string>
     <string name="xiangqi_local_engine_delete_confirm_title">删除离线引擎数据？</string>
     <string name="xiangqi_local_engine_delete_confirm_message">将删除 %1$s 的神经网络文件，之后可以重新下载。</string>
+    <string name="xiangqi_log_game_created">新建对局: %1$s</string>
+    <string name="xiangqi_log_game_renamed">重命名对局: %1$s</string>
+    <string name="xiangqi_log_game_resigned">对局认输: %1$s</string>
+    <string name="xiangqi_log_game_deleted">删除对局: %1$s</string>
 </resources>

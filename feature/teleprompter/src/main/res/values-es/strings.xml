@@ -2,14 +2,14 @@
 <resources>
     <string name="teleprompter_title">Teleprompter</string>
     <string name="teleprompter_my_scripts">Mi guion</string>
-    <string name="teleprompter_recent_scripts">Últimas comunicaciones</string>
-    <string name="teleprompter_scripts_total">Total   %d guiones</string>
+    <string name="teleprompter_recent_scripts">Guiones recientes</string>
+    <string name="teleprompter_scripts_total">Total: %d guiones</string>
     <string name="teleprompter_empty">Sin guion, toca abajo a la derecha + nuevo</string>
-    <string name="teleprompter_word_count"> %d palabra</string>
+    <plurals name="teleprompter_word_count"><item quantity="one">%d palabra</item><item quantity="other">%d palabras</item></plurals>
     <string name="teleprompter_new_script">Nuevo guion</string>
     <string name="teleprompter_edit_script">Editar guion</string>
     <string name="teleprompter_title_hint">Título del guion</string>
-    <string name="teleprompter_content_hint">Introduce aquí el contenido de la introducción...</string>
+    <string name="teleprompter_content_hint">Introduce aquí el contenido del guion…</string>
     <string name="teleprompter_save">Guardar</string>
     <string name="teleprompter_play">Reproducir</string>
     <string name="teleprompter_delete">Eliminar</string>
@@ -58,4 +58,10 @@
     <string name="teleprompter_ai_assist_title">Asistente de guiones de teleprompter</string>
     <string name="teleprompter_ai_assist_prompt">Eres el asistente de guiones. Cuando el usuario describa una escena, duración o tema, crea o actualiza un guion con manage_teleprompter.</string>
     <string name="teleprompter_ai_assist_fill_in">Escribe un discurso de apertura de 30 segundos y guárdalo en el teleprompter</string>
+    <string name="teleprompter_log_created_title">Nuevo guion: %1$s</string>
+    <string name="teleprompter_log_updated_title">Guion actualizado: %1$s</string>
+    <string name="teleprompter_log_deleted_title">Guion eliminado: %1$s</string>
+    <string name="teleprompter_log_created_desc">Guion “%1$s” creado (%2$d palabras)</string>
+    <string name="teleprompter_log_updated_desc">Guion “%1$s” actualizado (%2$d palabras)</string>
+    <string name="teleprompter_log_deleted_desc">Guion “%1$s” eliminado</string>
 </resources>

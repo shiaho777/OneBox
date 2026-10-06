@@ -144,4 +144,21 @@
     <string name="dialog_add_tag_title">新增標籤</string>
     <string name="tag_name_hint">標籤名稱</string>
     <string name="action_sort_categories">排序主題</string>
+    <string name="marktodo_log_category_created">新增分類: %1$s</string>
+    <string name="marktodo_log_category_updated">編輯分類: %1$s</string>
+    <string name="marktodo_log_category_deleted">刪除分類: %1$s</string>
+    <string name="marktodo_log_categories_reordered">重排分類</string>
+    <string name="marktodo_log_task_created">新增待辦: %1$s</string>
+    <string name="marktodo_log_task_updated">編輯待辦: %1$s</string>
+    <string name="marktodo_log_task_deleted">刪除待辦: %1$s</string>
+    <string name="marktodo_log_task_completed">完成待辦: %1$s</string>
+    <string name="marktodo_log_task_reopened">重新打開: %1$s</string>
+    <string name="marktodo_log_task_starred">收藏待辦: %1$s</string>
+    <string name="marktodo_log_task_unstarred">取消收藏: %1$s</string>
+    <string name="marktodo_log_tasks_reordered">重排任務</string>
+    <string name="marktodo_log_tag_created">新增標籤: %1$s</string>
+    <string name="marktodo_log_tag_deleted">刪除標籤: %1$s</string>
+    <string name="marktodo_log_category_deleted_desc">刪除了待辦分類「%1$s」及其所有任務</string>
+    <string name="marktodo_log_categories_reordered_desc">調整了 %1$d 個分類的排序</string>
+    <string name="marktodo_log_tasks_reordered_desc">調整了 %1$d 個任務的排序</string>
 </resources>

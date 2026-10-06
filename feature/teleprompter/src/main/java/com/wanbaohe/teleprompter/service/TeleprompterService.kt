@@ -3,7 +3,9 @@ package com.wanbaohe.teleprompter.service
 import com.shifenmiao.database.activity.ActivityLogRecorder
 import com.shifenmiao.database.teleprompter.entity.TeleprompterScriptEntity
 import com.shifenmiao.database.teleprompter.repo.TeleprompterRepository
+import com.shifenmiao.interfaces.singleton.AppContext
 import com.t8rin.imagetoolbox.core.ui.utils.navigation.Screen
+import com.wanbaohe.teleprompter.R
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -51,12 +53,17 @@ class TeleprompterService @Inject constructor(
             scriptId = entity.id,
             actionType = if (isCreate) "CREATE" else "UPDATE",
             source = source,
-            title = if (isCreate) "新建提词文稿: ${entity.title}" else "更新提词文稿: ${entity.title}",
-            description = if (isCreate) {
-                "创建了提词文稿「${entity.title}」（${entity.wordCount} 字）"
-            } else {
-                "更新了提词文稿「${entity.title}」（${entity.wordCount} 字）"
-            },
+            title = AppContext.getString(
+                if (isCreate) R.string.teleprompter_log_created_title
+                else R.string.teleprompter_log_updated_title,
+                entity.title
+            ),
+            description = AppContext.getContext().getString(
+                if (isCreate) R.string.teleprompter_log_created_desc
+                else R.string.teleprompter_log_updated_desc,
+                entity.title,
+                entity.wordCount
+            ),
             screenRoute = Screen.Teleprompter().id.toString(),
         )
         entity
@@ -70,8 +77,14 @@ class TeleprompterService @Inject constructor(
             scriptId = id,
             actionType = "DELETE",
             source = source,
-            title = "删除提词文稿: ${deleted?.title ?: id}",
-            description = "删除了提词文稿「${deleted?.title ?: id}」",
+            title = AppContext.getString(
+                R.string.teleprompter_log_deleted_title,
+                deleted?.title ?: id
+            ),
+            description = AppContext.getString(
+                R.string.teleprompter_log_deleted_desc,
+                deleted?.title ?: id
+            ),
             screenRoute = Screen.Teleprompter().id.toString(),
         )
     }

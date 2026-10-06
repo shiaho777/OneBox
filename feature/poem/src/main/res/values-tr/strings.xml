@@ -105,4 +105,7 @@
     <string name="agent_tool_poem_open_search_link">Şiir Arama Aç</string>
     <string name="agent_tool_poem_open_home_link">Çin Şiiri Aç</string>
     <string name="agent_tool_poem_unknown_error">bilinmeyen hata</string>
+    <string name="poem_log_favorited">Favori: “%1$s”</string>
+    <string name="poem_log_unfavorited">Favoriden çıkarıldı: “%1$s”</string>
+    <string name="poem_log_deleted">Silindi: “%1$s”</string>
 </resources>

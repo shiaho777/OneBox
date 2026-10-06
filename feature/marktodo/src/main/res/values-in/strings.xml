@@ -136,4 +136,21 @@
     <string name="view_grid">Grid</string>
     <string name="view_list">Daftar</string>
     <string name="action_sort_categories">Urutkan topik</string>
+    <string name="marktodo_log_category_created">Kategori baru: %1$s</string>
+    <string name="marktodo_log_category_updated">Edit kategori: %1$s</string>
+    <string name="marktodo_log_category_deleted">Hapus kategori: %1$s</string>
+    <string name="marktodo_log_categories_reordered">Susun ulang kategori</string>
+    <string name="marktodo_log_task_created">Tugas baru: %1$s</string>
+    <string name="marktodo_log_task_updated">Edit tugas: %1$s</string>
+    <string name="marktodo_log_task_deleted">Hapus tugas: %1$s</string>
+    <string name="marktodo_log_task_completed">Selesai: %1$s</string>
+    <string name="marktodo_log_task_reopened">Dibuka kembali: %1$s</string>
+    <string name="marktodo_log_task_starred">Berbintang: %1$s</string>
+    <string name="marktodo_log_task_unstarred">Batal berbintang: %1$s</string>
+    <string name="marktodo_log_tasks_reordered">Susun ulang tugas</string>
+    <string name="marktodo_log_tag_created">Tag baru: %1$s</string>
+    <string name="marktodo_log_tag_deleted">Hapus tag: %1$s</string>
+    <string name="marktodo_log_category_deleted_desc">Kategori “%1$s” dan semua tugasnya dihapus</string>
+    <string name="marktodo_log_categories_reordered_desc">%1$d kategori disusun ulang</string>
+    <string name="marktodo_log_tasks_reordered_desc">%1$d tugas disusun ulang</string>
 </resources>

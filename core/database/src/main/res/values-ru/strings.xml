@@ -40,4 +40,9 @@
     <string name="marktodo_preset_tag_work">Работа</string>
     <string name="marktodo_preset_task_note">Отметьте флажок слева, чтобы завершить меня; нажмите на меня, чтобы редактировать; долгое нажатие на карточку темы — изменить или удалить</string>
     <string name="marktodo_preset_task_title">Добро пожаловать в список дел</string>
+    <string name="activity_log_teleprompter_app_title">Телесуфлёр</string>
+    <string name="activity_log_bookkeeping_app_title">Бухгалтерия</string>
+    <string name="activity_log_poem_app_title">Китайская классическая поэзия</string>
+    <string name="activity_log_todo_app_title">Задачи</string>
+    <string name="activity_log_xiangqi_app_title">Китайские шахматы</string>
 </resources>

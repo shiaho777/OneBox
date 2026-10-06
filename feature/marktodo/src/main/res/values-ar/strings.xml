@@ -136,4 +136,21 @@
     <string name="view_grid">شبكة</string>
     <string name="view_list">قائمة</string>
     <string name="action_sort_categories">ترتيب المواضيع</string>
+    <string name="marktodo_log_category_created">فئة جديدة: %1$s</string>
+    <string name="marktodo_log_category_updated">تعديل الفئة: %1$s</string>
+    <string name="marktodo_log_category_deleted">حذف الفئة: %1$s</string>
+    <string name="marktodo_log_categories_reordered">إعادة ترتيب الفئات</string>
+    <string name="marktodo_log_task_created">مهمة جديدة: %1$s</string>
+    <string name="marktodo_log_task_updated">تعديل المهمة: %1$s</string>
+    <string name="marktodo_log_task_deleted">حذف المهمة: %1$s</string>
+    <string name="marktodo_log_task_completed">مكتملة: %1$s</string>
+    <string name="marktodo_log_task_reopened">إعادة فتح: %1$s</string>
+    <string name="marktodo_log_task_starred">مميزة بنجمة: %1$s</string>
+    <string name="marktodo_log_task_unstarred">إزالة النجمة: %1$s</string>
+    <string name="marktodo_log_tasks_reordered">إعادة ترتيب المهام</string>
+    <string name="marktodo_log_tag_created">علامة جديدة: %1$s</string>
+    <string name="marktodo_log_tag_deleted">حذف العلامة: %1$s</string>
+    <string name="marktodo_log_category_deleted_desc">تم حذف الفئة “%1$s” وجميع مهامها</string>
+    <string name="marktodo_log_categories_reordered_desc">تمت إعادة ترتيب %1$d فئات</string>
+    <string name="marktodo_log_tasks_reordered_desc">تمت إعادة ترتيب %1$d مهام</string>
 </resources>

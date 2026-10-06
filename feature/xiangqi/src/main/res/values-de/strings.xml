@@ -269,4 +269,8 @@
     <string name="xiangqi_tts_default_checkmate">Schachmatt!</string>
     <string name="xiangqi_tts_default_draw">Unentschieden!</string>
     <string name="xiangqi_new_ai_create">KI erstellt Spiel</string>
+    <string name="xiangqi_log_game_created">Neue Partie: %1$s</string>
+    <string name="xiangqi_log_game_renamed">Partie umbenannt: %1$s</string>
+    <string name="xiangqi_log_game_resigned">Aufgegeben: %1$s</string>
+    <string name="xiangqi_log_game_deleted">Partie gelöscht: %1$s</string>
 </resources>

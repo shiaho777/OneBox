@@ -267,4 +267,8 @@
     <string name="xiangqi_tts_default_checkmate">Skakmat!</string>
     <string name="xiangqi_tts_default_draw">Seri!</string>
     <string name="xiangqi_new_ai_create">AI buat permainan</string>
+    <string name="xiangqi_log_game_created">Permainan baru: %1$s</string>
+    <string name="xiangqi_log_game_renamed">Ganti nama permainan: %1$s</string>
+    <string name="xiangqi_log_game_resigned">Menyerah: %1$s</string>
+    <string name="xiangqi_log_game_deleted">Hapus permainan: %1$s</string>
 </resources>

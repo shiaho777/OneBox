@@ -105,4 +105,7 @@
     <string name="agent_tool_poem_open_search_link">Buka Pencarian Puisi</string>
     <string name="agent_tool_poem_open_home_link">Buka Puisi Tionghoa</string>
     <string name="agent_tool_poem_unknown_error">kesalahan tidak diketahui</string>
+    <string name="poem_log_favorited">Favorit: “%1$s”</string>
+    <string name="poem_log_unfavorited">Batal favorit: “%1$s”</string>
+    <string name="poem_log_deleted">Dihapus: “%1$s”</string>
 </resources>

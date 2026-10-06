@@ -40,4 +40,9 @@
     <string name="marktodo_preset_tag_work">İş</string>
     <string name="marktodo_preset_task_note">Beni tamamlamak için soldaki onay kutusuna dokunun; düzenlemek için üzerime dokunun; konu kartını düzenlemek veya silmek için uzun basın</string>
     <string name="marktodo_preset_task_title">Yapılacaklar Listesine Hoş Geldiniz</string>
+    <string name="activity_log_teleprompter_app_title">Teleprompter</string>
+    <string name="activity_log_bookkeeping_app_title">Defter</string>
+    <string name="activity_log_poem_app_title">Klasik Çin şiiri</string>
+    <string name="activity_log_todo_app_title">Görevler</string>
+    <string name="activity_log_xiangqi_app_title">Çin satrancı</string>
 </resources>

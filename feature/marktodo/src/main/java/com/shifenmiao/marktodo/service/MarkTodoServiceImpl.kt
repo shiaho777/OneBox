@@ -5,6 +5,8 @@ import com.shifenmiao.database.marktodo.entity.MarkTodoCategoryEntity
 import com.shifenmiao.database.marktodo.entity.MarkTodoTagEntity
 import com.shifenmiao.database.marktodo.entity.MarkTodoTaskEntity
 import com.shifenmiao.database.marktodo.repo.MarkTodoRepository
+import com.shifenmiao.interfaces.singleton.AppContext
+import com.shifenmiao.marktodo.R
 import com.shifenmiao.marktodo.data.iconFromKey
 import com.shifenmiao.marktodo.data.toModel
 import com.shifenmiao.marktodo.model.TodoCategory
@@ -66,8 +68,8 @@ class MarkTodoServiceImpl @Inject constructor(
                 entityType = "CATEGORY",
                 actionType = "CREATE",
                 source = source,
-                title = "新增分类: ${input.title}",
-                description = "创建了待办分类「${input.title}」"
+                title = AppContext.getString(R.string.marktodo_log_category_created, input.title),
+                description = AppContext.getString(R.string.marktodo_log_category_created, input.title)
             )
             categoryId
         }
@@ -98,8 +100,8 @@ class MarkTodoServiceImpl @Inject constructor(
                 entityType = "CATEGORY",
                 actionType = "UPDATE",
                 source = source,
-                title = "编辑分类: ${input.title}",
-                description = "更新了待办分类「${input.title}」"
+                title = AppContext.getString(R.string.marktodo_log_category_updated, input.title),
+                description = AppContext.getString(R.string.marktodo_log_category_updated, input.title)
             )
         }
     }
@@ -117,8 +119,8 @@ class MarkTodoServiceImpl @Inject constructor(
                 entityType = "CATEGORY",
                 actionType = "DELETE",
                 source = source,
-                title = "删除分类: $categoryTitle",
-                description = "删除了待办分类「$categoryTitle」及其所有任务"
+                title = AppContext.getString(R.string.marktodo_log_category_deleted, categoryTitle),
+                description = AppContext.getString(R.string.marktodo_log_category_deleted_desc, categoryTitle)
             )
         }
     }
@@ -137,8 +139,8 @@ class MarkTodoServiceImpl @Inject constructor(
                 entityType = "CATEGORY",
                 actionType = "REORDER",
                 source = source,
-                title = "重排分类",
-                description = "调整了 ${orderedIds.size} 个分类的排序"
+                title = AppContext.getString(R.string.marktodo_log_categories_reordered),
+                description = AppContext.getContext().getString(R.string.marktodo_log_categories_reordered_desc, orderedIds.size)
             )
         }
     }
@@ -173,8 +175,8 @@ class MarkTodoServiceImpl @Inject constructor(
                 entityType = "TASK",
                 actionType = "CREATE",
                 source = source,
-                title = "新增待办: ${input.title}",
-                description = "在分类中创建了待办「${input.title}」"
+                title = AppContext.getString(R.string.marktodo_log_task_created, input.title),
+                description = AppContext.getString(R.string.marktodo_log_task_created, input.title)
             )
             taskId
         }
@@ -210,8 +212,8 @@ class MarkTodoServiceImpl @Inject constructor(
                 entityType = "TASK",
                 actionType = "UPDATE",
                 source = source,
-                title = "编辑待办: ${input.title}",
-                description = "更新了待办「${input.title}」"
+                title = AppContext.getString(R.string.marktodo_log_task_updated, input.title),
+                description = AppContext.getString(R.string.marktodo_log_task_updated, input.title)
             )
         }
     }
@@ -229,8 +231,8 @@ class MarkTodoServiceImpl @Inject constructor(
                 entityType = "TASK",
                 actionType = "DELETE",
                 source = source,
-                title = "删除待办: $taskTitle",
-                description = "删除了待办「$taskTitle」"
+                title = AppContext.getString(R.string.marktodo_log_task_deleted, taskTitle),
+                description = AppContext.getString(R.string.marktodo_log_task_deleted, taskTitle)
             )
         }
     }
@@ -249,9 +251,16 @@ class MarkTodoServiceImpl @Inject constructor(
                 entityType = "TASK",
                 actionType = "TOGGLE_COMPLETE",
                 source = source,
-                title = if (isCompleted) "完成待办: $taskTitle" else "重新打开: $taskTitle",
-                description = if (isCompleted) "标记待办「$taskTitle」为已完成"
-                else "重新打开待办「$taskTitle》"
+                title = AppContext.getString(
+                    if (isCompleted) R.string.marktodo_log_task_completed
+                    else R.string.marktodo_log_task_reopened,
+                    taskTitle
+                ),
+                description = AppContext.getString(
+                    if (isCompleted) R.string.marktodo_log_task_completed
+                    else R.string.marktodo_log_task_reopened,
+                    taskTitle
+                )
             )
         }
     }
@@ -270,9 +279,16 @@ class MarkTodoServiceImpl @Inject constructor(
                 entityType = "TASK",
                 actionType = "TOGGLE_STAR",
                 source = source,
-                title = if (isStarred) "收藏待办: $taskTitle" else "取消收藏: $taskTitle",
-                description = if (isStarred) "收藏了待办「$taskTitle》"
-                else "取消收藏待办「$taskTitle》"
+                title = AppContext.getString(
+                    if (isStarred) R.string.marktodo_log_task_starred
+                    else R.string.marktodo_log_task_unstarred,
+                    taskTitle
+                ),
+                description = AppContext.getString(
+                    if (isStarred) R.string.marktodo_log_task_starred
+                    else R.string.marktodo_log_task_unstarred,
+                    taskTitle
+                )
             )
         }
     }
@@ -292,8 +308,8 @@ class MarkTodoServiceImpl @Inject constructor(
                 entityType = "TASK",
                 actionType = "REORDER",
                 source = source,
-                title = "重排任务",
-                description = "调整了 ${orderedIds.size} 个任务的排序"
+                title = AppContext.getString(R.string.marktodo_log_tasks_reordered),
+                description = AppContext.getContext().getString(R.string.marktodo_log_tasks_reordered_desc, orderedIds.size)
             )
         }
     }
@@ -354,8 +370,8 @@ class MarkTodoServiceImpl @Inject constructor(
                 entityType = "TAG",
                 actionType = "CREATE",
                 source = source,
-                title = "新增标签: $trimmed",
-                description = "创建了待办标签「$trimmed」"
+                title = AppContext.getString(R.string.marktodo_log_tag_created, trimmed),
+                description = AppContext.getString(R.string.marktodo_log_tag_created, trimmed)
             )
             tagId
         }
@@ -375,8 +391,8 @@ class MarkTodoServiceImpl @Inject constructor(
                 entityType = "TAG",
                 actionType = "DELETE",
                 source = source,
-                title = "删除标签: $tagName",
-                description = "删除了待办标签「$tagName」"
+                title = AppContext.getString(R.string.marktodo_log_tag_deleted, tagName),
+                description = AppContext.getString(R.string.marktodo_log_tag_deleted, tagName)
             )
         }
     }

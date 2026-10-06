@@ -2,14 +2,14 @@
 <resources>
     <string name="teleprompter_title">Телесуфлер</string>
     <string name="teleprompter_my_scripts">Мой сценарий</string>
-    <string name="teleprompter_recent_scripts">Последние сообщения</string>
-    <string name="teleprompter_scripts_total">Всего %d сценариев</string>
+    <string name="teleprompter_recent_scripts">Недавние сценарии</string>
+    <string name="teleprompter_scripts_total">Всего: %d сценариев</string>
     <string name="teleprompter_empty">Нет сценария, нажмите на плюс внизу справа</string>
-    <string name="teleprompter_word_count">%d слово</string>
+    <plurals name="teleprompter_word_count"><item quantity="one">%d слово</item><item quantity="few">%d слова</item><item quantity="many">%d слов</item><item quantity="other">%d слова</item></plurals>
     <string name="teleprompter_new_script">Новый сценарий</string>
     <string name="teleprompter_edit_script">Редактировать сценарий</string>
     <string name="teleprompter_title_hint">Название сценария</string>
-    <string name="teleprompter_content_hint">Введите здесь содержание вступления...</string>
+    <string name="teleprompter_content_hint">Введите здесь текст сценария…</string>
     <string name="teleprompter_save">Сохранить</string>
     <string name="teleprompter_play">Воспроизвести</string>
     <string name="teleprompter_delete">Удалить</string>
@@ -58,4 +58,10 @@
     <string name="teleprompter_ai_assist_title">Помощник по сценариям</string>
     <string name="teleprompter_ai_assist_prompt">Ты помощник по сценариям телесуфлёра. При описании сцены, длительности или темы создай/обнови сценарий через manage_teleprompter.</string>
     <string name="teleprompter_ai_assist_fill_in">Напиши 30-секундный вступительный текст и сохрани его в телесуфлёр</string>
+    <string name="teleprompter_log_created_title">Новый сценарий: %1$s</string>
+    <string name="teleprompter_log_updated_title">Сценарий обновлён: %1$s</string>
+    <string name="teleprompter_log_deleted_title">Сценарий удалён: %1$s</string>
+    <string name="teleprompter_log_created_desc">Сценарий «%1$s» создан (%2$d слов)</string>
+    <string name="teleprompter_log_updated_desc">Сценарий «%1$s» обновлён (%2$d слов)</string>
+    <string name="teleprompter_log_deleted_desc">Сценарий «%1$s» удалён</string>
 </resources>

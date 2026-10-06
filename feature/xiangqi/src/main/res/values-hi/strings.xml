@@ -269,4 +269,8 @@
     <string name="xiangqi_tts_default_checkmate">शहमात!</string>
     <string name="xiangqi_tts_default_draw">ड्रॉ!</string>
     <string name="xiangqi_new_ai_create">AI गेम बनाएं</string>
+    <string name="xiangqi_log_game_created">नई बाज़ी: %1$s</string>
+    <string name="xiangqi_log_game_renamed">बाज़ी का नाम बदला: %1$s</string>
+    <string name="xiangqi_log_game_resigned">हार स्वीकारी: %1$s</string>
+    <string name="xiangqi_log_game_deleted">बाज़ी हटाई: %1$s</string>
 </resources>

@@ -40,4 +40,9 @@
     <string name="marktodo_preset_tag_work">Trabaho</string>
     <string name="marktodo_preset_task_note">I-tap ang checkbox sa kaliwa para kumpletuhin ako; i-tap ako para mag-edit; pindutin nang matagal ang paksa card para i-edit o tanggalin</string>
     <string name="marktodo_preset_task_title">Maligayang pagdating sa To-do List</string>
+    <string name="activity_log_teleprompter_app_title">Teleprompter</string>
+    <string name="activity_log_bookkeeping_app_title">Aklat ng gastos</string>
+    <string name="activity_log_poem_app_title">Klasikong tula ng Tsina</string>
+    <string name="activity_log_todo_app_title">Mga gawain</string>
+    <string name="activity_log_xiangqi_app_title">Xiangqi</string>
 </resources>

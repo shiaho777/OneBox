@@ -40,4 +40,9 @@
     <string name="marktodo_preset_tag_work">업무</string>
     <string name="marktodo_preset_task_note">왼쪽 체크박스를 눌러 저를 완료해 보세요. 저를 누르면 편집할 수 있어요. 주제 카드를 길게 누르면 편집하거나 삭제할 수 있어요</string>
     <string name="marktodo_preset_task_title">할 일 목록에 오신 것을 환영합니다</string>
+    <string name="activity_log_teleprompter_app_title">텔레프롬프터</string>
+    <string name="activity_log_bookkeeping_app_title">가계부</string>
+    <string name="activity_log_poem_app_title">중국 고전 시가</string>
+    <string name="activity_log_todo_app_title">할 일 목록</string>
+    <string name="activity_log_xiangqi_app_title">중국 장기</string>
 </resources>

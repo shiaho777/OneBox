@@ -42,4 +42,9 @@
     <string name="marktodo_preset_tag_life">Life</string>
     <string name="marktodo_preset_tag_health">Health</string>
     <string name="marktodo_preset_tag_travel">Travel</string>
+    <string name="activity_log_teleprompter_app_title">Teleprompter</string>
+    <string name="activity_log_bookkeeping_app_title">Bookkeeping</string>
+    <string name="activity_log_poem_app_title">Chinese Poetry</string>
+    <string name="activity_log_todo_app_title">To-Do List</string>
+    <string name="activity_log_xiangqi_app_title">Chinese Chess</string>
 </resources>

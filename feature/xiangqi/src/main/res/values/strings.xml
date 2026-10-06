@@ -290,4 +290,8 @@
     <string name="xiangqi_local_engine_delete">Delete</string>
     <string name="xiangqi_local_engine_delete_confirm_title">Delete offline engine data?</string>
     <string name="xiangqi_local_engine_delete_confirm_message">The %1$s network file will be removed. You can download it again later.</string>
+    <string name="xiangqi_log_game_created">New game: %1$s</string>
+    <string name="xiangqi_log_game_renamed">Rename game: %1$s</string>
+    <string name="xiangqi_log_game_resigned">Resignation: %1$s</string>
+    <string name="xiangqi_log_game_deleted">Delete game: %1$s</string>
 </resources>

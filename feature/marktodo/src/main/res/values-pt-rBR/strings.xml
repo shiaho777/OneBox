@@ -136,4 +136,21 @@
     <string name="view_grid">Grade</string>
     <string name="view_list">Lista</string>
     <string name="action_sort_categories">Ordenar tópicos</string>
+    <string name="marktodo_log_category_created">Nova categoria: %1$s</string>
+    <string name="marktodo_log_category_updated">Editar categoria: %1$s</string>
+    <string name="marktodo_log_category_deleted">Categoria excluída: %1$s</string>
+    <string name="marktodo_log_categories_reordered">Reordenar categorias</string>
+    <string name="marktodo_log_task_created">Nova tarefa: %1$s</string>
+    <string name="marktodo_log_task_updated">Editar tarefa: %1$s</string>
+    <string name="marktodo_log_task_deleted">Tarefa excluída: %1$s</string>
+    <string name="marktodo_log_task_completed">Concluída: %1$s</string>
+    <string name="marktodo_log_task_reopened">Reaberta: %1$s</string>
+    <string name="marktodo_log_task_starred">Favoritada: %1$s</string>
+    <string name="marktodo_log_task_unstarred">Sem estrela: %1$s</string>
+    <string name="marktodo_log_tasks_reordered">Reordenar tarefas</string>
+    <string name="marktodo_log_tag_created">Nova etiqueta: %1$s</string>
+    <string name="marktodo_log_tag_deleted">Etiqueta excluída: %1$s</string>
+    <string name="marktodo_log_category_deleted_desc">Categoria “%1$s” e todas as suas tarefas excluídas</string>
+    <string name="marktodo_log_categories_reordered_desc">%1$d categorias reordenadas</string>
+    <string name="marktodo_log_tasks_reordered_desc">%1$d tarefas reordenadas</string>
 </resources>

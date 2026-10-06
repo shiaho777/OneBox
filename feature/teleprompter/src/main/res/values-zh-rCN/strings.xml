@@ -13,7 +13,7 @@
     <string name="teleprompter_ai_assist_title">提词稿助手</string>
     <string name="teleprompter_ai_assist_prompt">你是用户的提词稿助手。用户描述场景、时长或主题时，用 manage_teleprompter 工具创建或更新文稿。写稿时口语化、短句、适合朗读，按用户要求的时长控制字数（中文约每秒 4 字）。生成后简短确认标题和字数。</string>
     <string name="teleprompter_ai_assist_fill_in">写一段 30 秒的开场白，保存到提词器里</string>
-    <string name="teleprompter_word_count">%d 字</string>
+    <plurals name="teleprompter_word_count"><item quantity="other">%d 字</item></plurals>
     <string name="teleprompter_new_script">新建文稿</string>
     <string name="teleprompter_edit_script">编辑文稿</string>
     <string name="teleprompter_title_hint">文稿标题</string>
@@ -61,5 +61,11 @@
     <string name="agent_tool_manage_teleprompter_deeplink_guidance_edit">打开该文稿的编辑页面</string>
     <string name="agent_tool_manage_teleprompter_deeplink_label_play">播放文稿</string>
     <string name="agent_tool_manage_teleprompter_deeplink_guidance_play">立即开始提词播放</string>
+    <string name="teleprompter_log_created_title">新建提词文稿: %1$s</string>
+    <string name="teleprompter_log_updated_title">更新提词文稿: %1$s</string>
+    <string name="teleprompter_log_deleted_title">删除提词文稿: %1$s</string>
+    <string name="teleprompter_log_created_desc">创建了提词文稿「%1$s」(%2$d 字)</string>
+    <string name="teleprompter_log_updated_desc">更新了提词文稿「%1$s」(%2$d 字)</string>
+    <string name="teleprompter_log_deleted_desc">删除了提词文稿「%1$s」</string>
 </resources>
 

@@ -40,4 +40,9 @@
     <string name="marktodo_preset_tag_work">Trabajo</string>
     <string name="marktodo_preset_task_note">Toca la casilla para completarme; tócame para editar; mantén pulsada la tarjeta del tema para editarla o eliminarla</string>
     <string name="marktodo_preset_task_title">Te damos la bienvenida a Tareas</string>
+    <string name="activity_log_teleprompter_app_title">Teleprompter</string>
+    <string name="activity_log_bookkeeping_app_title">Contabilidad</string>
+    <string name="activity_log_poem_app_title">Poesía clásica china</string>
+    <string name="activity_log_todo_app_title">Tareas</string>
+    <string name="activity_log_xiangqi_app_title">Ajedrez chino</string>
 </resources>

@@ -187,4 +187,21 @@
     <string name="dialog_add_tag_title">New Tag</string>
     <string name="tag_name_hint">Tag name</string>
     <string name="action_sort_categories">Sort topics</string>
+    <string name="marktodo_log_category_created">New category: %1$s</string>
+    <string name="marktodo_log_category_updated">Edit category: %1$s</string>
+    <string name="marktodo_log_category_deleted">Delete category: %1$s</string>
+    <string name="marktodo_log_categories_reordered">Reorder categories</string>
+    <string name="marktodo_log_task_created">New task: %1$s</string>
+    <string name="marktodo_log_task_updated">Edit task: %1$s</string>
+    <string name="marktodo_log_task_deleted">Delete task: %1$s</string>
+    <string name="marktodo_log_task_completed">Completed: %1$s</string>
+    <string name="marktodo_log_task_reopened">Reopened: %1$s</string>
+    <string name="marktodo_log_task_starred">Starred: %1$s</string>
+    <string name="marktodo_log_task_unstarred">Unstarred: %1$s</string>
+    <string name="marktodo_log_tasks_reordered">Reorder tasks</string>
+    <string name="marktodo_log_tag_created">New tag: %1$s</string>
+    <string name="marktodo_log_tag_deleted">Delete tag: %1$s</string>
+    <string name="marktodo_log_category_deleted_desc">Deleted category “%1$s” and all its tasks</string>
+    <string name="marktodo_log_categories_reordered_desc">Reordered %1$d categories</string>
+    <string name="marktodo_log_tasks_reordered_desc">Reordered %1$d tasks</string>
 </resources>

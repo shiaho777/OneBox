@@ -105,4 +105,7 @@
     <string name="agent_tool_poem_open_search_link">Открыть поиск стихотворений</string>
     <string name="agent_tool_poem_open_home_link">Открыть китайскую поэзию</string>
     <string name="agent_tool_poem_unknown_error">неизвестная ошибка</string>
+    <string name="poem_log_favorited">В избранном: «%1$s»</string>
+    <string name="poem_log_unfavorited">Убрано из избранного: «%1$s»</string>
+    <string name="poem_log_deleted">Удалено: «%1$s»</string>
 </resources>

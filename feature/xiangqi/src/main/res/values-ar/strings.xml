@@ -277,4 +277,8 @@
     <string name="xiangqi_tts_default_checkmate">كش مات!</string>
     <string name="xiangqi_tts_default_draw">تعادل!</string>
     <string name="xiangqi_new_ai_create">إنشاء مباراة بالذكاء الاصطناعي</string>
+    <string name="xiangqi_log_game_created">مباراة جديدة: %1$s</string>
+    <string name="xiangqi_log_game_renamed">إعادة تسمية المباراة: %1$s</string>
+    <string name="xiangqi_log_game_resigned">استسلام: %1$s</string>
+    <string name="xiangqi_log_game_deleted">حذف المباراة: %1$s</string>
 </resources>

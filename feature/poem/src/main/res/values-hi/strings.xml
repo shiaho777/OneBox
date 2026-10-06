@@ -105,4 +105,7 @@
     <string name="agent_tool_poem_open_search_link">कविता खोज खोलें</string>
     <string name="agent_tool_poem_open_home_link">चीनी कविता खोलें</string>
     <string name="agent_tool_poem_unknown_error">अज्ञात त्रुटि</string>
+    <string name="poem_log_favorited">पसंदीदा: “%1$s”</string>
+    <string name="poem_log_unfavorited">पसंदीदा हटाया: “%1$s”</string>
+    <string name="poem_log_deleted">हटाया गया: “%1$s”</string>
 </resources>

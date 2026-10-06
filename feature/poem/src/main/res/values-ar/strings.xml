@@ -105,4 +105,7 @@
     <string name="agent_tool_poem_open_search_link">افتح البحث في القصائد</string>
     <string name="agent_tool_poem_open_home_link">افتح الشعر الصيني</string>
     <string name="agent_tool_poem_unknown_error">خطأ غير معروف</string>
+    <string name="poem_log_favorited">مفضل: “%1$s”</string>
+    <string name="poem_log_unfavorited">إزالة من المفضلة: “%1$s”</string>
+    <string name="poem_log_deleted">محذوف: “%1$s”</string>
 </resources>

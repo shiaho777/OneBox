@@ -109,4 +109,7 @@
     <string name="agent_tool_poem_open_search_link">Open Poem Search</string>
     <string name="agent_tool_poem_open_home_link">Open Chinese Poetry</string>
     <string name="agent_tool_poem_unknown_error">unknown error</string>
+    <string name="poem_log_favorited">Favorited: “%1$s”</string>
+    <string name="poem_log_unfavorited">Unfavorited: “%1$s”</string>
+    <string name="poem_log_deleted">Deleted: “%1$s”</string>
 </resources>

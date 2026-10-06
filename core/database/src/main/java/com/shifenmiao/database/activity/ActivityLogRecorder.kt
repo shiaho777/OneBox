@@ -277,7 +277,7 @@ class ActivityLogRecorder @Inject constructor(
             ActivityLogEntry(
                 category = ActivityCategory.BOOKKEEPING,
                 title = title,
-                appTitle = "记账本",
+                appTitle = context.getString(R.string.activity_log_bookkeeping_app_title),
                 description = description,
                 screenRoute = "",
                 payload = payload,
@@ -328,7 +328,7 @@ class ActivityLogRecorder @Inject constructor(
             ActivityLogEntry(
                 category = ActivityCategory.POEM,
                 title = title,
-                appTitle = "中国古诗词",
+                appTitle = context.getString(R.string.activity_log_poem_app_title),
                 description = description ?: title,
                 screenRoute = screenRoute ?: "",
                 payload = payload,
@@ -372,7 +372,7 @@ class ActivityLogRecorder @Inject constructor(
             ActivityLogEntry(
                 category = ActivityCategory.TODO,
                 title = title,
-                appTitle = "待办清单",
+                appTitle = context.getString(R.string.activity_log_todo_app_title),
                 description = description,
                 screenRoute = screenRoute,
                 payload = payload,
@@ -410,7 +410,7 @@ class ActivityLogRecorder @Inject constructor(
             ActivityLogEntry(
                 category = ActivityCategory.XIANGQI,
                 title = title,
-                appTitle = "中国象棋",
+                appTitle = context.getString(R.string.activity_log_xiangqi_app_title),
                 description = description,
                 screenRoute = screenRoute,
                 payload = payload,
@@ -451,7 +451,7 @@ class ActivityLogRecorder @Inject constructor(
             ActivityLogEntry(
                 category = ActivityCategory.TELEPROMPTER,
                 title = title,
-                appTitle = "提词器",
+                appTitle = context.getString(R.string.activity_log_teleprompter_app_title),
                 description = description,
                 screenRoute = screenRoute,
                 payload = payload,

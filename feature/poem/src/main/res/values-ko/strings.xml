@@ -105,4 +105,7 @@
     <string name="agent_tool_poem_open_search_link">시 검색 열기</string>
     <string name="agent_tool_poem_open_home_link">중국 시 열기</string>
     <string name="agent_tool_poem_unknown_error">알 수 없는 오류</string>
+    <string name="poem_log_favorited">즐겨찾기: “%1$s”</string>
+    <string name="poem_log_unfavorited">즐겨찾기 해제: “%1$s”</string>
+    <string name="poem_log_deleted">삭제: “%1$s”</string>
 </resources>

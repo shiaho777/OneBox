@@ -136,4 +136,21 @@
     <string name="view_grid">Raster</string>
     <string name="view_list">Liste</string>
     <string name="action_sort_categories">Themen sortieren</string>
+    <string name="marktodo_log_category_created">Neue Kategorie: %1$s</string>
+    <string name="marktodo_log_category_updated">Kategorie bearbeitet: %1$s</string>
+    <string name="marktodo_log_category_deleted">Kategorie gelöscht: %1$s</string>
+    <string name="marktodo_log_categories_reordered">Kategorien neu sortiert</string>
+    <string name="marktodo_log_task_created">Neue Aufgabe: %1$s</string>
+    <string name="marktodo_log_task_updated">Aufgabe bearbeitet: %1$s</string>
+    <string name="marktodo_log_task_deleted">Aufgabe gelöscht: %1$s</string>
+    <string name="marktodo_log_task_completed">Erledigt: %1$s</string>
+    <string name="marktodo_log_task_reopened">Wieder geöffnet: %1$s</string>
+    <string name="marktodo_log_task_starred">Markiert: %1$s</string>
+    <string name="marktodo_log_task_unstarred">Markierung entfernt: %1$s</string>
+    <string name="marktodo_log_tasks_reordered">Aufgaben neu sortiert</string>
+    <string name="marktodo_log_tag_created">Neues Tag: %1$s</string>
+    <string name="marktodo_log_tag_deleted">Tag gelöscht: %1$s</string>
+    <string name="marktodo_log_category_deleted_desc">Kategorie “%1$s” und alle ihre Aufgaben gelöscht</string>
+    <string name="marktodo_log_categories_reordered_desc">Reihenfolge von %1$d Kategorien geändert</string>
+    <string name="marktodo_log_tasks_reordered_desc">Reihenfolge von %1$d Aufgaben geändert</string>
 </resources>

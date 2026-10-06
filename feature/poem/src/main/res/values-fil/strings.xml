@@ -105,4 +105,7 @@
     <string name="agent_tool_poem_open_search_link">Buksan ang Paghahanap ng Tula</string>
     <string name="agent_tool_poem_open_home_link">Buksan ang Tula ng Tsino</string>
     <string name="agent_tool_poem_unknown_error">hindi kilalang error</string>
+    <string name="poem_log_favorited">Paborito: “%1$s”</string>
+    <string name="poem_log_unfavorited">Tinanggal sa paborito: “%1$s”</string>
+    <string name="poem_log_deleted">Tinanggal: “%1$s”</string>
 </resources>

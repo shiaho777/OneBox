@@ -278,4 +278,8 @@
     <string name="xiangqi_tts_default_checkmate">詰み！</string>
     <string name="xiangqi_tts_default_draw">引き分け！</string>
     <string name="xiangqi_new_ai_create">AIが対局を作成</string>
+    <string name="xiangqi_log_game_created">新規対局: %1$s</string>
+    <string name="xiangqi_log_game_renamed">対局名を変更: %1$s</string>
+    <string name="xiangqi_log_game_resigned">投了: %1$s</string>
+    <string name="xiangqi_log_game_deleted">対局を削除: %1$s</string>
 </resources>

@@ -136,4 +136,21 @@
     <string name="view_grid">Grid</string>
     <string name="view_list">Listahan</string>
     <string name="action_sort_categories">Ayusin ang mga paksa</string>
+    <string name="marktodo_log_category_created">Bagong kategorya: %1$s</string>
+    <string name="marktodo_log_category_updated">I-edit ang kategorya: %1$s</string>
+    <string name="marktodo_log_category_deleted">Tinanggal na kategorya: %1$s</string>
+    <string name="marktodo_log_categories_reordered">Isaayos muli ang mga kategorya</string>
+    <string name="marktodo_log_task_created">Bagong gawain: %1$s</string>
+    <string name="marktodo_log_task_updated">I-edit ang gawain: %1$s</string>
+    <string name="marktodo_log_task_deleted">Tinanggal na gawain: %1$s</string>
+    <string name="marktodo_log_task_completed">Natapos: %1$s</string>
+    <string name="marktodo_log_task_reopened">Muling binuksan: %1$s</string>
+    <string name="marktodo_log_task_starred">Na-star: %1$s</string>
+    <string name="marktodo_log_task_unstarred">Tinanggal ang star: %1$s</string>
+    <string name="marktodo_log_tasks_reordered">Isaayos muli ang mga gawain</string>
+    <string name="marktodo_log_tag_created">Bagong tag: %1$s</string>
+    <string name="marktodo_log_tag_deleted">Tinanggal na tag: %1$s</string>
+    <string name="marktodo_log_category_deleted_desc">Tinanggal ang kategoryang “%1$s” at lahat ng gawain nito</string>
+    <string name="marktodo_log_categories_reordered_desc">Isaayos muli ang %1$d kategorya</string>
+    <string name="marktodo_log_tasks_reordered_desc">Isaayos muli ang %1$d gawain</string>
 </resources>

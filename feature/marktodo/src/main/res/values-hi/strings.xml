@@ -136,4 +136,21 @@
     <string name="view_grid">ग्रिड</string>
     <string name="view_list">सूची</string>
     <string name="action_sort_categories">विषय क्रमबद्ध करें</string>
+    <string name="marktodo_log_category_created">नई श्रेणी: %1$s</string>
+    <string name="marktodo_log_category_updated">श्रेणी संपादित: %1$s</string>
+    <string name="marktodo_log_category_deleted">श्रेणी हटाई: %1$s</string>
+    <string name="marktodo_log_categories_reordered">श्रेणियाँ फिर से क्रमित</string>
+    <string name="marktodo_log_task_created">नया कार्य: %1$s</string>
+    <string name="marktodo_log_task_updated">कार्य संपादित: %1$s</string>
+    <string name="marktodo_log_task_deleted">कार्य हटाया: %1$s</string>
+    <string name="marktodo_log_task_completed">पूरा किया: %1$s</string>
+    <string name="marktodo_log_task_reopened">फिर से खोला: %1$s</string>
+    <string name="marktodo_log_task_starred">तारांकित: %1$s</string>
+    <string name="marktodo_log_task_unstarred">तारांकन हटाया: %1$s</string>
+    <string name="marktodo_log_tasks_reordered">कार्य फिर से क्रमित</string>
+    <string name="marktodo_log_tag_created">नया टैग: %1$s</string>
+    <string name="marktodo_log_tag_deleted">टैग हटाया: %1$s</string>
+    <string name="marktodo_log_category_deleted_desc">श्रेणी “%1$s” और उसके सभी कार्य हटाए गए</string>
+    <string name="marktodo_log_categories_reordered_desc">%1$d श्रेणियाँ फिर से क्रमित की गईं</string>
+    <string name="marktodo_log_tasks_reordered_desc">%1$d कार्य फिर से क्रमित किए गए</string>
 </resources>

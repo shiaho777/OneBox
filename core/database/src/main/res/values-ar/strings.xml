@@ -39,4 +39,9 @@
     <string name="marktodo_preset_tag_work">العمل</string>
     <string name="marktodo_preset_task_note">اضغط على مربع الاختيار لإكمالي؛ اضغط عليّ للتعديل؛ اضغط مطولًا على بطاقة الموضوع للتعديل أو الحذف</string>
     <string name="marktodo_preset_task_title">مرحبًا بك في قائمة المهام</string>
+    <string name="activity_log_teleprompter_app_title">التلقين</string>
+    <string name="activity_log_bookkeeping_app_title">دفتر الحسابات</string>
+    <string name="activity_log_poem_app_title">الشعر الصيني الكلاسيكي</string>
+    <string name="activity_log_todo_app_title">قائمة المهام</string>
+    <string name="activity_log_xiangqi_app_title">الشطرنج الصيني</string>
 </resources>

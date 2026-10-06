@@ -273,4 +273,8 @@
     <string name="xiangqi_tts_default_checkmate">Мат!</string>
     <string name="xiangqi_tts_default_draw">Ничья!</string>
     <string name="xiangqi_new_ai_create">Создать игру с ИИ</string>
+    <string name="xiangqi_log_game_created">Новая партия: %1$s</string>
+    <string name="xiangqi_log_game_renamed">Партия переименована: %1$s</string>
+    <string name="xiangqi_log_game_resigned">Партия сдана: %1$s</string>
+    <string name="xiangqi_log_game_deleted">Партия удалена: %1$s</string>
 </resources>

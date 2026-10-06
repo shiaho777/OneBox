@@ -27,14 +27,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.shifenmiao.database.teleprompter.entity.TeleprompterScriptEntity
+import com.wanbaohe.com.string.TimeFormatter
 import com.wanbaohe.teleprompter.R
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 import com.t8rin.imagetoolbox.core.ui.widget.enhanced.EnhancedButton
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassCard
@@ -142,13 +142,13 @@ fun ScriptCard(
             ) {
                 Column {
                     Text(
-                        text = stringResource(R.string.teleprompter_word_count, script.wordCount),
+                        text = pluralStringResource(R.plurals.teleprompter_word_count, script.wordCount, script.wordCount),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Spacer(Modifier.height(2.dp))
                     Text(
-                        text = formatRelativeTime(script.updatedAt),
+                        text = TimeFormatter.formatRelativeTime(Date(script.updatedAt)),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                     )
@@ -174,16 +174,5 @@ fun ScriptCard(
                 }
             }
         }
-    }
-}
-
-private fun formatRelativeTime(timestamp: Long): String {
-    val diff = System.currentTimeMillis() - timestamp
-    return when {
-        diff < 60_000L -> "刚刚"
-        diff < 3_600_000L -> "${diff / 60_000}分钟前"
-        diff < 86_400_000L -> "${diff / 3_600_000}小时前"
-        diff < 604_800_000L -> "${diff / 86_400_000}天前"
-        else -> SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(timestamp))
     }
 }
