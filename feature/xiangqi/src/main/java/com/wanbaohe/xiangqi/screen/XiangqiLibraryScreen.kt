@@ -1,47 +1,23 @@
 package com.wanbaohe.xiangqi.screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.shifenmiao.common.ui.BaseScreen
-import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassOutlinedTextField
-import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassStyle
-import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassSurface
+import com.wanbaohe.boardgame.model.GameCardData
+import com.wanbaohe.boardgame.model.GameCardLabels
+import com.wanbaohe.boardgame.model.GameCardPlayer
+import com.wanbaohe.boardgame.ui.GameCard
 import com.wanbaohe.xiangqi.R
 import com.wanbaohe.xiangqi.component.XiangqiLibraryComponent
 import com.wanbaohe.xiangqi.data.XiangqiGameSummary
@@ -49,11 +25,6 @@ import com.wanbaohe.xiangqi.domain.model.GameMode
 import com.wanbaohe.xiangqi.domain.model.GameStatus
 import com.wanbaohe.xiangqi.domain.model.PlayerType
 import com.wanbaohe.xiangqi.presentation.localizedGameResultText
-import java.text.DateFormat
-import java.util.Date
-import com.t8rin.imagetoolbox.core.resources.icons.Edit
-import com.t8rin.imagetoolbox.core.resources.icons.Delete
-import com.t8rin.imagetoolbox.core.resources.icons.line.LineArrowForwardIos
 
 @Composable
 fun XiangqiLibraryScreen(
@@ -97,6 +68,17 @@ private fun XiangqiLibraryContent(
         return
     }
 
+    val labels = GameCardLabels(
+        renameTitle = stringResource(R.string.xiangqi_rename_game),
+        renameHint = stringResource(R.string.xiangqi_rename_hint),
+        deleteConfirmTitle = stringResource(R.string.xiangqi_delete_confirm_title),
+        deleteConfirmMessage = stringResource(R.string.xiangqi_delete_confirm_message),
+        confirm = stringResource(R.string.xiangqi_confirm),
+        cancel = stringResource(R.string.xiangqi_cancel),
+        renameContentDescription = stringResource(R.string.xiangqi_rename_game),
+        deleteContentDescription = stringResource(R.string.xiangqi_delete_game),
+    )
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -105,7 +87,8 @@ private fun XiangqiLibraryContent(
     ) {
         items(component.games, key = { it.id }) { item ->
             GameCard(
-                item = item,
+                data = item.toCardData(),
+                labels = labels,
                 // 已结束的局点卡片的本意是"复盘"，进行中的才是"继续下"
                 onContinue = {
                     if (item.status.isFinished()) {
@@ -124,17 +107,9 @@ private fun XiangqiLibraryContent(
 }
 
 @Composable
-private fun GameCard(
-    item: XiangqiGameSummary,
-    onContinue: () -> Unit,
-    onAnalysis: () -> Unit,
-    onDelete: () -> Unit,
-    onRename: (String) -> Unit,
-) {
-    var showDeleteConfirm by remember { mutableStateOf(false) }
-    var showRenameDialog by remember { mutableStateOf(false) }
-    val isLocal = item.mode == GameMode.LOCAL_PVP
-    val modeText = when (item.mode) {
+private fun XiangqiGameSummary.toCardData(): GameCardData {
+    val isLocal = mode == GameMode.LOCAL_PVP
+    val modeText = when (mode) {
         GameMode.LOCAL_PVP -> stringResource(R.string.xiangqi_mode_local)
         GameMode.ONLINE_PVP -> stringResource(R.string.xiangqi_mode_online)
         GameMode.LLM_VS_LLM -> stringResource(R.string.xiangqi_mode_ai_vs_ai)
@@ -142,253 +117,51 @@ private fun GameCard(
     }
 
     val redName = when {
-        item.redPlayerType == PlayerType.LLM -> stringResource(R.string.xiangqi_player_ai)
+        redPlayerType == PlayerType.LLM -> stringResource(R.string.xiangqi_player_ai)
         isLocal -> stringResource(R.string.xiangqi_player_local_red)
         else -> stringResource(R.string.xiangqi_player_you)
     }
     val blackName = when {
-        item.blackPlayerType == PlayerType.LLM -> stringResource(R.string.xiangqi_player_ai)
+        blackPlayerType == PlayerType.LLM -> stringResource(R.string.xiangqi_player_ai)
         isLocal -> stringResource(R.string.xiangqi_player_local_black)
         else -> stringResource(R.string.xiangqi_player_you)
     }
 
-    GlassSurface(
-        modifier = Modifier.fillMaxWidth().clickable { onContinue() },
-        style = GlassStyle.Medium,
-        shape = RoundedCornerShape(20.dp),
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
-            ) {
-                Box(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f), RoundedCornerShape(4.dp))
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(4.dp))
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text(
-                        text = modeText.uppercase(),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.sp)
-                    )
-                }
-                Text(
-                    text = DateFormat.getDateInstance(DateFormat.MEDIUM).format(Date(item.updatedAt)),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelSmall
-                )
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(MaterialTheme.colorScheme.error.copy(alpha = 0.2f), CircleShape)
-                            .border(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.3f), CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(stringResource(R.string.xiangqi_side_red), color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(redName, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelSmall)
-                }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f).padding(horizontal = 16.dp)
-                ) {
-                    Box(modifier = Modifier.weight(1f).height(1.dp).background(Brush.horizontalGradient(listOf(Color.Transparent, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)))))
-                    Text(stringResource(R.string.xiangqi_vs_short), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f), style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(horizontal = 8.dp))
-                    Box(modifier = Modifier.weight(1f).height(1.dp).background(Brush.horizontalGradient(listOf(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), Color.Transparent))))
-                }
-
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
-                            .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f), CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(stringResource(R.string.xiangqi_side_black), color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = FontWeight.Bold)
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(blackName, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelSmall)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(text = item.title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold), color = MaterialTheme.colorScheme.onSurface)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = when (item.status) {
-                    GameStatus.NOT_STARTED -> stringResource(R.string.xiangqi_library_status_not_started)
-                    GameStatus.PAUSED -> stringResource(R.string.xiangqi_library_status_paused)
-                    GameStatus.PLAYING, GameStatus.CHECK -> stringResource(R.string.xiangqi_library_status_in_progress)
-                    else -> stringResource(R.string.xiangqi_library_status_game_over)
-                },
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            // 副标题：找局时最先看的两项信息——手数与结果。缺了它们，列表里全是"已结束"。
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = pluralStringResource(R.plurals.xiangqi_ply_count, item.plyCount, item.plyCount),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                val resultText = localizedGameResultText(item.resultText)
-                if (resultText.isNotBlank()) {
-                    Text(
-                        text = "·",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Text(
-                        text = resultText,
-                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-            Box(modifier = Modifier.fillMaxWidth().height(1.dp).background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)))
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Left: edit + delete icons
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    val subtleTint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f)
-                    IconButton(onClick = { showRenameDialog = true }) {
-                        Icon(
-                            com.t8rin.imagetoolbox.core.resources.Icons.Outlined.Edit,
-                            contentDescription = stringResource(R.string.xiangqi_rename_game),
-                            tint = subtleTint,
-                            modifier = Modifier.size(18.dp),
-                        )
-                    }
-                    IconButton(onClick = { showDeleteConfirm = true }) {
-                        Icon(
-                            com.t8rin.imagetoolbox.core.resources.Icons.Outlined.Delete,
-                            contentDescription = stringResource(R.string.xiangqi_delete_game),
-                            tint = subtleTint,
-                            modifier = Modifier.size(18.dp),
-                        )
-                    }
-                }
-
-                // Right: analysis link
-                Row(
-                    modifier = Modifier.clickable { onAnalysis() },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        // 进行中的局卡片点击就是进回放，"查看回放"在这里语义重叠，用「复盘」区分
-                        text = stringResource(
-                            if (item.status.isFinished()) {
-                                R.string.xiangqi_library_open_analysis
-                            } else {
-                                R.string.xiangqi_library_review
-                            },
-                        ),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                    Icon(com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineArrowForwardIos, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimaryContainer, modifier = Modifier.size(16.dp))
-                }
-            }
-        }
-    }
-
-    if (showDeleteConfirm) {
-        AlertDialog(
-            onDismissRequest = { showDeleteConfirm = false },
-            title = { Text(stringResource(R.string.xiangqi_delete_confirm_title)) },
-            text = { Text(stringResource(R.string.xiangqi_delete_confirm_message)) },
-            confirmButton = {
-                androidx.compose.material3.TextButton(onClick = {
-                    showDeleteConfirm = false
-                    onDelete()
-                }) {
-                    Text(stringResource(R.string.xiangqi_confirm))
-                }
-            },
-            dismissButton = {
-                androidx.compose.material3.TextButton(onClick = { showDeleteConfirm = false }) {
-                    Text(stringResource(R.string.xiangqi_cancel))
-                }
-            },
-        )
-    }
-
-    if (showRenameDialog) {
-        RenameGameDialog(
-            currentTitle = item.title,
-            onDismiss = { showRenameDialog = false },
-            onConfirm = { newTitle ->
-                showRenameDialog = false
-                onRename(newTitle)
-            },
-        )
-    }
-}
-
-@Composable
-private fun RenameGameDialog(
-    currentTitle: String,
-    onDismiss: () -> Unit,
-    onConfirm: (String) -> Unit,
-) {
-    var text by remember { mutableStateOf(currentTitle) }
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.xiangqi_rename_game)) },
-        text = {
-            GlassOutlinedTextField(
-                value = text,
-                onValueChange = { text = it },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text(stringResource(R.string.xiangqi_rename_hint)) },
-                singleLine = true,
-            )
+    return GameCardData(
+        title = title,
+        statusText = when (status) {
+            GameStatus.NOT_STARTED -> stringResource(R.string.xiangqi_library_status_not_started)
+            GameStatus.PAUSED -> stringResource(R.string.xiangqi_library_status_paused)
+            GameStatus.PLAYING, GameStatus.CHECK -> stringResource(R.string.xiangqi_library_status_in_progress)
+            else -> stringResource(R.string.xiangqi_library_status_game_over)
         },
-        confirmButton = {
-            androidx.compose.material3.TextButton(
-                onClick = { onConfirm(text) },
-                enabled = text.isNotBlank(),
-            ) {
-                Text(stringResource(R.string.xiangqi_confirm))
-            }
-        },
-        dismissButton = {
-            androidx.compose.material3.TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.xiangqi_cancel))
-            }
-        },
+        modeBadge = modeText,
+        updatedAt = updatedAt,
+        firstPlayer = GameCardPlayer(
+            badge = stringResource(R.string.xiangqi_side_red),
+            name = redName,
+            badgeColor = MaterialTheme.colorScheme.error,
+            badgeBackground = MaterialTheme.colorScheme.error.copy(alpha = 0.2f),
+            badgeBorder = MaterialTheme.colorScheme.error.copy(alpha = 0.3f),
+        ),
+        secondPlayer = GameCardPlayer(
+            badge = stringResource(R.string.xiangqi_side_black),
+            name = blackName,
+            badgeColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            badgeBackground = MaterialTheme.colorScheme.primaryContainer,
+            badgeBorder = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+        ),
+        vsLabel = stringResource(R.string.xiangqi_vs_short),
+        plyCountText = pluralStringResource(R.plurals.xiangqi_ply_count, plyCount, plyCount),
+        resultText = localizedGameResultText(resultText),
+        // 进行中的局卡片点击就是进回放,"查看回放"在这里语义重叠,用「复盘」区分
+        actionLabel = stringResource(
+            if (status.isFinished()) {
+                R.string.xiangqi_library_open_analysis
+            } else {
+                R.string.xiangqi_library_review
+            },
+        ),
     )
 }
 

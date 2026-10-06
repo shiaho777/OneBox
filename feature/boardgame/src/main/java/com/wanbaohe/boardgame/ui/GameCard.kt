@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.t8rin.imagetoolbox.core.resources.Icons
@@ -100,20 +102,19 @@ fun GameCard(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                PlayerBadge(player = data.firstPlayer)
+                PlayerBadge(player = data.firstPlayer, modifier = Modifier.weight(1f))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f).padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 12.dp)
                 ) {
-                    Box(modifier = Modifier.weight(1f).height(1.dp).background(Brush.horizontalGradient(listOf(Color.Transparent, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)))))
-                    Text(data.vsLabel, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f), style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(horizontal = 8.dp))
-                    Box(modifier = Modifier.weight(1f).height(1.dp).background(Brush.horizontalGradient(listOf(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), Color.Transparent))))
+                    Box(modifier = Modifier.width(20.dp).height(1.dp).background(Brush.horizontalGradient(listOf(Color.Transparent, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)))))
+                    Text(data.vsLabel, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f), style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(horizontal = 6.dp))
+                    Box(modifier = Modifier.width(20.dp).height(1.dp).background(Brush.horizontalGradient(listOf(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), Color.Transparent))))
                 }
 
-                PlayerBadge(player = data.secondPlayer)
+                PlayerBadge(player = data.secondPlayer, modifier = Modifier.weight(1f), mirrored = true)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -232,23 +233,58 @@ fun GameCard(
     }
 }
 
+/**
+ * 历史卡片一侧的玩家:圆标(自动取阵营名首字符)+ 阵营名 + 玩家名。
+ * 阵营名各语言长度差异大(zh「黑」/ de「Schwarz」/ ar「الأسود」),
+ * 放圆标右侧按文本排,超长省略,不往 40dp 圆里塞整词。
+ */
 @Composable
 private fun PlayerBadge(
     player: GameCardPlayer,
     modifier: Modifier = Modifier,
+    mirrored: Boolean = false,
 ) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .background(player.badgeBackground, CircleShape)
-                .border(1.dp, player.badgeBorder, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(player.badge, color = player.badgeColor, fontWeight = FontWeight.Bold)
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        if (!mirrored) {
+            BadgeMonogram(player = player)
+            Spacer(modifier = Modifier.width(10.dp))
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(player.name, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelSmall)
+        Column(
+            modifier = Modifier.weight(1f, fill = false),
+            horizontalAlignment = if (mirrored) Alignment.End else Alignment.Start,
+        ) {
+            Text(
+                text = player.badge,
+                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = player.name,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        if (mirrored) {
+            Spacer(modifier = Modifier.width(10.dp))
+            BadgeMonogram(player = player)
+        }
+    }
+}
+
+@Composable
+private fun BadgeMonogram(player: GameCardPlayer) {
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .background(player.badgeBackground, CircleShape)
+            .border(1.dp, player.badgeBorder, CircleShape),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(player.badge.take(1), color = player.badgeColor, fontWeight = FontWeight.Bold)
     }
 }
 
