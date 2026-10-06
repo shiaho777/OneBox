@@ -67,7 +67,7 @@ jobs:
       fail-fast: false
       matrix:
         app_flavor: ${{ github.event_name == 'push' && fromJSON('["google","foss"]') || fromJSON(format('["{0}"]', inputs.app_flavor || 'google')) }}
-        abi_flavor: ${{ github.event_name == 'push' && fromJSON('["arm64"]') || fromJSON(format('"{0}"', inputs.abi_flavor || 'arm64')) }}
+        abi_flavor: ${{ github.event_name == 'push' && fromJSON('["arm64"]') || fromJSON(format('["{0}"]', inputs.abi_flavor || 'arm64')) }}
         # 国内渠道用 include 追加(不覆盖上面的组合): arm64 一个架构足够 ——
         # 手机端全是 arm64, 且 abi 维度只有 arm64 这一个 flavor。
         include: ${{ github.event_name == 'push' && fromJSON('[{"app_flavor":"xiaomi","abi_flavor":"arm64"},{"app_flavor":"yyb","abi_flavor":"arm64"},{"app_flavor":"oppo","abi_flavor":"arm64"},{"app_flavor":"vivo","abi_flavor":"arm64"},{"app_flavor":"huawei","abi_flavor":"arm64"},{"app_flavor":"onebox","abi_flavor":"arm64"}]') || fromJSON('[]') }}

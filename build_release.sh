@@ -167,7 +167,7 @@ MANIFEST="$OUT_DIR/manifest.txt"
 FOUND=0
 for c in "${CHANNELS[@]}"; do
     for a in "${ABIS[@]}"; do
-        variant_dir="app/build/outputs/apk/${c}${a}/release"
+        variant_dir="app/build/outputs/apk/${c}$(to_pascal <<< "$a")/release"
         # 取该目录下第一个 .apk（正常只有一个 release apk）
         apk="$(find "$variant_dir" -maxdepth 1 -name '*.apk' -type f 2>/dev/null | head -n1 || true)"
         if [[ -z "$apk" ]]; then
