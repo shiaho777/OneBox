@@ -87,12 +87,12 @@ fun SudokuHomeContent(
     }
 }
 
-/** 难度卡配色: 主题没有绿色语义, 绿/深红用固定色, 中等的红贴主题 error。 */
+/** 难度卡配色: 主题三色, 难度越高越贴近 primary, 界面整体跟随主题变化。 */
 @Composable
 private fun difficultyAccent(difficulty: SudokuDifficulty): Color = when (difficulty) {
-    SudokuDifficulty.EASY -> Color(0xFF43A047)
-    SudokuDifficulty.MEDIUM -> MaterialTheme.colorScheme.error
-    SudokuDifficulty.HARD -> Color(0xFFB71C1C)
+    SudokuDifficulty.EASY -> MaterialTheme.colorScheme.tertiary
+    SudokuDifficulty.MEDIUM -> MaterialTheme.colorScheme.secondary
+    SudokuDifficulty.HARD -> MaterialTheme.colorScheme.primary
 }
 
 @Composable

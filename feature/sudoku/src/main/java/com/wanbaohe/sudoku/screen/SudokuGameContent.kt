@@ -51,6 +51,8 @@ import com.t8rin.imagetoolbox.core.resources.icons.line.LinePause
 import com.t8rin.imagetoolbox.core.resources.icons.line.LinePlay
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineTimer
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineUndo
+import com.t8rin.imagetoolbox.core.ui.widget.glass.glassThick
+import com.t8rin.imagetoolbox.core.ui.widget.glass.glassThin
 import com.t8rin.imagetoolbox.core.ui.widget.system.OneBoxDesignSystem
 import com.wanbaohe.sudoku.R
 import com.wanbaohe.sudoku.component.SudokuComponent
@@ -100,7 +102,7 @@ fun SudokuGameContent(
                 .fillMaxSize()
                 .padding(horizontal = OneBoxDesignSystem.screenPadding)
         ) {
-            Spacer(modifier = Modifier.height(OneBoxDesignSystem.microSpacing))
+            Spacer(modifier = Modifier.weight(1f))
 
             SudokuBoard(
                 state = state,
@@ -171,8 +173,7 @@ private fun SudokuBoard(
 ) {
     BoxWithConstraints(
         modifier = modifier
-            .clip(RoundedCornerShape(OneBoxDesignSystem.largeRadius))
-            .background(MaterialTheme.colorScheme.surface)
+            .glassThick(shape = RoundedCornerShape(OneBoxDesignSystem.largeRadius))
             .padding(BOARD_PADDING)
     ) {
         // maxWidth 已是扣掉 BOARD_PADDING 之后的内容宽度, 不用再减一遍
@@ -251,8 +252,7 @@ private fun SudokuCell(
     Box(
         modifier = modifier
             .aspectRatio(1f)
-            .clip(RoundedCornerShape(6.dp))
-            .background(containerColor)
+            .glassThin(shape = RoundedCornerShape(6.dp), color = containerColor)
             .clickable { onClick(index) },
         contentAlignment = Alignment.Center
     ) {
