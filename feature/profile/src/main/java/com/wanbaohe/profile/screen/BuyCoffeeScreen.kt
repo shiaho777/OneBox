@@ -42,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.shifenmiao.base.utils.ActionUtils
+import com.shifenmiao.base.utils.StringUtils
 import com.shifenmiao.common.logic.AppComponent
 import com.shifenmiao.common.ui.BaseScreen
 import com.shifenmiao.core.R
@@ -161,7 +162,7 @@ fun ColumnScope.BuyCoffeeBody(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = stringResource(id = R.string.current_points, loginState.points),
+                        text = stringResource(id = R.string.current_points, StringUtils.formatNumber(loginState.points)),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -177,7 +178,7 @@ fun ColumnScope.BuyCoffeeBody(
                         end = AppTheme.dimens.paddingNormal,
                         bottom = AppTheme.dimens.paddingSmall
                     ),
-                    text = stringResource(id = R.string.current_points, loginState.points),
+                    text = stringResource(id = R.string.current_points, StringUtils.formatNumber(loginState.points)),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )

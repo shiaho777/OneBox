@@ -437,8 +437,8 @@ private fun AddMenuGridItem(
             text = stringResource(item.label),
             style = MaterialTheme.typography.labelMedium,
             color = contentColor,
-            maxLines = 1,
-            // 葡语等长标签按可用宽度自动降字号，避免被 Ellipsis 截断（与底栏同一做法）
+            // 葡语等长标签按可用宽度自动降字号,仍放不下时折成两行,最后才 Ellipsis(与底栏同一做法)
+            maxLines = 2,
             autoSize = TextAutoSize.StepBased(
                 minFontSize = 9.sp,
                 maxFontSize = MaterialTheme.typography.labelMedium.fontSize,

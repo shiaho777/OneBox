@@ -9,6 +9,8 @@ import dagger.hilt.android.EntryPointAccessors
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 object DateUtils {
@@ -51,7 +53,7 @@ object DateUtils {
     }
 
     /**
-     * Formats a timestamp in milliseconds to a date string using the Chinese date format.
+     * 格式化时间戳为日期字符串:中文环境保持「yyyy年MM月dd日」,其他语种用系统本地化格式。
      *
      * @param timestampMs The timestamp in milliseconds to format, can be null
      * @return Formatted date string or empty string if input is null
@@ -61,8 +63,13 @@ object DateUtils {
             if (timestampMs == null) return ""
 
             val instant = Instant.ofEpochMilli(timestampMs)
-            val formatter = DateTimeFormatter.ofPattern(CHINESE_DATE_FORMATTER)
-                .withZone(ZoneId.systemDefault())
+            val isZh = Locale.getDefault().language == Locale.CHINESE.language
+            val formatter = if (isZh) {
+                DateTimeFormatter.ofPattern(CHINESE_DATE_FORMATTER)
+            } else {
+                DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+                    .withLocale(Locale.getDefault())
+            }.withZone(ZoneId.systemDefault())
             formatter.format(instant)
         } catch (e: Exception) {
             ""

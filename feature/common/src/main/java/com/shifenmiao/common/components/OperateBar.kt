@@ -167,9 +167,9 @@ private fun CategoryTagBadge(
             text = text,
             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
             color = textColor,
-            maxLines = 1,
-            // 分类名超长时先自动降字号,仍放不下才省略号(不用 marquee:长语种会一直滚动、
-            // 静止帧只剩残词);宽度上限同时避免挤压右侧评论入口
+            // 分类名超长时先自动降字号,再允许折成两行,仍放不下才省略号(不用 marquee:
+            // 长语种会一直滚动、静止帧只剩残词);宽度上限同时避免挤压右侧评论入口
+            maxLines = 2,
             autoSize = TextAutoSize.StepBased(
                 minFontSize = 9.sp,
                 maxFontSize = MaterialTheme.typography.labelSmall.fontSize,
