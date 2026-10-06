@@ -54,11 +54,13 @@ class CreateFeedbackComponent @AssistedInject internal constructor(
     private val _tags: MutableStateFlow<List<Tag>> = MutableStateFlow(emptyList())
     val tags: StateFlow<List<Tag>> = _tags.asStateFlow()
 
+    // 初始选中只记 id, 名称在 fetchTags 成功后用接口下发的本地化文案补齐,
+    // 避免硬编码中文与列表项重复展示
     private val _selectedTags: MutableStateFlow<List<Tag>> = MutableStateFlow(
         listOf(
             Tag(
                 id = 1,
-                name = "用户体验",
+                name = "",
                 desc = ""
             )
         )
@@ -85,7 +87,12 @@ class CreateFeedbackComponent @AssistedInject internal constructor(
             try {
                 val response = apiService.fetchBlogTags()
                 if (response.isSuccessful) {
-                    _tags.value = response.body()?.data ?: emptyList()
+                    val fetched = response.body()?.data ?: emptyList()
+                    _tags.value = fetched.distinctBy { tag -> tag.id }
+                    // 选中项名称以接口下发的本地化文案为准, 同时保证选中区与列表按 id 一致
+                    _selectedTags.value = _selectedTags.value.map { selected ->
+                        fetched.firstOrNull { it.id == selected.id } ?: selected
+                    }
                 }
             } catch (_: Exception) {
                 // Handle error
