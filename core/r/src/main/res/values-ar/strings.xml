@@ -1451,6 +1451,9 @@
     <string name="chess_description">الشطرنج الدولي مع FEN القياسي وإعادة العرض والاستيراد والتصدير ومعارك النماذج اللغوية.</string>
     <string name="minesweeper_title">كانسة الألغام</string>
     <string name="minesweeper_description">كانسة الألغام الكلاسيكية — اختبر منطقك وتفكيرك.</string>
+
+    <string name="sudoku_title">سودوكو</string>
+    <string name="sudoku_description">لعبة سودوكو كلاسيكية — املأ شبكة 9×9 بالمنطق.</string>
     <string name="ad_watch_title">مشاهدة الإعلانات</string>
     <string name="ad_watch_description">شاهد إعلانات المكافآت لتكسب النقاط.</string>
     <string name="ad_watch_earn_entry">شاهد الإعلانات لتكسب النقاط</string>

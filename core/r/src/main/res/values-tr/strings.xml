@@ -1353,6 +1353,9 @@
     <string name="chess_description">Standart FEN ile uluslararası satranç; tekrar oynatma, içe/dışa aktarma ve LLM maçları.</string>
     <string name="minesweeper_title">Mayın Tarlası</string>
     <string name="minesweeper_description">Klasik mayın tarlası — mantığınızı ve akıl yürütmenizi test edin.</string>
+
+    <string name="sudoku_title">Sudoku</string>
+    <string name="sudoku_description">Klasik Sudoku — 9×9 ızgarayı mantıkla doldur.</string>
     <string name="survive_30s_screen_title">30 Saniye Hayatta Kal</string>
     <string name="survive_30s_screen_description">Topu sürükleyerek engellerden kaçının. Kazanmak için 30 saniye hayatta kalın!</string>
     <string name="web_browser_title">Tarayıcı</string>

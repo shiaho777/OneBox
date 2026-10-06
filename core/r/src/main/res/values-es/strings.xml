@@ -1353,6 +1353,9 @@
     <string name="chess_description">Ajedrez internacional con FEN estándar, reproducción, importación/exportación y batallas con LLM.</string>
     <string name="minesweeper_title">Buscaminas</string>
     <string name="minesweeper_description">Buscaminas clásico: pon a prueba tu lógica y razonamiento.</string>
+
+    <string name="sudoku_title">Sudoku</string>
+    <string name="sudoku_description">Sudoku clásico: completa la cuadrícula de 9×9 con lógica.</string>
     <string name="survive_30s_screen_title">Sobrevive 30 segundos</string>
     <string name="survive_30s_screen_description">Arrastra la bola para esquivar obstáculos. ¡Sobrevive 30 segundos para ganar!</string>
     <string name="web_browser_title">Navegador</string>

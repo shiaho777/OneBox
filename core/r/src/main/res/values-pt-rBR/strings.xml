@@ -1353,6 +1353,9 @@
     <string name="chess_description">Xadrez internacional com FEN padrão, reprodução, importação/exportação e batalhas com LLM.</string>
     <string name="minesweeper_title">Campo Minado</string>
     <string name="minesweeper_description">Campo minado clássico — teste sua lógica e raciocínio.</string>
+
+    <string name="sudoku_title">Sudoku</string>
+    <string name="sudoku_description">Sudoku clássico — preencha a grade 9×9 com lógica.</string>
     <string name="survive_30s_screen_title">Sobreviva 30 Segundos</string>
     <string name="survive_30s_screen_description">Arraste a bola para desviar dos obstáculos. Sobreviva 30 segundos para vencer!</string>
     <string name="web_browser_title">Navegador</string>

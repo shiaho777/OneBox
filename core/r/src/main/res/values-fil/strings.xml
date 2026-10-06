@@ -1353,6 +1353,9 @@
     <string name="chess_description">International chess na may standard FEN, replay, import/export, at laban sa LLM.</string>
     <string name="minesweeper_title">Minesweeper</string>
     <string name="minesweeper_description">Classic minesweeper — subukan ang iyong lohika at pangangatwiran.</string>
+
+    <string name="sudoku_title">Sudoku</string>
+    <string name="sudoku_description">Klasikong Sudoku — punuin ang 9×9 na grid gamit ang lohika.</string>
     <string name="survive_30s_screen_title">Makaligtas ng 30 Segundo</string>
     <string name="survive_30s_screen_description">I-drag ang bola upang umiwas sa mga balakid. Makaligtas ng 30 segundo para manalo!</string>
     <string name="web_browser_title">Browser</string>

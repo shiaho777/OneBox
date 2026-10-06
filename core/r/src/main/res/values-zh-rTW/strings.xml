@@ -1498,6 +1498,9 @@
     <string name="chess_description">標準規則國際象棋,支援 FEN 快照、回放、匯入匯出與 AI 人機對弈。</string>
     <string name="minesweeper_title">踩地雷</string>
     <string name="minesweeper_description">經典的踩地雷遊戲，鍛鍊你的邏輯思維與推理能力。</string>
+
+    <string name="sudoku_title">數獨</string>
+    <string name="sudoku_description">經典的數獨遊戲，在 9×9 宮格裡鍛鍊邏輯與推理。</string>
     <string name="ad_watch_title">廣告看看看</string>
     <string name="ad_watch_description">看激勵廣告賺積分。</string>
     <string name="ad_watch_earn_entry">看廣告賺積分</string>

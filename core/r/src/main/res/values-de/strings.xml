@@ -1353,6 +1353,9 @@
     <string name="chess_description">Internationales Schach mit Standard-FEN, Wiedergabe, Import/Export und KI-Kämpfen.</string>
     <string name="minesweeper_title">Minesweeper</string>
     <string name="minesweeper_description">Klassisches Minesweeper – teste deine Logik und dein Denkvermögen.</string>
+
+    <string name="sudoku_title">Sudoku</string>
+    <string name="sudoku_description">Klassisches Sudoku – fülle das 9×9-Gitter mit Logik.</string>
     <string name="survive_30s_screen_title">Überlebe 30 Sekunden</string>
     <string name="survive_30s_screen_description">Ziehe den Ball, um Hindernissen auszuweichen. Überlebe 30 Sekunden, um zu gewinnen!</string>
     <string name="web_browser_title">Browser</string>

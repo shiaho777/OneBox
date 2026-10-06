@@ -1353,6 +1353,9 @@
     <string name="chess_description">मानक FEN के साथ अंतरराष्ट्रीय शतरंज, रीप्ले, आयात/निर्यात और LLM मुकाबलों के साथ।</string>
     <string name="minesweeper_title">माइनस्वीपर</string>
     <string name="minesweeper_description">क्लासिक माइनस्वीपर — अपने तर्क और विचार का परीक्षण करें।</string>
+
+    <string name="sudoku_title">सुडोकु</string>
+    <string name="sudoku_description">क्लासिक सुडोकु — तर्क से 9×9 ग्रिड भरें.</string>
     <string name="survive_30s_screen_title">30 सेकंड जीवित रहें</string>
     <string name="survive_30s_screen_description">बाधाओं से बचने के लिए गेंद को खींचें। जीतने के लिए 30 सेकंड जीवित रहें!</string>
     <string name="web_browser_title">ब्राउज़र</string>

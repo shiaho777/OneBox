@@ -1353,6 +1353,9 @@
     <string name="chess_description">Международные шахматы со стандартным FEN, воспроизведением, импортом/экспортом и матчами с LLM.</string>
     <string name="minesweeper_title">Сапёр</string>
     <string name="minesweeper_description">Классический сапёр — проверьте свою логику и рассуждения.</string>
+
+    <string name="sudoku_title">Судоку</string>
+    <string name="sudoku_description">Классическое судоку — заполните сетку 9×9 логикой.</string>
     <string name="survive_30s_screen_title">Продержись 30 секунд</string>
     <string name="survive_30s_screen_description">Перетаскивайте шар, чтобы уклоняться от препятствий. Продержитесь 30 секунд, чтобы победить!</string>
     <string name="web_browser_title">Браузер</string>

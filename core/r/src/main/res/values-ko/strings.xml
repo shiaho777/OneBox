@@ -1353,6 +1353,9 @@
     <string name="chess_description">표준 FEN의 국제 체스. 재생, 가져오기/내보내기 및 LLM 대전 지원.</string>
     <string name="minesweeper_title">지뢰찾기</string>
     <string name="minesweeper_description">클래식 지뢰 찾기 — 논리와 추리를 테스트하세요.</string>
+
+    <string name="sudoku_title">스도쿠</string>
+    <string name="sudoku_description">클래식 스도쿠 — 논리로 9×9 격자를 채우세요.</string>
     <string name="survive_30s_screen_title">30초 생존</string>
     <string name="survive_30s_screen_description">공을 드래그하여 장애물을 피하세요. 30초를 버티면 승리!</string>
     <string name="web_browser_title">브라우저</string>
