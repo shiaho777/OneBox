@@ -1,5 +1,11 @@
 package com.wanbaohe.game2048.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,12 +54,22 @@ fun ScoreSection(
                     fontWeight = FontWeight.Bold,
                     letterSpacing = MaterialTheme.typography.labelSmall.letterSpacing * 1.5,
                 )
-                Text(
-                    text = formatScore(currentScore),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
+                // 分数变化时向上滚动切换，给出明确的得分反馈
+                AnimatedContent(
+                    targetState = currentScore,
+                    transitionSpec = {
+                        (slideInVertically { it } + fadeIn()) togetherWith
+                            (slideOutVertically { -it } + fadeOut())
+                    },
+                    label = "currentScore",
+                ) { score ->
+                    Text(
+                        text = formatScore(score),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+                }
             }
         }
 

@@ -10,5 +10,7 @@
     <string name="game_2048_reached_2048">You can keep going for a higher score</string>
     <string name="game_2048_continue">Continue</string>
     <string name="game_2048_new_best_score">New record!</string>
+    <string name="game_2048_sound_on">Sound on</string>
+    <string name="game_2048_sound_off">Sound off</string>
 </resources>
 

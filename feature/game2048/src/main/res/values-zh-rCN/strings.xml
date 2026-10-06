@@ -10,5 +10,7 @@
     <string name="game_2048_reached_2048">你可以继续挑战更高分数</string>
     <string name="game_2048_continue">继续游戏</string>
     <string name="game_2048_new_best_score">新纪录！</string>
+    <string name="game_2048_sound_on">音效开</string>
+    <string name="game_2048_sound_off">音效关</string>
 </resources>
 

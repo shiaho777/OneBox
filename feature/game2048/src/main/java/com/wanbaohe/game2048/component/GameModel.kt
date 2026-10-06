@@ -18,6 +18,8 @@ enum class Direction { Up, Down, Left, Right }
  * @param isGameOver 游戏是否结束（无法移动）
  * @param isWon     是否已达成 2048
  * @param hasShownWinDialog 是否已弹过胜利弹窗（避免重复弹窗）
+ * @param soundEnabled 音效总开关（关时同时停 BGM）
+ * @param invalidMoveNonce 无效滑动计数，每次无效滑动 +1，驱动棋盘抖动反馈
  */
 @Immutable
 data class Game2048UiState(
@@ -27,6 +29,8 @@ data class Game2048UiState(
     val isGameOver: Boolean = false,
     val isWon: Boolean = false,
     val hasShownWinDialog: Boolean = false,
+    val soundEnabled: Boolean = true,
+    val invalidMoveNonce: Int = 0,
 ) {
     companion object {
         const val GRID_SIZE = 4

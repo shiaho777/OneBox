@@ -13,9 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +26,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.shifenmiao.common.ui.BaseScreen
+import com.t8rin.imagetoolbox.core.resources.icons.VolumeOff
+import com.t8rin.imagetoolbox.core.resources.icons.VolumeUp
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassButton
 import com.wanbaohe.game2048.R
 import com.wanbaohe.game2048.component.Game2048Component
@@ -42,6 +43,8 @@ import com.t8rin.imagetoolbox.core.resources.icons.Refresh
  * 1. 分数展示区（当前分 + 最高分）
  * 2. 4×4 游戏棋盘（含滑动手势 + 游戏结束覆盖层）
  * 3. 新游戏按钮
+ *
+ * 顶栏右侧是音效总开关（与扫雷等游戏同一套 [com.shifenmiao.base.audio.NetworkAudioPlayer] 实现）。
  */
 @Composable
 fun Game2048Screen(
@@ -52,6 +55,24 @@ fun Game2048Screen(
     BaseScreen(
         title = stringResource(R.string.game_2048_title),
         onGoBack = component.onGoBack,
+        actions = {
+            IconButton(onClick = component::toggleSound) {
+                Icon(
+                    imageVector = if (state.soundEnabled) {
+                        com.t8rin.imagetoolbox.core.resources.Icons.Outlined.VolumeUp
+                    } else {
+                        com.t8rin.imagetoolbox.core.resources.Icons.Outlined.VolumeOff
+                    },
+                    contentDescription = stringResource(
+                        if (state.soundEnabled) {
+                            R.string.game_2048_sound_on
+                        } else {
+                            R.string.game_2048_sound_off
+                        }
+                    ),
+                )
+            }
+        },
     ) {
         Column(
             modifier = Modifier
@@ -75,6 +96,7 @@ fun Game2048Screen(
             ) {
                 GameBoard(
                     grid = state.grid,
+                    invalidMoveNonce = state.invalidMoveNonce,
                     onSwipe = component::move,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -84,6 +106,8 @@ fun Game2048Screen(
                     isGameOver = state.isGameOver,
                     isWon = state.isWon,
                     hasShownWin = state.hasShownWinDialog,
+                    score = state.score,
+                    bestScore = state.bestScore,
                     onNewGame = component::newGame,
                     onContinue = component::dismissWinDialog,
                     modifier = Modifier.matchParentSize(),
@@ -119,4 +143,3 @@ fun Game2048Screen(
         }
     }
 }
-

@@ -28,11 +28,13 @@ import com.wanbaohe.game2048.R
 /**
  * 游戏结束 / 胜利覆盖层
  *
- * 半透明遮罩 + 居中提示文本 + 新游戏按钮。
+ * 半透明遮罩 + 居中提示文本 + 本局分数 + 新游戏按钮。
  *
  * @param isGameOver   游戏是否结束
  * @param isWon        是否达成 2048
  * @param hasShownWin  胜利弹窗是否已展示过（继续游戏后不再弹）
+ * @param score        本局得分
+ * @param bestScore    历史最高分
  * @param onNewGame    开始新游戏回调
  * @param onContinue   胜利后继续游戏回调
  */
@@ -41,6 +43,8 @@ fun GameOverOverlay(
     isGameOver: Boolean,
     isWon: Boolean,
     hasShownWin: Boolean,
+    score: Int,
+    bestScore: Int,
     onNewGame: () -> Unit,
     onContinue: () -> Unit,
     modifier: Modifier = Modifier,
@@ -97,6 +101,27 @@ fun GameOverOverlay(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                 )
+
+                Spacer(Modifier.height(16.dp))
+
+                // ── 本局得分 + 新纪录标记 ──
+                Text(
+                    text = String.format("%,d", score),
+                    style = MaterialTheme.typography.displaySmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center,
+                )
+                if (score > 0 && score >= bestScore) {
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = stringResource(R.string.game_2048_new_best_score),
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        textAlign = TextAlign.Center,
+                    )
+                }
 
                 Spacer(Modifier.height(24.dp))
 
