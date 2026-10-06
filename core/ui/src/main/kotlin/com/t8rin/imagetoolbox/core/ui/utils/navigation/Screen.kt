@@ -1952,6 +1952,14 @@ sealed class Screen(
     )
 
     @Serializable
+    @SerialName("Sudoku")
+    data object Sudoku : Screen(
+        id = 1106,
+        title = com.shifenmiao.core.R.string.sudoku_title,
+        subtitle = com.shifenmiao.core.R.string.sudoku_description,
+    )
+
+    @Serializable
     @SerialName("Notification")
     data object Notification : Screen(
         id = 1105,

@@ -85,6 +85,7 @@ class LifeNavigationFactories @Inject constructor(
     val chessRouterComponentFactory: ChessRouterComponent.Factory,
     val deadPixelTestComponentFactory: DeadPixelTestComponent.Factory,
     val minesweeperComponentFactory: com.wanbaohe.minesweeper.component.MinesweeperComponent.Factory,
+    val sudokuComponentFactory: com.wanbaohe.sudoku.component.SudokuComponent.Factory,
     val adWatchComponentFactory: com.wanbaohe.adwatch.component.AdWatchComponent.Factory,
     val altitudeComponentFactory: AltitudeComponent.Factory,
     val compassComponentFactory: CompassComponent.Factory,

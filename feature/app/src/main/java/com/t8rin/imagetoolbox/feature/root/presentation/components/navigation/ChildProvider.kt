@@ -1231,6 +1231,13 @@ class ChildProvider @Inject constructor(
             )
         )
 
+        is Screen.Sudoku -> NavigationChild.Sudoku(
+            component = lifeFactories.get().sudokuComponentFactory(
+                componentContext = componentContext,
+                onGoBack = ::navigateBack
+            )
+        )
+
         is Screen.AdWatch -> NavigationChild.AdWatch(
             component = lifeFactories.get().adWatchComponentFactory(
                 componentContext = componentContext,

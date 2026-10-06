@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sudoku_title">数独</string>
+
+    <string name="sudoku_tab_game">游戏</string>
+    <string name="sudoku_tab_stats">统计</string>
+    <string name="sudoku_tab_settings">设置</string>
+
+    <string name="sudoku_continue_title">继续游戏</string>
+    <string name="sudoku_continue_subtitle">上次玩到 %1$d/81 题</string>
+
+    <string name="sudoku_difficulty_easy">简单</string>
+    <string name="sudoku_difficulty_medium">中等</string>
+    <string name="sudoku_difficulty_hard">困难</string>
+    <string name="sudoku_difficulty_desc">9×9 · %1$d 题</string>
+
+    <string name="sudoku_hint">提示</string>
+    <string name="sudoku_undo">撤销</string>
+    <string name="sudoku_more">更多</string>
+    <string name="sudoku_menu_restart">重新开始</string>
+    <string name="sudoku_menu_change_difficulty">换个难度</string>
+
+    <string name="sudoku_stat_difficulty">难度</string>
+    <string name="sudoku_stat_filled">已填数字</string>
+    <string name="sudoku_stat_filled_value">%1$d / 81</string>
+    <string name="sudoku_stat_time">用时</string>
+    <string name="sudoku_timer_start">开始计时</string>
+    <string name="sudoku_timer_pause">暂停计时</string>
+    <string name="sudoku_erase">橡皮</string>
+
+    <string name="sudoku_complete_title">恭喜你！</string>
+    <string name="sudoku_complete_subtitle">你已完成本局数独，真棒！</string>
+    <string name="sudoku_complete_time">用时</string>
+    <string name="sudoku_complete_best">最佳纪录</string>
+    <string name="sudoku_play_again">再来一局</string>
+
+    <string name="sudoku_stats_title">数独统计</string>
+    <string name="sudoku_stats_total">总游戏数</string>
+    <string name="sudoku_stats_completed">完成数</string>
+    <string name="sudoku_stats_unfinished">未完成</string>
+    <string name="sudoku_stats_avg_time">平均用时</string>
+    <string name="sudoku_stats_win_rate">胜率</string>
+    <string name="sudoku_stats_percent">%1$d%%</string>
+    <string name="sudoku_stats_win_rate_sub">完成游戏的比例</string>
+    <string name="sudoku_stats_best_time">最佳时间</string>
+    <string name="sudoku_stats_best_time_sub">最快完成时间</string>
+    <string name="sudoku_stats_distribution">难度分布</string>
+    <string name="sudoku_stats_distribution_sub">按难度统计完成的游戏数</string>
+    <string name="sudoku_stats_trend">完成趋势</string>
+    <string name="sudoku_stats_trend_sub">最近 %1$d 天完成数</string>
+    <string name="sudoku_stats_days">%1$d 天</string>
+    <string name="sudoku_stats_empty">还没有对局数据，完成一局后再来看看吧。</string>
+    <string name="sudoku_time_none">--:--</string>
+
+    <string name="sudoku_settings_section_game">游戏设置</string>
+    <string name="sudoku_settings_difficulty">难度选择</string>
+    <string name="sudoku_settings_difficulty_progress">%1$s · %2$d/81</string>
+    <string name="sudoku_settings_choose_difficulty">选择难度</string>
+    <string name="sudoku_settings_auto_check">自动检查</string>
+    <string name="sudoku_settings_auto_check_sub">输入后自动检查错误</string>
+    <string name="sudoku_settings_hint">提示</string>
+    <string name="sudoku_settings_hint_sub">使用提示功能</string>
+    <string name="sudoku_settings_timer_mode">计时模式</string>
+    <string name="sudoku_settings_timer_mode_sub">记录每局用时</string>
+    <string name="sudoku_timer_off">关闭</string>
+    <string name="sudoku_timer_auto">自动</string>
+    <string name="sudoku_timer_manual">手动</string>
+
+    <string name="sudoku_settings_section_sound">声音与音效</string>
+    <string name="sudoku_settings_sound">音效</string>
+    <string name="sudoku_settings_sound_sub">操作与完成音效</string>
+    <string name="sudoku_settings_bgm">背景音乐</string>
+    <string name="sudoku_settings_bgm_sub">舒缓的背景音乐</string>
+
+    <string name="sudoku_cancel">取消</string>
+</resources>

@@ -1343,6 +1343,15 @@ sealed interface NavigationChild {
         }
     }
 
+    class Sudoku(
+        val component: com.wanbaohe.sudoku.component.SudokuComponent
+    ) : NavigationChild {
+        @Composable
+        override fun Content() {
+            com.wanbaohe.sudoku.screen.SudokuScreen(component = component)
+        }
+    }
+
     class AdWatch(
         val component: com.wanbaohe.adwatch.component.AdWatchComponent
     ) : NavigationChild {

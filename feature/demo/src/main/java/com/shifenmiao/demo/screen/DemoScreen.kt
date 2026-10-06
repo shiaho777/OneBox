@@ -788,6 +788,7 @@ private fun demoNavigationEntries(): List<DemoNavigationEntry> = listOf(
     DemoNavigationEntry(getString(R.string.iching_divination_title), com.t8rin.imagetoolbox.core.resources.Icons.Outlined.TaijiBagua) { Screen.IChingDivination() },
     DemoNavigationEntry("2048", com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineGrid4x4) { Screen.Game2048 },
     DemoNavigationEntry("扫雷", com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineCasino) { Screen.Minesweeper },
+    DemoNavigationEntry("数独", com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineGrid4x4) { Screen.Sudoku },
     DemoNavigationEntry(
         getString(DemoR.string.demo_blessing_wall_entry_title),
         com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineMagic,

@@ -109,6 +109,7 @@ import com.t8rin.imagetoolbox.core.resources.icons.line.LineTextCard
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineMarquee
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineMeasurement
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineMinesweeper
+import com.t8rin.imagetoolbox.core.resources.icons.line.LineGrid4x4
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineNoiseGeneration
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineOcrDocument
 import com.t8rin.imagetoolbox.core.resources.icons.line.LineOnline
@@ -355,6 +356,7 @@ internal fun Screen.simpleName(): String = when (this) {
     is Screen.CreateAIAgent -> "CreateAIAgent"
     is Screen.CreateAIChatPrompt -> "CreateAIChatPrompt"
     is Screen.Minesweeper -> "Minesweeper"
+    is Screen.Sudoku -> "Sudoku"
     is Screen.Survive30s -> "Survive30s"
     is Screen.DisplaySettings -> "DisplaySettings"
     is Screen.StartEntrySettings -> "StartEntrySettings"
@@ -507,6 +509,7 @@ internal fun Screen.icon(): ImageVector? = when (this) {
     is Screen.Compass -> com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineCompass
     is Screen.DeadPixelTest -> com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineDeadPixelTest
     is Screen.Minesweeper -> com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineMinesweeper
+    is Screen.Sudoku -> com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineGrid4x4
     is Screen.Community -> com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineGroup
     is Screen.MeasurementTools -> com.t8rin.imagetoolbox.core.resources.Icons.Outlined.LineMeasurement
     is Screen.Prompt -> com.t8rin.imagetoolbox.core.resources.Icons.Rounded.Lightbulb

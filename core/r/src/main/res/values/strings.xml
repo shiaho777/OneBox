@@ -1554,6 +1554,9 @@ Hint: If you choose "Hide Forever", you can bring me back later in Settings > Di
     <string name="minesweeper_title">Minesweeper</string>
     <string name="minesweeper_description">Classic minesweeper — test your logic and reasoning.</string>
 
+    <string name="sudoku_title">Sudoku</string>
+    <string name="sudoku_description">Classic Sudoku — fill the 9×9 grid with logic.</string>
+
     <string name="ad_watch_title">Ad Watch</string>
     <string name="ad_watch_description">Watch rewarded ads to earn points.</string>
     <string name="ad_watch_earn_entry">Watch ads to earn points</string>
