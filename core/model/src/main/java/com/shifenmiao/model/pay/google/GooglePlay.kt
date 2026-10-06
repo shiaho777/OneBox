@@ -2,6 +2,7 @@ package com.shifenmiao.model.pay.google
 
 import com.shifenmiao.model.pay.PayResult
 import com.shifenmiao.model.pay.PrePayResponse
+import com.shifenmiao.model.pay.alipay.PayPrice
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -39,4 +40,18 @@ data class PlayProduct(
     val points: Int = 0,
     val title: String = "",
     val formattedPrice: String = "",
+)
+
+/**
+ * Google Play 商品档位 → 国内同款打赏形象(图标 + 俏皮文案),
+ * 按各商品的人民币等价(rechargeFen)就近映射国内档位;
+ * 服务端新增未知档位时映射缺失, UI 回退展示 Play 商品名
+ */
+val PlayProductTierMap: Map<String, PayPrice> = mapOf(
+    "points_1000" to PayPrice.JuicePrice,     // ≈¥7
+    "points_3000" to PayPrice.BeerPrice,      // ≈¥21
+    "points_5000" to PayPrice.MoviePrice,     // ≈¥35
+    "points_10000" to PayPrice.MilkPrice,     // ≈¥70
+    "points_20000" to PayPrice.MedicinePrice, // ≈¥140
+    "points_50000" to PayPrice.SaunaPrice,    // ≈¥350
 )

@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.shifenmiao.core.R
 import com.shifenmiao.model.pay.google.PlayProduct
+import com.shifenmiao.model.pay.google.PlayProductTierMap
 import com.shifenmiao.theme.AppTheme
 import com.t8rin.imagetoolbox.core.resources.icons.Check
 import com.t8rin.imagetoolbox.core.ui.widget.glass.GlassCard
@@ -181,6 +182,8 @@ private fun PlayProductCard(
     modifier: Modifier = Modifier,
     product: PlayProduct,
 ) {
+    // 与国内档位一致的打赏形象(俏皮文案 + 图标); 未知档位回退展示 Play 商品名
+    val tier = PlayProductTierMap[product.productId]
     GlassCard(
         modifier = modifier,
         colors = CardDefaults.cardColors(
@@ -200,12 +203,28 @@ private fun PlayProductCard(
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = product.title,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center
-            )
+            if (tier != null) {
+                Text(
+                    text = stringResource(id = tier.name),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Icon(
+                    modifier = Modifier.size(48.dp),
+                    imageVector = tier.icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            } else {
+                Text(
+                    text = product.title,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center
+                )
+            }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = stringResource(id = R.string.play_points_desc, product.points),
