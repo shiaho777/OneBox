@@ -1,38 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="loan_calc_title">Darlehensrechner</string>
-    <string name="loan_calc_amount_label">Darlehensbetrag ($)</string>
-    <string name="loan_calc_amount_hint">Bitte geben Sie den Betrag ein.</string>
-    <string name="loan_calc_term_label">Darlehenslaufzeit</string>
-    <string name="loan_calc_term_hint">Auswahl</string>
-    <string name="loan_calc_rate_label">Jährlicher Zinssatz (%)</string>
+    <!-- 贷款计算器 -->
+    <string name="loan_calc_title">Kreditrechner</string>
+    <string name="loan_calc_amount_label">Kreditbetrag</string>
+    <string name="loan_calc_amount_hint">Betrag eingeben</string>
+    <string name="loan_calc_term_label">Laufzeit</string>
+    <string name="loan_calc_term_hint">Auswählen</string>
+    <string name="loan_calc_rate_label">Jahreszins (%)</string>
+    <string name="loan_calc_rate_annual">Jahreszins</string>
+    <string name="loan_calc_rate_monthly">Monatszins</string>
+    <string name="loan_calc_rate_monthly_option">Monatszins (%)</string>
     <string name="loan_calc_rate_hint">Jährlichen Zinssatz eingeben</string>
-    <string name="loan_calc_method_label">Rückzahlungsmethode</string>
-    <string name="loan_calc_method_hint">Auswahl</string>
-    <string name="loan_calc_start">Berechnung starten</string>
+    <string name="loan_calc_rate_monthly_hint">Monatlichen Zinssatz eingeben</string>
+    <string name="loan_calc_method_label">Rückzahlungsart</string>
+    <string name="loan_calc_method_hint">Auswählen</string>
+    <string name="loan_calc_start">Berechnen</string>
     <string name="loan_calc_cancel">Abbrechen</string>
-    <string name="loan_method_equal_installment">Einen Moment bitte.</string>
-    <string name="loan_method_equal_installment_desc">Monatliche Rate, Tilgung, Zinsen</string>
-    <string name="loan_method_equal_payment">Äquivalent</string>
-    <string name="loan_method_equal_payment_desc">Monatliche Rate gleich, Tilgung steigt, Zinsen sinken monatlich</string>
-    <string name="loan_method_equal_principal">Äquivalente Tilgung</string>
-    <string name="loan_method_equal_principal_desc">Monatliche Rate sinkt, Tilgung gleich, Zinsen sinken monatlich</string>
-    <string name="loan_method_interest_first">Lassen Sie uns das festhalten.</string>
-    <string name="loan_method_interest_first_desc">Monatlich feste Zinsen und volle Tilgung bei Fälligkeit</string>
-    <string name="loan_result_monthly_payment">Monatliche durchschnittliche Rückzahlungen</string>
+
+    <!-- 还款方式 -->
+    <string name="loan_method_equal_installment">Pauschalraten</string>
+    <string name="loan_method_equal_installment_desc">Rate, Tilgung und Zinsen jeden Monat gleich</string>
+    <string name="loan_method_equal_payment">Annuität</string>
+    <string name="loan_method_equal_payment_desc">Gleiche Monatsrate; Tilgungsanteil steigt, Zinsanteil sinkt</string>
+    <string name="loan_method_equal_principal">Tilgungsdarlehen</string>
+    <string name="loan_method_equal_principal_desc">Rate sinkt monatlich; Tilgung gleich, Zinsen nehmen ab</string>
+    <string name="loan_method_interest_first">Endfälliges Darlehen</string>
+    <string name="loan_method_interest_first_desc">Monatlich feste Zinsen, gesamte Tilgung am Laufzeitende</string>
+
+    <!-- 计算结果 -->
+    <string name="loan_result_monthly_payment">Monatsrate</string>
     <string name="loan_result_total_interest">Gesamtzinsen</string>
-    <string name="loan_result_total_repayment">Gesamtrückzahlungen</string>
-    <string name="loan_result_schedule_title">Rückzahlungsplan</string>
-    <string name="loan_result_month">Zeitraum</string>
-    <string name="loan_result_monthly_col">Monatsrate</string>
+    <string name="loan_result_total_repayment">Gesamtrückzahlung</string>
+    <string name="loan_result_schedule_title">Tilgungsplan</string>
+    <string name="loan_result_month">Nr.</string>
+    <string name="loan_result_monthly_col">Rate</string>
     <string name="loan_result_principal_col">Tilgung</string>
     <string name="loan_result_interest_col">Zinsen</string>
-    <string name="loan_result_remaining_col">Resttilgung</string>
-    <string name="loan_input_error_amount">Bitte geben Sie einen gültigen Darlehensbetrag ein</string>
-    <string name="loan_input_error_term">Bitte wählen Sie die Darlehenslaufzeit</string>
-    <string name="loan_input_error_rate">Geben Sie einen gültigen jährlichen Zinssatz ein</string>
-    <string name="loan_input_error_method">Bitte wählen Sie, wie Sie zurückzahlen möchten.</string>
+    <string name="loan_result_remaining_col">Restschuld</string>
+    <string name="loan_input_error_amount">Bitte einen gültigen Kreditbetrag eingeben</string>
+    <string name="loan_input_error_term">Bitte eine Laufzeit auswählen</string>
+    <string name="loan_input_error_rate">Bitte einen gültigen Jahreszins eingeben</string>
+    <string name="loan_input_error_method">Bitte eine Rückzahlungsart auswählen</string>
+
+    <!-- 期数选择（月） -->
     <string name="loan_term_months">%1$d Monate</string>
     <string name="loan_term_years">%1$d Jahre (%2$d Monate)</string>
-    <string name="loan_term_picker_title">Kreditlaufzeit auswählen</string>
+    <string name="loan_term_years_months">%1$d Jahre %2$d Monate</string>
+    <string name="loan_term_picker_title">Laufzeit auswählen</string>
 </resources>

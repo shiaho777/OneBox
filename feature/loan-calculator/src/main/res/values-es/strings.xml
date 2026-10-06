@@ -1,38 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="loan_calc_title">Calculadora de Préstamos</string>
-    <string name="loan_calc_amount_label">Monto del préstamo ($)</string>
-    <string name="loan_calc_amount_hint">Por favor ingrese el monto.</string>
-    <string name="loan_calc_term_label">Plazo del préstamo</string>
-    <string name="loan_calc_term_hint">Selección</string>
-    <string name="loan_calc_rate_label">Tasa de interés anual (%)</string>
+    <!-- 贷款计算器 -->
+    <string name="loan_calc_title">Calculadora de préstamos</string>
+    <string name="loan_calc_amount_label">Importe del préstamo</string>
+    <string name="loan_calc_amount_hint">Ingresa el importe</string>
+    <string name="loan_calc_term_label">Plazo</string>
+    <string name="loan_calc_term_hint">Seleccionar</string>
+    <string name="loan_calc_rate_label">Tasa anual (%)</string>
+    <string name="loan_calc_rate_annual">Tasa anual</string>
+    <string name="loan_calc_rate_monthly">Tasa mensual</string>
+    <string name="loan_calc_rate_monthly_option">Tasa mensual (%)</string>
     <string name="loan_calc_rate_hint">Ingresa la tasa de interés anual</string>
+    <string name="loan_calc_rate_monthly_hint">Ingresa la tasa de interés mensual</string>
     <string name="loan_calc_method_label">Método de pago</string>
-    <string name="loan_calc_method_hint">Selección</string>
-    <string name="loan_calc_start">Comenzar cálculo</string>
+    <string name="loan_calc_method_hint">Seleccionar</string>
+    <string name="loan_calc_start">Calcular</string>
     <string name="loan_calc_cancel">Cancelar</string>
-    <string name="loan_method_equal_installment">Solo espere.</string>
-    <string name="loan_method_equal_installment_desc">Cuota mensual, capital, interés</string>
-    <string name="loan_method_equal_payment">Equivalente</string>
-    <string name="loan_method_equal_payment_desc">La cuota mensual es la misma, el capital aumenta y el interés disminuye mensualmente</string>
-    <string name="loan_method_equal_principal">Capital equivalente</string>
-    <string name="loan_method_equal_principal_desc">Disminución mensual en la cuota, mismo capital por mes y disminución mensual del interés</string>
-    <string name="loan_method_interest_first">Anotémoslo.</string>
-    <string name="loan_method_interest_first_desc">Interés fijo mensual y capital total al vencimiento</string>
-    <string name="loan_result_monthly_payment">Pagos mensuales promedio</string>
-    <string name="loan_result_total_interest">Interés total</string>
-    <string name="loan_result_total_repayment">Pagos totales</string>
-    <string name="loan_result_schedule_title">Plan de pago</string>
-    <string name="loan_result_month">Período</string>
-    <string name="loan_result_monthly_col">Pago mensual</string>
+
+    <!-- 还款方式 -->
+    <string name="loan_method_equal_installment">Cuota fija (tasa plana)</string>
+    <string name="loan_method_equal_installment_desc">Misma cuota, capital e intereses cada mes</string>
+    <string name="loan_method_equal_payment">Cuota nivelada</string>
+    <string name="loan_method_equal_payment_desc">Cuota mensual igual; el capital sube y los intereses bajan</string>
+    <string name="loan_method_equal_principal">Capital fijo</string>
+    <string name="loan_method_equal_principal_desc">La cuota baja cada mes; capital igual e intereses decrecientes</string>
+    <string name="loan_method_interest_first">Intereses primero</string>
+    <string name="loan_method_interest_first_desc">Intereses fijos al mes y todo el capital al vencimiento</string>
+
+    <!-- 计算结果 -->
+    <string name="loan_result_monthly_payment">Cuota mensual</string>
+    <string name="loan_result_total_interest">Intereses totales</string>
+    <string name="loan_result_total_repayment">Pago total</string>
+    <string name="loan_result_schedule_title">Plan de pagos</string>
+    <string name="loan_result_month">N.º</string>
+    <string name="loan_result_monthly_col">Cuota</string>
     <string name="loan_result_principal_col">Capital</string>
-    <string name="loan_result_interest_col">Interés</string>
-    <string name="loan_result_remaining_col">Capital restante</string>
-    <string name="loan_input_error_amount">Ingresa un monto de préstamo válido</string>
-    <string name="loan_input_error_term">Selecciona el período del préstamo</string>
-    <string name="loan_input_error_rate">Ingresa una tasa de interés anual válida</string>
-    <string name="loan_input_error_method">Por favor, elija cómo pagar.</string>
+    <string name="loan_result_interest_col">Intereses</string>
+    <string name="loan_result_remaining_col">Capital pendiente</string>
+    <string name="loan_input_error_amount">Ingresa un importe de préstamo válido</string>
+    <string name="loan_input_error_term">Selecciona un plazo</string>
+    <string name="loan_input_error_rate">Ingresa una tasa anual válida</string>
+    <string name="loan_input_error_method">Selecciona un método de pago</string>
+
+    <!-- 期数选择（月） -->
     <string name="loan_term_months">%1$d meses</string>
     <string name="loan_term_years">%1$d años (%2$d meses)</string>
-    <string name="loan_term_picker_title">Selecciona el plazo del préstamo</string>
+    <string name="loan_term_years_months">%1$d años y %2$d meses</string>
+    <string name="loan_term_picker_title">Seleccionar plazo</string>
 </resources>

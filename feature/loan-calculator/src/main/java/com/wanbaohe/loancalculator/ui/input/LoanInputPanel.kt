@@ -50,7 +50,7 @@ fun LoanInputPanel(
             value = viewModel.amount,
             onValueChange = { viewModel.updateAmount(it) },
             hint = stringResource(R.string.loan_calc_amount_hint),
-            errorMessage = viewModel.amountError,
+            errorMessage = viewModel.amountError?.let { stringResource(it) },
         )
         Spacer(Modifier.height(12.dp))
 
@@ -61,14 +61,16 @@ fun LoanInputPanel(
             hint = stringResource(R.string.loan_calc_term_hint),
             isSelector = true,
             onClick = { showTermPicker = true },
-            errorMessage = viewModel.termError,
+            errorMessage = viewModel.termError?.let { stringResource(it) },
         )
         Spacer(Modifier.height(12.dp))
 
         // ── 年利率（带年/月切换下拉）──────────────────────────────────────────
         // label 只写"年利率"/"月利率"，单位符号由 leadingContent 承载，避免重复显示
         LoanInputItem(
-            label = if (isAnnualRate) "年利率" else "月利率",
+            label = stringResource(
+                if (isAnnualRate) R.string.loan_calc_rate_annual else R.string.loan_calc_rate_monthly
+            ),
             value = viewModel.annualRate,
             onValueChange = { input ->
                 if (isAnnualRate) {
@@ -82,15 +84,14 @@ fun LoanInputPanel(
                     )
                 }
             },
-            hint = if (isAnnualRate)
-                stringResource(R.string.loan_calc_rate_hint)
-            else
-                "请输入月利率",
-            errorMessage = viewModel.rateError,
+            hint = stringResource(
+                if (isAnnualRate) R.string.loan_calc_rate_hint else R.string.loan_calc_rate_monthly_hint
+            ),
+            errorMessage = viewModel.rateError?.let { stringResource(it) },
             leadingContent = {
-                // 年/月切换触发器，显示"（%）▾"
+                // 年/月切换触发器，显示"(%) ▾"
                 Text(
-                    text = "（%）▾",
+                    text = "(%) ▾",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier
@@ -102,14 +103,14 @@ fun LoanInputPanel(
                     onDismissRequest = { showRateDropdown = false },
                 ) {
                     DropdownMenuItem(
-                        text = { Text("年利率（%）") },
+                        text = { Text(stringResource(R.string.loan_calc_rate_label)) },
                         onClick = {
                             isAnnualRate = true
                             showRateDropdown = false
                         },
                     )
                     DropdownMenuItem(
-                        text = { Text("月利率（%）") },
+                        text = { Text(stringResource(R.string.loan_calc_rate_monthly_option)) },
                         onClick = {
                             isAnnualRate = false
                             showRateDropdown = false
@@ -123,11 +124,11 @@ fun LoanInputPanel(
         // ── 还款方式（选择行）─────────────────────────────────────────────────
         LoanInputItem(
             label = stringResource(R.string.loan_calc_method_label),
-            value = viewModel.repaymentMethod?.label ?: "",
+            value = viewModel.repaymentMethod?.let { stringResource(it.labelRes) } ?: "",
             hint = stringResource(R.string.loan_calc_method_hint),
             isSelector = true,
             onClick = { showMethodPicker = true },
-            errorMessage = viewModel.methodError,
+            errorMessage = viewModel.methodError?.let { stringResource(it) },
         )
         Spacer(Modifier.height(28.dp))
 
@@ -165,12 +166,13 @@ fun LoanInputPanel(
 }
 
 /** 将月数格式化为友好的期数标签 */
+@Composable
 private fun termLabel(months: Int): String {
     val years = months / 12
     val remainMonths = months % 12
     return when {
-        years > 0 && remainMonths == 0 -> "${years}年（${months}个月）"
-        years > 0 -> "${years}年${remainMonths}个月"
-        else -> "${months}个月"
+        years > 0 && remainMonths == 0 -> stringResource(R.string.loan_term_years, years, months)
+        years > 0 -> stringResource(R.string.loan_term_years_months, years, remainMonths)
+        else -> stringResource(R.string.loan_term_months, months)
     }
 }

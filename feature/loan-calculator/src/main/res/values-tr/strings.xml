@@ -1,38 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- 贷款计算器 -->
     <string name="loan_calc_title">Kredi Hesaplayıcı</string>
-    <string name="loan_calc_amount_label">Kredi Tutarı ($)</string>
-    <string name="loan_calc_amount_hint">Lütfen tutarı girin.</string>
-    <string name="loan_calc_term_label">Kredi Vadesi</string>
-    <string name="loan_calc_term_hint">Seçim</string>
-    <string name="loan_calc_rate_label">Yıllık Faiz Oranı (%)</string>
+    <string name="loan_calc_amount_label">Kredi tutarı</string>
+    <string name="loan_calc_amount_hint">Tutarı girin</string>
+    <string name="loan_calc_term_label">Vade</string>
+    <string name="loan_calc_term_hint">Seç</string>
+    <string name="loan_calc_rate_label">Yıllık oran (%)</string>
+    <string name="loan_calc_rate_annual">Yıllık oran</string>
+    <string name="loan_calc_rate_monthly">Aylık oran</string>
+    <string name="loan_calc_rate_monthly_option">Aylık oran (%)</string>
     <string name="loan_calc_rate_hint">Yıllık faiz oranını girin</string>
-    <string name="loan_calc_method_label">Geri Ödeme Yöntemi</string>
-    <string name="loan_calc_method_hint">Seçim</string>
-    <string name="loan_calc_start">Hesaplamaya Başla</string>
+    <string name="loan_calc_rate_monthly_hint">Aylık faiz oranını girin</string>
+    <string name="loan_calc_method_label">Geri ödeme yöntemi</string>
+    <string name="loan_calc_method_hint">Seç</string>
+    <string name="loan_calc_start">Hesapla</string>
     <string name="loan_calc_cancel">İptal</string>
-    <string name="loan_method_equal_installment">Sadece bekleyin.</string>
-    <string name="loan_method_equal_installment_desc">Aylık taksit, anapara, faiz</string>
-    <string name="loan_method_equal_payment">Eşit</string>
-    <string name="loan_method_equal_payment_desc">Aylık taksit aynı, anapara artar ve faiz aylık azalır</string>
+
+    <!-- 还款方式 -->
+    <string name="loan_method_equal_installment">Sabit taksit (düz)</string>
+    <string name="loan_method_equal_installment_desc">Taksit, anapara ve faiz her ay aynı</string>
+    <string name="loan_method_equal_payment">Eşit taksit</string>
+    <string name="loan_method_equal_payment_desc">Aylık taksit aynı; anapara artar, faiz azalır</string>
     <string name="loan_method_equal_principal">Eşit anapara</string>
-    <string name="loan_method_equal_principal_desc">Aylık taksit aylık azalır, anapara aynı ve faiz aylık azalır</string>
-    <string name="loan_method_interest_first">Hadi yazalım.</string>
-    <string name="loan_method_interest_first_desc">Aylık sabit faiz ve vade sonunda anapara</string>
-    <string name="loan_result_monthly_payment">Aylık ortalama ödemeler</string>
+    <string name="loan_method_equal_principal_desc">Taksit her ay azalır; anapara eşit, faiz azalır</string>
+    <string name="loan_method_interest_first">Önce faiz</string>
+    <string name="loan_method_interest_first_desc">Her ay sabit faiz, vade sonunda tüm anapara</string>
+
+    <!-- 计算结果 -->
+    <string name="loan_result_monthly_payment">Aylık taksit</string>
     <string name="loan_result_total_interest">Toplam faiz</string>
-    <string name="loan_result_total_repayment">Toplam ödemeler</string>
+    <string name="loan_result_total_repayment">Toplam geri ödeme</string>
     <string name="loan_result_schedule_title">Geri ödeme planı</string>
-    <string name="loan_result_month">Dönem</string>
-    <string name="loan_result_monthly_col">Ay ödemesi</string>
+    <string name="loan_result_month">No</string>
+    <string name="loan_result_monthly_col">Taksit</string>
     <string name="loan_result_principal_col">Anapara</string>
     <string name="loan_result_interest_col">Faiz</string>
     <string name="loan_result_remaining_col">Kalan anapara</string>
     <string name="loan_input_error_amount">Lütfen geçerli bir kredi tutarı girin</string>
-    <string name="loan_input_error_term">Lütfen kredi vadesini seçin</string>
-    <string name="loan_input_error_rate">Geçerli bir yıllık faiz oranı girin</string>
-    <string name="loan_input_error_method">Lütfen geri ödeme şeklini seçin.</string>
+    <string name="loan_input_error_term">Lütfen vade seçin</string>
+    <string name="loan_input_error_rate">Lütfen geçerli bir yıllık faiz oranı girin</string>
+    <string name="loan_input_error_method">Lütfen geri ödeme yöntemi seçin</string>
+
+    <!-- 期数选择（月） -->
     <string name="loan_term_months">%1$d ay</string>
     <string name="loan_term_years">%1$d yıl (%2$d ay)</string>
-    <string name="loan_term_picker_title">Kredi vadesi seçin</string>
+    <string name="loan_term_years_months">%1$d yıl %2$d ay</string>
+    <string name="loan_term_picker_title">Vade seçin</string>
 </resources>

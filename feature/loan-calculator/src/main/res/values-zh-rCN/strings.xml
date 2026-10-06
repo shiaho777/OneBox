@@ -7,7 +7,11 @@
     <string name="loan_calc_term_label">贷款期数</string>
     <string name="loan_calc_term_hint">选择</string>
     <string name="loan_calc_rate_label">年利率（%）</string>
+    <string name="loan_calc_rate_annual">年利率</string>
+    <string name="loan_calc_rate_monthly">月利率</string>
+    <string name="loan_calc_rate_monthly_option">月利率（%）</string>
     <string name="loan_calc_rate_hint">请输入年利率</string>
+    <string name="loan_calc_rate_monthly_hint">请输入月利率</string>
     <string name="loan_calc_method_label">还款方式</string>
     <string name="loan_calc_method_hint">选择</string>
     <string name="loan_calc_start">开始计算</string>
@@ -39,8 +43,8 @@
     <string name="loan_input_error_method">请选择还款方式</string>
 
     <!-- 期数选择（月） -->
-    <string name="loan_term_months">%d 个月</string>
+    <string name="loan_term_months">%1$d 个月</string>
     <string name="loan_term_years">%1$d 年（%2$d 个月）</string>
+    <string name="loan_term_years_months">%1$d 年 %2$d 个月</string>
     <string name="loan_term_picker_title">选择贷款期数</string>
 </resources>
-
