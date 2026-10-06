@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="decision_wheel_title">Decision Wheel</string>
+    <string name="decision_wheel_title">Gulong ng Desisyon</string>
     <string name="wheel_tab">Gulong</string>
     <string name="new_wheel">Bagong Loop</string>
     <string name="edit_wheel">I-edit ang Wheel</string>

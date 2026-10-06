@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="password_vault_title">Password Vault</string>
+    <string name="password_vault_title">Vault ng Password</string>
     <string name="password_vault_subtitle">Ligtas na iimbak ang mga password para sa mga site, app, at door codes</string>
     <string name="password_vault_locked">Naka-lock ang vault</string>
     <string name="password_vault_locked_desc">Ilagay ang iyong master password para i-unlock. Lahat ng data ay naka-encrypt dito, at awtomatikong nagla-lock ang vault kapag umalis ka.</string>

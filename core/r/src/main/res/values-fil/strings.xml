@@ -31,7 +31,7 @@
     <string name="demo_navigation_deeplink_example_pick_multiple_files">Pumili ng Maramihang File</string>
     <string name="home">Home</string>
     <string name="home_description">Lahat ng iyong tool sa isang lugar</string>
-    <string name="profile">Profile</string>
+    <string name="profile">Akin</string>
     <string name="profile_description">Account at mga setting</string>
     <string name="online">Tuklasin</string>
     <string name="online_description">I-explore ang mga napiling nilalaman</string>
@@ -345,10 +345,10 @@
     <string name="profile_user_info_username">Username</string>
     <string name="profile_user_info_email">Email</string>
     <string name="profile_user_info_points">Mga Puntos</string>
-    <string name="profile_user_info_invitation_code">Invite Code</string>
+    <string name="profile_user_info_invitation_code">Code ng Imbitasyon</string>
     <string name="copy_to_clipboard_tips_prefix">Nakopya sa clipboard</string>
     <string name="profile_input_invitation_code">Ilagay ang invite code para kumita ng 1000 puntos</string>
-    <string name="profile_share_invitation_code">Ibahagi ang Invite Code</string>
+    <string name="profile_share_invitation_code">Ibahagi ang Code ng Imbitasyon</string>
     <string name="profile_input_invitation_copy">Kopyahin:</string>
     <string name="profile_item_theme">Tema</string>
     <string name="profile_item_day_night_mode">Araw at Gabi</string>
@@ -379,7 +379,7 @@
     <string name="webview_title_feedback">Feedback</string>
     <string name="ai_chat_description">Sinusuportahan ang mga LLM API mula sa Baidu, Alibaba Qwen, Moonshot, at iba pa.</string>
     <string name="ai_chat_menu_new_conversation">Bagong Chat</string>
-    <string name="search_hint">Maghanap ng mga function, hal. AI, Marquee, Calendar…</string>
+    <string name="search_hint">Maghanap ng function, hal. AI, Marquee, Calendar…</string>
     <string name="no_search_result">Walang nahanap na resulta!</string>
     <string name="privacy_title">Patakaran sa Privacy</string>
     <string name="privacy_item_1">Pahintulot sa Storage</string>
@@ -508,7 +508,7 @@
     <string name="ai_prompt_working_snapshot_desc">Ang pag-uusap na ito ay nagpapatuloy gamit ang snapshot ng prompt na nai-save noong ginawa ang session, na pinapanatili ang konteksto na matatag.</string>
     <string name="ai_prompt_working_live_desc">Ang pag-uusap na ito ay gumagana sa pinakabagong nilalaman ng prompt na ito, na pinakamainam para sa pagsisimula ng bagong gawain.</string>
     <string name="ai_chat_quick_start_title">Subukang Magsimula Sa</string>
-    <string name="ai_chat_quick_start_subtitle">I-tap upang punan ang input, pagkatapos ay pindutin ang Send upang pinuhin pa</string>
+    <string name="ai_chat_quick_start_subtitle">I-tap upang punan ang input, pagkatapos ay pindutin ang Send upang mapagbuti pa</string>
     <string name="ai_chat_quick_start_1">Tanghalian ay nagkakahalagang 28, i-record sa dining</string>
     <string name="ai_chat_quick_start_2">Ito ang kinakailangan, gawin itong tala at praktikal na listahan ng gawain</string>
     <string name="ai_chat_quick_start_3">Basahin ang QR code o barcode sa larawang ito at ipaliwanag kung ano ito</string>
@@ -1696,7 +1696,7 @@ Tip: kapag pinili mo ang \"Itago Magpakailanman\", maaari mo akong ibalik sa Mga
     <string name="robot_status_waiting_input">Naghihintay ng sagot</string>
     <string name="robot_status_waiting_llm">Sumasagot</string>
 <string name="household_items">Pamamahala ng mga Item</string>    <string name="household_items_description">Tandaan kung saan nakalagay ang mga gamit sa bahay, may expiry dates at notes.</string>
-    <string name="ai_detect_title">AI Detector</string>
+    <string name="ai_detect_title">Detektor ng AI</string>
     <string name="ai_detect_description">Tukuyin kung ang teksto o larawan ay gawa ng AI.</string>
     <string name="app_update_dialog_title">May bagong bersyon %1$s</string>
     <string name="app_update_dialog_message">Nasa %1$s ka. Available na ang bersyon %2$s — inirerekomendang i-update.</string>
@@ -1825,9 +1825,9 @@ Tip: kapag pinili mo ang \"Itago Magpakailanman\", maaari mo akong ibalik sa Mga
     <string name="nav_check_in">Pag-check in</string>
     <string name="nav_blessing">Pagpapala</string>
     <string name="nav_image_creation">Paggawa ng Larawan</string>
-    <string name="ad_watch_title">Panonood ng Anunsyo</string>
-    <string name="ad_watch_description">Manood ng mga rewarded na anunsyo para makakuha ng puntos.</string>
-    <string name="ad_watch_earn_entry">Manood ng mga anunsyo para makakuha ng puntos</string>
+    <string name="ad_watch_title">Panonood ng Ad</string>
+    <string name="ad_watch_description">Manood ng mga rewarded ad para makakuha ng puntos.</string>
+    <string name="ad_watch_earn_entry">Manood ng mga ad para makakuha ng puntos</string>
     <string name="local_model_loading_hint">Nilo-load ang lokal na modelo %1$s, ang unang pag-load pagkatapos buksan ang app ay tumatagal ng ilang segundo…</string>
     <string name="comment_empty_eyebrow">② Nagbabago ito kasama mo</string>
     <string name="comment_empty_title">Maaaring hubugin ng iyong ideya ang susunod na update</string>

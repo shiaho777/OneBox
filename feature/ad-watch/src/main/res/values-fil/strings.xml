@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ad_watch_title">Panonood ng Anunsyo</string>
-    <string name="ad_watch_headline_1">Ano ang mga patalastas na pinagkakagastusan ng malalaking brand?</string>
+    <string name="ad_watch_title">Panonood ng Ad</string>
+    <string name="ad_watch_headline_1">Ano ang mga ad na pinagkakagastusan ng malalaking brand?</string>
     <string name="ad_watch_headline_2">Ano ang hitsura ng mga ad na pinapalabas ng malalaking kumpanya?</string>
     <string name="ad_watch_headline_3">15 segundo, tingnan ang husay ng mga brand</string>
     <string name="ad_watch_headline_4">Ang iba ay gumagastos para sa atensyon, ikaw ay kumikita ng puntos</string>
