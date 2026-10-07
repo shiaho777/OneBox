@@ -415,8 +415,6 @@ android {
             // BouncyCastle 1.85 起三个 jar 都打包了相同的 META-INF/LICENSE.md,只保留一份避免 merge 冲突
             pickFirsts += "META-INF/LICENSE.md"
             excludes += "kotlin/"
-            excludes += "org/"
-            excludes += ".properties"
             excludes += ".bin"
             excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
             // 排除 BouncyCastle 后量子密码 Picnic 预计算表（约 1.1MB，几乎不会用到）
