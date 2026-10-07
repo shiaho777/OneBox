@@ -33,6 +33,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.text.get
 import kotlin.text.toLong
@@ -50,8 +51,9 @@ class FileTransferServer(
     private val db by lazy { FeatureDatabase.getInstanceOrCreate(context) }
     private val chatDao by lazy { db.chatMessageDao() }
 
-    // 已验证的session
-    private val authenticatedSessions = mutableSetOf<String>()
+    // 已验证的 session：sessionId -> 最近一次通过校验的时间戳；NanoHTTPD 会在多个工作线程上读写
+    private val authenticatedSessions = ConcurrentHashMap<String, Long>()
+
 
     /**
      * 最近活跃的浏览器频道（用于手机端发送消息时选择目标）。
@@ -96,7 +98,12 @@ class FileTransferServer(
      * 更新配置
      */
     fun updateConfig(newConfig: TransferConfig) {
+        val passwordChanged = config.password != newConfig.password
         config = newConfig
+        // 密码变更后，此前签发的 session 不应继续有效
+        if (passwordChanged) {
+            authenticatedSessions.clear()
+        }
     }
 
     /**
@@ -143,7 +150,7 @@ class FileTransferServer(
     fun getChatHistory(): List<ChatMessage> = getChatHistoryByChannel(lastActiveChannelId)
 
     fun getChatHistoryByChannel(channelId: String): List<ChatMessage> {
-        return runBlocking(Dispatchers.IO) {
+        return runBlocking {
             runCatching {
                 chatDao.getMessagesByChannel(channelId).map { it.toChatMessage() }
             }.getOrElse { emptyList() }
@@ -328,7 +335,7 @@ class FileTransferServer(
      * 获取会话摘要列表（用于手机端 UI 展示多浏览器会话）。
      */
     fun listChatSessions(): List<ChatSession> {
-        return runBlocking(Dispatchers.IO) {
+        return runBlocking {
             runCatching {
                 chatDao.listSessionSummaries().map {
                     ChatSession(
@@ -350,9 +357,48 @@ class FileTransferServer(
     private fun isAuthenticated(session: IHTTPSession): Boolean {
         if (config.password == null) return true
 
-        val cookies = session.cookies
-        val sessionId = cookies.read("session_id")
-        return sessionId != null && authenticatedSessions.contains(sessionId)
+        val sessionId = session.cookies.read("session_id")
+        return sessionId != null && refreshSession(sessionId)
+    }
+
+    /**
+     * 校验 session 是否仍然有效；有效则顺带把活跃时间推到当前时刻（滑动过期）。
+     */
+    private fun refreshSession(sessionId: String): Boolean {
+        val now = System.currentTimeMillis()
+        val lastSeenAt = authenticatedSessions[sessionId]
+        val valid = lastSeenAt != null && now - lastSeenAt <= SESSION_TTL_MS
+
+        if (valid) {
+            // 先续期再清理：刚通过校验的 session 时间戳最新，不会被容量上限挤掉
+            authenticatedSessions[sessionId] = now
+            pruneExpiredSessions(now)
+        } else if (lastSeenAt != null) {
+            authenticatedSessions.remove(sessionId, lastSeenAt)
+        }
+
+        return valid
+    }
+
+    /**
+     * 清理空闲超时的 session，并在数量超过上限时淘汰最久未活跃的若干个。
+     *
+     * 惰性清理：只在请求路径上顺手做，不需要额外的后台任务。
+     */
+    private fun pruneExpiredSessions(now: Long) {
+        authenticatedSessions.forEach { (sessionId, lastSeenAt) ->
+            if (now - lastSeenAt > SESSION_TTL_MS) {
+                authenticatedSessions.remove(sessionId, lastSeenAt)
+            }
+        }
+
+        val overflow = authenticatedSessions.size - MAX_SESSIONS
+        if (overflow > 0) {
+            authenticatedSessions.entries
+                .sortedBy { it.value }
+                .take(overflow)
+                .forEach { authenticatedSessions.remove(it.key, it.value) }
+        }
     }
 
     /**
@@ -373,8 +419,11 @@ class FileTransferServer(
             (params["password"] as? String) ?: session.parameters["password"]?.firstOrNull()
 
         return if (password == config.password) {
+            val now = System.currentTimeMillis()
             val sessionId = java.util.UUID.randomUUID().toString()
-            authenticatedSessions.add(sessionId)
+            // 先写入再清理：容量上限淘汰最久未活跃的，新 session 时间戳最新，不会被自己挤掉
+            authenticatedSessions[sessionId] = now
+            pruneExpiredSessions(now)
 
             val response = newFixedLengthResponse(
                 Response.Status.OK,
@@ -1231,5 +1280,10 @@ class FileTransferServer(
     }
 
     companion object {
+        /** session 空闲超过该时长即失效（滑动过期：每次通过校验都会续期） */
+        private const val SESSION_TTL_MS = 30 * 60 * 1000L
+
+        /** session 数量上限：浏览器反复重连时不至于无界增长，超出后淘汰最久未活跃的 */
+        private const val MAX_SESSIONS = 64
     }
 }
